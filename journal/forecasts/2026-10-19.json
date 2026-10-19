@@ -1,0 +1,48 @@
+[
+ {
+  "symbol": "SPY",
+  "made_at": "2026-10-19T19:04:41+00:00",
+  "date": "2026-10-19",
+  "config": "v0-day04",
+  "reference": {
+   "t": "2026-10-19T18:00:00Z",
+   "price": 767.615
+  },
+  "week": {
+   "direction": "no call",
+   "note": "higher timeframe is consolidating: no call"
+  },
+  "next_days": {
+   "direction": "no call",
+   "note": "higher timeframe is consolidating: no call"
+  },
+  "today": {
+   "direction": "no call",
+   "note": "higher timeframe is consolidating: no call"
+  },
+  "grades": {}
+ },
+ {
+  "symbol": "GLD",
+  "made_at": "2026-10-19T19:04:43+00:00",
+  "date": "2026-10-19",
+  "config": "v0-day04",
+  "reference": {
+   "t": "2026-10-19T18:00:00Z",
+   "price": 379.94
+  },
+  "week": {
+   "direction": "down",
+   "note": "lower timeframe agrees"
+  },
+  "next_days": {
+   "direction": "down",
+   "note": "lower timeframe agrees"
+  },
+  "today": {
+   "direction": "down",
+   "note": "lower timeframe agrees"
+  },
+  "grades": {}
+ }
+]

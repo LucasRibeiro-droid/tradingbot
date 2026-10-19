@@ -11,7 +11,8 @@ became, and what the bot's own study of that rule found on real charts.
 | 1 | Take Action | not yet studied | — |
 | 2 | Candlesticks | learned, first study run | `tradingbot/candles.py`, `tradingbot/study.py` |
 | 3 | Discipline | learned | `tradingbot/discipline.py` |
-| 4–55 | … | not yet studied | — |
+| 4 | Trends | learned, first study and forecast run | `tradingbot/trend.py`, `tradingbot/trend_study.py`, `tradingbot/forecast.py` |
+| 5–55 | … | not yet studied | — |
 
 ## How the bot learns
 

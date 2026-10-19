@@ -40,6 +40,19 @@ class CandleParams:
 
 
 @dataclass(frozen=True)
+class TrendParams:
+    """How the bot finds swings and trends (Day 4)."""
+
+    # Bars on each side a swing high (low) must be higher (lower) than.
+    swing_strength: int = 2
+    # "wick": swings from highs and lows. "close": swings from closes, like a line chart (18:32).
+    swing_source: str = "wick"
+    # Consolidation (12:32): over this many bars, price went nowhere relative to its range.
+    consolidation_lookback: int = 20
+    consolidation_max_efficiency: float = 0.30
+
+
+@dataclass(frozen=True)
 class StudyParams:
     """How the bot measures "how price reacted" to a candle (Day 2 homework)."""
 
@@ -62,13 +75,21 @@ class Locked:
     follow_plan_exactly: bool = True
     # Day 3, 14:27 and 26:14: never satisfied; every day ends with a next improvement step.
     always_improving: bool = True
+    # Day 4, 08:13-10:22: higher timeframes hold higher power; never trade against them.
+    trade_against_htf_trend: bool = False
+    # Day 4, 27:04: focus on one or two instruments.
+    max_instruments: int = 2
 
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v0-day02"
+    version: str = "v0-day04"
     candle: CandleParams = CandleParams()
+    trend: TrendParams = TrendParams()
     study: StudyParams = StudyParams()
+    # The one or two instruments the bot studies and trades (LOCKED.max_instruments).
+    # SPY stands in for TJR's S&P 500 and GLD for gold, the two markets he uses most.
+    watchlist: tuple[str, ...] = ("SPY", "GLD")
 
 
 LOCKED = Locked()
