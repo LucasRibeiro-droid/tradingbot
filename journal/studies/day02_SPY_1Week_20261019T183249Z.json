@@ -1,0 +1,2392 @@
+{
+ "symbol": "SPY",
+ "timeframe": "1Week",
+ "config": {
+  "version": "v0-day02",
+  "candle": {
+   "doji_max_body_pct": 0.1,
+   "long_wick_min_pct": 0.6,
+   "short_wick_max_pct": 0.1,
+   "long_legged_min_wick_pct": 0.3,
+   "hammer_max_body_pct": 0.35,
+   "hammer_wick_to_body": 2.0,
+   "strong_close_min_body_pct": 0.7,
+   "strong_close_max_close_wick_pct": 0.1,
+   "weakness_wick_to_body": 1.0,
+   "rejection_min_wick_pct": 0.5,
+   "min_range_vs_avg": 0.5,
+   "avg_range_lookback": 20,
+   "context_lookback": 5
+  },
+  "study": {
+   "horizon_bars": 5,
+   "min_examples": 10
+  }
+ },
+ "candles": 315,
+ "base": {
+  "up": 219,
+  "down": 90,
+  "n": 309
+ },
+ "summary": {
+  "ALL:bear": {
+   "n": 57,
+   "hit_rate": 0.439,
+   "base_rate": 0.291,
+   "edge": 0.147,
+   "took_expected_side_first": 0.649,
+   "avg_move_in_lean_direction": -0.038,
+   "enough_examples": true
+  },
+  "ALL:bull": {
+   "n": 94,
+   "hit_rate": 0.766,
+   "base_rate": 0.709,
+   "edge": 0.057,
+   "took_expected_side_first": 0.755,
+   "avg_move_in_lean_direction": 0.533,
+   "enough_examples": true
+  },
+  "kind=indecision:bear": {
+   "n": 5,
+   "hit_rate": 0.4,
+   "base_rate": 0.291,
+   "edge": 0.109,
+   "took_expected_side_first": 0.4,
+   "avg_move_in_lean_direction": -0.486,
+   "enough_examples": false
+  },
+  "kind=indecision:bull": {
+   "n": 2,
+   "hit_rate": 1.0,
+   "base_rate": 0.709,
+   "edge": 0.291,
+   "took_expected_side_first": 0.5,
+   "avg_move_in_lean_direction": 1.52,
+   "enough_examples": false
+  },
+  "kind=rejection:bear": {
+   "n": 13,
+   "hit_rate": 0.615,
+   "base_rate": 0.291,
+   "edge": 0.324,
+   "took_expected_side_first": 0.846,
+   "avg_move_in_lean_direction": 0.746,
+   "enough_examples": true
+  },
+  "kind=rejection:bull": {
+   "n": 30,
+   "hit_rate": 0.9,
+   "base_rate": 0.709,
+   "edge": 0.191,
+   "took_expected_side_first": 0.767,
+   "avg_move_in_lean_direction": 1.046,
+   "enough_examples": true
+  },
+  "kind=strong_close:bear": {
+   "n": 22,
+   "hit_rate": 0.273,
+   "base_rate": 0.291,
+   "edge": -0.019,
+   "took_expected_side_first": 0.773,
+   "avg_move_in_lean_direction": -0.623,
+   "enough_examples": true
+  },
+  "kind=strong_close:bull": {
+   "n": 41,
+   "hit_rate": 0.707,
+   "base_rate": 0.709,
+   "edge": -0.001,
+   "took_expected_side_first": 0.878,
+   "avg_move_in_lean_direction": 0.315,
+   "enough_examples": true
+  },
+  "kind=weakness:bear": {
+   "n": 17,
+   "hit_rate": 0.529,
+   "base_rate": 0.291,
+   "edge": 0.238,
+   "took_expected_side_first": 0.412,
+   "avg_move_in_lean_direction": 0.25,
+   "enough_examples": true
+  },
+  "kind=weakness:bull": {
+   "n": 21,
+   "hit_rate": 0.667,
+   "base_rate": 0.709,
+   "edge": -0.042,
+   "took_expected_side_first": 0.524,
+   "avg_move_in_lean_direction": 0.133,
+   "enough_examples": true
+  },
+  "shape=cross_doji:bull": {
+   "n": 5,
+   "hit_rate": 0.8,
+   "base_rate": 0.709,
+   "edge": 0.091,
+   "took_expected_side_first": 1.0,
+   "avg_move_in_lean_direction": 0.287,
+   "enough_examples": false
+  },
+  "shape=dragonfly_doji:bull": {
+   "n": 4,
+   "hit_rate": 1.0,
+   "base_rate": 0.709,
+   "edge": 0.291,
+   "took_expected_side_first": 0.75,
+   "avg_move_in_lean_direction": 1.885,
+   "enough_examples": false
+  },
+  "shape=gravestone_doji:bear": {
+   "n": 1,
+   "hit_rate": 0.0,
+   "base_rate": 0.291,
+   "edge": -0.291,
+   "took_expected_side_first": 1.0,
+   "avg_move_in_lean_direction": -1.779,
+   "enough_examples": false
+  },
+  "shape=hammer:bull": {
+   "n": 3,
+   "hit_rate": 0.333,
+   "base_rate": 0.709,
+   "edge": -0.375,
+   "took_expected_side_first": 0.667,
+   "avg_move_in_lean_direction": -0.921,
+   "enough_examples": false
+  },
+  "shape=hanging_man:bull": {
+   "n": 8,
+   "hit_rate": 0.875,
+   "base_rate": 0.709,
+   "edge": 0.166,
+   "took_expected_side_first": 0.75,
+   "avg_move_in_lean_direction": 1.048,
+   "enough_examples": false
+  },
+  "shape=inverted_cross_doji:bear": {
+   "n": 4,
+   "hit_rate": 0.75,
+   "base_rate": 0.291,
+   "edge": 0.459,
+   "took_expected_side_first": 0.75,
+   "avg_move_in_lean_direction": 1.3,
+   "enough_examples": false
+  },
+  "shape=inverted_hammer:bear": {
+   "n": 1,
+   "hit_rate": 0.0,
+   "base_rate": 0.291,
+   "edge": -0.291,
+   "took_expected_side_first": 1.0,
+   "avg_move_in_lean_direction": -2.264,
+   "enough_examples": false
+  },
+  "shape=long_legged_doji:bear": {
+   "n": 5,
+   "hit_rate": 0.4,
+   "base_rate": 0.291,
+   "edge": 0.109,
+   "took_expected_side_first": 0.4,
+   "avg_move_in_lean_direction": -0.486,
+   "enough_examples": false
+  },
+  "shape=long_legged_doji:bull": {
+   "n": 2,
+   "hit_rate": 1.0,
+   "base_rate": 0.709,
+   "edge": 0.291,
+   "took_expected_side_first": 0.5,
+   "avg_move_in_lean_direction": 1.52,
+   "enough_examples": false
+  },
+  "shape=regular:bear": {
+   "n": 23,
+   "hit_rate": 0.565,
+   "base_rate": 0.291,
+   "edge": 0.274,
+   "took_expected_side_first": 0.522,
+   "avg_move_in_lean_direction": 0.338,
+   "enough_examples": true
+  },
+  "shape=regular:bull": {
+   "n": 31,
+   "hit_rate": 0.806,
+   "base_rate": 0.709,
+   "edge": 0.098,
+   "took_expected_side_first": 0.581,
+   "avg_move_in_lean_direction": 0.632,
+   "enough_examples": true
+  },
+  "shape=shooting_star:bear": {
+   "n": 1,
+   "hit_rate": 1.0,
+   "base_rate": 0.291,
+   "edge": 0.709,
+   "took_expected_side_first": 1.0,
+   "avg_move_in_lean_direction": 5.018,
+   "enough_examples": false
+  },
+  "shape=strong_close:bear": {
+   "n": 22,
+   "hit_rate": 0.273,
+   "base_rate": 0.291,
+   "edge": -0.019,
+   "took_expected_side_first": 0.773,
+   "avg_move_in_lean_direction": -0.623,
+   "enough_examples": true
+  },
+  "shape=strong_close:bull": {
+   "n": 41,
+   "hit_rate": 0.707,
+   "base_rate": 0.709,
+   "edge": -0.001,
+   "took_expected_side_first": 0.878,
+   "avg_move_in_lean_direction": 0.315,
+   "enough_examples": true
+  }
+ },
+ "examples": [
+  {
+   "t": "2020-10-12T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.384,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.742,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2020-10-19T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.577,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 2.094,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2020-11-02T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.801,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.645,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2020-11-09T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.535,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.93,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2020-12-07T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.38,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 1.426,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-01-04T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.879,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.685,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-01-25T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.784,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.781,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2021-02-01T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.815,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.374,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-03-01T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.616,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 1.535,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-03-29T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.779,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 2.747,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-04-05T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.958,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.601,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-04-12T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.837,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.302,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-04-19T04:00:00Z",
+   "shape": "cross_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.738,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 0.44,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-05-03T04:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.946,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.208,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2021-05-10T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.65,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -0.004,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-05-17T04:00:00Z",
+   "shape": "cross_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.752,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 1.013,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-05-31T04:00:00Z",
+   "shape": "dragonfly_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 1.0,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 2.19,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-06-14T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.867,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 2.655,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2021-06-21T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.879,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.069,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-06-28T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.81,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.061,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-07-05T04:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 1.0,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 1.257,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-07-19T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.74,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.57,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-07-26T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.428,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 2.524,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-08-02T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.873,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.443,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-08-09T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.751,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.676,
+   "first_taken": "both",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2021-08-16T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.661,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.177,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-08-23T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.912,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -2.657,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-09-06T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.971,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.236,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-09-13T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.913,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.826,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-11-08T05:00:00Z",
+   "shape": "hanging_man",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.644,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -0.717,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-11-22T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.762,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.124,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-12-06T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.843,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.259,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-12-20T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.77,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -1.362,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2021-12-27T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.588,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -3.747,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-01-10T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.519,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.83,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-01-17T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.988,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.017,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-01-31T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.513,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.571,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-02-21T05:00:00Z",
+   "shape": "hammer",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 1.0,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.614,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-02-28T05:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": 1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": 1.221,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-03-14T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.814,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.603,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-03-28T04:00:00Z",
+   "shape": "inverted_cross_doji",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.71,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": -3.214,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-04-18T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.784,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down",
+    "closed near the low: very strong bearish rejection"
+   ],
+   "move": -0.436,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-05-02T04:00:00Z",
+   "shape": "inverted_cross_doji",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.717,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": -0.888,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-05-09T04:00:00Z",
+   "shape": "hammer",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.776,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": -1.615,
+   "first_taken": "both",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-05-23T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.792,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -1.152,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-05-30T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.338,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -1.941,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-06-06T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.934,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.118,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-06-20T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.915,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.109,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-07-11T04:00:00Z",
+   "shape": "dragonfly_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.879,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 2.367,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-07-25T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.707,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.865,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-08-15T04:00:00Z",
+   "shape": "shooting_star",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.908,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down",
+    "closed near the low: very strong bearish rejection"
+   ],
+   "move": -5.018,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-08-22T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.8,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -3.196,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-09-05T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.702,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -2.488,
+   "first_taken": "both",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-10-03T04:00:00Z",
+   "shape": "gravestone_doji",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.83,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": 1.779,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-10-10T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.433,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 1.743,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-10-17T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.879,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 2.39,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-10-24T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.799,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.091,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-11-07T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.803,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.52,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-11-14T05:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": -1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": -0.965,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2022-11-21T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.749,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -1.78,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-12-12T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.839,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down",
+    "closed near the low: very strong bearish rejection"
+   ],
+   "move": 0.458,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2022-12-19T05:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": 1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": 1.819,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-01-02T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.567,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 1.762,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-01-16T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.666,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.042,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-02-06T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.583,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": -1.432,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-02-13T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.572,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": -0.918,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-02-27T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.877,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.548,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-03-06T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.833,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.22,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-03-20T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.518,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 1.545,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-03-27T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.704,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.207,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-04-24T04:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.925,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.975,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-05-01T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.644,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 1.249,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-05-22T04:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 1.0,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 2.293,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-06-05T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.325,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 3.426,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-06-26T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.813,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.274,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-07-17T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.579,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.675,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-07-31T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.899,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -0.102,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-08-21T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.512,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.097,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-09-18T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.853,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -1.304,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-09-25T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.502,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.747,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-10-02T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.587,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 1.034,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-10-09T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.554,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 1.861,
+   "first_taken": "both",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2023-10-16T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.737,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.995,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-10-30T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.881,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.059,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-11-13T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.89,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.918,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2023-12-04T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.726,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 2.9,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-02-12T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.694,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 1.835,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-03-04T05:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": -1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": 0.057,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-03-11T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.673,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": -1.662,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-04-01T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.498,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.195,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-04-15T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.934,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.599,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-04-29T04:00:00Z",
+   "shape": "dragonfly_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 1.0,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 1.758,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-05-20T04:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": -1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": 1.988,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-05-27T04:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.737,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 2.418,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-06-17T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.501,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 0.03,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-06-24T04:00:00Z",
+   "shape": "inverted_cross_doji",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.759,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": -1.443,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-07-01T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.734,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -1.743,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-07-15T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.77,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.765,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-08-05T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.888,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.2,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-08-12T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.83,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.648,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-08-26T04:00:00Z",
+   "shape": "dragonfly_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 1.0,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 1.223,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-09-02T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.94,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.922,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2024-09-09T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.748,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.065,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-09-30T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.575,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 2.777,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-11-04T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.855,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.19,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-11-18T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.793,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.124,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-11-25T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.524,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": -1.058,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-12-23T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.508,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 0.462,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2024-12-30T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.867,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 0.736,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-01-06T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.732,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.377,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-01-13T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.917,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.1,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-01-27T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.535,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.705,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-02-17T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.791,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": -3.105,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-02-24T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.557,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -4.21,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-03-10T04:00:00Z",
+   "shape": "hammer",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.659,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -1.763,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-03-17T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.425,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.16,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-03-24T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.708,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.511,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-03-31T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.705,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.935,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-05-05T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.432,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 2.291,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-05-12T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.739,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.096,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-06-23T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.807,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.282,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-07-21T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.726,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.703,
+   "first_taken": "both",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-08-04T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.959,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.684,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-08-18T04:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.982,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 1.352,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-09-22T04:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": -1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": 1.567,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-10-06T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.871,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.886,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-10-13T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.348,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -0.304,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-10-27T04:00:00Z",
+   "shape": "inverted_cross_doji",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.671,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": 0.345,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-11-10T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.399,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.489,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2025-11-24T05:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.941,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.09,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2025-12-15T05:00:00Z",
+   "shape": "hanging_man",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.779,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 0.599,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-01-12T05:00:00Z",
+   "shape": "long_legged_doji",
+   "kind": "indecision",
+   "lean": -1,
+   "strength": 0.25,
+   "notes": [
+    "indecision",
+    "momentum of the prior move is fading"
+   ],
+   "move": -0.217,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-01-26T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.464,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": -1.493,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-02-02T05:00:00Z",
+   "shape": "cross_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.653,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": -1.345,
+   "first_taken": "high",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-02-23T05:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.451,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -2.092,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2026-03-02T05:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 0.521,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down"
+   ],
+   "move": 0.465,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-03-09T04:00:00Z",
+   "shape": "inverted_hammer",
+   "kind": "rejection",
+   "lean": -1,
+   "strength": 1.0,
+   "notes": [
+    "long upper wick rejected: sellers pushed price back down",
+    "closed near the low: very strong bearish rejection"
+   ],
+   "move": 2.264,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-03-23T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.814,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 2.93,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-04-06T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.758,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 1.93,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-04-13T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.91,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.998,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-04-20T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.789,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 3.496,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-05-04T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": 1,
+   "strength": 0.763,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.18,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-05-11T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.587,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 0.542,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-06-01T04:00:00Z",
+   "shape": "strong_close",
+   "kind": "strong_close",
+   "lean": -1,
+   "strength": 0.73,
+   "notes": [
+    "full-body close: momentum continues"
+   ],
+   "move": 0.783,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-06-08T04:00:00Z",
+   "shape": "cross_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.785,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 0.145,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-06-15T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.54,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": -0.452,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2026-07-06T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.796,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up",
+    "closed near the high: very strong bullish rejection"
+   ],
+   "move": 1.346,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-07-27T04:00:00Z",
+   "shape": "cross_doji",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.8,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 1.184,
+   "first_taken": "high",
+   "agreed": true,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-08-24T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": -1,
+   "strength": 0.455,
+   "notes": [
+    "bullish close but failed to hold the high: bullish weakness"
+   ],
+   "move": 0.173,
+   "first_taken": "low",
+   "agreed": false,
+   "took_expected_side_first": true
+  },
+  {
+   "t": "2026-08-31T04:00:00Z",
+   "shape": "regular",
+   "kind": "rejection",
+   "lean": 1,
+   "strength": 0.538,
+   "notes": [
+    "long lower wick rejected: buyers pushed price back up"
+   ],
+   "move": 0.707,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  },
+  {
+   "t": "2026-09-07T04:00:00Z",
+   "shape": "regular",
+   "kind": "weakness",
+   "lean": 1,
+   "strength": 0.575,
+   "notes": [
+    "bearish close but failed to hold the low: bearish weakness"
+   ],
+   "move": 0.083,
+   "first_taken": "low",
+   "agreed": true,
+   "took_expected_side_first": false
+  }
+ ]
+}
