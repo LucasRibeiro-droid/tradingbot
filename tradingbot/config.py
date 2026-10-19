@@ -57,6 +57,11 @@ class Locked:
     candle_read_is_entry_signal: bool = False
     # Day 2, 07:30: no patterns of three or more candles ("mountain tops", W's, head and shoulders).
     max_pattern_candles: int = 2
+    # Day 3, 03:25 and 24:38: take every valid setup, take nothing else, exit only where the
+    # plan says, never risk more than the plan. Checked by discipline.audit.
+    follow_plan_exactly: bool = True
+    # Day 3, 14:27 and 26:14: never satisfied; every day ends with a next improvement step.
+    always_improving: bool = True
 
 
 @dataclass(frozen=True)

@@ -5,8 +5,8 @@ at a time from the TJR Boot Camp, measures every rule against real price data, a
 changes one variable at a time so each improvement can be traced to its cause.
 
 - `knowledge/`: what the bot has learned, lesson by lesson
-- `tradingbot/`: the code (`candles.py` for Day 2, `study.py` for the homework studies, `data.py` for Alpaca bars)
-- `journal/`: study results and open hypotheses
+- `tradingbot/`: the code (`candles.py` for Day 2, `discipline.py` for Day 3, `study.py` for the homework studies, `data.py` for Alpaca bars)
+- `journal/`: study results, open hypotheses and the daily journal
 
 ```
 python -m unittest discover -s tests -t .           # tests
