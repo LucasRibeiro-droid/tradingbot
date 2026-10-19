@@ -41,9 +41,12 @@ class CandleParams:
 
 @dataclass(frozen=True)
 class TrendParams:
-    """How the bot finds swings and trends (Day 4)."""
+    """How the bot finds swings and trends (Days 4 and 6)."""
 
-    # Bars on each side a swing high (low) must be higher (lower) than.
+    # "two_candle": Day 6's definition (up candle then down candle is a high, and the
+    # reverse is a low). "pivot": the bot's first Day 4 attempt, kept for comparison.
+    swing_method: str = "two_candle"
+    # Pivot method only: bars on each side a swing high (low) must be higher (lower) than.
     swing_strength: int = 2
     # "wick": swings from highs and lows. "close": swings from closes, like a line chart (18:32).
     swing_source: str = "wick"
@@ -79,11 +82,14 @@ class Locked:
     trade_against_htf_trend: bool = False
     # Day 4, 27:04: focus on one or two instruments.
     max_instruments: int = 2
+    # Day 6, 12:44: "it is not a break of structure unless the candle closes above a high
+    # or below a low". Wicks never break structure.
+    bos_requires_close: bool = True
 
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v0-day04"
+    version: str = "v0-day06"
     candle: CandleParams = CandleParams()
     trend: TrendParams = TrendParams()
     study: StudyParams = StudyParams()

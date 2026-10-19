@@ -1,7 +1,8 @@
-"""Day 4 — Trends: where price wants to go, and why higher timeframes decide it.
+"""Days 4 and 6 — Trends and break of structure.
 
-Source: TJR Boot Camp Day 4 (https://www.youtube.com/watch?v=viuGHEuv0nw).
-Full write-up: knowledge/day04_trends.md.
+Sources: TJR Boot Camp Day 4: Trends (https://www.youtube.com/watch?v=viuGHEuv0nw) and
+Day 6: Break of Structure (https://www.youtube.com/watch?v=PmhuPbY8ZHo).
+Full write-ups: knowledge/day04_trends.md, knowledge/day06_break_of_structure.md.
 
 Everything here works bar by bar without looking ahead: a swing point only counts once
 the candles that confirm it have closed, and a trend only changes on a candle close.
@@ -22,7 +23,8 @@ NONE = 0
 
 @dataclass(frozen=True)
 class Swing:
-    """A swing high or low: a turning point in price (Day 4, 02:13)."""
+    """A high or a low. Day 6, 01:56: a high is a move up then a move down; a low is a
+    move down then a move up. Two candles are enough."""
 
     index: int
     price: float
@@ -34,11 +36,19 @@ class Swing:
 class TrendState:
     """The trend as it was known at the close of one candle."""
 
-    direction: int  # UP, DOWN, or NONE before enough swings exist
+    direction: int  # UP, DOWN, or NONE before the first break of structure
     consolidating: bool
-    swing_high: float | None
-    swing_low: float | None
-    shifted: bool = False  # this candle's close changed the direction
+    swing_high: float | None  # most recent high (Day 6, 08:54: only the most recent counts)
+    swing_low: float | None  # most recent low
+    # "bos_up" / "bos_down": this candle closed beyond the watched level (Day 6, 07:37).
+    # "sweep_high" / "sweep_low": its wick went beyond but it did not close there: not a
+    # break of structure, often a liquidity sweep (Day 6, 12:10 and 23:50).
+    event: str | None = None
+
+    @property
+    def shifted(self) -> bool:
+        """This candle's close broke structure and changed the direction."""
+        return self.event in ("bos_up", "bos_down")
 
     @property
     def tradeable_direction(self) -> int:
@@ -52,7 +62,34 @@ def _hl(c: Candle, source: str) -> tuple[float, float]:
 
 
 def swings(candles: Sequence[Candle], p: TrendParams = TrendParams()) -> list[Swing]:
-    """Swing highs and lows: a bar higher (lower) than ``swing_strength`` bars on each side."""
+    """All highs and lows, using ``p.swing_method``.
+
+    "two_candle" (Day 6, the default): an up candle then a down candle is a high, at the
+    higher wick of the two; a down candle then an up candle is a low, at the lower wick of
+    the two (Day 6, 02:20-05:02). Known once the second candle closes.
+    "pivot" (the bot's first Day 4 attempt): higher (lower) than ``swing_strength``
+    candles on each side.
+    """
+    if p.swing_method == "two_candle":
+        return _two_candle_swings(candles, p.swing_source)
+    return _pivot_swings(candles, p)
+
+
+def _two_candle_swings(candles: Sequence[Candle], source: str) -> list[Swing]:
+    out = []
+    for i in range(len(candles) - 1):
+        a, b = candles[i], candles[i + 1]
+        if not (a.closed and b.closed):
+            continue
+        (ah, al), (bh, bl) = _hl(a, source), _hl(b, source)
+        if a.direction > 0 and b.direction < 0:
+            out.append(Swing(i if ah >= bh else i + 1, max(ah, bh), "high", i + 1))
+        elif a.direction < 0 and b.direction > 0:
+            out.append(Swing(i if al <= bl else i + 1, min(al, bl), "low", i + 1))
+    return out
+
+
+def _pivot_swings(candles: Sequence[Candle], p: TrendParams) -> list[Swing]:
     n = p.swing_strength
     hl = [_hl(c, p.swing_source) for c in candles]
     out = []
@@ -78,38 +115,41 @@ def efficiency(candles: Sequence[Candle], end: int, lookback: int) -> float:
 
 
 def trend_series(candles: Sequence[Candle], p: TrendParams = TrendParams()) -> list[TrendState]:
-    """The trend after each candle closes.
+    """The trend after each candle closes, driven by breaks of structure (Day 6, 13:59-18:00).
 
-    Up: higher highs and higher lows. Down: lower highs and lower lows (Day 4, 02:13-03:32).
-    Once trending, the trend holds until a candle closes beyond the last swing on the other
-    side; that close is the structure break that flips it (Day 4, 04:24-05:08; closes only,
-    Day 2, 16:50). Consolidation is flagged separately (Day 4, 12:32).
+    1. Identify the trend. 2. In an uptrend, watch the most recent low. 3. In a downtrend,
+    watch the most recent high. 4. A candle **close** below the most recent low breaks
+    structure down. 5. A close above the most recent high breaks structure up. Before the
+    first break, either side counts. Wicks beyond the level are sweeps, not breaks.
+    Consolidation is flagged separately (Day 4, 12:32).
     """
     found = sorted(swings(candles, p), key=lambda s: s.confirmed_at)
-    highs: list[float] = []
-    lows: list[float] = []
+    high = low = None
     k = 0
     direction = NONE
     states = []
     for j, c in enumerate(candles):
-        while k < len(found) and found[k].confirmed_at <= j:
-            (highs if found[k].kind == "high" else lows).append(found[k].price)
-            k += 1
-        shifted = False
+        event = None
         if c.closed:
-            close = c.c
-            if direction == NONE and len(highs) >= 2 and len(lows) >= 2:
-                if highs[-1] > highs[-2] and lows[-1] > lows[-2]:
-                    direction = UP
-                elif highs[-1] < highs[-2] and lows[-1] < lows[-2]:
-                    direction = DOWN
-            elif direction == UP and lows and close < lows[-1]:
-                direction, shifted = DOWN, True
-            elif direction == DOWN and highs and close > highs[-1]:
-                direction, shifted = UP, True
+            watch_high = direction in (NONE, DOWN) and high is not None
+            watch_low = direction in (NONE, UP) and low is not None
+            if watch_high and c.c > high:
+                direction, event = UP, "bos_up"
+            elif watch_low and c.c < low:
+                direction, event = DOWN, "bos_down"
+            elif watch_low and c.l < low:
+                event = "sweep_low"
+            elif watch_high and c.h > high:
+                event = "sweep_high"
+        # Swings completed by this candle become the levels to watch from the next one on.
+        while k < len(found) and found[k].confirmed_at <= j:
+            if found[k].kind == "high":
+                high = found[k].price
+            else:
+                low = found[k].price
+            k += 1
         consolidating = efficiency(candles, j, p.consolidation_lookback) < p.consolidation_max_efficiency
-        states.append(TrendState(direction, consolidating, highs[-1] if highs else None,
-                                 lows[-1] if lows else None, shifted))
+        states.append(TrendState(direction, consolidating, high, low, event))
     return states
 
 

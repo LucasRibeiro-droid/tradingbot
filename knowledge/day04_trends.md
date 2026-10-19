@@ -5,6 +5,11 @@ Studied from the full video plus the captions.
 Code: `tradingbot/trend.py`. Thresholds: `TrendParams` in `tradingbot/config.py`.
 Homework: `tradingbot/forecast.py`. Study: `tradingbot/trend_study.py`.
 
+> **Revised by Day 6.** Day 6 defines a high as an up candle followed by a down candle (and the
+> reverse for a low), and says the trend flips only when a candle closes past the *most recent*
+> high or low. The trend code now follows Day 6; see `knowledge/day06_break_of_structure.md`.
+> The study results below were measured with the old pivot swings (`swing_method="pivot"`).
+
 ## What the lesson teaches
 
 ### 1. Why the trend matters: momentum (01:01–01:36)

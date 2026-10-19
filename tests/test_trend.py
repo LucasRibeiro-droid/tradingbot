@@ -28,15 +28,34 @@ def zigzag(points: list[float], steps: int = 3) -> list[float]:
 P = TrendParams(consolidation_lookback=6)
 
 
+def c(t: int, o: float, h: float, l: float, cl: float, closed: bool = True) -> Candle:
+    return Candle(f"2026-01-01T00:{t:02d}:00Z", o, h, l, cl, closed)
+
+
 class Swings(unittest.TestCase):
-    def test_finds_turning_points_only_after_they_are_confirmed(self):
+    def test_pivot_method_confirms_after_swing_strength_bars(self):
+        pivot = TrendParams(swing_method="pivot", consolidation_lookback=6)
         candles = path(*zigzag([100, 110, 104, 116]))
-        found = swings(candles, P)
+        found = swings(candles, pivot)
         kinds = [(s.kind, s.index) for s in found]
         self.assertIn(("high", 3), kinds)
         self.assertIn(("low", 6), kinds)
         for s in found:
-            self.assertEqual(s.confirmed_at, s.index + P.swing_strength)
+            self.assertEqual(s.confirmed_at, s.index + pivot.swing_strength)
+
+    def test_up_then_down_candle_is_a_high_at_the_higher_wick(self):
+        # Day 6, 02:20 and 04:20: two candles make a high; take the highest wick of the two.
+        found = swings([c(0, 100, 106, 99, 105), c(1, 105, 108, 101, 102)])
+        self.assertEqual([(s.kind, s.price, s.index, s.confirmed_at) for s in found],
+                         [("high", 108, 1, 1)])
+
+    def test_down_then_up_candle_is_a_low_at_the_lower_wick(self):
+        found = swings([c(0, 105, 106, 95, 100), c(1, 100, 104, 97, 103)])
+        self.assertEqual([(s.kind, s.price, s.index) for s in found], [("low", 95, 0)])
+
+    def test_forming_candle_does_not_complete_a_high(self):
+        # Day 6, 21:14: "this candle forming is not a high".
+        self.assertEqual(swings([c(0, 100, 106, 99, 105), c(1, 105, 107, 101, 102, closed=False)]), [])
 
 
 class Trends(unittest.TestCase):
@@ -68,6 +87,45 @@ class Trends(unittest.TestCase):
         candles = path(*zigzag([100, 110, 104, 116]), wick=5)
         prices = {s.price for s in swings(candles, TrendParams(swing_source="close"))}
         self.assertIn(110, prices)
+
+
+class BreakOfStructure(unittest.TestCase):
+    def setUp(self):
+        # Up, down (high at 106), down, up (low at 98), then the candle under test.
+        self.base = [c(0, 100, 104, 99, 103), c(1, 103, 106, 101, 102), c(2, 102, 103, 98, 99),
+                     c(3, 99, 104, 99, 103)]
+
+    def last(self, candle):
+        return trend_series(self.base + [candle], P)[-1]
+
+    def test_close_above_most_recent_high_is_bos_up(self):
+        s = self.last(c(4, 103, 108, 102, 107))
+        self.assertEqual((s.event, s.direction), ("bos_up", UP))
+
+    def test_wick_above_without_close_is_only_a_sweep(self):
+        # Day 6, 12:44: a wick above a high is not a break of structure.
+        s = self.last(c(4, 103, 108, 102, 105))
+        self.assertEqual((s.event, s.direction), ("sweep_high", NONE))
+
+    def test_close_below_most_recent_low_is_bos_down(self):
+        s = self.last(c(4, 103, 103.5, 96, 97))
+        self.assertEqual((s.event, s.direction), ("bos_down", DOWN))
+
+    def test_only_the_most_recent_low_is_watched(self):
+        # Day 6, 18:00-19:00: older lows no longer matter once a newer one forms.
+        candles = self.base + [c(4, 103, 108, 102, 107), c(5, 107, 109, 104, 105),
+                               c(6, 105, 106, 104.5, 105.5)]  # new low at 104 (down then up)
+        states = trend_series(candles + [c(7, 105.5, 106, 103, 103.5)], P)
+        self.assertEqual(states[-1].swing_low, 104)
+        self.assertEqual((states[-1].event, states[-1].direction), ("bos_down", DOWN))
+
+    def test_in_uptrend_highs_are_not_watched_for_a_break(self):
+        candles = self.base + [c(4, 103, 108, 102, 107)]
+        s = trend_series(candles + [c(5, 107, 112, 106, 111)], P)[-1]
+        self.assertEqual((s.direction, s.event), (UP, None))
+
+    def test_closes_are_required_by_lock(self):
+        self.assertTrue(LOCKED.bos_requires_close)
 
 
 class Consolidation(unittest.TestCase):
