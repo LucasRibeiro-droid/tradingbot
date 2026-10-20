@@ -1,8 +1,8 @@
 """Test the decision process, and what each indicator adds to it, judged by target before stop.
 
-Runs decision.decide on every candle and follows each decision exactly. Then repeats with
-one indicator added or removed from ``DecisionParams.confluences`` at a time, so the
-difference between runs is that indicator's contribution (H12). Results are in R:
+Runs the harness on every candle and follows each decision exactly. Repeats with one
+indicator added or removed from ``DecisionParams.confluences`` at a time (H12), and with the
+fair value gap continuation path alone and together with the reversal path. Results are in R:
 +reward/risk for a target, -1 for a stop. Expectancy (average R) is what matters.
 
 Usage:
@@ -19,7 +19,7 @@ from typing import Sequence
 
 from .candles import Candle
 from .config import BASELINE, Config, to_dict
-from .decision import decide, simulate
+from .decision import Continuation, decide, simulate
 from .liquidity import scan
 from .trend import state_at, trend_series
 
@@ -39,17 +39,24 @@ def variants(config: Config) -> dict[str, Config]:
     return out
 
 
-def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta, config: Config) -> dict:
+def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta, config: Config,
+        paths: tuple[str, ...] = ("reversal",)) -> dict:
+    """Run the harness. ``paths``: "reversal" (liquidity sweep + break, Days 6-12) and/or
+    "continuation" (higher-timeframe fair value gap + lower-timeframe break, Days 14-18)."""
     states = trend_series(ltf, config.trend)
     htf_states = trend_series(htf, config.trend)
     scanned = scan(ltf, config.liquidity)
+    cont = Continuation(htf, htf_length, config) if "continuation" in paths else None
     trades = []
     j, current = 0, None
     for i, c in enumerate(ltf):
         while j < len(htf) and state_at(htf[j:j + 1], htf_states[j:j + 1], htf_length, c.t) is not None:
             current = htf_states[j]
             j += 1
-        dec = decide(ltf, states, scanned, i, current, config)
+        dec = decide(ltf, states, scanned, i, current, config) if "reversal" in paths else None
+        if cont is not None:
+            cdec = cont.step(ltf, states, scanned, i, current)
+            dec = dec or cdec
         if dec is None:
             continue
         out = simulate(ltf, dec, config.decision.max_hold_bars)
@@ -82,8 +89,11 @@ def main() -> None:
     print(f"\n{args.symbol} {args.ltf} inside {args.htf}")
     print(f"{'variant':44} {'n':>5} {'win':>6} {'avg R':>7} {'total R':>8} {'med RR':>7}")
     results = {}
-    for label, config in variants(BASELINE).items():
-        r = run(ltf, htf, timeframe_length(args.htf), config)
+    runs = [(label, config, ("reversal",)) for label, config in variants(BASELINE).items()]
+    runs += [("continuation (fair value gaps) only", BASELINE, ("continuation",)),
+             ("reversal + continuation", BASELINE, ("reversal", "continuation"))]
+    for label, config, paths in runs:
+        r = run(ltf, htf, timeframe_length(args.htf), config, paths)
         results[label] = r
         s = r["summary"]
         if s["n"]:

@@ -35,7 +35,9 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 14 | Fair Value Gaps Pt 1 | learned (concept) | — |
 | 15 | Identifying problems | not yet studied | — |
 | 16 | FVG Pt. 2 | learned; detection built, homework study run; topic file `fair_value_gaps.md` | `tradingbot/fvg.py`, `tradingbot/fvg_study.py` |
-| 17–55 | … | not yet studied | — |
+| 17 | Patience | not yet studied | — |
+| 18 | FVG Pt. 3 | learned; fair value gaps complete; continuation path in the harness | `tradingbot/decision.py` |
+| 19–55 | … | not yet studied | — |
 
 ## How the bot learns
 

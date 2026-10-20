@@ -15,7 +15,7 @@ the reasons each indicator gave.
 | Trend and higher-timeframe bias | Day 4 | Which direction is allowed at all. | `day04_trends.md` |
 | Break of structure | Day 6 | The trigger: a candle closes past the most recent high or low. | `day06_break_of_structure.md` |
 | Liquidity | Days 8, 10, 12 | Evidence that orders were just filled on the other side (a sweep), and where price is drawn to next (the target). | `liquidity.md` |
-| Fair value gaps | Days 14, 16, 18 | where retracements go; entry area with a reaction or lower-timeframe break. Detection ready (`fvg.py`); not in the harness until Day 18 teaches how to trade them | `fair_value_gaps.md` |
+| Fair value gaps | Days 14, 16, 18 | The continuation path: a higher-timeframe gap in the trend's direction, price retraces in, lower-timeframe break of structure | `fair_value_gaps.md` |
 | Order blocks | Days 20, 22, 24 | to come | |
 | Equilibrium | Days 26, 28 | to come | |
 | Daily bias | Days 34, 35, 36 | to come | |
@@ -32,6 +32,15 @@ against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two i
 4. **Entry:** the trigger candle's close [Bot]. TJR enters on the retracement into a fair value gap or order block, triggered by a break of structure on a **lower** timeframe [TJR Day 12, 10:54; Day 14, 04:28]. The harness is single-timeframe for the trigger until those lessons are learned.
 5. **Stop:** beyond the most extreme price of the last 10 candles [Bot]; stops are taught on Day 38.
 6. **Target:** the draw on liquidity, the nearest untaken pool in the trade's direction [TJR Day 12]. None, no trade.
+
+## The continuation path (Days 14, 16, 18)
+
+`decision.Continuation`, run alongside the reversal path:
+1. A fair value gap on the **higher** timeframe, in that timeframe's trend direction [TJR Day 16].
+2. Price retraces into it [TJR]; a gap price pushes past is dropped [TJR Day 18]; "pushed past" = a close beyond the far side [Bot].
+3. Trigger: a break of structure on the **lower** timeframe in the trend's direction [TJR Days 14, 16, 18].
+4. Only from 9:30 New York on [TJR Day 18: after the market open].
+5. Stop beyond the retracement's extreme [TJR Day 18 example]; target the nearest untaken liquidity [TJR Day 12]. One target, no partials, no break-even yet [Bot simplification].
 
 ## How it improves
 

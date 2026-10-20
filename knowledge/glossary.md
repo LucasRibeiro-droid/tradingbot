@@ -47,7 +47,7 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Market movers** | Banks and institutions whose orders move price. | — | They need liquidity to fill. |
 | **Confluence** | Several indicators agreeing. | `DecisionParams.confluences` | Required before the bot acts. |
 
-## Fair value gaps (Days 14, 16; Day 18 still to come)
+## Fair value gaps and execution terms (Days 14, 16, 18)
 
 | Term | Meaning | How the bot measures it | Signals |
 |---|---|---|---|
@@ -55,7 +55,12 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Retracement** | A pullback against the trend before it continues. | — | In a trend, retracements are drawn into fair value gaps [TJR Day 14]. |
 | **Filled** | Price has come back into a gap [TJR Day 16]. Exact meaning not specified. | `follow()`: touched [Bot] | — |
 | **Reaction** | After a gap is filled, a candle closing in the trend's direction [TJR Day 16, 08:09]. | `follow()` [Bot test] | Confirmation to act. |
-| **Secondary entry** | Mentioned with fair value gaps [TJR Day 14, 04:14]; not explained yet. | — | Open question. |
+| **Secondary entry / patient entry** | After a sweep and break, waiting for the retracement into a gap and a lower-timeframe break for a better reward-to-risk [TJR Days 14, 18]. | `decision.Continuation` | — |
+| **Scale down** | Moving to a lower timeframe to find the entry trigger, sometimes several times (15m → 5m → 1m) [TJR Days 14, 18]. | higher/lower timeframe pair in the harness | — |
+| **Market open** | The session open; TJR only takes trades from the open on [TJR Day 18]. | `after_market_open()`: 9:30 New York | Its full value is taught later. |
+| **Take profit / partials** | Closing part of a position at a target; TJR used several [TJR Day 18 example]. | not yet | — |
+| **Break even** | Moving the stop to the entry price so the rest of the trade can't lose [TJR Day 18 example]. | not yet | — |
+| **Accumulation** | An area where orders built up before a move; used as a target [TJR Day 18]. Taught later. | — | — |
 
 ## Results
 

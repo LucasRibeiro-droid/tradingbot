@@ -27,3 +27,6 @@ Baseline: `v1-decision` (one decision process reading all indicators; see knowle
 | H16 | Day 16 lesson, 03:22 | Fair value gaps that agree with the trend continue more often than counter-trend ones. | — | open — better on 4 of 6 charts (4-hour: SPY 58% vs 45%, GLD 58% vs 44% after a reaction) |
 | H17 | Day 16 lesson, 07:58 | Waiting for a reaction inside a gap beats acting when price first enters it. | — | supported on 6 of 6 charts (54–62% vs 38–42%), partly by construction; retest by target-before-stop once Day 18 teaches the trade |
 | H18 | Day 16 study, 2026-10-20 | On SPY, gaps created by the overnight session break behave differently from gaps created within a session. | gap source | open |
+| H19 | Day 18 lesson, 05:28 | The continuation path needs TJR's exits: a minimum reward/risk, several liquidity targets with partials, a break-even stop. | target / management | open — continuation alone near break-even (−0.17R to +0.08R) with median reward/risk 0.22–0.66 |
+| H20 | Day 18 lesson, 12:03 | Refining a higher-timeframe gap with the lower timeframe's wicks improves entries. | gap refinement | open |
+| H21 | Day 18 lesson, 09:53 | Gaps lined up with untaken liquidity (or with liquidity taken inside them) work better. | gap + liquidity confluence | open |
