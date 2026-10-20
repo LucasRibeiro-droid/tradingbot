@@ -43,6 +43,13 @@
    "direction": "down",
    "note": "lower timeframe agrees"
   },
-  "grades": {}
+  "grades": {
+   "today": {
+    "close": 379.65,
+    "t": "2026-10-19T04:00:00Z",
+    "move": -0.29,
+    "correct": true
+   }
+  }
  }
 ]

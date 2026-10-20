@@ -13,6 +13,8 @@ python -m unittest discover -s tests -t .           # tests
 python -m tradingbot.study SPY --timeframe 1Day --days 2200   # Day 2 study (needs ALPACA_API_KEY / ALPACA_SECRET_KEY)
 python -m tradingbot.trend_study SPY --htf 1Day --ltf 1Hour  # Days 4 and 6 study
 python -m tradingbot.chart GLD --timeframe 1Day             # draw highs, lows, breaks and fakes (needs matplotlib)
+python -m tradingbot.session_study SPY --open-minutes 15     # Day 7 study: does the New York open fake out?
+python scripts/gemini_watch.py URL --out knowledge/sources/dayNN.md  # Gemini watches a lesson (needs GEMINI_API_KEY)
 python -m tradingbot.forecast make | grade                   # Day 4 homework: forecasts, graded later
 ```
 
