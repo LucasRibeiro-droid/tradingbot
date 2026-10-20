@@ -32,8 +32,10 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 11 | How to take a Loss | not yet studied | — |
 | 12 | Liquidity Pt 3 | learned; indicator in `liquidity.md`, used by the decision process | `tradingbot/liquidity.py`, `tradingbot/decision.py` |
 | 13 | Risk Management | not yet studied | — |
-| 14 | Fair Value Gaps Pt 1 | learned (concept); detection waits for Day 16 | — |
-| 15–55 | … | not yet studied | — |
+| 14 | Fair Value Gaps Pt 1 | learned (concept) | — |
+| 15 | Identifying problems | not yet studied | — |
+| 16 | FVG Pt. 2 | learned; detection built, homework study run; topic file `fair_value_gaps.md` | `tradingbot/fvg.py`, `tradingbot/fvg_study.py` |
+| 17–55 | … | not yet studied | — |
 
 ## How the bot learns
 

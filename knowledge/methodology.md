@@ -2,7 +2,7 @@
 
 TJR's bootcamp teaches **one** way of trading, built from pieces taught over many lessons.
 This file reconstructs it as far as the lessons received so far allow (Days 2–4, 6–8, 10,
-12, 14; see `course_map.md`). It's updated with every lesson.
+12, 14, 16; see `course_map.md`). It's updated with every lesson.
 
 Tags: **[TJR]** taught explicitly (Day, timestamp) · **[Inferred]** concluded from several
 lessons · **[Bot]** a choice made to make something testable, not from TJR.
@@ -70,11 +70,12 @@ stop losses (38), take profits (37), position size (39), the trading plan (29).
 - Prominent highs and lows hold the most: the start of a big trend, double tops, highs or lows that caused a break of structure [TJR Day 12, 03:36–05:56].
 - Liquidity is a magnet: price is drawn to it [TJR Day 12, 05:56].
 
-### Fair value gaps [Day 14; incomplete until Days 16, 18]
+### Fair value gaps [Days 14, 16; incomplete until Day 18] (details: `fair_value_gaps.md`)
 - **Fair value gap = liquidity void = imbalance**; the names mean the same thing; TJR prefers "liquidity void" [TJR Day 14, 02:02–02:08].
 - It's the opposite of liquidity: a price range where there are **no opposing orders**. A big move up happens because there are no sell orders in that range; a big drop because there are no resting buy orders [TJR Day 14, 02:22–03:04].
 - Usually seen as a big candle that moves "with no hesitation" [TJR Day 14, 02:46, 05:31–05:50].
-- **Not yet taught:** how to identify one on the chart (Day 16).
+- **Identification:** three candles; bullish = top of candle 1's wick to bottom of candle 3's wick; bearish = bottom of candle 1's wick to top of candle 3's wick; overlapping wicks = not a gap [TJR Day 16, 04:12–05:45, 09:41–11:13].
+- **For retracements and continuations, never reversals:** in an uptrend use bullish gaps only [TJR Day 16, 03:22–04:05].
 
 ---
 
@@ -108,7 +109,8 @@ What TJR has named as a reason to enter, in his words:
 - Liquidity sweep + break of structure [TJR Day 12, 10:02, 11:01 "those are pretty standard"; Day 14, 06:46].
 - Liquidity sweep + break of structure + an imbalance filled and reacted off [TJR Day 12, 18:11].
 - Liquidity sweep + break of structure + an order block hit and reacted off [TJR Day 12, 18:11].
-- Higher-timeframe fair value gap filled + lower-timeframe break of structure in the trend's direction [TJR Day 14, 04:28–05:05, 06:34].
+- Higher-timeframe fair value gap filled + lower-timeframe break of structure in the trend's direction [TJR Day 14, 04:28–05:05, 06:34; Day 16, 12:01].
+- A gap in the trend's direction, filled, then a reaction candle (closing in the trend's direction) or a lower-timeframe break of structure [TJR Day 16, 07:58–08:41].
 - Liquidity and break of structure alone "you can take a trade off of" for someone who only understands those [TJR Day 7, 05:05].
 - But also: "You need to know a lot more than just liquidity and break of structure to be able to form an actual bias and take an actual high probability trade" [TJR Day 10, 13:45].
 
@@ -118,8 +120,10 @@ What TJR has named as a reason to enter, in his words:
 
 - **Entry:** after confirmation, not when price first reaches a level [TJR Day 8, 08:38; Day 12, 06:21]. Entry location is the retracement into a fair value gap or order block, triggered by a lower-timeframe break of structure [TJR Day 12, 10:54–11:20; Day 14, 04:28]. Details come in the execution lessons.
 - Fair value gaps are "for retracements", "not for entries necessarily", or "for a secondary entry"; liquidity sweeps tell where the market is going [TJR Day 14, 03:52–04:22].
+- **Never enter just because price reached a gap;** wait for a reaction or a lower-timeframe break [TJR Day 16, 07:58–08:41].
+- Homework example only (not a rule): enter on a bearish close inside a bearish gap after a break down, stop above the previous high, target the previous lows [TJR Day 16, 09:13–09:28].
 - **Target:** the liquidity on the other side [TJR Day 12, 08:20–10:22]. Fair value gaps are also places to take profit [TJR Day 12, 13:55]. Taking profits is taught on Day 37.
-- **Stop loss:** not taught yet (Day 38). Implied: beyond the point where the idea is wrong [Inferred from Day 10, 03:36].
+- **Stop loss:** not taught yet (Day 38). Implied: beyond the point where the idea is wrong [Inferred from Day 10, 03:36]. Day 16's example used "above the previous high".
 - **Invalidation:** no reaction or no break of structure after liquidity is reached means no trade [TJR Day 12, 07:20].
 
 ---
@@ -153,7 +157,7 @@ What TJR has named as a reason to enter, in his words:
 | Break of structure | Highs/lows, closed candles | Confirmation that direction changed or orders filled; entry trigger on the lower timeframe | [TJR Days 6, 8, 14] |
 | Liquidity | Highs and lows (prominent) | Where reversals start; where targets are | [TJR Days 8–12] |
 | Sweep | Liquidity | Precondition for a reversal; never an entry alone | [TJR Days 8, 12] |
-| Fair value gap | Big impulsive moves | Where retracements go; entry area | [TJR Day 14] |
+| Fair value gap | Three candles; trend | Where retracements go in a trend; entry area once confirmed by a reaction or lower-timeframe break; not for reversals | [TJR Days 14, 16] |
 | Candle read | Candles | One confluence only | [TJR Day 2] |
 | Order block | — | Entry area, like a fair value gap | [TJR Day 12 preview; Days 20–24] |
 
@@ -166,6 +170,8 @@ What TJR has named as a reason to enter, in his words:
 - "Not every single high and low will be used as liquidity to fill orders" [TJR Day 12, 19:25].
 - "Even when we know for certain, we don't actually know" [TJR Day 6, 24:36].
 - Don't copy TJR's markets: his London-open pattern was found by watching GBPJPY [TJR Day 7, 06:55].
+- Fair value gaps are not used for reversals [TJR Day 16, 03:22]; they're everywhere and many fail, so they need confirmation [TJR Day 16, 07:26].
+- [Inferred] Markets that close overnight (stocks like SPY) produce gaps between sessions that TJR's nearly-24-hour markets rarely show; the lessons don't address them.
 
 ---
 
@@ -176,14 +182,14 @@ What TJR has named as a reason to enter, in his words:
 | Day 4 defines a trend change as the trend breaking; Day 6 defines exactly what that means. | Refinement, not a conflict: Day 6 says it held this back for its own lesson [TJR Day 6, 01:51]. |
 | Day 7: "nothing is law, use what works for you" vs locked rules (closes only, never against the higher timeframe). | Day 7 is about which pieces to use, not about bending definitions. The bot keeps TJR's stated absolutes as its starting point and tests the rest [Inferred]. |
 | Day 10: highs and lows in general hold liquidity; Day 12: prominent ones matter most and "not every high and low will be used". | Refinement by the third part of the same topic [TJR Day 12, 03:58, 19:25]. |
-| Day 12: "it filled an imbalance and reacted ... that's where I'm entering"; Day 14: "I don't use fair value gaps for entries necessarily". | Likely consistent: the gap marks *where* to look, and the entry is triggered by the reaction or lower-timeframe break inside it [Inferred from Day 14, 04:28]. To confirm in Days 16–18 and the execution lessons. |
+| Day 12: "it filled an imbalance and reacted ... that's where I'm entering"; Day 14: "I don't use fair value gaps for entries necessarily". | Resolved by Day 16: the gap marks *where* to look; the entry needs a reaction or a lower-timeframe break inside it [TJR Day 16, 07:58–08:41]. |
 | Day 7: liquidity + break of structure alone can be traded; Day 10: you need much more than that for a high-probability trade. | Possibly levels of quality (tradeable vs high probability). Open question. |
 
 ---
 
 ## 12. Open questions
 
-1. How exactly is a fair value gap identified? (Day 16)
+1. ~~How is a fair value gap identified?~~ Answered by Day 16. Still open: what counts as "filled", and when a gap stops counting.
 2. Which lower timeframe goes with which higher timeframe for the entry trigger?
 3. How is "prominent" decided for a high or low, beyond examples? (So far: start of a trend, double top, caused a break of structure.)
 4. When TJR enters "off the break of structure" vs on a retracement into a gap or order block, what decides which? (Day 12, 10:46–11:01 offers both.)
@@ -200,7 +206,7 @@ What TJR has named as a reason to enter, in his words:
 | Closed candles on at least two timeframes | ready (`data.py`) |
 | Highs, lows, trend, breaks of structure per timeframe | ready (`trend.py`), definitions [TJR] |
 | Liquidity pools and sweeps | ready (`liquidity.py`); "prominent" approximated [Bot] |
-| Fair value gaps | **waiting for Day 16's definition** |
+| Fair value gaps | ready (`fvg.py`), definition [TJR Day 16]; "filled" and "invalidated" are [Bot] |
 | Order blocks, equilibrium, daily bias | waiting for their lessons |
 | Entry trigger on a lower timeframe inside a zone | waiting (Days 16–18, 30–33) |
 | Stop, target, position size | target [TJR]; stop and size waiting (Days 37–39) |
@@ -213,5 +219,6 @@ These are not TJR's and are tested, not trusted (`config.py`, `journal/hypothese
 - Consolidation = price covered <30% of its 20-candle range.
 - A prominent high/low = higher/lower than 5 candles on each side (`pool_strength`), standing in for TJR's visual judgment.
 - A sweep counts as "just before" a break if within 10 candles.
+- Fair value gap "entered" = touched; "reacted" = a candle in the zone closing in the gap's direction; "broken" = a close beyond the far side.
 - In the test harness (`decision.py`): entry at the break's close (TJR enters on the retracement), stop beyond the last 10 candles' extreme (stop placement not yet taught), positions closed after 50 candles.
 - Instruments SPY and GLD as stand-ins for TJR's S&P 500 and gold.

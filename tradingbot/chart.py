@@ -13,6 +13,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from .config import BASELINE
+from .fvg import find_gaps, follow
 from .liquidity import find_pools, pools_and_takes
 from .trend import DOWN, UP, swings, trend_series
 
@@ -20,6 +21,7 @@ CHART_DIR = Path(__file__).resolve().parent.parent / "journal" / "charts"
 SURFACE, INK, MUTED = "#fcfcfb", "#0b0b0b", "#52514e"
 UP_CANDLE, DOWN_CANDLE = "#2a78d6", "#52514e"  # TJR's chart: up candles blue, down dark
 BOS, SWEEP, POOL = "#eb6834", "#6250d6", "#1baf7a"
+GAP_UP, GAP_DOWN = "#2a78d6", "#eda100"  # bullish / bearish fair value gaps
 
 
 def draw(candles, title: str, path: Path, config=BASELINE) -> Path:
@@ -40,6 +42,14 @@ def draw(candles, title: str, path: Path, config=BASELINE) -> Path:
                                    facecolor=color, edgecolor=color))
 
     span = max(c.h for c in candles) - min(c.l for c in candles)
+
+    # Days 14, 16: fair value gaps, from the candle that created them until a close beyond
+    # the far side (or the right edge).
+    for g in find_gaps(candles):
+        ev = follow(candles, g)
+        end = ev.broken_at if ev.broken_at is not None else len(candles) - 0.5
+        ax.add_patch(plt.Rectangle((g.index - 0.5, g.bottom), end - g.index + 0.5, g.top - g.bottom,
+                                   facecolor=GAP_UP if g.side > 0 else GAP_DOWN, alpha=0.13, linewidth=0))
 
     # Day 10: liquidity pools, from the clear high/low that forms them to the candle that
     # takes them; dashed to the right edge while still untaken.
@@ -90,7 +100,8 @@ def draw(candles, title: str, path: Path, config=BASELINE) -> Path:
     ax.set_xlim(-1, len(candles))
     ax.set_title(title, loc="left", fontsize=12, color=INK, pad=22)
     ax.text(0, 1.01, "▼▲ highs and lows (two-candle rule)   ● BOS: close beyond the watched level   "
-            "✕ fake: wick beyond, no close   ⋯ watched level   — liquidity pool (dashed: still untaken), ○ taken",
+            "✕ fake: wick beyond, no close   ⋯ watched level   — liquidity pool (dashed: untaken), ○ taken   "
+            "▭ fair value gap (blue bullish, amber bearish)",
             transform=ax.transAxes,
             fontsize=8, color=MUTED, va="bottom")
     path.parent.mkdir(parents=True, exist_ok=True)

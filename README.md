@@ -5,7 +5,7 @@ at a time from the TJR Boot Camp, measures every rule against real price data, a
 changes one variable at a time so each improvement can be traced to its cause.
 
 - `knowledge/`: what the bot has learned: indicators lesson by lesson, the glossary, and how it decides (`decision.md`)
-- `tradingbot/`: the code (`candles.py` for Day 2, `discipline.py` for Day 3, `trend.py` for Days 4 and 6, `forecast.py` for Day 4, `liquidity.py` for Days 8, 10 and 12, `decision.py` (the one decision process that reads every indicator), `chart.py` to draw what the bot sees, `study.py` for the homework studies, `data.py` for Alpaca bars)
+- `tradingbot/`: the code (`candles.py` for Day 2, `discipline.py` for Day 3, `trend.py` for Days 4 and 6, `forecast.py` for Day 4, `liquidity.py` for Days 8, 10 and 12, `fvg.py` for fair value gaps (Days 14, 16), `decision.py` (the one decision process that reads every indicator), `chart.py` to draw what the bot sees, `study.py` for the homework studies, `data.py` for Alpaca bars)
 - `journal/`: study results, open hypotheses, forecasts and the daily journal
 
 ```
@@ -15,6 +15,7 @@ python -m tradingbot.trend_study SPY --htf 1Day --ltf 1Hour  # Days 4 and 6 stud
 python -m tradingbot.chart GLD --timeframe 1Day             # draw highs, lows, breaks and fakes (needs matplotlib)
 python -m tradingbot.session_study SPY --open-minutes 15     # Day 7 study: does the New York open fake out?
 python -m tradingbot.decision_study SPY --htf 1Day --ltf 1Hour   # the decision process, with/without each indicator
+python -m tradingbot.fvg_study SPY --timeframe 4Hour         # Day 16 homework: every fair value gap and what price did
 python scripts/gemini_watch.py URL --out knowledge/sources/dayNN.md  # Gemini watches a lesson (needs GEMINI_API_KEY)
 python scripts/transcribe_local.py VIDEO --out knowledge/sources/dayNN.md --model-dir DIR  # offline transcript
 python -m tradingbot.forecast make | grade                   # Day 4 homework: forecasts, graded later

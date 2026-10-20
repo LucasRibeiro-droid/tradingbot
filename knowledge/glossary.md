@@ -47,12 +47,14 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Market movers** | Banks and institutions whose orders move price. | — | They need liquidity to fill. |
 | **Confluence** | Several indicators agreeing. | `DecisionParams.confluences` | Required before the bot acts. |
 
-## Fair value gaps (Day 14; Days 16 and 18 still to come)
+## Fair value gaps (Days 14, 16; Day 18 still to come)
 
 | Term | Meaning | How the bot measures it | Signals |
 |---|---|---|---|
-| **Fair value gap (FVG)** / **liquidity void** / **imbalance** | Three names for one thing: a price range with no opposing orders, so price moved through it fast, usually as a big candle with no hesitation [TJR Day 14]. | not yet: how to spot one is taught on Day 16 | Where retracements are drawn back to; with a lower-timeframe break of structure inside it, an entry for continuation. |
+| **Fair value gap (FVG)** / **liquidity void** / **imbalance** | Three names for one thing: a price range with no opposing orders, so price moved through it fast, usually as a big candle with no hesitation [TJR Day 14]. | `find_gaps()`: three candles; bullish = candle 1 high to candle 3 low, bearish = candle 1 low to candle 3 high, when they don't overlap [TJR Day 16] | Where retracements are drawn back to in a trend; with a reaction or lower-timeframe break inside it, an entry for continuation. Not for reversals. |
 | **Retracement** | A pullback against the trend before it continues. | — | In a trend, retracements are drawn into fair value gaps [TJR Day 14]. |
+| **Filled** | Price has come back into a gap [TJR Day 16]. Exact meaning not specified. | `follow()`: touched [Bot] | — |
+| **Reaction** | After a gap is filled, a candle closing in the trend's direction [TJR Day 16, 08:09]. | `follow()` [Bot test] | Confirmation to act. |
 | **Secondary entry** | Mentioned with fair value gaps [TJR Day 14, 04:14]; not explained yet. | — | Open question. |
 
 ## Results

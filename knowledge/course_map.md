@@ -23,7 +23,8 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 10 | Liquidity Pt 2 | Where liquidity sits | buy stops/stop losses above highs; sell stops/stop losses below lows; sweep-rally/sweep-fall on every timeframe | Days 4, 6, 8 | learned (part 2 of 3) | Locates the levels price will hunt |
 | 11 | How to take a Loss | — | — | — | **not received** | Psychology |
 | 12 | Liquidity Pt 3 | Using liquidity | prominent highs/lows; liquidity as a magnet (draw); wait for confirmation; target opposite liquidity; "a piece, not a strategy" | Days 6, 8, 10 | learned (**liquidity complete**) | Reversal context, confirmation sequence, targets |
-| 14 | Fair Value Gaps Pt 1 | What FVGs are and why | FVG = liquidity void = imbalance: a range with no opposing orders; used for retracements; HTF FVG filled + LTF BOS = continuation entry; the sequence chained together | Days 4, 6, 8–12 | **partial** (part 1 of 3; how to spot = Day 16, Part 3 = Day 18) | Where retracements go; entry location |
+| 14 | Fair Value Gaps Pt 1 | What FVGs are and why | FVG = liquidity void = imbalance: a range with no opposing orders; used for retracements; HTF FVG filled + LTF BOS = continuation entry; the sequence chained together | Days 4, 6, 8–12 | **partial** (part 1 of 3) | Where retracements go; entry location |
+| 16 | FVG Pt. 2 | How to identify FVGs | three-candle rule (wick to wick); overlapping wicks = not a gap; continuation not reversal; wait for a reaction or LTF break; homework example trade | Days 2, 4, 6, 14 | **partial** (part 2 of 3; Part 3 = Day 18) | Makes gaps detectable; adds the confirmation rule |
 
 ## Not yet received
 
@@ -31,7 +32,6 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 |---|---|---|
 | 13 | Risk Management | risk |
 | 15 | Identifying problems | psychology |
-| 16 | FVG Pt. 2 | how to spot FVGs (continues Day 14) |
 | 17 | Patience | psychology |
 | 18 | FVG Pt. 3 | likely using FVGs (continues Days 14, 16) |
 | 19 | How to Read News Data | news / fundamentals |
