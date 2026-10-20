@@ -1,0 +1,288 @@
+{
+ "symbol": "GLD",
+ "htf": "1Day",
+ "ltf": "5Min",
+ "config": {
+  "version": "v0-day08",
+  "candle": {
+   "doji_max_body_pct": 0.1,
+   "long_wick_min_pct": 0.6,
+   "short_wick_max_pct": 0.1,
+   "long_legged_min_wick_pct": 0.3,
+   "hammer_max_body_pct": 0.35,
+   "hammer_wick_to_body": 2.0,
+   "strong_close_min_body_pct": 0.7,
+   "strong_close_max_close_wick_pct": 0.1,
+   "weakness_wick_to_body": 1.0,
+   "rejection_min_wick_pct": 0.5,
+   "min_range_vs_avg": 0.5,
+   "avg_range_lookback": 20,
+   "context_lookback": 5
+  },
+  "trend": {
+   "swing_method": "two_candle",
+   "swing_strength": 2,
+   "swing_source": "wick",
+   "consolidation_lookback": 20,
+   "consolidation_max_efficiency": 0.3
+  },
+  "liquidity": {
+   "sweep_lookback": 10
+  },
+  "study": {
+   "horizon_bars": 5,
+   "min_examples": 10
+  },
+  "watchlist": [
+   "SPY",
+   "GLD"
+  ]
+ },
+ "ltf_candles": 3265,
+ "htf_candles": 84,
+ "base": {
+  "up": 1545,
+  "down": 1699,
+  "n": 3259
+ },
+ "summary": {
+  "1.ltf_trend:down": {
+   "n": 1244,
+   "hit_rate": 0.508,
+   "base_rate": 0.521,
+   "edge": -0.013,
+   "avg_move_with_direction": -0.05
+  },
+  "1.ltf_trend:up": {
+   "n": 1126,
+   "hit_rate": 0.468,
+   "base_rate": 0.474,
+   "edge": -0.006,
+   "avg_move_with_direction": 0.083
+  },
+  "2.ltf_trend_against_htf:down": {
+   "n": 195,
+   "hit_rate": 0.518,
+   "base_rate": 0.521,
+   "edge": -0.003,
+   "avg_move_with_direction": -0.578
+  },
+  "2.ltf_trend_against_htf:up": {
+   "n": 659,
+   "hit_rate": 0.46,
+   "base_rate": 0.474,
+   "edge": -0.014,
+   "avg_move_with_direction": -0.614
+  },
+  "2.ltf_trend_no_htf_trend:down": {
+   "n": 370,
+   "hit_rate": 0.568,
+   "base_rate": 0.521,
+   "edge": 0.046,
+   "avg_move_with_direction": 0.552
+  },
+  "2.ltf_trend_no_htf_trend:up": {
+   "n": 247,
+   "hit_rate": 0.51,
+   "base_rate": 0.474,
+   "edge": 0.036,
+   "avg_move_with_direction": 1.91
+  },
+  "2.ltf_trend_with_htf:down": {
+   "n": 679,
+   "hit_rate": 0.473,
+   "base_rate": 0.521,
+   "edge": -0.049,
+   "avg_move_with_direction": -0.227
+  },
+  "2.ltf_trend_with_htf:up": {
+   "n": 220,
+   "hit_rate": 0.445,
+   "base_rate": 0.474,
+   "edge": -0.029,
+   "avg_move_with_direction": 0.12
+  },
+  "3.candle_read_against_htf:down": {
+   "n": 153,
+   "hit_rate": 0.575,
+   "base_rate": 0.521,
+   "edge": 0.054,
+   "avg_move_with_direction": 0.499
+  },
+  "3.candle_read_against_htf:up": {
+   "n": 436,
+   "hit_rate": 0.454,
+   "base_rate": 0.474,
+   "edge": -0.02,
+   "avg_move_with_direction": -0.162
+  },
+  "3.candle_read_no_htf_trend:down": {
+   "n": 220,
+   "hit_rate": 0.541,
+   "base_rate": 0.521,
+   "edge": 0.02,
+   "avg_move_with_direction": 0.161
+  },
+  "3.candle_read_no_htf_trend:up": {
+   "n": 188,
+   "hit_rate": 0.457,
+   "base_rate": 0.474,
+   "edge": -0.017,
+   "avg_move_with_direction": -0.14
+  },
+  "3.candle_read_with_htf:down": {
+   "n": 437,
+   "hit_rate": 0.478,
+   "base_rate": 0.521,
+   "edge": -0.043,
+   "avg_move_with_direction": -0.167
+  },
+  "3.candle_read_with_htf:up": {
+   "n": 154,
+   "hit_rate": 0.422,
+   "base_rate": 0.474,
+   "edge": -0.052,
+   "avg_move_with_direction": -0.665
+  },
+  "4.bos_against_htf:down": {
+   "n": 31,
+   "hit_rate": 0.581,
+   "base_rate": 0.521,
+   "edge": 0.059,
+   "avg_move_with_direction": 3.61
+  },
+  "4.bos_against_htf:up": {
+   "n": 99,
+   "hit_rate": 0.475,
+   "base_rate": 0.474,
+   "edge": 0.001,
+   "avg_move_with_direction": -0.561
+  },
+  "4.bos_no_htf_trend:down": {
+   "n": 35,
+   "hit_rate": 0.571,
+   "base_rate": 0.521,
+   "edge": 0.05,
+   "avg_move_with_direction": 1.026
+  },
+  "4.bos_no_htf_trend:up": {
+   "n": 36,
+   "hit_rate": 0.528,
+   "base_rate": 0.474,
+   "edge": 0.054,
+   "avg_move_with_direction": 0.051
+  },
+  "4.bos_with_htf:down": {
+   "n": 101,
+   "hit_rate": 0.386,
+   "base_rate": 0.521,
+   "edge": -0.135,
+   "avg_move_with_direction": -0.765
+  },
+  "4.bos_with_htf:up": {
+   "n": 32,
+   "hit_rate": 0.469,
+   "base_rate": 0.474,
+   "edge": -0.005,
+   "avg_move_with_direction": 2.334
+  },
+  "5.sweep_high_then:down": {
+   "n": 70,
+   "hit_rate": 0.486,
+   "base_rate": 0.521,
+   "edge": -0.036,
+   "avg_move_with_direction": 0.091
+  },
+  "5.sweep_low_then:up": {
+   "n": 75,
+   "hit_rate": 0.333,
+   "base_rate": 0.474,
+   "edge": -0.141,
+   "avg_move_with_direction": -1.935
+  },
+  "6.bos_after_liquidity:down": {
+   "n": 167,
+   "hit_rate": 0.461,
+   "base_rate": 0.521,
+   "edge": -0.06,
+   "avg_move_with_direction": 0.423
+  },
+  "6.bos_after_liquidity:up": {
+   "n": 164,
+   "hit_rate": 0.494,
+   "base_rate": 0.474,
+   "edge": 0.02,
+   "avg_move_with_direction": 0.166
+  },
+  "6.bos_no_liquidity:up": {
+   "n": 3,
+   "hit_rate": 0.0,
+   "base_rate": 0.474,
+   "edge": -0.474,
+   "avg_move_with_direction": -2.083
+  },
+  "7.bos_after_liquidity_against_htf:down": {
+   "n": 31,
+   "hit_rate": 0.581,
+   "base_rate": 0.521,
+   "edge": 0.059,
+   "avg_move_with_direction": 3.61
+  },
+  "7.bos_after_liquidity_against_htf:up": {
+   "n": 98,
+   "hit_rate": 0.48,
+   "base_rate": 0.474,
+   "edge": 0.006,
+   "avg_move_with_direction": -0.543
+  },
+  "7.bos_after_liquidity_no_htf_trend:down": {
+   "n": 35,
+   "hit_rate": 0.571,
+   "base_rate": 0.521,
+   "edge": 0.05,
+   "avg_move_with_direction": 1.026
+  },
+  "7.bos_after_liquidity_no_htf_trend:up": {
+   "n": 35,
+   "hit_rate": 0.543,
+   "base_rate": 0.474,
+   "edge": 0.069,
+   "avg_move_with_direction": 0.105
+  },
+  "7.bos_after_liquidity_with_htf:down": {
+   "n": 101,
+   "hit_rate": 0.386,
+   "base_rate": 0.521,
+   "edge": -0.135,
+   "avg_move_with_direction": -0.765
+  },
+  "7.bos_after_liquidity_with_htf:up": {
+   "n": 31,
+   "hit_rate": 0.484,
+   "base_rate": 0.474,
+   "edge": 0.01,
+   "avg_move_with_direction": 2.479
+  },
+  "7.bos_no_liquidity_against_htf:up": {
+   "n": 1,
+   "hit_rate": 0.0,
+   "base_rate": 0.474,
+   "edge": -0.474,
+   "avg_move_with_direction": -2.246
+  },
+  "7.bos_no_liquidity_no_htf_trend:up": {
+   "n": 1,
+   "hit_rate": 0.0,
+   "base_rate": 0.474,
+   "edge": -0.474,
+   "avg_move_with_direction": -1.816
+  },
+  "7.bos_no_liquidity_with_htf:up": {
+   "n": 1,
+   "hit_rate": 0.0,
+   "base_rate": 0.474,
+   "edge": -0.474,
+   "avg_move_with_direction": -2.186
+  }
+ }
+}

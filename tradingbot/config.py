@@ -56,6 +56,15 @@ class TrendParams:
 
 
 @dataclass(frozen=True)
+class LiquidityParams:
+    """Day 8: liquidity taken, then a break of structure the other way."""
+
+    # How many candles back (including the break itself) liquidity must have been taken
+    # for a break of structure to count as the confirmation TJR waits for.
+    sweep_lookback: int = 10
+
+
+@dataclass(frozen=True)
 class StudyParams:
     """How the bot measures "how price reacted" to a candle (Day 2 homework)."""
 
@@ -85,13 +94,17 @@ class Locked:
     # Day 6, 12:44: "it is not a break of structure unless the candle closes above a high
     # or below a low". Wicks never break structure.
     bos_requires_close: bool = True
+    # Day 8, 08:38: reaching liquidity is not an entry. Wait for the shift in structure;
+    # "if we don't see a shift in direction ... hands off."
+    liquidity_alone_is_entry: bool = False
 
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v0-day06"
+    version: str = "v0-day08"
     candle: CandleParams = CandleParams()
     trend: TrendParams = TrendParams()
+    liquidity: LiquidityParams = LiquidityParams()
     study: StudyParams = StudyParams()
     # The one or two instruments the bot studies and trades (LOCKED.max_instruments).
     # SPY stands in for TJR's S&P 500 and GLD for gold, the two markets he uses most.

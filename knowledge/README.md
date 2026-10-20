@@ -16,7 +16,8 @@ became, and what the bot's own study of that rule found on real charts.
 | 5 | Goal Setting | not yet studied | — |
 | 6 | Break of Structure | learned, first study run; revised Day 4's swings | `tradingbot/trend.py`, `tradingbot/chart.py` |
 | 7 | Individuality | learned (via Gemini), first study run | `tradingbot/session_study.py` |
-| 8–55 | … | not yet studied | — |
+| 8 | Liquidity Pt 1 | learned (via Gemini); study blocked until Day 10 | `tradingbot/liquidity.py` |
+| 9–55 | … | not yet studied | — |
 
 ## How the bot learns
 

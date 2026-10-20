@@ -44,6 +44,10 @@ class TrendState:
     # "sweep_high" / "sweep_low": its wick went beyond but it did not close there: not a
     # break of structure, often a liquidity sweep (Day 6, 12:10 and 23:50).
     event: str | None = None
+    # This candle traded past the most recent high (low), by wick or close: it took the
+    # resting orders sitting there (Day 8, 02:20).
+    took_high: bool = False
+    took_low: bool = False
 
     @property
     def shifted(self) -> bool:
@@ -130,6 +134,8 @@ def trend_series(candles: Sequence[Candle], p: TrendParams = TrendParams()) -> l
     states = []
     for j, c in enumerate(candles):
         event = None
+        took_high = c.closed and high is not None and c.h > high
+        took_low = c.closed and low is not None and c.l < low
         if c.closed:
             watch_high = direction in (NONE, DOWN) and high is not None
             watch_low = direction in (NONE, UP) and low is not None
@@ -149,7 +155,7 @@ def trend_series(candles: Sequence[Candle], p: TrendParams = TrendParams()) -> l
                 low = found[k].price
             k += 1
         consolidating = efficiency(candles, j, p.consolidation_lookback) < p.consolidation_max_efficiency
-        states.append(TrendState(direction, consolidating, high, low, event))
+        states.append(TrendState(direction, consolidating, high, low, event, took_high, took_low))
     return states
 
 

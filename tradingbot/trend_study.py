@@ -8,6 +8,8 @@ Questions, each compared against what price did anyway on the same chart:
      timeframe? A break against it should be "just a retracement" (Day 6, 22:31).
   5. After a fake (a wick through the level without a close), does price go back the other
      way, as TJR says it often does (Day 6, 23:58)? Day 6's homework: real breaks vs fakes.
+  6. Is a break of structure that comes right after liquidity was taken on the other side
+     more reliable than one that doesn't (Day 8, 07:04-09:36)?
 
 Usage:
     python -m tradingbot.trend_study SPY --htf 1Day --ltf 1Hour --days 730 [--swing-method pivot]
@@ -24,6 +26,7 @@ from typing import Sequence
 from .candles import NEUTRAL, Candle, read
 from .config import BASELINE, Config, to_dict, with_change
 from .study import reaction
+from .liquidity import sweep_then_shift
 from .trend import NONE, TrendState, state_at, trend_series
 
 JOURNAL_DIR = Path(__file__).resolve().parent.parent / "journal" / "studies"
@@ -83,6 +86,9 @@ def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta,
             d = 1 if s.event == "bos_up" else -1
             rel = "with_htf" if htf_dir == d else "no_htf_trend" if htf_dir == NONE else "against_htf"
             rows.append({"key": f"4.bos_{rel}:{name[d]}", "move": r["move"]})
+            after = "after_liquidity" if sweep_then_shift(ltf_states, i, config.liquidity) else "no_liquidity"
+            rows.append({"key": f"6.bos_{after}:{name[d]}", "move": r["move"]})
+            rows.append({"key": f"7.bos_{after}_{rel}:{name[d]}", "move": r["move"]})
         elif s.event in ("sweep_low", "sweep_high"):
             # A wick below a low that fails to close there points back up, and vice versa.
             d = 1 if s.event == "sweep_low" else -1
