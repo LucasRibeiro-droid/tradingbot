@@ -5,7 +5,7 @@ the bot did not use to form it, and is only promoted to the new baseline if it w
 margin larger than chance. Rejected hypotheses stay here with their result so they are not
 retried.
 
-Baseline: `v0-day08` (candle settings unchanged since `v0-day02`; swings follow Day 6).
+Baseline: `v0-day10` (candle settings unchanged since `v0-day02`; swings follow Day 6).
 
 | ID | From | Hypothesis | Variable | Status |
 |---|---|---|---|---|
@@ -21,4 +21,5 @@ Baseline: `v0-day08` (candle settings unchanged since `v0-day02`; swings follow 
 | H10 | Day 6 lesson, 23:58 | After a fake (a wick past the watched level without a close), price goes back the other way. | — | open — no consistent edge alone (3 of 5 and 2 of 5); retest with Day 8 liquidity context |
 | H11 | Day 7 lesson, 06:55 | The New York open fakes out (a strong first move that quickly flips) on SPY/GLD, like TJR's London open on GBPJPY. | — | open — first study: the opposite; the first 15–30 minutes held to the close 58–77% of the time. Retest with Day 8 liquidity sweeps |
 | H12 | Day 7 lesson, 04:45 | Each strategy component earns its place: removing it makes results worse. | one component on/off | open — needs the full strategy |
-| H13 | Day 8 lesson, 07:04 | A break of structure right after real liquidity is taken beats one without. | liquidity definition | blocked — with every two-candle high/low counted as liquidity, ~99% of breaks qualify; needs Day 10's definition of where liquidity sits |
+| H13 | Day 8 lesson, 07:04 | A break of structure right after real liquidity is taken beats one without. | liquidity definition | open — with Day 10 pools: better for breaks up on 3 of 6 charts, breaks down 2 of 6. Retest judged by target-before-stop once Day 12 is learned |
+| H14 | Day 10 study, 2026-10-20 | Pools from more prominent highs/lows (`pool_strength` 5 → 10 or 20) mark the liquidity that matters more. | liquidity.pool_strength | open |

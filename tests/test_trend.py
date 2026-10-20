@@ -186,23 +186,23 @@ class Forecast(unittest.TestCase):
 
 
 class Liquidity(unittest.TestCase):
-    def test_low_taken_then_break_up_is_the_setup(self):
-        from tradingbot.liquidity import sweep_then_shift
-        # High at 106, low at 98; then a wick under 98 (liquidity taken), then a close above 106.
-        candles = [c(0, 100, 104, 99, 103), c(1, 103, 106, 101, 102), c(2, 102, 103, 98, 99),
-                   c(3, 99, 104, 99, 103), c(4, 103, 103.5, 97, 101), c(5, 101, 108, 100.5, 107)]
-        states = trend_series(candles, P)
-        self.assertTrue(states[4].took_low)
-        self.assertEqual(states[5].event, "bos_up")
-        self.assertEqual(sweep_then_shift(states, 5), UP)
+    def pools(self, closes, strength=2):
+        from tradingbot.config import LiquidityParams
+        from tradingbot.liquidity import pools_and_takes
+        return pools_and_takes(path(*closes), LiquidityParams(pool_strength=strength))
 
-    def test_break_without_liquidity_taken_is_not_the_setup(self):
-        from tradingbot.liquidity import sweep_then_shift
-        candles = [c(0, 100, 104, 99, 103), c(1, 103, 106, 101, 102), c(2, 102, 103, 98, 99),
-                   c(3, 99, 104, 99, 103), c(4, 103, 108, 102, 107)]
-        states = trend_series(candles, P)
-        self.assertEqual(states[4].event, "bos_up")
-        self.assertEqual(sweep_then_shift(states, 4), NONE)
+    def test_clear_low_becomes_a_pool_and_is_taken_once(self):
+        # A clear low at 95 (index 3), then price comes back down through it twice.
+        taken = self.pools([100, 98, 96, 95, 97, 99, 101, 99, 96, 94, 93])
+        takers = [i for i, t in enumerate(taken) if any(p.price < 95 for p in t.sell_side)]
+        self.assertEqual(len(takers), 1)
+
+    def test_liquidity_then_break_up_is_the_setup(self):
+        from tradingbot.liquidity import Taken, Pool, sweep_then_shift
+        states = [TrendState(DOWN, False, 106, 98)] * 3 + [TrendState(UP, False, 106, 98, "bos_up")]
+        taken = [Taken(), Taken(sell_side=(Pool(0, 97, "sell_side", 0),)), Taken(), Taken()]
+        self.assertEqual(sweep_then_shift(states, taken, 3), UP)
+        self.assertEqual(sweep_then_shift(states, [Taken()] * 4, 3), NONE)
 
     def test_liquidity_alone_is_never_an_entry(self):
         self.assertFalse(LOCKED.liquidity_alone_is_entry)

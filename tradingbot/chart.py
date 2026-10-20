@@ -13,12 +13,13 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from .config import BASELINE
+from .liquidity import find_pools, pools_and_takes
 from .trend import DOWN, UP, swings, trend_series
 
 CHART_DIR = Path(__file__).resolve().parent.parent / "journal" / "charts"
 SURFACE, INK, MUTED = "#fcfcfb", "#0b0b0b", "#52514e"
 UP_CANDLE, DOWN_CANDLE = "#2a78d6", "#52514e"  # TJR's chart: up candles blue, down dark
-BOS, SWEEP = "#eb6834", "#6250d6"
+BOS, SWEEP, POOL = "#eb6834", "#6250d6", "#1baf7a"
 
 
 def draw(candles, title: str, path: Path, config=BASELINE) -> Path:
@@ -39,6 +40,21 @@ def draw(candles, title: str, path: Path, config=BASELINE) -> Path:
                                    facecolor=color, edgecolor=color))
 
     span = max(c.h for c in candles) - min(c.l for c in candles)
+
+    # Day 10: liquidity pools, from the clear high/low that forms them to the candle that
+    # takes them; dashed to the right edge while still untaken.
+    taken_at = {}
+    for j, tk in enumerate(pools_and_takes(candles, config.liquidity)):
+        for pool in tk.buy_side + tk.sell_side:
+            taken_at[pool] = j
+    for pool in find_pools(candles, config.liquidity):
+        end = taken_at.get(pool)
+        ax.hlines(pool.price, pool.index, end if end is not None else len(candles) - 0.5, color=POOL,
+                  linewidth=1.2, linestyles="-" if end is not None else "--")
+        if end is not None:
+            ax.plot(end, pool.price, marker="o", markersize=5, markerfacecolor=SURFACE,
+                    markeredgecolor=POOL, mew=1.5)
+
     for s in found:
         y = s.price + (0.012 * span if s.kind == "high" else -0.012 * span)
         ax.plot(s.index, y, marker="v" if s.kind == "high" else "^", color=MUTED, markersize=4)
@@ -74,7 +90,8 @@ def draw(candles, title: str, path: Path, config=BASELINE) -> Path:
     ax.set_xlim(-1, len(candles))
     ax.set_title(title, loc="left", fontsize=12, color=INK, pad=22)
     ax.text(0, 1.01, "▼▲ highs and lows (two-candle rule)   ● BOS: close beyond the watched level   "
-            "✕ fake: wick beyond, no close   ⋯ watched level", transform=ax.transAxes,
+            "✕ fake: wick beyond, no close   ⋯ watched level   — liquidity pool (dashed: still untaken), ○ taken",
+            transform=ax.transAxes,
             fontsize=8, color=MUTED, va="bottom")
     path.parent.mkdir(parents=True, exist_ok=True)
     fig.tight_layout()

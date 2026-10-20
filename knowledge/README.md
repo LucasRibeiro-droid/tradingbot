@@ -5,7 +5,8 @@ What the bot knows, one TJR Boot Camp lesson at a time
 
 Each lesson file says what was taught (with video timestamps), which rule or code it
 became, and what the bot's own study of that rule found on real charts.
-`sources/` holds transcripts and screen logs written by Gemini (`scripts/gemini_watch.py`).
+`sources/` holds transcripts: written by Gemini (`scripts/gemini_watch.py`) for YouTube links,
+or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with audio.
 
 | Day | Lesson | Status | Code |
 |---|---|---|---|
@@ -16,8 +17,10 @@ became, and what the bot's own study of that rule found on real charts.
 | 5 | Goal Setting | not yet studied | — |
 | 6 | Break of Structure | learned, first study run; revised Day 4's swings | `tradingbot/trend.py`, `tradingbot/chart.py` |
 | 7 | Individuality | learned (via Gemini), first study run | `tradingbot/session_study.py` |
-| 8 | Liquidity Pt 1 | learned (via Gemini); study blocked until Day 10 | `tradingbot/liquidity.py` |
-| 9–55 | … | not yet studied | — |
+| 8 | Liquidity Pt 1 | learned; revised by Day 10 | `tradingbot/liquidity.py` |
+| 9 | Check In | not yet studied | — |
+| 10 | Liquidity Pt 2 | learned, study and homework charts run | `tradingbot/liquidity.py`, `tradingbot/chart.py` |
+| 11–55 | … | not yet studied | — |
 
 ## How the bot learns
 

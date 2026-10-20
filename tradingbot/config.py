@@ -57,9 +57,13 @@ class TrendParams:
 
 @dataclass(frozen=True)
 class LiquidityParams:
-    """Day 8: liquidity taken, then a break of structure the other way."""
+    """Days 8 and 10: where liquidity sits, and liquidity taken before a break the other way."""
 
-    # How many candles back (including the break itself) liquidity must have been taken
+    # Day 10: liquidity rests above clear highs and below clear lows that have held. A
+    # pool is a high (low) higher (lower) than this many candles on each side, still
+    # untouched since it formed. TJR's examples were prominent swings, not two-candle wiggles.
+    pool_strength: int = 5
+    # How many candles back (including the break itself) a pool must have been taken
     # for a break of structure to count as the confirmation TJR waits for.
     sweep_lookback: int = 10
 
@@ -101,7 +105,7 @@ class Locked:
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v0-day08"
+    version: str = "v0-day10"
     candle: CandleParams = CandleParams()
     trend: TrendParams = TrendParams()
     liquidity: LiquidityParams = LiquidityParams()
