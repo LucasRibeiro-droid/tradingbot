@@ -1,0 +1,848 @@
+{
+ "symbol": "SPY",
+ "htf": "1Week",
+ "ltf": "1Day",
+ "variants": {
+  "baseline liquidity_swept": {
+   "config": {
+    "version": "v1-decision",
+    "candle": {
+     "doji_max_body_pct": 0.1,
+     "long_wick_min_pct": 0.6,
+     "short_wick_max_pct": 0.1,
+     "long_legged_min_wick_pct": 0.3,
+     "hammer_max_body_pct": 0.35,
+     "hammer_wick_to_body": 2.0,
+     "strong_close_min_body_pct": 0.7,
+     "strong_close_max_close_wick_pct": 0.1,
+     "weakness_wick_to_body": 1.0,
+     "rejection_min_wick_pct": 0.5,
+     "min_range_vs_avg": 0.5,
+     "avg_range_lookback": 20,
+     "context_lookback": 5
+    },
+    "trend": {
+     "swing_method": "two_candle",
+     "swing_strength": 2,
+     "swing_source": "wick",
+     "consolidation_lookback": 20,
+     "consolidation_max_efficiency": 0.3
+    },
+    "liquidity": {
+     "pool_strength": 5,
+     "sweep_lookback": 10
+    },
+    "decision": {
+     "confluences": [
+      "liquidity_swept"
+     ],
+     "stop_lookback": 10,
+     "max_hold_bars": 50
+    },
+    "study": {
+     "horizon_bars": 5,
+     "min_examples": 10
+    },
+    "watchlist": [
+     "SPY",
+     "GLD"
+    ]
+   },
+   "summary": {
+    "n": 13,
+    "win_rate": 0.692,
+    "avg_r": 0.075,
+    "total_r": 0.98,
+    "median_rr": 0.49
+   },
+   "trades": [
+    {
+     "t": "2021-05-14T04:00:00Z",
+     "direction": 1,
+     "entry": 386.92,
+     "stop": 376.16,
+     "target": 392.89,
+     "rr": 0.555,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.555,
+     "exit": "target",
+     "bars": 14
+    },
+    {
+     "t": "2021-06-22T04:00:00Z",
+     "direction": 1,
+     "entry": 394.37,
+     "stop": 386.64,
+     "target": 395.34,
+     "rr": 0.125,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.125,
+     "exit": "target",
+     "bars": 2
+    },
+    {
+     "t": "2021-10-07T04:00:00Z",
+     "direction": 1,
+     "entry": 410.14,
+     "stop": 398.76,
+     "target": 423.28,
+     "rr": 1.155,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 1.155,
+     "exit": "target",
+     "bars": 9
+    },
+    {
+     "t": "2021-12-31T05:00:00Z",
+     "direction": -1,
+     "entry": 445.71,
+     "stop": 449.56,
+     "target": 423.42,
+     "rr": 5.79,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2022-06-09T04:00:00Z",
+     "direction": -1,
+     "entry": 377.95,
+     "stop": 392.99,
+     "target": 358.28,
+     "rr": 1.308,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 1.308,
+     "exit": "target",
+     "bars": 2
+    },
+    {
+     "t": "2024-08-22T04:00:00Z",
+     "direction": -1,
+     "entry": 542.03,
+     "stop": 548.73,
+     "target": 497.25,
+     "rr": 6.684,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2024-12-24T05:00:00Z",
+     "direction": 1,
+     "entry": 589.53,
+     "stop": 569.72,
+     "target": 595.28,
+     "rr": 0.29,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 5
+    },
+    {
+     "t": "2025-11-26T05:00:00Z",
+     "direction": 1,
+     "entry": 672.35,
+     "stop": 643.88,
+     "target": 677.61,
+     "rr": 0.185,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.185,
+     "exit": "target",
+     "bars": 5
+    },
+    {
+     "t": "2026-01-26T05:00:00Z",
+     "direction": 1,
+     "entry": 687.35,
+     "stop": 671.31,
+     "target": 690.65,
+     "rr": 0.206,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.206,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2026-02-25T05:00:00Z",
+     "direction": 1,
+     "entry": 687.7,
+     "stop": 670.52,
+     "target": 691.65,
+     "rr": 0.23,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 4
+    },
+    {
+     "t": "2026-07-06T04:00:00Z",
+     "direction": 1,
+     "entry": 749.41,
+     "stop": 714.81,
+     "target": 752.87,
+     "rr": 0.1,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.1,
+     "exit": "target",
+     "bars": 4
+    },
+    {
+     "t": "2026-07-31T04:00:00Z",
+     "direction": 1,
+     "entry": 744.94,
+     "stop": 727.3,
+     "target": 753.67,
+     "rr": 0.495,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.495,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2026-09-18T04:00:00Z",
+     "direction": 1,
+     "entry": 761.62,
+     "stop": 747.82,
+     "target": 773.37,
+     "rr": 0.851,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "liquidity taken on the other side just before",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.851,
+     "exit": "target",
+     "bars": 1
+    }
+   ]
+  },
+  "without liquidity_swept": {
+   "config": {
+    "version": "v1-decision+confluences=none",
+    "candle": {
+     "doji_max_body_pct": 0.1,
+     "long_wick_min_pct": 0.6,
+     "short_wick_max_pct": 0.1,
+     "long_legged_min_wick_pct": 0.3,
+     "hammer_max_body_pct": 0.35,
+     "hammer_wick_to_body": 2.0,
+     "strong_close_min_body_pct": 0.7,
+     "strong_close_max_close_wick_pct": 0.1,
+     "weakness_wick_to_body": 1.0,
+     "rejection_min_wick_pct": 0.5,
+     "min_range_vs_avg": 0.5,
+     "avg_range_lookback": 20,
+     "context_lookback": 5
+    },
+    "trend": {
+     "swing_method": "two_candle",
+     "swing_strength": 2,
+     "swing_source": "wick",
+     "consolidation_lookback": 20,
+     "consolidation_max_efficiency": 0.3
+    },
+    "liquidity": {
+     "pool_strength": 5,
+     "sweep_lookback": 10
+    },
+    "decision": {
+     "confluences": [],
+     "stop_lookback": 10,
+     "max_hold_bars": 50
+    },
+    "study": {
+     "horizon_bars": 5,
+     "min_examples": 10
+    },
+    "watchlist": [
+     "SPY",
+     "GLD"
+    ]
+   },
+   "summary": {
+    "n": 32,
+    "win_rate": 0.562,
+    "avg_r": -0.177,
+    "total_r": -5.67,
+    "median_rr": 0.56
+   },
+   "trades": [
+    {
+     "t": "2021-03-10T05:00:00Z",
+     "direction": 1,
+     "entry": 360.76,
+     "stop": 344.45,
+     "target": 365.06,
+     "rr": 0.264,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.264,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2021-03-26T04:00:00Z",
+     "direction": 1,
+     "entry": 367.86,
+     "stop": 356.77,
+     "target": 368.73,
+     "rr": 0.078,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.078,
+     "exit": "target",
+     "bars": 3
+    },
+    {
+     "t": "2021-05-14T04:00:00Z",
+     "direction": 1,
+     "entry": 386.92,
+     "stop": 376.16,
+     "target": 392.89,
+     "rr": 0.555,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.555,
+     "exit": "target",
+     "bars": 14
+    },
+    {
+     "t": "2021-06-22T04:00:00Z",
+     "direction": 1,
+     "entry": 394.37,
+     "stop": 386.64,
+     "target": 395.34,
+     "rr": 0.125,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.125,
+     "exit": "target",
+     "bars": 2
+    },
+    {
+     "t": "2021-10-07T04:00:00Z",
+     "direction": 1,
+     "entry": 410.14,
+     "stop": 398.76,
+     "target": 423.28,
+     "rr": 1.155,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 1.155,
+     "exit": "target",
+     "bars": 9
+    },
+    {
+     "t": "2021-12-14T05:00:00Z",
+     "direction": -1,
+     "entry": 433.38,
+     "stop": 440.39,
+     "target": 419.87,
+     "rr": 1.927,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2021-12-31T05:00:00Z",
+     "direction": -1,
+     "entry": 445.71,
+     "stop": 449.56,
+     "target": 423.42,
+     "rr": 5.79,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2022-01-12T05:00:00Z",
+     "direction": 1,
+     "entry": 442.15,
+     "stop": 428.55,
+     "target": 450.48,
+     "rr": 0.613,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 3
+    },
+    {
+     "t": "2022-04-19T04:00:00Z",
+     "direction": 1,
+     "entry": 418.86,
+     "stop": 410.12,
+     "target": 435.01,
+     "rr": 1.848,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 3
+    },
+    {
+     "t": "2022-06-09T04:00:00Z",
+     "direction": -1,
+     "entry": 377.95,
+     "stop": 392.99,
+     "target": 358.28,
+     "rr": 1.308,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 1.308,
+     "exit": "target",
+     "bars": 2
+    },
+    {
+     "t": "2022-09-09T04:00:00Z",
+     "direction": 1,
+     "entry": 384.37,
+     "stop": 367.31,
+     "target": 408.19,
+     "rr": 1.396,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 5
+    },
+    {
+     "t": "2022-10-12T04:00:00Z",
+     "direction": -1,
+     "entry": 338.48,
+     "stop": 360.24,
+     "target": 335.37,
+     "rr": 0.143,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.143,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2022-10-20T04:00:00Z",
+     "direction": -1,
+     "entry": 346.91,
+     "stop": 356.42,
+     "target": 330.51,
+     "rr": 1.725,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2023-03-03T05:00:00Z",
+     "direction": 1,
+     "entry": 385.49,
+     "stop": 374.23,
+     "target": 398.93,
+     "rr": 1.194,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 4
+    },
+    {
+     "t": "2023-06-27T04:00:00Z",
+     "direction": 1,
+     "entry": 419.12,
+     "stop": 414.37,
+     "target": 425.81,
+     "rr": 1.408,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 1.408,
+     "exit": "target",
+     "bars": 3
+    },
+    {
+     "t": "2023-08-24T04:00:00Z",
+     "direction": -1,
+     "entry": 419.87,
+     "stop": 430.61,
+     "target": 414.37,
+     "rr": 0.512,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 3
+    },
+    {
+     "t": "2023-09-15T04:00:00Z",
+     "direction": -1,
+     "entry": 427.51,
+     "stop": 435.95,
+     "target": 425.48,
+     "rr": 0.241,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.241,
+     "exit": "target",
+     "bars": 2
+    },
+    {
+     "t": "2024-01-08T05:00:00Z",
+     "direction": 1,
+     "entry": 459.47,
+     "stop": 451.66,
+     "target": 462.36,
+     "rr": 0.37,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.37,
+     "exit": "target",
+     "bars": 3
+    },
+    {
+     "t": "2024-05-31T04:00:00Z",
+     "direction": 1,
+     "entry": 512.19,
+     "stop": 503.55,
+     "target": 517.73,
+     "rr": 0.641,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.641,
+     "exit": "target",
+     "bars": 3
+    },
+    {
+     "t": "2024-07-31T04:00:00Z",
+     "direction": 1,
+     "entry": 536.29,
+     "stop": 523.7,
+     "target": 550.68,
+     "rr": 1.143,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2024-08-22T04:00:00Z",
+     "direction": -1,
+     "entry": 542.03,
+     "stop": 548.73,
+     "target": 497.25,
+     "rr": 6.684,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2
+    },
+    {
+     "t": "2024-09-03T04:00:00Z",
+     "direction": -1,
+     "entry": 538.03,
+     "stop": 549.75,
+     "target": 497.25,
+     "rr": 3.48,
+     "reasons": [
+      "break of structure down",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 10
+    },
+    {
+     "t": "2024-12-24T05:00:00Z",
+     "direction": 1,
+     "entry": 589.53,
+     "stop": 569.72,
+     "target": 595.28,
+     "rr": 0.29,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 5
+    },
+    {
+     "t": "2025-02-13T05:00:00Z",
+     "direction": 1,
+     "entry": 597.92,
+     "stop": 579.09,
+     "target": 598.97,
+     "rr": 0.056,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.056,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2025-11-10T05:00:00Z",
+     "direction": 1,
+     "entry": 674.01,
+     "stop": 654.15,
+     "target": 682.3,
+     "rr": 0.417,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 6
+    },
+    {
+     "t": "2025-11-26T05:00:00Z",
+     "direction": 1,
+     "entry": 672.35,
+     "stop": 643.88,
+     "target": 677.61,
+     "rr": 0.185,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.185,
+     "exit": "target",
+     "bars": 5
+    },
+    {
+     "t": "2026-01-26T05:00:00Z",
+     "direction": 1,
+     "entry": 687.35,
+     "stop": 671.31,
+     "target": 690.65,
+     "rr": 0.206,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.206,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2026-02-25T05:00:00Z",
+     "direction": 1,
+     "entry": 687.7,
+     "stop": 670.52,
+     "target": 691.65,
+     "rr": 0.23,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 4
+    },
+    {
+     "t": "2026-07-06T04:00:00Z",
+     "direction": 1,
+     "entry": 749.41,
+     "stop": 714.81,
+     "target": 752.87,
+     "rr": 0.1,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.1,
+     "exit": "target",
+     "bars": 4
+    },
+    {
+     "t": "2026-07-31T04:00:00Z",
+     "direction": 1,
+     "entry": 744.94,
+     "stop": 727.3,
+     "target": 753.67,
+     "rr": 0.495,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.495,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2026-09-18T04:00:00Z",
+     "direction": 1,
+     "entry": 761.62,
+     "stop": 747.82,
+     "target": 773.37,
+     "rr": 0.851,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.851,
+     "exit": "target",
+     "bars": 1
+    },
+    {
+     "t": "2026-10-05T04:00:00Z",
+     "direction": 1,
+     "entry": 774.97,
+     "stop": 758.815,
+     "target": 777.44,
+     "rr": 0.153,
+     "reasons": [
+      "break of structure up",
+      "higher timeframe agrees",
+      "target: nearest untaken liquidity"
+     ],
+     "r": 0.153,
+     "exit": "target",
+     "bars": 1
+    }
+   ]
+  }
+ }
+}

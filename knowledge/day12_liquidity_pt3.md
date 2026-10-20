@@ -3,8 +3,9 @@
 Source: TJR Boot Camp, Day 12: Liquidity Pt 3 (https://www.youtube.com/watch?v=KtC2SbemF6w, 20:04).
 Studied from the uploaded video (360p, with audio). Transcript made offline with Whisper,
 in `sources/day12_liquidity_pt3.md`; charts checked from frames.
-**The combined liquidity model (Days 8, 10 and 12) is in `liquidity.md`.** This file keeps
-what Day 12 itself added, with timestamps.
+**Liquidity is one indicator, taught across Days 8, 10 and 12; see `liquidity.md`.** How the
+bot combines it with its other indicators is in `decision.md`. This file keeps what Day 12
+itself added, with timestamps.
 
 ## What Day 12 adds
 
@@ -34,4 +35,4 @@ what Day 12 itself added, with timestamps.
 
 ### Homework (17:39–19:56)
 - Find five liquidity sweeps and, for each, the confluence that explains the move: "there was a break of structure ... then it filled an imbalance and reacted off of it, that's where I'm entering."
-- **Bot version:** `python -m tradingbot.liquidity_study` trades every sweep-and-break it finds and records each one (`journal/studies/day12_*.json`), with its entry, stop, target and result.
+- **Bot version:** `python -m tradingbot.decision_study` runs the bot's decision process over history and records every decision (`journal/studies/decision_*.json`) with its reasons, entry, stop, target and result, with and without the liquidity indicator.

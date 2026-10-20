@@ -27,7 +27,7 @@ from typing import Sequence
 from .candles import NEUTRAL, Candle, read
 from .config import BASELINE, Config, to_dict, with_change
 from .study import reaction
-from .liquidity import pools_and_takes, sweep_then_shift
+from .liquidity import pools_and_takes, swept_before
 from .trend import NONE, TrendState, state_at, trend_series
 
 JOURNAL_DIR = Path(__file__).resolve().parent.parent / "journal" / "studies"
@@ -88,7 +88,7 @@ def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta,
             d = 1 if s.event == "bos_up" else -1
             rel = "with_htf" if htf_dir == d else "no_htf_trend" if htf_dir == NONE else "against_htf"
             rows.append({"key": f"4.bos_{rel}:{name[d]}", "move": r["move"]})
-            after = "after_liquidity" if sweep_then_shift(ltf_states, taken, i, config.liquidity) else "no_liquidity"
+            after = "after_liquidity" if swept_before(taken, i, d, config.liquidity) else "no_liquidity"
             rows.append({"key": f"6.bos_{after}:{name[d]}", "move": r["move"]})
             rows.append({"key": f"7.bos_{after}_{rel}:{name[d]}", "move": r["move"]})
         elif s.event in ("sweep_low", "sweep_high"):

@@ -6,7 +6,7 @@ Studied from the uploaded video (with audio). Transcript made offline with Whisp
 Code: `tradingbot/liquidity.py` (`find_pools`, `pools_and_takes`, `sweep_then_shift`).
 Chart: `tradingbot/chart.py` now draws pools.
 
-**See `liquidity.md` for the combined model (Days 8, 10, 12).**
+**Liquidity is one indicator, taught across Days 8, 10 and 12; see `liquidity.md`.**
 
 **This lesson revises Day 8's code.** Day 8 counted every two-candle high or low as
 liquidity, so ~99% of breaks of structure "came after liquidity". Day 10 shows that

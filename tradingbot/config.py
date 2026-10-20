@@ -57,17 +57,28 @@ class TrendParams:
 
 @dataclass(frozen=True)
 class LiquidityParams:
-    """Days 8, 10 and 12: where liquidity sits, liquidity taken before a break the other way, and
-    liquidity on the other side as the target."""
+    """Liquidity indicator (Days 8, 10, 12): where it sits and when it counts as just taken."""
 
     # Day 10: liquidity rests above clear highs and below clear lows that have held. A
     # pool is a high (low) higher (lower) than this many candles on each side, still
     # untouched since it formed. TJR's examples were prominent swings, not two-candle wiggles.
     pool_strength: int = 5
-    # How many candles back (including the break itself) a pool must have been taken
-    # for a break of structure to count as the confirmation TJR waits for.
+    # How many candles back (including the current one) a taken pool still counts as
+    # "liquidity was just swept".
     sweep_lookback: int = 10
-    # A liquidity trade still open after this many candles is closed at the close.
+
+
+@dataclass(frozen=True)
+class DecisionParams:
+    """The one decision process that reads all indicators (decision.py)."""
+
+    # Indicators that must agree before the bot acts on a break of structure. The learning
+    # loop adds or removes one at a time (H12). "with_htf" is always applied as well,
+    # because trading against the higher timeframe is locked off.
+    confluences: tuple[str, ...] = ("liquidity_swept",)
+    # Stop beyond the most extreme price of this many candles (up to the trigger).
+    stop_lookback: int = 10
+    # A position still open after this many candles is closed at the close.
     max_hold_bars: int = 50
 
 
@@ -108,10 +119,11 @@ class Locked:
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v0-day12"
+    version: str = "v1-decision"
     candle: CandleParams = CandleParams()
     trend: TrendParams = TrendParams()
     liquidity: LiquidityParams = LiquidityParams()
+    decision: DecisionParams = DecisionParams()
     study: StudyParams = StudyParams()
     # The one or two instruments the bot studies and trades (LOCKED.max_instruments).
     # SPY stands in for TJR's S&P 500 and GLD for gold, the two markets he uses most.
