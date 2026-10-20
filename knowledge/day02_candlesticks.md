@@ -1,7 +1,7 @@
 # Day 2 — Candlesticks
 
 Source: TJR Boot Camp, Day 2: Candlesticks (https://www.youtube.com/watch?v=bEkbNGUzQME, 23:17).
-Studied from the full video plus the captions. Timestamps below point into the video.
+Studied from the full video plus the captions. Saved transcript (offline Whisper, from the uploaded audio): `sources/day02_candlesticks.md`. Timestamps below point into the video.
 Code: `tradingbot/candles.py`. Thresholds: `CandleParams` in `tradingbot/config.py`.
 
 ## What the lesson teaches
