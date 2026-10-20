@@ -52,3 +52,8 @@ Question: is a break of structure more reliable when liquidity on the other side
 **It couldn't be answered yet.** About 99% of breaks on every chart already came right after liquidity was taken (for example 399 of 402 on SPY 1-hour), leaving 1–7 breaks per chart to compare against. With Day 6's two-candle rule, nearly every small wiggle is a high or low, so "the most recent low got taken" is almost always true before a break.
 
 What the bot takes from this: its current notion of liquidity, "any most-recent two-candle high or low", is far too broad. TJR doesn't treat every tiny low as a pool of resting orders; Day 10 teaches where liquidity actually sits. Queued as H13.
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Liquidity = resting orders; banks need it; sweep then break of structure = orders filled; no shift, hands off; entries near tops and bottoms.
+- **[Bot]** "Liquidity taken" = any candle trading past the most recent two-candle high/low (the Day 8 study). Replaced after Day 10.

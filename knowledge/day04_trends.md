@@ -66,3 +66,10 @@ Charts: SPY and GLD 1-hour inside daily (2 years), SPY and GLD daily inside week
 What the bot takes from this:
 - This matches TJR's own framing: the trend is "the overall umbrella" that picks the direction, not the entry (05:39, 11:58). Entries come from break of structure, liquidity and the rest of the strategy in later lessons.
 - The way the bot measures trend may not yet match how TJR sees it. His swings on the weekly chart are much bigger than 2-candle turning points, and his claim is about the next push going past the last high, not about the next 5 candles. Both are queued as one-variable tests (H5, H7).
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Higher highs/higher lows and the reverse; momentum; consolidation as the third state; higher timeframes outrank lower and the lower is only for timing; wait for the lower timeframe to turn; one or two instruments; the week/days/today forecast homework.
+- **[Bot]** Consolidation = price covered less than 30% of its 20-candle range. TJR identifies it visually.
+- **[Bot]** The original 2-candles-each-side swing method (since replaced by Day 6's definition, which is [TJR]).
+- **[Bot]** Forecast horizons graded at today's close, the 2nd trading day, and the week's last close.

@@ -44,3 +44,8 @@ open from where the first N minutes went.
 What the bot takes from this:
 - **TJR's London fakeout does not carry over to the New York open on SPY or GLD.** The opposite happened: the first move held to the close about 60–75% of the time, and more often when it was large. That's the lesson of the day in action: his market's behavior isn't law for the bot's market.
 - **Caution:** part of this is mechanical. A large early move gives the close a head start in that direction, so "large moves hold more often" is partly expected. The measure also misses TJR's real pattern: a strong move that flips quickly and *then* runs. Liquidity sweeps (Days 8–12) will give a sharper test (H11).
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Strategy = simple concepts plugged into an execution order; use the pieces you understand; not law; find your own edge by observation; compete with yourself.
+- **[Bot]** The New York open study is the bot's own experiment inspired by TJR's London-session observation; TJR made no claim about the New York open.

@@ -36,3 +36,8 @@ itself added, with timestamps.
 ### Homework (17:39–19:56)
 - Find five liquidity sweeps and, for each, the confluence that explains the move: "there was a break of structure ... then it filled an imbalance and reacted off of it, that's where I'm entering."
 - **Bot version:** `python -m tradingbot.decision_study` runs the bot's decision process over history and records every decision (`journal/studies/decision_*.json`) with its reasons, entry, stop, target and result, with and without the liquidity indicator.
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Prominent highs/lows; liquidity as a magnet; no confirmation, no trade; target the liquidity on the other side; the walkthroughs; "a piece, not a strategy".
+- **[Bot]** In the test harness: entry at the break's close, stop beyond the last 10 candles, a 50-candle limit. TJR shows entries on the retracement into an imbalance or order block, and teaches stops on Day 38.

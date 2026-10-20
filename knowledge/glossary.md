@@ -47,6 +47,14 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Market movers** | Banks and institutions whose orders move price. | — | They need liquidity to fill. |
 | **Confluence** | Several indicators agreeing. | `DecisionParams.confluences` | Required before the bot acts. |
 
+## Fair value gaps (Day 14; Days 16 and 18 still to come)
+
+| Term | Meaning | How the bot measures it | Signals |
+|---|---|---|---|
+| **Fair value gap (FVG)** / **liquidity void** / **imbalance** | Three names for one thing: a price range with no opposing orders, so price moved through it fast, usually as a big candle with no hesitation [TJR Day 14]. | not yet: how to spot one is taught on Day 16 | Where retracements are drawn back to; with a lower-timeframe break of structure inside it, an entry for continuation. |
+| **Retracement** | A pullback against the trend before it continues. | — | In a trend, retracements are drawn into fair value gaps [TJR Day 14]. |
+| **Secondary entry** | Mentioned with fair value gaps [TJR Day 14, 04:14]; not explained yet. | — | Open question. |
+
 ## Results
 
 | Term | Meaning |

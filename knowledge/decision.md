@@ -1,9 +1,11 @@
-# How the bot decides
+# How the bot decides (test harness)
 
-The bot has **one** decision process (`tradingbot/decision.py`). The lessons don't each
-teach a strategy; they each teach a way of reading the chart, an **indicator**. At every
-candle close the bot reads all of its indicators and decides: buy, sell, or do nothing.
-Every decision lists the reasons each indicator gave.
+The methodology itself is reconstructed in `methodology.md`. This file describes the bot's
+**test harness** (`tradingbot/decision.py`): one decision process that reads the indicators
+learned so far, so their contribution can be measured. It is not TJR's strategy and is not
+for live trading; several steps are [Bot] placeholders until the lessons that teach them.
+At every candle close it reads its indicators and decides buy, sell or nothing, listing
+the reasons each indicator gave.
 
 ## Indicators it reads today
 
@@ -13,7 +15,7 @@ Every decision lists the reasons each indicator gave.
 | Trend and higher-timeframe bias | Day 4 | Which direction is allowed at all. | `day04_trends.md` |
 | Break of structure | Day 6 | The trigger: a candle closes past the most recent high or low. | `day06_break_of_structure.md` |
 | Liquidity | Days 8, 10, 12 | Evidence that orders were just filled on the other side (a sweep), and where price is drawn to next (the target). | `liquidity.md` |
-| Fair value gaps | Days 14, 16, 18 | to come: where to enter on the pullback | |
+| Fair value gaps | Days 14, 16, 18 | where retracements go; entry area with a lower-timeframe break. Concept learned (Day 14); detection waits for Day 16 | `day14_fair_value_gaps_pt1.md` |
 | Order blocks | Days 20, 22, 24 | to come | |
 | Equilibrium | Days 26, 28 | to come | |
 | Daily bias | Days 34, 35, 36 | to come | |
@@ -22,14 +24,14 @@ Rules from the discipline lessons apply on top: follow the plan exactly (Day 3),
 against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two instruments
 (Day 4).
 
-## The decision today
+## The harness today
 
-1. **Trigger:** a break of structure (Day 6).
-2. **Direction allowed:** only with the higher timeframe's trend (Day 4, locked).
-3. **Confluence:** every indicator in `DecisionParams.confluences` must agree. Today that's `liquidity_swept`: liquidity on the other side was taken in the last 10 candles.
-4. **Entry:** the trigger candle's close. TJR enters on the pullback into a fair value gap or order block (Day 12, 10:54). That comes when those indicators are learned.
-5. **Stop:** beyond the most extreme price of the last 10 candles.
-6. **Target:** the draw on liquidity, the nearest untaken pool in the trade's direction. None, no trade.
+1. **Trigger:** a break of structure [TJR Day 6].
+2. **Direction allowed:** only with the higher timeframe's trend [TJR Day 4, locked].
+3. **Confluence:** every indicator in `DecisionParams.confluences` must agree. Today that's `liquidity_swept`: liquidity on the other side was taken shortly before [TJR Days 8, 12]; "shortly" = within 10 candles [Bot].
+4. **Entry:** the trigger candle's close [Bot]. TJR enters on the retracement into a fair value gap or order block, triggered by a break of structure on a **lower** timeframe [TJR Day 12, 10:54; Day 14, 04:28]. The harness is single-timeframe for the trigger until those lessons are learned.
+5. **Stop:** beyond the most extreme price of the last 10 candles [Bot]; stops are taught on Day 38.
+6. **Target:** the draw on liquidity, the nearest untaken pool in the trade's direction [TJR Day 12]. None, no trade.
 
 ## How it improves
 

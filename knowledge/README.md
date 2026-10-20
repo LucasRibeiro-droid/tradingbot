@@ -3,9 +3,13 @@
 What the bot knows, one TJR Boot Camp lesson at a time
 (playlist: https://www.youtube.com/playlist?list=PLKE_22Jx497twaT62Qv9DAiagynP4dAYV).
 
-**The lessons teach indicators, not strategies.** Each one is a way of reading the chart
-(candles, trend, break of structure, liquidity, ...). The bot reads all of them through
-**one** decision process, described in `decision.md`. The terms are defined in `glossary.md`.
+**The lessons are modules of one course, not separate strategies.** Start here:
+
+- `LEARNING_PROTOCOL.md`: how every lesson is processed (the owner's instructions).
+- `methodology.md`: the cumulative knowledge base: the one methodology reconstructed so far, every rule tagged [TJR] / [Inferred] / [Bot], with open questions and contradictions.
+- `course_map.md`: all 56 videos, what each teaches, how it connects, what's still missing.
+- `glossary.md`: every term learned.
+- `decision.md`: the bot's test harness that combines the indicators learned so far.
 
 Each lesson file says what was taught (with video timestamps), which rule or code it
 became, and what the bot's own study of it found on real charts. Topics taught over
@@ -27,7 +31,9 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 10 | Liquidity Pt 2 | learned; indicator in `liquidity.md` | `tradingbot/liquidity.py`, `tradingbot/chart.py` |
 | 11 | How to take a Loss | not yet studied | — |
 | 12 | Liquidity Pt 3 | learned; indicator in `liquidity.md`, used by the decision process | `tradingbot/liquidity.py`, `tradingbot/decision.py` |
-| 13–55 | … | not yet studied | — |
+| 13 | Risk Management | not yet studied | — |
+| 14 | Fair Value Gaps Pt 1 | learned (concept); detection waits for Day 16 | — |
+| 15–55 | … | not yet studied | — |
 
 ## How the bot learns
 

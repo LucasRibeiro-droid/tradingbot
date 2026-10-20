@@ -64,3 +64,9 @@ Same charts as Day 4. Horizon: 5 candles. "Edge" is hit rate minus the base rate
 2. **Breaks up against a higher-timeframe downtrend did not fail.** They beat the base rate in all 5 charts (+1.0% to +8.9%). So the rule held on the down side and not on the up side. One likely reason: SPY and GLD both drifted up over these years. That's a hypothesis to test (H9).
 3. **Fakes on their own had no consistent edge.** A sweep of a low followed by a rise beat the base rate in 3 of 5 charts; a sweep of a high followed by a fall in 2 of 5. TJR says these are liquidity sweeps, taught next in Day 8, so they're expected to need that context.
 4. **Two-candle swings vs the old pivot swings:** with-versus-against-the-higher-timeframe results were similar (6 of 10 vs 7 of 10 comparisons favored "with"). The two-candle rule is the lesson's definition, so it's the baseline regardless.
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Two-candle highs and lows at the extreme wick; break of structure only on a candle close; only the most recent high/low; the 5-step checklist; wicks past a level are fakes / liquidity sweeps; a break against the higher timeframe can be a retracement; the homework.
+- **[Bot]** Before the first break of structure, the bot watches both sides. TJR always starts from an identified trend.
+- **[Bot]** A candle whose open equals its close is neither up nor down, so it never forms a high or low.

@@ -73,3 +73,10 @@ What the bot takes from this:
 2. **Strong closes are followed by price taking that candle's high (or low) first** 66–88% of the time on every chart. That's short-term continuation. It's a property to test, not a trade.
 3. **Rejections looked strongest on the weekly chart**, which is where TJR showed them. The samples are small, so this is a hypothesis.
 4. Many groups were compared at once, so a few large edges are expected by chance. Nothing here gets promoted until it holds on data the bot hasn't seen. Open hypotheses are in `journal/hypotheses.md`.
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Candle anatomy; only closed candles count (16:50); only single-candle patterns (07:31–09:52); strong close, rejection, weakness and doji meanings; a candle read is one confluence and never an entry or an override of the trend (13:22–15:01).
+- **[Bot]** Every numeric threshold (doji body ≤10% of range, long wick ≥60%, strong close body ≥70%, hammer wick ≥2× body, rejection wick ≥50%, "too small to read" under half the 20-candle average range). TJR describes these shapes visually and gives no numbers.
+- **[Bot]** Naming a hammer after a rise "hanging man" and an inverted hammer after a rise "shooting star" uses a 5-candle look-back, a standard convention, not TJR's.
+- **[Bot]** The study's 5-candle horizon and base-rate comparison are the bot's way of doing the homework, not TJR's measure.

@@ -1,23 +1,20 @@
-"""The bot's one decision process: read every indicator at a candle, decide buy, sell or nothing.
+"""Test harness: reads the indicators learned so far and decides buy, sell or nothing.
 
-Each lesson teaches an indicator, a way of reading the chart, not a strategy of its own:
-  - candles (Day 2): what a single closed candle says
-  - trend and higher-timeframe bias (Day 4): which direction is allowed
-  - break of structure (Day 6): the trigger that the direction has shifted
-  - liquidity (Days 8, 10, 12): whether orders were just taken on the other side, and
-    where price is drawn to next
-  - fair value gaps, order blocks, equilibrium, daily bias: to come (Days 14-36)
-This process combines them. As lessons are added, indicators are added here; the learning
-loop tests adding or removing one at a time (H12).
+This is NOT TJR's strategy. It assembles the pieces taught so far to test what each one
+contributes. The full methodology is reconstructed in knowledge/methodology.md; parts it
+depends on (fair value gaps, order blocks, execution, stops) are not taught yet.
 
-Current rules, each from a lesson:
-  1. Trigger: a candle closes past the most recent high or low (break of structure, Day 6).
-  2. Allowed only in the higher timeframe's direction (Day 4, locked).
-  3. Every indicator named in ``DecisionParams.confluences`` must agree.
-  4. Entry at the trigger's close. TJR enters on the pullback into a fair value gap or
-     order block (Day 12, 10:54); this improves when those indicators are learned.
-  5. Stop beyond the most extreme price of the last ``stop_lookback`` candles.
-  6. Target: the nearest untaken liquidity in the trade's direction (Day 12). None, no trade.
+Steps, with provenance ([TJR] taught, [Inferred], [Bot] placeholder):
+  1. Trigger: a break of structure, a candle close past the most recent high/low [TJR Day 6].
+  2. Only in the higher timeframe's direction [TJR Day 4, locked].
+  3. Required confluences from ``DecisionParams.confluences``; today "liquidity_swept":
+     liquidity on the other side taken shortly before [TJR Days 8, 12; "shortly" = 10
+     candles is Bot].
+  4. Entry at the trigger candle's close [Bot]. TJR enters on the retracement into a fair
+     value gap or order block, triggered by a LOWER-timeframe break (Day 14, 04:28); this
+     harness uses one timeframe for the trigger until Days 16-18 and 30-33 are learned.
+  5. Stop beyond the last ``stop_lookback`` candles' extreme [Bot]; stops are taught on Day 38.
+  6. Target: the nearest untaken liquidity in the trade's direction [TJR Day 12].
 """
 from __future__ import annotations
 

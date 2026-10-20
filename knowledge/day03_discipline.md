@@ -45,3 +45,9 @@ humans. Four ideas do carry over directly.
 Overcoming fear of judgment, confidence, fitness and reading goals are human habits. The
 bot has nothing to translate them into. The one part of the homework that applies to *you*:
 TJR asks every student to start one uncomfortable, beneficial habit today.
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Students lose on the same strategy by skipping trades and bailing early (03:25); trade with risk management, no over-trading or over-leveraging (24:38); one uncomfortable habit daily; 21/60 days; always improving; document the journey.
+- **[Inferred]** Turning "don't skip, don't bail" into an audit of four violations (skipped setup, trade without setup, exit off plan, oversized risk).
+- **[Bot]** The daily journal format and streak counter.

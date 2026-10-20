@@ -61,3 +61,9 @@ break of structure aren't enough by themselves. Two things are still missing: th
 of the strategy (fair value gaps, order blocks, bias), and a fairer test. TJR's trades are
 judged by whether they reach their target before their stop, not by where price is 5
 candles later, and that needs Day 12's execution rules.
+
+## Provenance audit (2026-10-20)
+
+- **[TJR]** Where liquidity sits and why (buy stops and stop losses above highs, the reverse below lows); sweep-fall and sweep-rally on every timeframe; it's not enough on its own; the homework.
+- **[Bot]** A pool = a high/low that is higher/lower than 5 candles on each side and untouched since. TJR picks clear levels by eye.
+- **[Bot]** A pool is taken by a wick or a close. TJR's examples include both.
