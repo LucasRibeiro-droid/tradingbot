@@ -1,11 +1,13 @@
 # Day 8 — Liquidity, Part 1: what it is and why price moves
 
 Source: TJR Boot Camp, Day 8: Liquidity Pt 1 (https://www.youtube.com/watch?v=Lxnu7InGhGE, 11:42).
-Watched by Gemini; transcript and screen log in `sources/day08_liquidity_pt1.md`.
-TJR says "not much that's going to be put on the chart today, mainly just going to be me
-talking", and the screen log agrees: a static gold weekly chart with no drawings. The
-transcript carries the lesson. (Gemini's log names a chart date of "16 Oct '23", which
-can't be right for a video recorded around June 2023; its exact screen details need checking.)
+Transcript by Gemini (`sources/day08_liquidity_pt1.md`); video checked by the bot from an
+uploaded copy. TJR says "not much that's going to be put on the chart today, mainly just
+going to be me talking", and the video confirms it: one static gold weekly chart
+(XAUUSD 1W, FOREXCOM) with no drawings for all 11:41, so the transcript carries the lesson.
+Gemini's screen log checked out against the real frame: its open/high/low (1946.59 /
+1974.82 / 1932.14) match exactly, and its "16 Oct '23" is the date label TradingView shows
+under the mouse cursor hovering in empty space to the right of the last candle.
 Code: `tradingbot/liquidity.py`, `took_high`/`took_low` in `tradingbot/trend.py`.
 
 "Probably the largest topic and the most important topic of my strategy." Part 1 is only
