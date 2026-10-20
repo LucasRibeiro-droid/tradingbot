@@ -57,7 +57,8 @@ class TrendParams:
 
 @dataclass(frozen=True)
 class LiquidityParams:
-    """Days 8 and 10: where liquidity sits, and liquidity taken before a break the other way."""
+    """Days 8, 10 and 12: where liquidity sits, liquidity taken before a break the other way, and
+    liquidity on the other side as the target."""
 
     # Day 10: liquidity rests above clear highs and below clear lows that have held. A
     # pool is a high (low) higher (lower) than this many candles on each side, still
@@ -66,6 +67,8 @@ class LiquidityParams:
     # How many candles back (including the break itself) a pool must have been taken
     # for a break of structure to count as the confirmation TJR waits for.
     sweep_lookback: int = 10
+    # A liquidity trade still open after this many candles is closed at the close.
+    max_hold_bars: int = 50
 
 
 @dataclass(frozen=True)
@@ -105,7 +108,7 @@ class Locked:
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v0-day10"
+    version: str = "v0-day12"
     candle: CandleParams = CandleParams()
     trend: TrendParams = TrendParams()
     liquidity: LiquidityParams = LiquidityParams()

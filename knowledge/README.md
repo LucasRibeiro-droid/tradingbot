@@ -17,10 +17,12 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 5 | Goal Setting | not yet studied | — |
 | 6 | Break of Structure | learned, first study run; revised Day 4's swings | `tradingbot/trend.py`, `tradingbot/chart.py` |
 | 7 | Individuality | learned (via Gemini), first study run | `tradingbot/session_study.py` |
-| 8 | Liquidity Pt 1 | learned; revised by Day 10 | `tradingbot/liquidity.py` |
+| 8 | Liquidity Pt 1 | learned; see `liquidity.md` (Days 8, 10, 12 combined) | `tradingbot/liquidity.py` |
 | 9 | Check In | not yet studied | — |
 | 10 | Liquidity Pt 2 | learned, study and homework charts run | `tradingbot/liquidity.py`, `tradingbot/chart.py` |
-| 11–55 | … | not yet studied | — |
+| 11 | How to take a Loss | not yet studied | — |
+| 12 | Liquidity Pt 3 | learned; liquidity model traded and tested | `tradingbot/liquidity.py`, `tradingbot/liquidity_study.py` |
+| 13–55 | … | not yet studied | — |
 
 ## How the bot learns
 

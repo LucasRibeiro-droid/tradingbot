@@ -206,3 +206,33 @@ class Liquidity(unittest.TestCase):
 
     def test_liquidity_alone_is_never_an_entry(self):
         self.assertFalse(LOCKED.liquidity_alone_is_entry)
+
+
+class LiquidityTrade(unittest.TestCase):
+    def setUp(self):
+        from tradingbot.liquidity import Pool, Taken
+        self.Pool, self.Taken = Pool, Taken
+        # Candles: a sweep low at 95, then a break-up candle closing at 103.
+        self.candles = [c(0, 100, 101, 97, 98), c(1, 98, 99, 95, 96), c(2, 96, 103.5, 95.5, 103)]
+        self.states = [TrendState(DOWN, False, 102, 97)] * 2 + [TrendState(UP, False, 102, 97, "bos_up")]
+        target = Pool(0, 109, "buy_side", 0)
+        self.scanned = [(Taken(), (target,))] * 3
+
+    def test_plan_targets_the_nearest_untaken_pool_above(self):
+        from tradingbot.liquidity import plan
+        tp = plan(self.candles, self.states, self.scanned, 2, UP)
+        self.assertEqual((tp.entry, tp.stop, tp.target), (103, 95, 109))
+        self.assertAlmostEqual(tp.reward_to_risk, 6 / 8)
+
+    def test_no_target_no_trade(self):
+        from tradingbot.liquidity import plan
+        self.assertIsNone(plan(self.candles, self.states, [(self.Taken(), ())] * 3, 2, UP))
+
+    def test_simulate_target_first_wins_and_touching_both_loses(self):
+        from tradingbot.liquidity import plan, simulate
+        tp = plan(self.candles, self.states, self.scanned, 2, UP)
+        win = self.candles + [c(3, 103, 110, 102, 109)]
+        self.assertEqual(simulate(win, tp, 5)["exit"], "target")
+        both = self.candles + [c(3, 103, 110, 94, 100)]
+        self.assertEqual(simulate(both, tp, 5)["r"], -1.0)
+        self.assertIsNone(simulate(self.candles + [c(3, 103, 104, 102, 103)], tp, 5))

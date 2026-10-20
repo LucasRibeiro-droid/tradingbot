@@ -10,6 +10,8 @@ Gemini's screen log checked out against the real frame: its open/high/low (1946.
 under the mouse cursor hovering in empty space to the right of the last candle.
 Code: `tradingbot/liquidity.py`, `took_high`/`took_low` in `tradingbot/trend.py`.
 
+> **See `liquidity.md` for the combined model (Days 8, 10, 12).**
+>
 > **Revised by Day 10.** Liquidity now means pools beyond clear highs and lows that have
 > held (`liquidity.find_pools`), not the most recent two-candle high or low. The study below
 > was the reason; see `knowledge/day10_liquidity_pt2.md` for the rerun.
