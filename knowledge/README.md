@@ -47,7 +47,9 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 26 | Equilibrium | learned (concept); topic file `equilibrium.md` | — |
 | 27 | Fear | not yet studied | — |
 | 28 | Equilibrium pt.2 | learned; **equilibrium complete**; measurement built, tested as a continuation filter | `tradingbot/equilibrium.py`, `tradingbot/decision.py` |
-| 29–55 | … | not yet studied | — |
+| 29 | Trading Plan | not yet studied | — |
+| 30 | Execution | learned (entry models, no charts); topic file `execution.md` | — |
+| 31–55 | … | not yet studied | — |
 
 ## How the bot learns
 

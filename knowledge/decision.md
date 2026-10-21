@@ -43,6 +43,10 @@ against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two i
 5. Stop beyond the retracement's extreme [TJR Day 18 example]; target the nearest untaken liquidity [TJR Day 12]. One target, no partials, no break-even yet [Bot simplification].
 6. The zone can be a fair value gap (baseline) or an order block, TJR's first choice [TJR Day 20, 06:57; Day 24, 11:53]. Same steps otherwise, so the two can be compared (H24).
 
+## How the paths map onto TJR's entry models (Day 30)
+
+Model 1 (sweep + break) ≈ the reversal path; models 2/3 (order block / gap) ≈ the continuation path with `zone="order_block"` / `"fvg"`; model 4 (+ discount) ≈ `in_discount=True`. Differences and open points: `execution.md`.
+
 ## How it improves
 
 `python -m tradingbot.decision_study SYMBOL --htf TF --ltf TF` runs the decision process

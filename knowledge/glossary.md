@@ -86,6 +86,14 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Premium** | Above equilibrium: the expensive half, where big money sells in a downtrend [TJR Day 26, 06:50, 11:16]. | — | Look for a sell reason here. |
 | **Inducement** | TJR's name for the liquidity sweep [TJR Day 26, 09:08]. | `Taken` | — |
 
+## Execution (Day 30; Days 32, 33 to come)
+
+| Term | Meaning | How the bot measures it | Signals |
+|---|---|---|---|
+| **Building blocks** | Liquidity sweep, break of structure, order block, fair value gap, equilibrium [TJR Day 30, 01:05]. | the indicator modules | — |
+| **Entry models** | TJR's four ways to combine them into an entry, from most risky (sweep + break) to safest (sweep + break + gap/block + discount) [TJR Day 30, 03:12–06:45]. | harness paths (see `execution.md`) | — |
+| **Ultimate confluence** | All of them together: model 4, "foolproof" for beginners [TJR Day 30, 05:45]. | `Continuation(in_discount=True)` (approx.) | — |
+
 ## Results
 
 | Term | Meaning |
