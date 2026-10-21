@@ -18,7 +18,7 @@ the reasons each indicator gave.
 | Fair value gaps | Days 14, 16, 18 | The continuation path: a higher-timeframe gap in the trend's direction, price retraces in, lower-timeframe break of structure | `fair_value_gaps.md` |
 | Order blocks | Days 20, 22, 24 | An alternative zone for the continuation path (`Continuation(zone="order_block")`), compared with fair value gaps (H24); not yet the baseline. | `order_blocks.md` |
 | Equilibrium | Days 26, 28 | Measured (`equilibrium.py`); an optional condition on the continuation path: the retracement must reach the higher timeframe's discount (H28), not the baseline yet. | `equilibrium.md` |
-| Daily bias | Days 34, 35, 36 | to come | |
+| Daily bias | Days 34, 35, 36 | The harness's higher-timeframe filter (daily) = TJR's daily bias; tested on the entry models (H30), definition of daily swings in question (H31). | `daily_bias.md` |
 
 Rules from the discipline lessons apply on top: follow the plan exactly (Day 3), never
 against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two instruments

@@ -52,7 +52,8 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 31 | Hard Work | not yet studied | — |
 | 32 | Execution pt.2 | learned (models 1 and 2 on charts); homework matches `orderblock_study.py` | `tradingbot/orderblock_study.py` |
 | 33 | Execution pt.3 | learned; **execution complete**; all four entry models compared on the same setups | `tradingbot/models_study.py` |
-| 34–55 | … | not yet studied | — |
+| 34 | Daily Bias | learned (part 1); topic file `daily_bias.md`; first test of the bias on the entry models | `tradingbot/models_study.py --bias` |
+| 35–55 | … | not yet studied | — |
 
 ## How the bot learns
 

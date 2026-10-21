@@ -94,6 +94,14 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Entry models** | TJR's four ways to combine them into an entry, from most risky (sweep + break) to safest (sweep + break + gap/block + discount) [TJR Day 30, 03:12–06:45]. | harness paths (see `execution.md`) | — |
 | **Ultimate confluence** | All of them together: model 4, "foolproof" for beginners [TJR Day 30, 05:45]. | `Continuation(in_discount=True)` (approx.) | — |
 
+## Daily bias (Day 34; Days 35, 36 to come)
+
+| Term | Meaning | How the bot measures it | Signals |
+|---|---|---|---|
+| **Daily bias** | Where the market wants to go for the day: the direction of the last daily break of structure [TJR Day 34, 02:07]. | `state_at()` on daily candles | Trade only in its direction. |
+| **Top-down analysis** | Weekly → daily → 4-hour → 1-hour → execution timeframe [TJR Day 34, 00:45]. | — | — |
+| **Tentative take profits** | Short targets while the 4-hour still disagrees with the daily [TJR Day 34, 05:16]. | not yet | — |
+
 ## Results
 
 | Term | Meaning |

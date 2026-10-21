@@ -15,6 +15,11 @@ target, the nearest liquidity when the break closes [Day 12]. A model that doesn
 entry before the target, the stop or ``max_hold_bars`` takes no trade: 0R [Bot].
 TJR ranks them from most risky (1) to safest (4) [Day 30, 05:50] (H29).
 
+With ``--bias``, each setup is also labelled by the daily bias when its break closes: the
+direction of the last daily break of structure ("what is the daily market structure? We get
+a break of structure to the downside, so I'm bearish on the daily", Day 34, 02:04-02:27).
+TJR: setups against it are "short-lived" (Day 33, 23:27; Day 34, 00:31) (H30).
+
 Usage:
     python -m tradingbot.models_study SPY --timeframe 1Hour --days 365
 """
@@ -35,7 +40,7 @@ from .fvg import find_gaps
 from .liquidity import draw, scan
 from .orderblock_study import block_trade
 from .orderblocks import find_blocks
-from .trend import trend_series
+from .trend import NONE, state_at, trend_series
 
 JOURNAL_DIR = Path(__file__).resolve().parent.parent / "journal" / "studies"
 
@@ -62,12 +67,14 @@ def _wait(candles, setup: Decision, until: int, entry_at) -> dict:
     return {"r": 0.0, "exit": "no_entry"}
 
 
-def run(candles: Sequence[Candle], config=BASELINE) -> dict:
+def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | None = None) -> dict:
     states = trend_series(candles, config.trend)
     scanned = scan(candles, config.liquidity)
     eq = ranges(candles, states)
     gaps = find_gaps(candles)
     wait = config.decision.max_hold_bars
+    if daily is not None:
+        daily_states = trend_series(daily, config.trend)
     rows = []
     for b in find_blocks(candles, states, [t for t, _ in scanned], config.trend, config.liquidity):
         i, d = b.confirmed_at, (1 if b.side == BULLISH else -1)
@@ -108,6 +115,10 @@ def run(candles: Sequence[Candle], config=BASELINE) -> dict:
             return None
 
         out = {"t": candles[i].t, "side": b.side}
+        if daily is not None:
+            ds = state_at(daily, daily_states, timedelta(days=1), candles[i].t)
+            bias = ds.direction if ds else NONE
+            out["bias"] = "none" if bias == NONE else "with" if bias == b.side else "against"
         m1 = simulate(candles, setup, config.decision.max_hold_bars)
         out["1"] = m1 and {**m1, "rr": round(setup.reward_to_risk, 3)}
         out["2"] = block_trade(candles, setup, near, wait)
@@ -116,18 +127,23 @@ def run(candles: Sequence[Candle], config=BASELINE) -> dict:
         if all(out[k] for k in "1234"):
             rows.append(out)
 
-    summary = {}
-    for k in "1234":
-        res = [r[k] for r in rows]
-        taken = [x for x in res if x["exit"] not in ("missed", "no_entry")]
-        summary[k] = {
-            "setups": len(res), "trades": len(taken),
-            "win_rate": round(sum(x["exit"] == "target" for x in taken) / len(taken), 3) if taken else None,
-            "avg_r_per_trade": round(sum(x["r"] for x in taken) / len(taken), 3) if taken else None,
-            "avg_r_per_setup": round(sum(x["r"] for x in res) / len(res), 3) if res else None,
-            "median_rr": median(x["rr"] for x in taken) if taken else None,
-        }
-    return {"config": to_dict(config), "summary": summary, "setups": rows}
+    def summarize(rows):
+        return {k: _summary([r[k] for r in rows]) for k in "1234"}
+
+    summary = summarize(rows)
+    by_bias = {g: summarize([r for r in rows if r.get("bias") == g]) for g in ("with", "against")} if daily is not None else None
+    return {"config": to_dict(config), "summary": summary, "by_bias": by_bias, "setups": rows}
+
+
+def _summary(res: list[dict]) -> dict:
+    taken = [x for x in res if x["exit"] not in ("missed", "no_entry")]
+    return {
+        "setups": len(res), "trades": len(taken),
+        "win_rate": round(sum(x["exit"] == "target" for x in taken) / len(taken), 3) if taken else None,
+        "avg_r_per_trade": round(sum(x["r"] for x in taken) / len(taken), 3) if taken else None,
+        "avg_r_per_setup": round(sum(x["r"] for x in res) / len(res), 3) if res else None,
+        "median_rr": median(x["rr"] for x in taken) if taken else None,
+    }
 
 
 def main() -> None:
@@ -137,18 +153,26 @@ def main() -> None:
     ap.add_argument("symbol")
     ap.add_argument("--timeframe", default="1Hour")
     ap.add_argument("--days", type=int, default=365)
+    ap.add_argument("--bias", action="store_true", help="label setups by the daily bias (Day 34)")
     args = ap.parse_args()
-    candles = fetch_bars(args.symbol, args.timeframe, datetime.now(timezone.utc) - timedelta(days=args.days))
-    result = run(candles)
+    start = datetime.now(timezone.utc) - timedelta(days=args.days)
+    candles = fetch_bars(args.symbol, args.timeframe, start)
+    daily = fetch_bars(args.symbol, "1Day", start - timedelta(days=120)) if args.bias else None
+    result = run(candles, daily=daily)
     print(f"\n{args.symbol} {args.timeframe}: {len(candles)} candles")
     print(f"{'model':6} {'setups':>7} {'trades':>7} {'win':>6} {'avg R/trade':>12} {'avg R/setup':>12} {'med RR':>7}")
     for k, s in result["summary"].items():
         f = lambda v, fmt: format(v, fmt) if v is not None else "-"
         print(f"{k:6} {s['setups']:>7} {s['trades']:>7} {f(s['win_rate'], '.1%'):>6} {f(s['avg_r_per_trade'], '+.2f'):>12} "
               f"{f(s['avg_r_per_setup'], '+.2f'):>12} {f(s['median_rr'], '.2f'):>7}")
+    for g, summ in (result["by_bias"] or {}).items():
+        print(f"  {g} the daily bias: " + "  ".join(
+            f"m{k} n={s['trades']} win={s['win_rate'] if s['win_rate'] is None else format(s['win_rate'], '.0%')} "
+            f"R={s['avg_r_per_trade'] if s['avg_r_per_trade'] is None else format(s['avg_r_per_trade'], '+.2f')}"
+            for k, s in summ.items()))
     JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    path = JOURNAL_DIR / f"day33_models_{args.symbol}_{args.timeframe}_{stamp}.json"
+    path = JOURNAL_DIR / f"{'day34_bias' if args.bias else 'day33'}_models_{args.symbol}_{args.timeframe}_{stamp}.json"
     path.write_text(json.dumps({"symbol": args.symbol, "timeframe": args.timeframe, **result}, indent=1))
 
 
