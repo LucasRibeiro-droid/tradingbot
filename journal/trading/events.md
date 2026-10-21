@@ -6,3 +6,6 @@
 | 2026-10-21 02:45 | Alpaca docs unreachable (MCP docs 403, docs.alpaca.markets not resolvable) | PDT and fractional-bracket rules unverified | verify with the first small paper order |
 | 2026-10-21 02:45 | Real-time SIP data denied (403); IEX only | thinner real-time bars | trade on IEX, as researched |
 | 2026-10-21 13:32 | session start (paper): equity 99.98, buying power 99.98, shorting off |  |  |
+| 2026-10-21 13:34 | Watchlist had only stocks priced above the $99.98 buying power (MU, QQQ, NVDA, META, SPCX, TSLA, SNDK, AAPL): nothing could be sized | no trades possible from 09:32 | screener now skips stocks above buying power; session restarted; old list kept as watchlist_2026-10-21_unaffordable.json |
+| 2026-10-21 13:34 | session start (paper): equity 99.98, buying power 99.98, shorting off |  |  |
+| 2026-10-21 13:35 | Session on the old account (PA3L67J2X, $99.98) stopped: owner installed new API keys, which only reach new sessions | no trades were placed on the old account today | trading continues in a new session with the new keys |

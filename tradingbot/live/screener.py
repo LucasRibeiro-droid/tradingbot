@@ -34,7 +34,10 @@ def _get(url: str):
         return json.load(r)
 
 
-def screen(config: Config = BASELINE, shorting_enabled: bool = False, extra: tuple[str, ...] = ("SPY", "GLD")) -> dict:
+def screen(config: Config = BASELINE, shorting_enabled: bool = False, extra: tuple[str, ...] = ("SPY", "GLD"),
+           buying_power: float | None = None) -> dict:
+    """``buying_power``: skip stocks the account can't buy one whole share of (bracket orders
+    need whole shares)."""
     tp = config.trading
     actives = [x["symbol"] for by in ("volume", "trades")
                for x in _get(SCREENER_URL.format(by=by)).get("most_actives", [])]
@@ -63,6 +66,8 @@ def screen(config: Config = BASELINE, shorting_enabled: bool = False, extra: tup
         bias = trend_series(closed, config.trend)[-1].tradeable_direction
         range_pct = sum((c.h - c.l) / c.c for c in closed[-20:]) / 20 * 100
         why = []
+        if buying_power is not None and price > buying_power:
+            why.append(f"price {price:.2f} above buying power {buying_power:.2f}")
         if price < tp.min_price:
             why.append(f"price {price:.2f} < {tp.min_price}")
         if dollar_vol < tp.min_dollar_volume:

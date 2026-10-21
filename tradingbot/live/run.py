@@ -128,7 +128,7 @@ class Session:
         if wl.exists():
             result = json.loads(wl.read_text())
         else:
-            result = screen(self.config, self.shorting)
+            result = screen(self.config, self.shorting, buying_power=float(acct["buying_power"]))
             wl.write_text(json.dumps(result, indent=1))
         self.watch = [r["symbol"] for r in result["watch"]]
         self._load_state()

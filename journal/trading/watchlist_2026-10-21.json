@@ -1,188 +1,26 @@
 {
- "t": "2026-10-21T13:32:55+00:00",
+ "t": "2026-10-21T13:34:39+00:00",
  "watch": [
-  {
-   "symbol": "MU",
-   "price": 896.07,
-   "dollar_volume_m": 25758.3,
-   "range_pct": 3.93,
-   "daily_bias": "down",
-   "name": "Micron Technology, Inc. Common Stock"
-  },
-  {
-   "symbol": "QQQ",
-   "price": 717.63,
-   "dollar_volume_m": 24794.1,
-   "range_pct": 1.18,
-   "daily_bias": "down",
-   "name": "Invesco QQQ Trust, Series 1"
-  },
-  {
-   "symbol": "NVDA",
-   "price": 216.47,
-   "dollar_volume_m": 22804.7,
-   "range_pct": 2.16,
-   "daily_bias": "down",
-   "name": "NVIDIA Corporation Common Stock"
-  },
-  {
-   "symbol": "META",
-   "price": 694.25,
-   "dollar_volume_m": 13326.7,
-   "range_pct": 3.07,
-   "daily_bias": "down",
-   "name": "Meta Platforms, Inc. Class A Common Stock"
-  },
-  {
-   "symbol": "SPCX",
-   "price": 147.79,
-   "dollar_volume_m": 12907.8,
-   "range_pct": 3.97,
-   "daily_bias": "none",
-   "name": "Space Exploration Technologies Corp. Class A Common Stock"
-  },
-  {
-   "symbol": "TSLA",
-   "price": 373.71,
-   "dollar_volume_m": 12360.7,
-   "range_pct": 2.84,
-   "daily_bias": "none",
-   "name": "Tesla, Inc. Common Stock"
-  },
-  {
-   "symbol": "SNDK",
-   "price": 1365.38,
-   "dollar_volume_m": 12030.2,
-   "range_pct": 4.73,
-   "daily_bias": "down",
-   "name": "Sandisk Corporation Common Stock"
-  },
-  {
-   "symbol": "AAPL",
-   "price": 339.5,
-   "dollar_volume_m": 11948.1,
-   "range_pct": 1.79,
-   "daily_bias": "none",
-   "name": "Apple Inc. Common Stock"
-  }
- ],
- "also_qualified": [
-  {
-   "symbol": "AMD",
-   "price": 534.74,
-   "dollar_volume_m": 11211.4,
-   "range_pct": 3.81,
-   "daily_bias": "down",
-   "name": "Advanced Micro Devices, Inc. Common Stock"
-  },
-  {
-   "symbol": "MSFT",
-   "price": 531.87,
-   "dollar_volume_m": 10819.0,
-   "range_pct": 2.1,
-   "daily_bias": "down",
-   "name": "Microsoft Corporation Common Stock"
-  },
   {
    "symbol": "INTC",
    "price": 91.69,
-   "dollar_volume_m": 10311.0,
+   "dollar_volume_m": 10315.3,
    "range_pct": 4.58,
    "daily_bias": "down",
    "name": "Intel Corporation Common Stock"
   },
   {
-   "symbol": "AMZN",
-   "price": 262.63,
-   "dollar_volume_m": 8652.9,
-   "range_pct": 2.16,
-   "daily_bias": "up",
-   "name": "Amazon.com, Inc. Common Stock"
-  },
-  {
-   "symbol": "GOOGL",
-   "price": 340.27,
-   "dollar_volume_m": 7793.4,
-   "range_pct": 2.34,
-   "daily_bias": "down",
-   "name": "Alphabet Inc. Class A Common Stock"
-  },
-  {
-   "symbol": "AVGO",
-   "price": 334.37,
-   "dollar_volume_m": 7240.7,
-   "range_pct": 2.61,
-   "daily_bias": "down",
-   "name": "Broadcom Inc. Common Stock"
-  },
-  {
-   "symbol": "MRVL",
-   "price": 240.42,
-   "dollar_volume_m": 5050.5,
-   "range_pct": 5.4,
-   "daily_bias": "none",
-   "name": "Marvell Technology, Inc. Common Stock"
-  },
-  {
-   "symbol": "GOOG",
-   "price": 336.4,
-   "dollar_volume_m": 4997.9,
-   "range_pct": 2.29,
-   "daily_bias": "down",
-   "name": "Alphabet Inc. Class C Capital Stock"
-  },
-  {
-   "symbol": "TSM",
-   "price": 425.08,
-   "dollar_volume_m": 4623.6,
-   "range_pct": 2.35,
-   "daily_bias": "up",
-   "name": "Taiwan Semiconductor Manufacturing Company Ltd."
-  },
-  {
-   "symbol": "NBIS",
-   "price": 171.45,
-   "dollar_volume_m": 4030.1,
-   "range_pct": 6.65,
-   "daily_bias": "down",
-   "name": "Nebius Group N.V. Class A Ordinary Shares"
-  },
-  {
-   "symbol": "BE",
-   "price": 222.65,
-   "dollar_volume_m": 3569.1,
-   "range_pct": 6.78,
-   "daily_bias": "down",
-   "name": "Bloom Energy Corporation"
-  },
-  {
    "symbol": "CRWV",
    "price": 62.13,
-   "dollar_volume_m": 3252.6,
+   "dollar_volume_m": 3255.5,
    "range_pct": 6.5,
    "daily_bias": "down",
    "name": "CoreWeave, Inc. Class A Common Stock"
   },
   {
-   "symbol": "SKHY",
-   "price": 139.79,
-   "dollar_volume_m": 2902.1,
-   "range_pct": 3.62,
-   "daily_bias": "down",
-   "name": "SK hynix Inc. American Depositary Shares"
-  },
-  {
-   "symbol": "MSTR",
-   "price": 142.72,
-   "dollar_volume_m": 2765.5,
-   "range_pct": 5.71,
-   "daily_bias": "down",
-   "name": "Strategy Inc Common Stock Class A"
-  },
-  {
    "symbol": "NFLX",
    "price": 68.69,
-   "dollar_volume_m": 2488.4,
+   "dollar_volume_m": 2492.7,
    "range_pct": 2.14,
    "daily_bias": "down",
    "name": "Netflix, Inc. Common Stock"
@@ -190,7 +28,7 @@
   {
    "symbol": "IBIT",
    "price": 46.71,
-   "dollar_volume_m": 1640.0,
+   "dollar_volume_m": 1640.6,
    "range_pct": 2.11,
    "daily_bias": "down",
    "name": "iShares Bitcoin Trust ETF Shares"
@@ -198,7 +36,7 @@
   {
    "symbol": "IREN",
    "price": 26.62,
-   "dollar_volume_m": 1638.6,
+   "dollar_volume_m": 1640.0,
    "range_pct": 6.5,
    "daily_bias": "down",
    "name": "IREN Limited Ordinary Shares"
@@ -206,7 +44,7 @@
   {
    "symbol": "SMCI",
    "price": 32.47,
-   "dollar_volume_m": 1281.2,
+   "dollar_volume_m": 1286.0,
    "range_pct": 5.47,
    "daily_bias": "down",
    "name": "Super Micro Computer, Inc. Common Stock"
@@ -214,7 +52,7 @@
   {
    "symbol": "T",
    "price": 23.42,
-   "dollar_volume_m": 1010.7,
+   "dollar_volume_m": 1012.7,
    "range_pct": 1.99,
    "daily_bias": "down",
    "name": "AT&T Inc."
@@ -222,15 +60,17 @@
   {
    "symbol": "IONQ",
    "price": 31.26,
-   "dollar_volume_m": 963.2,
+   "dollar_volume_m": 963.6,
    "range_pct": 6.68,
    "daily_bias": "down",
    "name": "IonQ, Inc."
-  },
+  }
+ ],
+ "also_qualified": [
   {
    "symbol": "BITO",
    "price": 11.01,
-   "dollar_volume_m": 744.9,
+   "dollar_volume_m": 745.1,
    "range_pct": 2.15,
    "daily_bias": "down",
    "name": "ProShares Bitcoin ETF"
@@ -238,7 +78,7 @@
   {
    "symbol": "AAL",
    "price": 12.11,
-   "dollar_volume_m": 743.4,
+   "dollar_volume_m": 743.6,
    "range_pct": 3.6,
    "daily_bias": "down",
    "name": "American Airlines Group Inc. Common Stock"
@@ -246,7 +86,7 @@
   {
    "symbol": "NOK",
    "price": 9.02,
-   "dollar_volume_m": 648.7,
+   "dollar_volume_m": 649.0,
    "range_pct": 3.92,
    "daily_bias": "down",
    "name": "Nokia Corporation"
@@ -254,51 +94,72 @@
   {
    "symbol": "UNG",
    "price": 10.5,
-   "dollar_volume_m": 323.1,
+   "dollar_volume_m": 323.2,
    "range_pct": 3.06,
    "daily_bias": "none",
    "name": "United States Natural Gas Fund, LP Unit"
   }
  ],
  "rejected": {
-  "SPY": "average daily range 0.80% < 1.0%",
-  "GLD": "average daily range 0.96% < 1.0%",
+  "SPY": "price 769.05 above buying power 99.98; average daily range 0.80% < 1.0%",
+  "GLD": "price 377.65 above buying power 99.98; average daily range 0.96% < 1.0%",
   "SHFS": "price 0.09 < 5.0; dollar volume 4M < 50M",
   "SXTC": "price 0.07 < 5.0; dollar volume 27M < 50M",
   "OLOX": "price 0.74 < 5.0; dollar volume 13M < 50M",
   "WHLR": "price 0.36 < 5.0; dollar volume 7M < 50M",
-  "RBNE": "price 0.40 < 5.0; dollar volume 2M < 50M",
+  "RBNE": "price 0.40 < 5.0; dollar volume 3M < 50M",
   "WFF": "price 0.09 < 5.0",
   "SDST": "price 0.02 < 5.0; dollar volume 8M < 50M",
   "AMOD": "price 1.29 < 5.0; dollar volume 46M < 50M",
+  "SPCX": "price 147.79 above buying power 99.98",
   "RCT": "price 0.08 < 5.0; dollar volume 0M < 50M",
   "DKI": "price 0.05 < 5.0; dollar volume 10M < 50M",
-  "AHT": "price 1.79 < 5.0; dollar volume 2M < 50M",
   "SPCH": "leveraged/inverse product: Leverage Shares 2X Long SPCX Daily ETF",
+  "AHT": "price 1.79 < 5.0; dollar volume 2M < 50M",
   "SOXL": "leveraged/inverse product: Direxion Daily Semiconductor Bull 3X ETF",
   "NIVF": "price 0.25 < 5.0; dollar volume 15M < 50M",
-  "NWGL": "price 0.15 < 5.0; dollar volume 9M < 50M",
   "KORU": "leveraged/inverse product: Direxion Daily MSCI South Korea Bull 3X ETF",
+  "NWGL": "price 0.15 < 5.0; dollar volume 9M < 50M",
   "SOXS": "leveraged/inverse product: Direxion Daily Semiconductor Bear 3X ETF",
   "NEXR": "price 0.77 < 5.0; dollar volume 1M < 50M",
-  "SSPC": "leveraged/inverse product: Leverage Shares 2X Short SPCX Daily ETF",
   "TSLL": "leveraged/inverse product: Direxion Shares ETF Trust Direxion Daily TSLA Bull 2X ETF",
+  "SSPC": "leveraged/inverse product: Leverage Shares 2X Short SPCX Daily ETF",
   "INVE": "price 2.22 < 5.0; dollar volume 1M < 50M",
-  "SPHL": "price 2.43 < 5.0; dollar volume 3M < 50M",
+  "SPHL": "price 2.43 < 5.0; dollar volume 4M < 50M",
   "SNXX": "leveraged/inverse product: Tradr 2X Long SNDK Daily ETF",
+  "NVDA": "price 216.47 above buying power 99.98",
   "TQQQ": "leveraged/inverse product: ProShares UltraPro QQQ",
-  "SLNH": "price 0.58 < 5.0; dollar volume 8M < 50M",
-  "YMAT": "price 2.01 < 5.0; dollar volume 25M < 50M",
   "SQQQ": "leveraged/inverse product: ProShares UltraPro Short QQQ",
-  "HODO": "price 0.08 < 5.0; dollar volume 4M < 50M",
+  "TSLA": "price 373.71 above buying power 99.98",
+  "SLNH": "price 0.58 < 5.0; dollar volume 8M < 50M",
+  "GOOGL": "price 340.27 above buying power 99.98",
+  "YMAT": "price 2.01 < 5.0; dollar volume 25M < 50M",
   "MSTZ": "leveraged/inverse product: T-Rex 2X Inverse MSTR Daily Target ETF",
+  "HODO": "price 0.08 < 5.0; dollar volume 4M < 50M",
   "GCDT": "price 0.20 < 5.0; dollar volume 5M < 50M",
+  "NIO": "price 3.43 < 5.0",
   "IRE": "leveraged/inverse product: Defiance Daily Target 2X Long IREN ETF",
   "INLF": "price 0.26 < 5.0; dollar volume 15M < 50M",
   "SAFX": "price 0.21 < 5.0; dollar volume 3M < 50M",
-  "NIO": "price 3.43 < 5.0",
-  "AAOX": "leveraged/inverse product: Tradr 2X Long AAOI Daily ETF",
+  "NVD": "leveraged/inverse product: GraniteShares ETF Trust GraniteShares 2x Short NVDA Daily ETF",
+  "MU": "price 896.07 above buying power 99.98",
+  "GOOG": "price 336.40 above buying power 99.98",
+  "QQQ": "price 717.63 above buying power 99.98",
+  "SNDK": "price 1365.38 above buying power 99.98",
+  "NBIS": "price 171.45 above buying power 99.98",
+  "SKHY": "price 139.79 above buying power 99.98",
+  "AAPL": "price 339.50 above buying power 99.98",
+  "META": "price 694.25 above buying power 99.98",
+  "AMD": "price 534.74 above buying power 99.98",
+  "AMZN": "price 262.63 above buying power 99.98",
+  "MSTR": "price 142.72 above buying power 99.98",
+  "BE": "price 222.65 above buying power 99.98",
+  "MSFT": "price 531.87 above buying power 99.98",
+  "TSM": "price 425.08 above buying power 99.98",
+  "MRVL": "price 240.42 above buying power 99.98",
+  "VOO": "price 706.80 above buying power 99.98; average daily range 0.80% < 1.0%",
+  "AVGO": "price 334.37 above buying power 99.98",
   "SAIQ": "dollar volume 49M < 50M",
-  "VOO": "average daily range 0.80% < 1.0%"
+  "DELL": "price 461.56 above buying power 99.98"
  }
 }
