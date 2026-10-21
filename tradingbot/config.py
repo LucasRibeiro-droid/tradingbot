@@ -102,6 +102,40 @@ class StudyParams:
 
 
 @dataclass(frozen=True)
+class TradingParams:
+    """Live (paper) trading settings. The risk settings are the owner's, authorized 2026-10-21;
+    the rest are [Bot] choices from the research (journal/trading/README.md)."""
+
+    # Owner: risk 1% of equity per trade (entry to stop).
+    risk_per_trade_pct: float = 1.0
+    # Owner: no daily loss limit and no cap on trades; "take as many trades there are to take
+    # as long as you follow a clear logic". None = no limit.
+    max_daily_loss_pct: float | None = None
+    max_trades_per_day: int | None = None
+    # Owner + LOCKED.max_instruments (Day 4): screen each morning, trade at most 2 instruments a day.
+    max_instruments_per_day: int = 2
+    # [Bot] Execution on the 15-minute: the entry models with TJR's exits were positive on
+    # SPY and GLD 15-minute and 1-hour, not on the 5-minute for SPY (knowledge/exits.md).
+    # Take profit 1 from the next timeframe up (Day 37).
+    execution_tf: str = "15Min"
+    take_profit_tf: str = "1Hour"
+    # Entry model 1 (sweep + break, enter on the break's close; Day 30, Day 32): the best
+    # per-setup results with TJR's exits on 3 of 4 intraday charts (knowledge/execution.md).
+    entry_model: int = 1
+    # New entries from the New York open [TJR Day 18] until this time (ET); flat before the
+    # close [Bot: TJR doesn't hold trades for days, Day 36, 20:00].
+    last_entry: str = "15:30"
+    flatten_at: str = "15:55"
+    # Day 38: room beyond the sweep for the spread. TJR used 0.5 points on the S&P (~0.01%).
+    stop_buffer_pct: float = 0.02
+    # [Bot] Screening filters.
+    min_price: float = 5.0
+    min_dollar_volume: float = 50_000_000.0  # average daily, last 20 days
+    min_range_pct: float = 1.0  # average daily high-low range, last 20 days, % of price
+    shortlist: int = 8
+
+
+@dataclass(frozen=True)
 class Locked:
     """Rules stated directly in the lessons. Not tunable."""
 
@@ -136,6 +170,7 @@ class Config:
     liquidity: LiquidityParams = LiquidityParams()
     decision: DecisionParams = DecisionParams()
     study: StudyParams = StudyParams()
+    trading: TradingParams = TradingParams()
     # The one or two instruments the bot studies and trades (LOCKED.max_instruments).
     # SPY stands in for TJR's S&P 500 and GLD for gold, the two markets he uses most.
     watchlist: tuple[str, ...] = ("SPY", "GLD")

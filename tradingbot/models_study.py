@@ -47,7 +47,7 @@ from .candles import BULLISH, Candle
 from .config import BASELINE, to_dict
 from .decision import Decision, simulate
 from .equilibrium import ranges
-from .exits import simulate_partials, take_profits
+from .exits import gap_edges, simulate_partials, take_profits
 from .fvg import find_gaps
 from .liquidity import draw, scan
 from .orderblocks import find_blocks
@@ -198,16 +198,7 @@ def _tjr_exit(candles, scanned, gaps, htf, htf_scanned, htf_length, setup: Decis
     k = _last_closed(htf, htf_length, candles[j].t)
     htf_draws = [p.price for p in htf_scanned[k][1]] if k is not None else []
     ltf_pools = [p.price for p in scanned[j][1]]
-    # Unfilled gaps beyond the entry: their near edge, where price is drawn to first [Bot].
-    gap_edges = []
-    for g in gaps:
-        if g.confirmed_at >= j:
-            continue
-        edge = g.bottom if d == 1 else g.top
-        traded = any(x.h >= g.bottom and x.l <= g.top for x in candles[g.confirmed_at + 1:j + 1])
-        if not traded and (edge - price) * d > 0:
-            gap_edges.append(edge)
-    tps = take_profits(d, price, setup.stop, htf_draws, ltf_pools + gap_edges)
+    tps = take_profits(d, price, setup.stop, htf_draws, ltf_pools + gap_edges(candles, gaps, j, price, d))
     if not tps:
         return {"r": 0.0, "exit": "no_target"}
     res = simulate_partials(candles, j, d, price, setup.stop, tps, max_bars, check_entry_candle=bool(touch))

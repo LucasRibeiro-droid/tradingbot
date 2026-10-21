@@ -74,3 +74,17 @@ def simulate_partials(candles: Sequence[Candle], index: int, direction: int, ent
         return None
     r += (1 - part * hit) * (after[-1].c - entry) * direction / risk
     return {"r": round(r, 3), "exit": "time", "bars": max_bars, "hit": hit}
+
+
+def gap_edges(candles: Sequence[Candle], gaps, j: int, price: float, direction: int) -> list[float]:
+    """Near edges of fair value gaps beyond ``price`` that formed before candle ``j`` and that
+    price hasn't traded into since: building blocks price is drawn to [TJR Day 37; Bot]."""
+    out = []
+    for g in gaps:
+        if g.confirmed_at >= j:
+            continue
+        edge = g.bottom if direction == 1 else g.top
+        traded = any(x.h >= g.bottom and x.l <= g.top for x in candles[g.confirmed_at + 1:j + 1])
+        if not traded and (edge - price) * direction > 0:
+            out.append(edge)
+    return out
