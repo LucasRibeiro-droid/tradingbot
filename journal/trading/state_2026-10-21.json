@@ -71,11 +71,48 @@
    "be_moved": false,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1530_MU.md"
+  },
+  {
+   "symbol": "SPCX",
+   "setup_t": "2026-10-21T17:00:00Z",
+   "direction": -1,
+   "planned_entry": 160.6,
+   "stop": 166.19,
+   "targets": [
+    143.28,
+    142.99,
+    140.7
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-21-SPCX-1700-0",
+     "order_id": "82a5b93d-abaf-4e3a-95a5-ff9cee1a883e",
+     "qty": 21,
+     "target": 143.28
+    },
+    {
+     "client_id": "tjr-2026-10-21-SPCX-1700-1",
+     "order_id": "dafe19f1-dbaa-4133-a53e-68068bded45f",
+     "qty": 20,
+     "target": 142.99
+    },
+    {
+     "client_id": "tjr-2026-10-21-SPCX-1700-2",
+     "order_id": "81030ba5-7471-474e-9c8f-92e8347183e5",
+     "qty": 20,
+     "target": 140.7
+    }
+   ],
+   "entry_fill": 160.55278680327868,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1700_SPCX.md"
   }
  ],
  "traded_symbols": [
   "MU",
-  "NVDA"
+  "NVDA",
+  "SPCX"
  ],
  "seen": [
   [
@@ -85,6 +122,10 @@
   [
    "NVDA",
    "2026-10-21T14:00:00Z"
+  ],
+  [
+   "SPCX",
+   "2026-10-21T17:00:00Z"
   ]
  ]
 }
