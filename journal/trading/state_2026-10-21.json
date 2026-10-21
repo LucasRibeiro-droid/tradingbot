@@ -143,15 +143,56 @@
    "be_moved": false,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1730_TSLA.md"
+  },
+  {
+   "symbol": "AAPL",
+   "setup_t": "2026-10-21T18:45:00Z",
+   "direction": -1,
+   "planned_entry": 344,
+   "stop": 345.25,
+   "targets": [
+    338.895,
+    338.71,
+    335.86
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-21-AAPL-1845-0",
+     "order_id": "8a474aac-4700-47c0-aedd-7149930198d1",
+     "qty": 10,
+     "target": 338.895
+    },
+    {
+     "client_id": "tjr-2026-10-21-AAPL-1845-1",
+     "order_id": "4a7536de-6ce9-4576-af86-813239cd8296",
+     "qty": 9,
+     "target": 338.71
+    },
+    {
+     "client_id": "tjr-2026-10-21-AAPL-1845-2",
+     "order_id": "bb56d058-c0eb-4a12-84b6-64c446f58cc5",
+     "qty": 9,
+     "target": 335.86
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1845_AAPL.md"
   }
  ],
  "traded_symbols": [
+  "AAPL",
   "MU",
   "NVDA",
   "SPCX",
   "TSLA"
  ],
  "seen": [
+  [
+   "AAPL",
+   "2026-10-21T18:45:00Z"
+  ],
   [
    "MU",
    "2026-10-21T15:30:00Z"
