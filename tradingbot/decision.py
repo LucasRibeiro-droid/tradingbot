@@ -145,12 +145,22 @@ class Continuation:
     """
 
     def __init__(self, htf_candles: Sequence[Candle], htf_length, config: Config = BASELINE,
-                 zone: str = "fvg"):
+                 zone: str = "fvg", in_discount: bool = False):
         from .fvg import find_gaps
         from .orderblocks import find_blocks, wick_zone
         from .trend import _ts
         self.config = config
         self.zone = zone
+        # Equilibrium (Days 26, 28): optionally require the retracement to reach the higher
+        # timeframe's discount (premium for shorts): "a fair value gap within a discounted
+        # price and then you get a reaction ... enter" (Day 26, 09:49-10:10).
+        self.in_discount = in_discount
+        from .equilibrium import ranges
+        from .trend import trend_series
+        self._eq = [(_ts(c.t) + htf_length, r) for c, r in
+                    zip(htf_candles, ranges(htf_candles, trend_series(htf_candles, config.trend)))]
+        self._eq_k = 0
+        self._range = None
         if zone == "fvg":
             found = find_gaps(htf_candles)
         else:
@@ -173,6 +183,9 @@ class Continuation:
         while self._k < len(self._pending) and self._pending[self._k][0] <= now:
             self.zones.append(_Zone(self._pending[self._k][1]))
             self._k += 1
+        while self._eq_k < len(self._eq) and self._eq[self._eq_k][0] <= now:
+            self._range = self._eq[self._eq_k][1]
+            self._eq_k += 1
         d = htf.tradeable_direction if htf else NONE
         s = states[i]
         decision = None
@@ -189,7 +202,9 @@ class Continuation:
                 z.entered, z.extreme = True, c.h if z.extreme is None else max(z.extreme, c.h)
             trigger = "bos_up" if g.side == UP else "bos_down"
             if (decision is None and z.entered and g.side == d and s.event == trigger
-                    and after_market_open(c.t)):
+                    and after_market_open(c.t)
+                    and (not self.in_discount or (self._range is not None and self._range.direction == g.side
+                                                  and self._range.depth(z.extreme) >= 0.5))):
                 z.done = True
                 stop, entry = z.extreme, c.c
                 target = draw(scanned[i][1], g.side, entry)

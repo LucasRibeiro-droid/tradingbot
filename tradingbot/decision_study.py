@@ -43,11 +43,14 @@ def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta, con
         paths: tuple[str, ...] = ("reversal",)) -> dict:
     """Run the harness. ``paths``: "reversal" (liquidity sweep + break, Days 6-12) and/or
     "continuation" (higher-timeframe fair value gap + lower-timeframe break, Days 14-18) or
-    "ob_continuation" (the same with a higher-timeframe order block, Days 20-24)."""
+    "ob_continuation" (the same with a higher-timeframe order block, Days 20-24) or
+    "continuation_discount" (gaps, only when the retracement reaches the discount, Days 26-28)."""
     states = trend_series(ltf, config.trend)
     htf_states = trend_series(htf, config.trend)
     scanned = scan(ltf, config.liquidity)
     cont = Continuation(htf, htf_length, config) if "continuation" in paths else None
+    if "continuation_discount" in paths:
+        cont = Continuation(htf, htf_length, config, in_discount=True)
     if "ob_continuation" in paths:
         cont = Continuation(htf, htf_length, config, zone="order_block")
     if "ob_wick_continuation" in paths:
@@ -97,6 +100,7 @@ def main() -> None:
     runs = [(label, config, ("reversal",)) for label, config in variants(BASELINE).items()]
     runs += [("continuation (fair value gaps) only", BASELINE, ("continuation",)),
              ("reversal + continuation", BASELINE, ("reversal", "continuation")),
+             ("continuation (gaps, in discount) only", BASELINE, ("continuation_discount",)),
              ("continuation (order blocks) only", BASELINE, ("ob_continuation",)),
              ("continuation (order blocks, wick box) only", BASELINE, ("ob_wick_continuation",))]
     for label, config, paths in runs:

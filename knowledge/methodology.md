@@ -2,7 +2,7 @@
 
 TJR's bootcamp teaches **one** way of trading, built from pieces taught over many lessons.
 This file reconstructs it as far as the lessons received so far allow (Days 2–4, 6–8, 10,
-12, 14, 16, 18, 20, 22, 24, 26; see `course_map.md`). It's updated with every lesson.
+12, 14, 16, 18, 20, 22, 24, 26, 28; see `course_map.md`). It's updated with every lesson.
 
 Tags: **[TJR]** taught explicitly (Day, timestamp) · **[Inferred]** concluded from several
 lessons · **[Bot]** a choice made to make something testable, not from TJR.
@@ -43,7 +43,7 @@ Assembled, the decision chain taught so far is [Inferred from Days 4, 6, 8–24]
 6. **Stop** beyond the retracement's high or low [Day 18, 07:12 example], or beyond the whole order block "to play safe"; its size follows the timeframe being played [Day 22, 09:15–09:59, 23:21]. **Targets:** previous liquidity, accumulation areas, gap levels; several take profits, rest to break even [Day 12, 05:56–10:22; Day 18 examples].
 7. **No confirmation, no trade** at any step [Day 8, 08:38; Day 12, 07:20]. **No trades before the market opens** [Day 18, 03:13].
 
-Still to be taught: equilibrium part 2 (28), execution (30, 32, 33), daily bias (34–36),
+Still to be taught: the trading plan (29), putting everything together (30, 32, 33), execution (30, 32, 33), daily bias (34–36),
 stop losses (38), take profits (37), position size (39), the trading plan (29).
 
 ---
@@ -85,10 +85,12 @@ stop losses (38), take profits (37), position size (39), the trading plan (29).
 - A gap price pushes past is no longer of interest [TJR Day 18, 09:43]. Refine a gap on a lower timeframe when a lower-timeframe wick already fills part of it [TJR Day 18, 12:03].
 - "More of a confirmation rather than an entry" [TJR Day 18, 16:09].
 
-### Equilibrium [Day 26; incomplete until Day 28] (details: `equilibrium.md`)
+### Equilibrium [Days 26, 28; complete] (details: `equilibrium.md`)
 - The 50% of a swing high to swing low (or low to high). Below it is a **discount** (buy, in an uptrend); above it is a **premium** (sell, in a downtrend) [TJR Day 26, 06:32–08:20, 11:16].
 - A gauge, not an entry: inside the discount, find an order block, a fair value gap or a break of structure [TJR Day 26, 08:21–08:48]. A fair value gap inside the discount is "the perfect" combination [TJR Day 26, 09:49–10:10].
 - The sweep is the "inducement"; the break of structure is "our first primary entry" [TJR Day 26, 09:08–09:16].
+- Measure low → high in an uptrend (high → low in a downtrend), dragging it to each new extreme; Gann box or Fibonacci at 0 / 0.5 / 1 [TJR Day 28, 03:57, 08:13–09:16, 18:23]. "Discount" = a good price for the trade's direction [Inferred from Day 28, 02:06 and Day 26, 07:06].
+- Equilibrium + a break alone is "not much confirmation"; combine with a gap or block [TJR Day 28, 07:20, 03:30].
 
 ### Order blocks [Days 20, 22, 24; complete] (details: `order_blocks.md`)
 - **Order block = the move that caused the liquidity sweep**, before the break of structure that shifts the market: the leg up that took the highs before a break down, or the leg down that took the lows before a break up [TJR Day 20, 03:10; Day 22, 02:36–02:46].
@@ -226,7 +228,7 @@ What TJR has named as a reason to enter, in his words:
 | Day 22: on the 4-hour "this was the candle ... relatively precise"; but "it's the whole move". | The whole move; a higher timeframe can show it as one candle, so scale down [TJR Day 22, 07:49–08:15]. Where the move starts is not defined. |
 | Day 22: stop "above the order block itself if you want to play safe" vs "under here or underneath here, it doesn't really matter". | Both are examples; stops are taught on Day 38. |
 | Days 22, 24: after price reaches an order block, enter on a lower-timeframe break. Day 26: "even just hitting the order block, enter off that"; "if it hits the order block I'm instantly entering". | Both are taught. Possibly confidence or timeframe. H23 (bare entry at the block): better reward-to-risk, worse average R on 5 of 6 charts. Open. |
-| Day 26, 07:06: above 50% "is considered a discount to go short". | A misspoken word: by his reasoning and 11:16 it's the premium [Inferred]. |
+| Day 26, 07:06 and Day 28, 02:06: shorts "in a discount", above 50%. | Not a mistake: TJR uses "discount" for a good price in the trade's direction ("on sale") [Inferred]. |
 | Day 18 waits for the New York open; Day 22's 15-minute example waits for the London open. | Different markets (TJR trades GBP pairs). Which open for which instrument stays open. |
 
 ---
@@ -258,7 +260,7 @@ What TJR has named as a reason to enter, in his words:
 | Liquidity pools and sweeps | ready (`liquidity.py`); "prominent" approximated [Bot] |
 | Fair value gaps | ready (`fvg.py`), definition [TJR Day 16]; "filled" and "invalidated" are [Bot] |
 | Order blocks | detection ready (`orderblocks.py`), definition [TJR Days 20–24], exact leg boundaries [Bot]; in the harness as an alternative continuation zone (H24) |
-| Equilibrium | concept learned [TJR Day 26]; which swing to measure waits for Day 28 |
+| Equilibrium | ready (`equilibrium.py`), [TJR Days 26, 28]; anchors and wicks [Inferred from frames]; tested as a continuation filter (H28) |
 | Daily bias | waiting for its lessons |
 | News calendar | needed (TJR: no trading on PPI/FOMC days); waits for Day 19 |
 | Entry trigger on a lower timeframe inside a zone | ready in the harness (`decision.Continuation`), refinements wait for Days 30–33 |

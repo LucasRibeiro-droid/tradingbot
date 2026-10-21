@@ -6,7 +6,7 @@ explains with his hands ("it's hard to show while I'm explaining it", 06:30), so
 screenshots are needed. Topic file: `equilibrium.md`.
 
 **Classification:** part 1 of 2 (explanation; Day 28 = on the chart). A **concept** and the
-third **retracement tool**. The topic stays **open** until Day 28. The trading content is
+third **retracement tool**. Completed by Day 28. The trading content is
 05:08–11:40. The rest is off-topic chat, a Discord ad (11:43–15:12) and a school-play clip
 (15:39–18:00); the Discord ad does contain one trading remark, used below.
 
@@ -43,7 +43,7 @@ third **retracement tool**. The topic stays **open** until Day 28. The trading c
 - **Days 22, 24 (contradiction):** there, the entry after price reaches an order block was a lower-timeframe break. Here, "even just hitting the order block, enter off that"; "if it hits the order block I'm instantly entering".
 
 ## Issues
-1. **Misspoken word:** at 07:06–07:20 TJR says above the 50 mark "is considered a **discount** to go short". From his own reasoning ("because it's at a high price") and 11:16–11:22, the area above 50% is the **premium**: the good place to short. The bot reads it that way [Inferred].
+1. **Misspoken word:** at 07:06–07:20 TJR says above the 50 mark "is considered a **discount** to go short". From his own reasoning ("because it's at a high price") and 11:16–11:22, the area above 50% is the **premium**: the good place to short. The bot reads it that way [Inferred]. **Day 28 update:** he says it again ("they always buy and short in a discount", 02:14), so it's his wording: "discount" = a good price for the trade's direction.
 2. **Which swing high and low:** "a swing high to a swing low". Which pair (the latest, the range of the leg that broke structure, a higher-timeframe range) isn't said. Expected on Day 28.
 3. **Wicks or closes** for the high and low: not said.
 4. **Order block: instant entry vs waiting for a break** (see Connections). Possibly by timeframe or confidence. The bot's H23 test of a bare limit entry at the block gave a better reward-to-risk but a worse average result on 5 of 6 charts.
