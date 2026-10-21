@@ -107,12 +107,49 @@
    "be_moved": false,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1700_SPCX.md"
+  },
+  {
+   "symbol": "TSLA",
+   "setup_t": "2026-10-21T17:30:00Z",
+   "direction": -1,
+   "planned_entry": 386.4,
+   "stop": 388.9,
+   "targets": [
+    363.69,
+    363.04,
+    359.51
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-21-TSLA-1730-0",
+     "order_id": "3b49c6c6-1b4b-4212-b4b7-77c5e5b51a31",
+     "qty": 9,
+     "target": 363.69
+    },
+    {
+     "client_id": "tjr-2026-10-21-TSLA-1730-1",
+     "order_id": "7e6851f3-d527-449e-bda3-6bb6fce4e6e5",
+     "qty": 8,
+     "target": 363.04
+    },
+    {
+     "client_id": "tjr-2026-10-21-TSLA-1730-2",
+     "order_id": "3fded7bc-5032-4c56-96f4-bf2db1827443",
+     "qty": 8,
+     "target": 359.51
+    }
+   ],
+   "entry_fill": 386.7425,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1730_TSLA.md"
   }
  ],
  "traded_symbols": [
   "MU",
   "NVDA",
-  "SPCX"
+  "SPCX",
+  "TSLA"
  ],
  "seen": [
   [
@@ -126,6 +163,10 @@
   [
    "SPCX",
    "2026-10-21T17:00:00Z"
+  ],
+  [
+   "TSLA",
+   "2026-10-21T17:30:00Z"
   ]
  ]
 }
