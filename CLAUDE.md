@@ -15,6 +15,10 @@ time, check it out of sample, and record every change in `journal/trading/rule_c
 - `journal/trading/reviews/`: daily reviews; `performance.md`, `lessons.md`, `events.md`.
 - Live engine: `tradingbot/live/` (`run.py` session, `signals.py` assessment, `screener.py`,
   `broker.py` paper-only client, `replay.py` to test a setting change on history).
+- **The session runs on GitHub Actions** (`.github/workflows/trading-session.yml` on the default
+  branch; every 15 min on weekdays, one run at a time, journal pushed here every 2 min). Claude
+  containers are shut down minutes after a conversation goes idle, so **don't start the bot in a
+  Claude session**; check the Actions run instead, and start one with `run_workflow` if none is running.
 
 ## Before working on a bootcamp lesson
 
