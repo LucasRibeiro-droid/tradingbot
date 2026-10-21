@@ -25,9 +25,10 @@ Choose which models you trade and write them in the execution plan [TJR Day 30, 
 
 ## How the bot's test harness maps onto them
 - Model 1 ≈ the reversal path (`decide`): sweep within 10 candles + break, entry at the break's close.
-- Models 2/3 ≈ the continuation path (`Continuation`, `zone="order_block"` / `"fvg"`). The bot waits for a lower-timeframe break inside the zone, as in Days 16–24, rather than entering on the touch.
+- Model 2 as Day 32 executes it (on the touch, stop beyond the block) = the block trade in `orderblock_study.py` (a sweep is required there).
+- The continuation path (`Continuation`, `zone="order_block"` / `"fvg"`) is the Days 16–24 variant: it waits for a lower-timeframe break inside the zone, an optional extra confirmation.
 - Model 4 ≈ the continuation path with `in_discount=True` (H28).
-- These paths don't yet require that the sweep and break come first: the continuation path uses the higher timeframe's trend, which a break of structure set, but doesn't check for a sweep before that break. That's a difference to close once Day 32 shows the models on charts.
+- The continuation path doesn't yet require a sweep before the higher timeframe's break; TJR's models all start with one. To close when models 3 and 4 are tested (Day 33).
 
 This is the "base strategy", not the whole of it: daily bias, stops and take profits come later [TJR Day 32, 02:23–04:30].
 
