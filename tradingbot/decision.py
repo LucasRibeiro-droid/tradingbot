@@ -16,8 +16,8 @@ Steps, with provenance ([TJR] taught, [Inferred], [Bot] placeholder):
   5. Stop beyond the last ``stop_lookback`` candles' extreme [Bot]; stops are taught on Day 38.
   6. Target: the nearest untaken liquidity in the trade's direction [TJR Day 12].
 
-A second path, ``Continuation`` (Days 14, 16, 18), trades the retracement into a
-higher-timeframe fair value gap with a lower-timeframe break of structure; see its docstring.
+A second path, ``Continuation`` (Days 14-24), trades the retracement into a higher-timeframe
+fair value gap or order block with a lower-timeframe break of structure; see its docstring.
 """
 from __future__ import annotations
 
@@ -104,7 +104,7 @@ def simulate(candles: Sequence[Candle], dec: Decision, max_bars: int) -> dict | 
 
 
 # ---------------------------------------------------------------------------------------
-# Continuation through fair value gaps (Days 14, 16, 18)
+# Continuation through fair value gaps (Days 14, 16, 18) or order blocks (Days 20, 22, 24)
 # ---------------------------------------------------------------------------------------
 
 def after_market_open(t: str) -> bool:
@@ -126,8 +126,13 @@ class _Zone:
 
 
 class Continuation:
-    """Higher-timeframe fair value gap, retracement into it, lower-timeframe break of
-    structure in the trend's direction (Days 14, 16, 18).
+    """Higher-timeframe fair value gap or order block, retracement into it, lower-timeframe
+    break of structure in the trend's direction (Days 14, 16, 18; order blocks Days 20-24).
+
+    ``zone``: "fvg" (fair value gaps) or "order_block". Order blocks are TJR's first-choice
+    retracement area and are used "off the first retracement" (Day 20, 06:57; Day 24, 16:49);
+    the entry is the same: price taps in, then a lower-timeframe break (Day 24, 11:53-12:10).
+    Everything else is shared, so the two zone types can be compared one variable at a time.
 
     [TJR] Only gaps in the higher timeframe's direction (Day 16, 03:22). Never enter when
     price merely reaches the gap; wait for a lower-timeframe break in the trend's direction
@@ -138,12 +143,17 @@ class Continuation:
     touching the zone; one decision per gap; entry at the break candle's close.
     """
 
-    def __init__(self, htf_candles: Sequence[Candle], htf_length, config: Config = BASELINE):
+    def __init__(self, htf_candles: Sequence[Candle], htf_length, config: Config = BASELINE,
+                 zone: str = "fvg"):
         from .fvg import find_gaps
+        from .orderblocks import find_blocks
         from .trend import _ts
         self.config = config
+        self.zone = zone
+        found = (find_gaps(htf_candles) if zone == "fvg"
+                 else find_blocks(htf_candles, trend=config.trend, liquidity=config.liquidity))
         self._pending = sorted(((_ts(htf_candles[g.confirmed_at].t) + htf_length, g)
-                                for g in find_gaps(htf_candles)), key=lambda x: x[0])
+                                for g in found), key=lambda x: x[0])
         self._k = 0
         self.zones: list[_Zone] = []
 
@@ -181,7 +191,8 @@ class Continuation:
                 if target is not None and stop != entry and (stop < entry) == (g.side == UP):
                     decision = Decision(i, g.side, entry, stop, target, (
                         "higher timeframe trend agrees",
-                        f"retraced into a higher-timeframe {'bullish' if g.side == UP else 'bearish'} fair value gap",
+                        f"retraced into a higher-timeframe {'bullish' if g.side == UP else 'bearish'} "
+                        + ("fair value gap" if self.zone == "fvg" else "order block"),
                         f"lower-timeframe break of structure {'up' if g.side == UP else 'down'}",
                         "stop beyond the retracement's extreme",
                         "target: nearest untaken liquidity"))

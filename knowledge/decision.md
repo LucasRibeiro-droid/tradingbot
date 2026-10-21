@@ -16,7 +16,7 @@ the reasons each indicator gave.
 | Break of structure | Day 6 | The trigger: a candle closes past the most recent high or low. | `day06_break_of_structure.md` |
 | Liquidity | Days 8, 10, 12 | Evidence that orders were just filled on the other side (a sweep), and where price is drawn to next (the target). | `liquidity.md` |
 | Fair value gaps | Days 14, 16, 18 | The continuation path: a higher-timeframe gap in the trend's direction, price retraces in, lower-timeframe break of structure | `fair_value_gaps.md` |
-| Order blocks | Days 20, 22, 24 | Detected (`orderblocks.py`) and studied, **not used in decisions** until Day 24 teaches how to put them together. | `order_blocks.md` |
+| Order blocks | Days 20, 22, 24 | An alternative zone for the continuation path (`Continuation(zone="order_block")`), compared with fair value gaps (H24); not yet the baseline. | `order_blocks.md` |
 | Equilibrium | Days 26, 28 | to come | |
 | Daily bias | Days 34, 35, 36 | to come | |
 
@@ -33,7 +33,7 @@ against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two i
 5. **Stop:** beyond the most extreme price of the last 10 candles [Bot]; stops are taught on Day 38.
 6. **Target:** the draw on liquidity, the nearest untaken pool in the trade's direction [TJR Day 12]. None, no trade.
 
-## The continuation path (Days 14, 16, 18)
+## The continuation path (Days 14–24)
 
 `decision.Continuation`, run alongside the reversal path:
 1. A fair value gap on the **higher** timeframe, in that timeframe's trend direction [TJR Day 16].
@@ -41,6 +41,7 @@ against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two i
 3. Trigger: a break of structure on the **lower** timeframe in the trend's direction [TJR Days 14, 16, 18].
 4. Only from 9:30 New York on [TJR Day 18: after the market open].
 5. Stop beyond the retracement's extreme [TJR Day 18 example]; target the nearest untaken liquidity [TJR Day 12]. One target, no partials, no break-even yet [Bot simplification].
+6. The zone can be a fair value gap (baseline) or an order block, TJR's first choice [TJR Day 20, 06:57; Day 24, 11:53]. Same steps otherwise, so the two can be compared (H24).
 
 ## How it improves
 

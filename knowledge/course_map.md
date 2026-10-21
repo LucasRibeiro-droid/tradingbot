@@ -28,6 +28,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 18 | FVG Pt. 3 | Putting it together | timeframe cascade (15m → 5m → 1m); patient entry for better reward-to-risk; gap pushed past = dropped; refine gap on lower TF; gap + liquidity confluence; trades only after market open; partials and break-even (examples); "confirmation rather than an entry" | Days 2, 4, 6, 8–16 | learned (**fair value gaps complete**) | Continuation path; first full examples of the sequence; previews order blocks, equilibrium, market open, accumulation |
 | 20 | Order Blocks | What an order block is | order block = the leg that caused the liquidity sweep, before the break; price retraces into it to fill more orders; ranking: sweep + break starts the move, then order block > fair value gap > equilibrium for retracements; one per trend; every timeframe; = accumulation area; no trading on news days | Days 6, 8–12, 14–18 | partial (part 1 of 3) | The first-choice retracement area; names Day 18's "accumulation" |
 | 22 | Order Blocks pt.2 | How to spot order blocks | find the break, mark the whole move before it that swept liquidity; several candles; scale down for precision; stop size follows the timeframe played; stop beyond the block "to play safe"; targets at higher-timeframe liquidity; wait for the open (NY or London); lower-timeframe break inside the block; some blocks never get hit; homework 5 blocks × 3 timeframes | Days 4, 6, 12, 18, 20 | partial (part 2 of 3) | Makes order blocks detectable; first rules on stop size |
+| 24 | Order Blocks Pt 3 | Putting order blocks together | summary; best with a sweep; box the whole leg (beginners) or wick to start of body (TJR); tap in → break → enter; order blocks as take profit; gaps for any retracement, block for the first; daily block not enough alone → 4h break → 1h block → break; daily/weekly bias; already inside → double confirmation | Days 4, 6, 8–22 | learned (**order blocks complete**) | Completes the first-choice retracement area; previews daily bias and equilibrium |
 
 ## Not yet received
 
@@ -37,7 +38,6 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 15 | Identifying problems | psychology |
 | 17 | Patience | psychology |
 | 19 | How to Read News Data | news / fundamentals |
-| 24 | Order Blocks Pt 3 | putting order blocks together (completes the topic) |
 | 21 | How to Take a Win & Life Lessons | psychology |
 | 23 | Check In / Be my boy | psychology |
 | 25 | Over Confidence | psychology |

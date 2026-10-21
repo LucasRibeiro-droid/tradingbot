@@ -42,11 +42,14 @@ def variants(config: Config) -> dict[str, Config]:
 def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta, config: Config,
         paths: tuple[str, ...] = ("reversal",)) -> dict:
     """Run the harness. ``paths``: "reversal" (liquidity sweep + break, Days 6-12) and/or
-    "continuation" (higher-timeframe fair value gap + lower-timeframe break, Days 14-18)."""
+    "continuation" (higher-timeframe fair value gap + lower-timeframe break, Days 14-18) or
+    "ob_continuation" (the same with a higher-timeframe order block, Days 20-24)."""
     states = trend_series(ltf, config.trend)
     htf_states = trend_series(htf, config.trend)
     scanned = scan(ltf, config.liquidity)
     cont = Continuation(htf, htf_length, config) if "continuation" in paths else None
+    if "ob_continuation" in paths:
+        cont = Continuation(htf, htf_length, config, zone="order_block")
     trades = []
     j, current = 0, None
     for i, c in enumerate(ltf):
@@ -91,7 +94,8 @@ def main() -> None:
     results = {}
     runs = [(label, config, ("reversal",)) for label, config in variants(BASELINE).items()]
     runs += [("continuation (fair value gaps) only", BASELINE, ("continuation",)),
-             ("reversal + continuation", BASELINE, ("reversal", "continuation"))]
+             ("reversal + continuation", BASELINE, ("reversal", "continuation")),
+             ("continuation (order blocks) only", BASELINE, ("ob_continuation",))]
     for label, config, paths in runs:
         r = run(ltf, htf, timeframe_length(args.htf), config, paths)
         results[label] = r

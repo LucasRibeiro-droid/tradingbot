@@ -19,6 +19,7 @@ Key points:
 - YouTube blocks downloads from cloud sessions. Uploaded video files work.
 - Uploaded video with audio: `python scripts/transcribe_local.py VIDEO --out knowledge/sources/dayNN.md --model-dir DIR` (offline Whisper via sherpa-onnx; model from the sherpa-onnx GitHub `asr-models` release).
 - YouTube link only: `python scripts/gemini_watch.py URL --out knowledge/sources/dayNN.md --model gemini-3.5-flash` (needs `GEMINI_API_KEY`).
+- Captions already pasted: add `--screen-only` so Gemini only describes the screen and quotes the speech at each entry; check those quotes against the captions. Its timing is reliable; its box/price details are not, so ask the owner for screenshots at exact timestamps. Free quota is ~20 requests/day per model; `gemini-3-flash-preview` works when `3.5-flash` is exhausted.
 - Look at chart frames yourself with ffmpeg at the timestamps where TJR points or draws.
 
 ## Code
