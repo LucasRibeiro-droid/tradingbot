@@ -11,3 +11,5 @@
 | 2026-10-21 13:35 | Session on the old account (PA3L67J2X, $99.98) stopped: owner installed new API keys, which only reach new sessions | no trades were placed on the old account today | trading continues in a new session with the new keys |
 | 2026-10-21 13:36 | New keys verified: paper account PA3PX6CUDFOF, equity $100,000, buying power $400,000, shorting enabled; market open, no positions, no open orders | sizing no longer limited by account size; shorts possible | old-account watchlist and state deleted; session relaunched to screen with the new buying power |
 | 2026-10-21 13:36 | session start (paper): equity 100000, buying power 400000, shorting on |  |  |
+| 2026-10-21 14:24 | Container restarted (uptime 16 s); session process gone, last state write 13:43 | no trading 13:43–14:25 | Alpaca reconciled: no positions, no orders; session relaunched (unbuffered output) |
+| 2026-10-21 14:24 | session start (paper): equity 100000, buying power 400000, shorting on |  |  |

@@ -1,5 +1,49 @@
 {
- "trades": [],
- "traded_symbols": [],
- "seen": []
+ "trades": [
+  {
+   "symbol": "NVDA",
+   "setup_t": "2026-10-21T14:00:00Z",
+   "direction": -1,
+   "planned_entry": 217.87,
+   "stop": 222.2,
+   "targets": [
+    212.78,
+    212.5,
+    211.16
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-21-NVDA-1400-0",
+     "order_id": "20947051-6a6b-4cae-852a-f3aefa483d36",
+     "qty": 77,
+     "target": 212.78
+    },
+    {
+     "client_id": "tjr-2026-10-21-NVDA-1400-1",
+     "order_id": "b3e6ed96-714e-4013-abc6-d6d27d315c54",
+     "qty": 77,
+     "target": 212.5
+    },
+    {
+     "client_id": "tjr-2026-10-21-NVDA-1400-2",
+     "order_id": "5b2add9f-4d8c-4cbe-b374-73027cee62ec",
+     "qty": 76,
+     "target": 211.16
+    }
+   ],
+   "entry_fill": 218.57,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/user/tradingbot/journal/trading/trades/2026-10-21_1400_NVDA.md"
+  }
+ ],
+ "traded_symbols": [
+  "NVDA"
+ ],
+ "seen": [
+  [
+   "NVDA",
+   "2026-10-21T14:00:00Z"
+  ]
+ ]
 }
