@@ -19,3 +19,5 @@
 | 2026-10-21 15:01 | position NVDA -230 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review  **False alarm:** written by a manual test of the reconcile fix, which ran without loading the saved state; the session does manage NVDA |
 | 2026-10-21 15:14 | Container restarted a third time (uptime 12 s); bot last wrote state 15:06:08 | no scanning or management ~15:06–15:15; NVDA protected at Alpaca | reconciled (NVDA −230, brackets live); relaunched |
 | 2026-10-21 15:14 | session start (paper): equity 99616.45, buying power 337680.23, shorting on |  |  |
+| 2026-10-21 15:16 | Bot relaunched as a session-tracked background task (test: does it keep the container from being reclaimed when the conversation is idle?) | a few seconds without management | watch whether state keeps updating while idle |
+| 2026-10-21 15:16 | session start (paper): equity 99581.4, buying power 337497.96, shorting on |  |  |
