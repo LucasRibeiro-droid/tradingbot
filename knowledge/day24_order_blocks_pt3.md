@@ -20,7 +20,7 @@ off-topic chat (no trading content).
 - **Beginners: box the entire leg.** "This is probably going to be your best bet ... there's no reason to get advanced with it, just box off the entire thing" (10:15–10:26). Repeated at the end: "don't try and be a pro at something that you're ass at ... if I'm you guys I'm using that big ass box and I'm marking out the entire leg down prior to the move up, or the entire leg up prior to the move down" (25:16–25:54).
 - **TJR's own way: from the wick to the start of the body.** "I literally just do it off the wick of the candle ... I just box off the wick" (10:38–10:42). "Oftentimes it'll tap into just the wick area and then sometimes respond, or it'll tap just the base ... the base of the body, right where the body starts. Usually that's like the reaction point. I don't know why ... this is just market experience me talking" (11:12–11:44). "This is how I label it: just from the wick down to the start of the body" (11:46–11:49).
 - Also: "price coming in touching just the body of the candle" (26:13–26:17).
-- **Ambiguous:** *which* candle's wick. Gemini says TJR re-drew the box on the 1-hour S&P from "the wick high to the start of the candle body" of one candle, but its prices conflict with that (see the screen check). Screenshots needed.
+- **Which candle** (from the owner's screenshots, below): the candle at the end of the leg that a retracement reaches first, from its wick to where its body starts [Inferred from one example, 10:45/11:30].
 
 ### 3. Entry, targets, using it as a target (11:51–13:41)
 - Price taps in, then "whether you want to wait for this break of structure right here, and then you can go long, target previous areas of liquidity" (11:53–12:10). "Maybe you get confirmation off of this break of structure right here, cool, enter" (13:06–13:13).
@@ -65,6 +65,21 @@ off-topic chat (no trading content).
   3. **12:30 / 13:55:** two different "1 May" sweeps (a low at 4103.18 and a high at 4186.92) in the same sequence. Dates are likely misread.
 - **Verdict:** use Gemini for *where* things happen and *which chart*, not for exact box boundaries. The labelling rule (§2) comes from TJR's words. The exact candle it applies to waits for screenshots.
 
+
+## What the owner's screenshots show (`sources/day24_frames/`)
+- **10:20, S&P 1-hour: the whole leg.** The box spans the last leg down, from about 4101 to the sweep low at 4051.17. This is the "box off the entire thing" way.
+- **10:45 and 11:30, S&P 4-hour: TJR's own box.** He switches to the **4-hour** (Gemini said 1-hour), where the same leg is a few candles.
+  - The box is thin: about 4101.4 to 4105.8.
+  - It sits at the **top of the leg down**, the end a retracement from above reaches first. It runs from the upper wick of the leg's top candle down to where that candle's body starts.
+  - At 11:30, later 4-hour candles come down, wick into the box, and turn: "touch the base".
+- **12:47, S&P 4-hour: "this whole candle".** One up candle that swept the highs, boxed from its wick high (4191.04) to about 4165.7, where its body starts. On the 4-hour, the leg up was that single candle.
+  - This settles Gemini's contradiction: it's a leg **up** before a break **down** (a short). Gemini's "last down candle before a break up" was wrong.
+- **26:16, GBPJPY 1-hour: the whole leg** up, from about 161.80 to the sweep high near 163.29. Price later comes back to the box's lower edge; that's the touch he calls "touching just the body of the candle".
+- **Verdict on Gemini:**
+  - Right on timing, instruments and roughly where boxes are.
+  - Wrong on the timeframe at 10:45, on the direction at 12:46, and on the exact prices.
+  - Screenshots at exact times fixed all three.
+
 ## Connections
 - **Days 20, 22:** completes the topic.
   - Adds how to box (whole leg for beginners; TJR: wick to start of body).
@@ -88,4 +103,5 @@ off-topic chat (no trading content).
   - Scale down when the range is too big.
 - **[Inferred]**
   - "Off the first retracement" = a block is used once, on the first pullback after the break. TJR's own example shows price returning a second time (14:45), so this is a preference, not a hard rule.
-- **[Bot]** Which candle "wick to start of body" refers to (pending screenshots); everything exact in `orderblocks.py`.
+- **[Inferred]** "Wick to start of body" = the wick of the leg's candle nearest the retracement (one example, S&P 4-hour).
+- **[Bot]** Everything exact in `orderblocks.py` (`wick_zone`).

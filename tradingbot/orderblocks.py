@@ -95,3 +95,24 @@ def follow_block(candles: Sequence[Candle], block: Block) -> GapEvent:
     (broken). Same tests as fair value gaps [Bot: TJR: "draws right back into here, fills
     more orders and booms", Day 22, 05:12; when a block stops counting isn't taught yet]."""
     return follow(candles, block)  # type: ignore[arg-type]
+
+
+def wick_zone(candles: Sequence[Candle], block: Block) -> Block:
+    """TJR's own way to box a block: "from the wick down to the start of the body" (Day 24,
+    11:46), because price often reacts at the wick or "right where the body starts".
+
+    Which candle [Inferred from the frames at 10:45 and 11:30, S&P 4-hour]: the candle at the
+    end of the leg that a retracement reaches first. For a bullish block (a leg down), that's
+    the leg's highest candle: the zone runs from its high down to the top of its body. A
+    bearish block mirrors it: from the leg's lowest low up to the bottom of that candle's body.
+    """
+    leg = range(block.start, block.sweep + 1)
+    if block.side == BULLISH:
+        k = max(leg, key=lambda j: candles[j].h)
+        c = candles[k]
+        return Block(block.side, block.start, block.sweep, top=c.h, bottom=max(c.o, c.c),
+                     confirmed_at=block.confirmed_at)
+    k = min(leg, key=lambda j: candles[j].l)
+    c = candles[k]
+    return Block(block.side, block.start, block.sweep, top=min(c.o, c.c), bottom=c.l,
+                 confirmed_at=block.confirmed_at)

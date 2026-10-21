@@ -50,6 +50,8 @@ def run(ltf: Sequence[Candle], htf: Sequence[Candle], htf_length: timedelta, con
     cont = Continuation(htf, htf_length, config) if "continuation" in paths else None
     if "ob_continuation" in paths:
         cont = Continuation(htf, htf_length, config, zone="order_block")
+    if "ob_wick_continuation" in paths:
+        cont = Continuation(htf, htf_length, config, zone="order_block_wick")
     trades = []
     j, current = 0, None
     for i, c in enumerate(ltf):
@@ -95,7 +97,8 @@ def main() -> None:
     runs = [(label, config, ("reversal",)) for label, config in variants(BASELINE).items()]
     runs += [("continuation (fair value gaps) only", BASELINE, ("continuation",)),
              ("reversal + continuation", BASELINE, ("reversal", "continuation")),
-             ("continuation (order blocks) only", BASELINE, ("ob_continuation",))]
+             ("continuation (order blocks) only", BASELINE, ("ob_continuation",)),
+             ("continuation (order blocks, wick box) only", BASELINE, ("ob_wick_continuation",))]
     for label, config, paths in runs:
         r = run(ltf, htf, timeframe_length(args.htf), config, paths)
         results[label] = r

@@ -2,7 +2,7 @@ import unittest
 
 from tradingbot.candles import BEARISH, BULLISH, Candle
 from tradingbot.liquidity import Pool, Taken
-from tradingbot.orderblocks import find_blocks, follow_block
+from tradingbot.orderblocks import find_blocks, follow_block, wick_zone
 from tradingbot.trend import DOWN, UP, TrendState
 
 
@@ -56,6 +56,23 @@ class Identify(unittest.TestCase):
         taken[5] = BUY_SIDE_TAKEN
         st = states(8, 7, "bos_down", DOWN)
         self.assertEqual(len(find_blocks(LEG_UP_THEN_BREAK, st, taken)), 1)
+
+
+class WickZone(unittest.TestCase):
+    def test_bearish_block_wick_to_body_at_the_legs_low(self):
+        # Day 24, 11:46: "from the wick down to the start of the body", at the end of the leg
+        # a retracement reaches first (for a leg up: its low, candle 3, low 99.5, body 100-100.8).
+        taken = [Taken()] * 8
+        taken[5] = BUY_SIDE_TAKEN
+        b = wick_zone(LEG_UP_THEN_BREAK, find_blocks(LEG_UP_THEN_BREAK, states(8, 7, "bos_down", DOWN), taken)[0])
+        self.assertEqual((b.bottom, b.top), (99.5, 100))
+
+    def test_bullish_block_mirrors(self):
+        taken = [Taken()] * 8
+        taken[5] = Taken(sell_side=(Pool(2, -102.2, "sell_side", 3),))
+        m = mirror(LEG_UP_THEN_BREAK)
+        b = wick_zone(m, find_blocks(m, states(8, 7, "bos_up", UP), taken)[0])
+        self.assertEqual((b.bottom, b.top), (-100, -99.5))
 
 
 class Follow(unittest.TestCase):

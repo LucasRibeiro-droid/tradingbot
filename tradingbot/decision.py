@@ -129,7 +129,8 @@ class Continuation:
     """Higher-timeframe fair value gap or order block, retracement into it, lower-timeframe
     break of structure in the trend's direction (Days 14, 16, 18; order blocks Days 20-24).
 
-    ``zone``: "fvg" (fair value gaps) or "order_block". Order blocks are TJR's first-choice
+    ``zone``: "fvg" (fair value gaps), "order_block" (the whole leg) or "order_block_wick"
+    (TJR's own box, wick to the start of the body, Day 24, 11:46). Order blocks are TJR's first-choice
     retracement area and are used "off the first retracement" (Day 20, 06:57; Day 24, 16:49);
     the entry is the same: price taps in, then a lower-timeframe break (Day 24, 11:53-12:10).
     Everything else is shared, so the two zone types can be compared one variable at a time.
@@ -146,12 +147,16 @@ class Continuation:
     def __init__(self, htf_candles: Sequence[Candle], htf_length, config: Config = BASELINE,
                  zone: str = "fvg"):
         from .fvg import find_gaps
-        from .orderblocks import find_blocks
+        from .orderblocks import find_blocks, wick_zone
         from .trend import _ts
         self.config = config
         self.zone = zone
-        found = (find_gaps(htf_candles) if zone == "fvg"
-                 else find_blocks(htf_candles, trend=config.trend, liquidity=config.liquidity))
+        if zone == "fvg":
+            found = find_gaps(htf_candles)
+        else:
+            found = find_blocks(htf_candles, trend=config.trend, liquidity=config.liquidity)
+            if zone == "order_block_wick":  # TJR's own box: wick to the start of the body (Day 24)
+                found = [wick_zone(htf_candles, b) for b in found]
         self._pending = sorted(((_ts(htf_candles[g.confirmed_at].t) + htf_length, g)
                                 for g in found), key=lambda x: x[0])
         self._k = 0

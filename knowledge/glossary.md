@@ -67,7 +67,7 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | Term | Meaning | How the bot measures it | Signals |
 |---|---|---|---|
 | **Order block** | The whole move that caused a liquidity sweep, before the break of structure that shifted the market: the leg up that took the highs (before a break down), or the leg down that took the lows (before a break up). Orders were filled there [TJR Days 20, 22]. | `find_blocks()`: leg from the last two-candle low/high to the sweep's extreme, wick to wick, must take a pool [Bot] | Price tends to retrace into it and continue the new way. TJR's first-choice retracement area. One per trend. |
-| **Wick to start of body** | TJR's own way to box an order block: from a candle's wick to where its body starts, where price often reacts [TJR Day 24, 11:46]. Beginners box the whole leg. | not yet (which candle is pending) | Reaction point. |
+| **Wick to start of body** | TJR's own way to box an order block: from a candle's wick to where its body starts, where price often reacts [TJR Day 24, 11:46]. Beginners box the whole leg. | `wick_zone()`: the leg's candle nearest the retracement [Inferred from frames] | A reaction point; pullbacks often go deeper. |
 | **Double confirmation** | Waiting for another break of structure when price is already inside the block at the first break [TJR Day 24, 24:46]. | — | — |
 | **Accumulation area** | Same as an order block [TJR Day 20, 11:08]. | — | Also a target (Day 18). |
 | **Retracement tools** | Order blocks, fair value gaps and equilibrium, in TJR's order of preference [TJR Day 20, 06:24–07:49]. | — | Where to re-enter after missing the sweep-and-break entry. |

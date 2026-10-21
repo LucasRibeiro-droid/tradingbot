@@ -236,7 +236,7 @@ What TJR has named as a reason to enter, in his words:
 8. Which market open applies to which instrument, and why it matters (taught later, Day 18, 02:32).
 9. Accumulation and distribution (mentioned Day 18, 11:36; taught later).
 10. Position management: how many partial profits, when to move the stop to break even (Day 18 examples only; Days 37, 38).
-11. Order blocks: where exactly the leg starts; which candle TJR's "wick to start of body" box uses (screenshots requested); a gap inside a block is "either or" [Day 24, 16:20].
+11. Order blocks: where exactly the leg starts; a gap inside a block is "either or" [Day 24, 16:20]. TJR's "wick to start of body" box = the wick of the leg's candle nearest the retracement [Inferred from the owner's screenshots, Day 24 10:45/11:30].
 12. ~~Accumulation~~ = order block [Day 20, 11:08]. Distribution still open.
 13. News days: which events, and how long to stay out (Day 19, not received).
 

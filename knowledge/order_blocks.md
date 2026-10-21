@@ -1,8 +1,8 @@
 # Order blocks (topic file: Days 20, 22, 24)
 
 **Status: complete** (Day 20: what they are; Day 22: how to spot them; Day 24: putting it
-together). One detail is still pending: which candle TJR's "wick to start of the body" box
-applies to (screenshots requested). Order blocks are in the test harness as an alternative
+together). The owner's screenshots settled which candle TJR's "wick to start of the body" box
+uses (`day24_order_blocks_pt3.md`). Order blocks are in the test harness as an alternative
 continuation zone (`Continuation(zone="order_block")`), being compared with fair value gaps (H24).
 Lesson notes: `day20_order_blocks_pt1.md`, `day22_order_blocks_pt2.md`, `day24_order_blocks_pt3.md`.
 Code: `tradingbot/orderblocks.py` (detection, read-only), `tradingbot/orderblock_study.py` (homework).
@@ -25,7 +25,7 @@ Code: `tradingbot/orderblocks.py` (detection, read-only), `tradingbot/orderblock
 
 **How to box it [TJR Day 24]:**
 - **Whole leg** ("your best bet", and what beginners should do) [10:15–10:26, 25:16–25:54].
-- **TJR's own way:** "from the wick down to the start of the body", because price often reacts at the wick area or "the base of the body, right where the body starts", "just market experience" [10:38–11:49, 26:13]. Which candle's wick is not clear from the speech; see the open questions.
+- **TJR's own way:** "from the wick down to the start of the body", because price often reacts at the wick area or "the base of the body, right where the body starts", "just market experience" [10:38–11:49, 26:13]. From the frames: the wick of the leg's candle at the end a retracement reaches first (top of a leg down, bottom of a leg up), down to where its body starts; a thin zone at the near edge of the whole-leg box [Inferred, one example; `orderblocks.wick_zone`].
 
 ## What it's for [TJR]
 - A **retracement tool**, with fair value gaps and equilibrium; liquidity sweep + break of structure is the start of the move [Day 20, 06:16–06:57].
@@ -100,6 +100,19 @@ The same path as the fair value gap continuation (higher-timeframe zone in the t
 - Average R was better on 2 of 6. Samples are small (8–28 trades): inconclusive. Blocks are not promoted; the fair value gap path stays the baseline.
 - Blocks produce far fewer trades (one per trend shift, versus many gaps).
 
+## Does price turn in TJR's wick zone? (H26, 2026-10-21)
+TJR: price often reacts at the wick or "right where the body starts" [Day 24, 11:12–11:44]. For blocks where price retraced in and then continued past the move's extreme:
+
+| Chart | Continued | Turned inside the wick zone | Wick zone as share of the leg (median) |
+|---|---|---|---|
+| SPY 1Day / 4Hour / 1Hour / 15Min | 26 / 26 / 47 / 34 | 12% / 15% / 9% / 15% | 8% / 6% / 10% / 10% |
+| GLD 1Day / 4Hour / 1Hour / 15Min | 25 / 20 / 42 / 39 | 24% / 25% / 5% / 10% | 6% / 5% / 6% / 5% |
+
+- **Where pullbacks turned:** inside the wick zone more often than its size alone would suggest, on 6 of 8 charts (a rough reference, not a true base rate).
+- **But usually deeper:** 75–95% of winning pullbacks went past it into the leg.
+- **As the line that cancels the setup:** in the harness (close beyond the thin zone = dropped), it left only 1–5 trades per chart, so it's too strict.
+- **Conclusion:** keep the whole leg as the zone (TJR's advice for beginners). The wick zone is a reaction point to watch, not the zone. H26: supported as a reaction point, rejected as the zone.
+
 ## Contradictions and open questions
 1. **"One order block per trend" vs "order blocks on every timeframe."** Likely resolved by timeframe: one per trend *on a given timeframe*. A lower-timeframe trend shift inside a higher-timeframe trend makes its own [Inferred].
 2. **Whole move vs one candle.** Day 22: "on the four hour this was the candle ... relatively precise, but what was the entire move?" The whole move, scaled down for precision. Where exactly the move starts is not defined.
@@ -108,6 +121,6 @@ The same path as the fair value gap continuation (higher-timeframe zone in the t
 5. **Which open:** New York 9:30 in one example, London in another. Still open from Day 18 (for SPY/GLD the bot uses 9:30 New York).
 6. **When a block stops counting:** Day 24 says blocks work "off the first retracement", yet shows price coming back a second time [14:45]. [Bot] uses a close beyond the sweep's extreme, and one trade per block.
 9. **Sweep required?** Days 20/22: the block *is* the move that swept. Day 24: a sweep is "almost always best". The bot requires a sweep (`require_sweep=True`); the alternative is a one-variable test.
-10. **"Wick to the start of the body": which candle?** Probably the candle at the leg's far end, where price returns first. Gemini's description of 10:13–10:35 contradicts itself; screenshots requested at 10:20, 10:45, 11:30.
+10. ~~"Wick to the start of the body": which candle?~~ Settled by the owner's screenshots: the leg's candle at the end the retracement reaches first [10:45, 11:30]. Based on one example.
 7. **News days:** "don't trade" on PPI/FOMC days [Day 20, 11:41]. Not executable until Day 19 (news) is received.
 8. [Bot note] Other teachers use "order block" for the *last opposite candle* before a move. TJR's definition is the whole leg that swept liquidity. The bot follows TJR and doesn't mix them.
