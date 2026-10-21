@@ -14,6 +14,10 @@ class Sizing(unittest.TestCase):
     def test_capped_by_buying_power(self):
         self.assertEqual(size(10_000, 1_000, 50.0, 49.5, 1.0), 20)
 
+    def test_capped_by_position_size(self):
+        # $100,000 equity, 10% cap = $10,000 at $200 -> 50 shares, though 1% risk allows 500.
+        self.assertEqual(size(100_000, 400_000, 200.0, 198.0, 1.0, 10.0), 50)
+
     def test_cannot_size(self):
         self.assertEqual(size(99.98, 99.98, 262.0, 260.0, 1.0), 0)
 

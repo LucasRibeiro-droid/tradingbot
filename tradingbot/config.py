@@ -112,8 +112,13 @@ class TradingParams:
     # as long as you follow a clear logic". None = no limit.
     max_daily_loss_pct: float | None = None
     max_trades_per_day: int | None = None
-    # Owner + LOCKED.max_instruments (Day 4): screen each morning, trade at most 2 instruments a day.
-    max_instruments_per_day: int = 2
+    # Owner, 2026-10-21 (later): "take as many trades as it wants as long as it follows a clear
+    # logic baseline". No cap on instruments (TJR's Day 4 "one or two" stays in LOCKED as the
+    # baseline reference). None = no limit; every trade comes from the watchlist screen.
+    max_instruments_per_day: int | None = None
+    # Owner, 2026-10-21: "the bot does not have to buy big positions". Each position's cost is
+    # capped at this % of equity; the 1% risk stays the ceiling. Results are measured in R.
+    max_position_pct: float = 10.0
     # [Bot] Execution on the 15-minute: the entry models with TJR's exits were positive on
     # SPY and GLD 15-minute and 1-hour, not on the 5-minute for SPY (knowledge/exits.md).
     # Take profit 1 from the next timeframe up (Day 37).

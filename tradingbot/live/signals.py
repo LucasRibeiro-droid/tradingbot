@@ -121,15 +121,17 @@ def assess(symbol: str, ltf: Sequence[Candle], tp_tf: Sequence[Candle], daily: S
     }
 
 
-def size(equity: float, buying_power: float, entry: float, stop: float, risk_pct: float) -> int:
-    """Whole shares so the loss at the stop is at most ``risk_pct`` of equity and the cost
-    fits the buying power. 0 = can't be sized within the limits."""
+def size(equity: float, buying_power: float, entry: float, stop: float, risk_pct: float,
+         max_position_pct: float | None = None) -> int:
+    """Whole shares so the loss at the stop is at most ``risk_pct`` of equity, the cost fits
+    the buying power and, if set, at most ``max_position_pct`` of equity. 0 = can't be sized."""
     risk_per_share = abs(entry - stop)
     if risk_per_share <= 0 or entry <= 0:
         return 0
     by_risk = int(equity * risk_pct / 100 // risk_per_share)
     by_cash = int(buying_power // entry)
-    return max(0, min(by_risk, by_cash))
+    by_position = int(equity * max_position_pct / 100 // entry) if max_position_pct else by_cash
+    return max(0, min(by_risk, by_cash, by_position))
 
 
 def split(qty: int, targets: Sequence[float]) -> list[tuple[int, float]]:

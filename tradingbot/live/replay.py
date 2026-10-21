@@ -26,7 +26,7 @@ def _ny(t: str) -> datetime:
     return datetime.fromisoformat(t.replace("Z", "+00:00")).astimezone(NY)
 
 
-def replay(symbol: str, days: int, config=BASELINE, ago: int = 0) -> list[dict]:
+def replay(symbol: str, days: int, config=BASELINE, ago: int = 0, shorting: bool = True) -> list[dict]:
     """The last ``days`` days, ending ``ago`` days before now (for out-of-sample checks)."""
     tp = config.trading
     now = datetime.now(timezone.utc) - timedelta(days=ago)
@@ -43,7 +43,7 @@ def replay(symbol: str, days: int, config=BASELINE, ago: int = 0) -> list[dict]:
         t_close = _ts(c.t) + ltf_len
         h = [x for x in htf if _ts(x.t) < t_close]
         dly = [x for x in daily if _ts(x.t) < t_close]
-        a = assess(symbol, ltf[lo:i + 1], h, dly, config, False, ltf_len, tp_len)
+        a = assess(symbol, ltf[lo:i + 1], h, dly, config, shorting, ltf_len, tp_len)
         if a is None:
             continue
         rec = {"t": a["t"], "decision": a["decision"], "reasons": a["reasons"], "plan": a["plan"],
@@ -77,6 +77,8 @@ def main() -> None:
     ap.add_argument("--symbols", default="")
     ap.add_argument("--bias-filter", action="store_true", help="only trade with the daily bias (TJR's baseline rule)")
     ap.add_argument("--ago", type=int, default=0, help="end the replay this many days ago (out-of-sample checks)")
+    ap.add_argument("--long-only", action="store_true",
+                    help="no short setups (replays before 2026-10-21 were long-only: the old account couldn't short)")
     ap.add_argument("--set", action="append", default=[], metavar="SECTION.FIELD=VALUE",
                     help="change one setting, e.g. trading.execution_tf=1Hour (repeatable)")
     args = ap.parse_args()
@@ -93,7 +95,7 @@ def main() -> None:
     syms = args.symbols.split(",") if args.symbols else [r["symbol"] for r in json.loads(sorted(root.glob("watchlist_*.json"))[-1].read_text())["watch"]]
     allres, summary = {}, {}
     for s in syms:
-        recs = replay(s, args.days, config, args.ago)
+        recs = replay(s, args.days, config, args.ago, shorting=not args.long_only)
         allres[s] = recs
         appr = [r for r in recs if r["decision"] == "APPROVED" and r.get("result") and r["result"]["exit"] != "no_time"]
         rs = [r["result"]["r"] for r in appr]

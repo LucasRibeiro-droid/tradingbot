@@ -18,6 +18,29 @@ persistent records the owner's operating brief requires (2026-10-21). Nothing ha
 
 The research history (studies, hypotheses H1–H35) stays in `journal/studies/` and `journal/hypotheses.md`.
 
+## How the bot learns from its trades (owner, 2026-10-21)
+Goal: learn from mistakes and be as profitable as possible, measured in R (profit or loss ÷ the
+risk planned at entry), within the owner's guidelines. Positions are small on purpose (≤10% of
+equity each); there is no cap on trades or instruments as long as each trade follows the logic.
+
+1. **Every trade is reviewed** after the close (a scheduled session every weekday, 16:20 ET):
+   reconciled with Alpaca; its page gets MFE/MAE, what went right and wrong, validity class 1–4
+   judged on what was known at entry, and the lesson. `performance.md` is updated by direction,
+   bias relation, time of day, stock and setup.
+2. **One trade never changes a rule.** A lesson that repeats becomes a hypothesis in
+   `journal/hypotheses.md` with a test: one setting changed, everything else the same.
+3. **The test** is `tradingbot.live.replay` on the same stocks, shorts included: the last 120
+   days (in sample) and the 120 days before (`--ago 120`, out of sample).
+4. **Adopted only if** the change has a higher average R per trade in *both* periods, with at
+   least 30 trades in each, and total R is not lower out of sample. Otherwise it is rejected or
+   left open, with the numbers. At most one change at a time, recorded in `rule_changes.md`, and
+   applied in `config.TradingParams` with a comment pointing to the evidence.
+5. **Checked live:** after 20 live trades under a change, live average R is compared with the
+   replay's; if live is worse than the previous setting's replay average, the change is reverted.
+6. Mistakes of execution (the bot not doing what its logic says: missed setups from outages,
+   wrong sizes, orders not reconciled) are fixed in code at once, logged in `events.md`; they are
+   not rule changes.
+
 ## Inspection, 2026-10-21 (before the session)
 **Knowledge base:** `knowledge/methodology.md` and the topic files cover the building blocks, execution models, daily bias and exits (Days 2–4, 6–8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32–38).
 - **Not studied:** 1, 5, 9, 11, **13 (Risk Management)**, 15, 17, **19 (News)**, 21, 23, 25, 27, **29 (Trading Plan; owner asked to erase)**, 31, **39 (Lot Size)**, 40–55 (backtesting, journaling, weekly analysis, applied daily bias).

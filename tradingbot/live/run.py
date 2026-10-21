@@ -11,7 +11,7 @@ Cycle (owner's brief, section 11), every ``execution_tf`` candle close:
   1. assess each watched stock (signals.assess): APPROVED or REJECTED, recorded in setups.jsonl
   2. execute an approved setup: size at the owner's 1% risk, one bracket order per take profit
      (Day 37 ladder; Alpaca brackets carry one take profit each), at most
-     ``max_instruments_per_day`` different stocks a day (LOCKED, Day 4; owner)
+     ``max_instruments_per_day`` different stocks a day if set (owner: no limit since 2026-10-21)
   3. manage: after the first take profit fills, move the other parts' stops to break even
      (Day 18 example); reconcile every order with Alpaca, never assume a fill
   4. record entries, exits, P/L in R, MFE/MAE in trades.jsonl; incidents in events.md
@@ -204,19 +204,21 @@ class Session:
         if self.halted:
             a["decision"], a["reasons"] = "REJECTED", ["new entries halted after technical failures"]
             return
-        if sym not in self.traded_symbols and len(self.traded_symbols) >= tp.max_instruments_per_day:
-            a["decision"], a["reasons"] = "REJECTED", [f"already traded {tp.max_instruments_per_day} instruments today (LOCKED, Day 4)"]
+        cap = tp.max_instruments_per_day
+        if cap is not None and sym not in self.traded_symbols and len(self.traded_symbols) >= cap:
+            a["decision"], a["reasons"] = "REJECTED", [f"already traded {cap} instruments today"]
             return
         if any(t.symbol == sym and not t.closed for t in self.trades):
             a["decision"], a["reasons"] = "REJECTED", ["a position in this stock is still open"]
             return
         acct = self.broker.account()
-        qty = size(float(acct["equity"]), float(acct["buying_power"]), plan["entry"], plan["stop"], tp.risk_per_trade_pct)
+        qty = size(float(acct["equity"]), float(acct["buying_power"]), plan["entry"], plan["stop"],
+                   tp.risk_per_trade_pct, tp.max_position_pct)
         parts = split(qty, plan["take_profits"])
         a["size"] = {"equity": acct["equity"], "buying_power": acct["buying_power"], "qty": qty,
                      "risk_dollars": round(qty * abs(plan["entry"] - plan["stop"]), 2), "parts": parts}
         if not parts:
-            a["decision"], a["reasons"] = "REJECTED", ["can't size: 1% risk or buying power allows less than one share"]
+            a["decision"], a["reasons"] = "REJECTED", ["can't size: risk, position or buying-power limit allows less than one share"]
             return
         if self.dry_run:
             return

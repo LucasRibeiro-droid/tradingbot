@@ -9,7 +9,7 @@ research tested). Kept if [Bot filters, config.TradingParams]:
   - a daily bias the account can trade: the last daily break of structure up when shorting is
     disabled [TJR Day 34; LOCKED: never against the higher timeframe]
 Ranked by dollar volume; the top ``shortlist`` are watched. At most
-``max_instruments_per_day`` of them are traded (LOCKED.max_instruments, Day 4; owner).
+any of them may be traded (``max_instruments_per_day``; owner: no limit since 2026-10-21).
 """
 from __future__ import annotations
 
