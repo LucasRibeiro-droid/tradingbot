@@ -80,6 +80,17 @@ class DecisionParams:
     stop_lookback: int = 10
     # A position still open after this many candles is closed at the close.
     max_hold_bars: int = 50
+    # Exits. "tjr" (default since v2, H19): Day 37's take-profit ladder, the first target the
+    # next higher-timeframe draw on liquidity at least ``first_tp_min_r`` away, then building
+    # blocks, ``take_profits`` in all, equal parts, stop to break even after the first.
+    # "single": everything at the nearest liquidity (the bot's exit before Day 37).
+    exits: str = "tjr"
+    take_profits: int = 3
+    first_tp_min_r: float = 1.0
+    # Reversal-path stop. "sweep" (Day 38): beyond the liquidity sweep, the invalidation
+    # point. "lookback": beyond the extreme of the last ``stop_lookback`` candles (before v2).
+    # On SPY/GLD, 5-minute to 1-hour, the two gave identical trades (the sweep is the extreme).
+    stop: str = "sweep"
 
 
 @dataclass(frozen=True)
@@ -119,7 +130,7 @@ class Locked:
 
 @dataclass(frozen=True)
 class Config:
-    version: str = "v1-decision"
+    version: str = "v2-tjr-exits"
     candle: CandleParams = CandleParams()
     trend: TrendParams = TrendParams()
     liquidity: LiquidityParams = LiquidityParams()

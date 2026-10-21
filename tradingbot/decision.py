@@ -41,10 +41,14 @@ class Decision:
     stop: float
     target: float
     reasons: tuple[str, ...]
+    # Day 37's take-profit ladder; empty = everything at ``target``.
+    targets: tuple[float, ...] = ()
 
     @property
     def reward_to_risk(self) -> float:
-        return abs(self.target - self.entry) / abs(self.entry - self.stop)
+        """To the first target."""
+        first = self.targets[0] if self.targets else self.target
+        return abs(first - self.entry) / abs(self.entry - self.stop)
 
 
 def decide(candles: Sequence[Candle], states: Sequence[TrendState],
@@ -72,7 +76,15 @@ def decide(candles: Sequence[Candle], states: Sequence[TrendState],
             raise ValueError(f"unknown confluence {name!r}")
 
     entry = candles[i].c
-    window = candles[max(0, i - config.decision.stop_lookback + 1):i + 1]
+    if config.decision.stop == "sweep":
+        # Day 38: "I almost always put my stop loss above the liquidity sweep": beyond the
+        # extreme from the candle that took the liquidity to the break.
+        lb = max(0, i - config.liquidity.sweep_lookback + 1)
+        swept = [j for j in range(lb, i + 1) if (taken[j].sell_side if d == UP else taken[j].buy_side)]
+        start = swept[0] if swept else lb
+        window = candles[start:i + 1]
+    else:
+        window = candles[max(0, i - config.decision.stop_lookback + 1):i + 1]
     stop = min(c.l for c in window) if d == UP else max(c.h for c in window)
     target = draw(scanned[i][1], d, entry)
     if target is None or stop == entry:
@@ -81,12 +93,31 @@ def decide(candles: Sequence[Candle], states: Sequence[TrendState],
     return Decision(i, d, entry, stop, target, tuple(reasons))
 
 
+def with_tjr_exits(dec: Decision, htf_draws: Sequence[float], other_levels: Sequence[float],
+                   config: Config = BASELINE) -> Decision | None:
+    """The same decision with Day 37's take-profit ladder (`exits.take_profits`). None when
+    there's no higher-timeframe draw at least ``first_tp_min_r`` away: no trade."""
+    from dataclasses import replace
+    from .exits import take_profits
+    tps = take_profits(dec.direction, dec.entry, dec.stop, htf_draws, other_levels,
+                       n=config.decision.take_profits, min_r=config.decision.first_tp_min_r)
+    if not tps:
+        return None
+    return replace(dec, target=tps[-1], targets=tuple(tps),
+                   reasons=dec.reasons + (f"take profits: {len(tps)}, first the higher-timeframe draw",))
+
+
 def simulate(candles: Sequence[Candle], dec: Decision, max_bars: int) -> dict | None:
     """Follow the decision exactly: +reward/risk if the target is hit first, -1 if the stop is.
+    With a take-profit ladder (``dec.targets``), equal parts at each, break even after the
+    first (`exits.simulate_partials`).
 
     A candle that touches both counts as the stop (we can't know which came first). After
     ``max_bars`` candles the position is closed at that close. None if the data runs out.
     """
+    if dec.targets:
+        from .exits import simulate_partials
+        return simulate_partials(candles, dec.index, dec.direction, dec.entry, dec.stop, dec.targets, max_bars)
     risk = abs(dec.entry - dec.stop)
     after = candles[dec.index + 1:dec.index + 1 + max_bars]
     for n, c in enumerate(after, 1):

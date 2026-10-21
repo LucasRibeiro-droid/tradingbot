@@ -45,4 +45,21 @@ Same setups, same entries (the four models of Days 30–33), same stop; only the
 - Win rates fall (29–39% for models 1–2) while the first target's median reward-to-risk rises to 2.1–4.1. Fewer, bigger wins, as TJR trades.
 - Part of the change: setups with no higher-timeframe target at 1R or more aren't taken (mainly on the daily charts, where the next timeframe up is weekly).
 - **H19: supported.** The exit rules come from the lessons and weren't fitted to this data. The [Bot] choices (three targets, thirds, break even) were fixed before the run.
-- **Caveat:** one run of 34–66 setups per chart, no costs or slippage. Next: make TJR's exits the harness's default exit, and retest the daily-bias filters (H30–H33) with them.
+- **Caveat:** one run of 34–66 setups per chart, no costs or slippage.
+
+## Now the default (config `v2-tjr-exits`, 2026-10-21)
+`DecisionParams.exits = "tjr"` (3 take profits, first ≥1R at the next timeframe up's draw), `stop = "sweep"`. `models_study.py` uses TJR's exits by default (`--single-exit` for the old one).
+
+**In the harness** (`decision_study.py`, same decisions, only the exit changed), total R:
+
+| Chart pair | Reversal: single → TJR | Continuation: single → TJR |
+|---|---|---|
+| SPY 1Hour in 1Day | +2.6 → **+8.0** | −4.8 → **−0.1** |
+| SPY 15Min in 4Hour | +4.2 → **+5.2** | −6.1 → **−1.3** |
+| SPY 5Min in 1Hour | −5.2 → −13.0 | +0.2 → −0.8 |
+| GLD 1Hour in 1Day | +0.3 → **+0.4** | +3.2 → **+3.4** |
+| GLD 15Min in 4Hour | +4.0 → **+24.6** | +13.4 → **+45.6** |
+| GLD 5Min in 1Hour | −1.5 → **+31.2** | −10.0 → **+8.9** |
+
+- Better on 10 of 12; SPY 5-minute is the exception on both paths.
+- The stop beyond the sweep gave **identical** trades to the old 10-candle stop: the sweep is always the extreme there.

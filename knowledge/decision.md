@@ -30,8 +30,8 @@ against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two i
 2. **Direction allowed:** only with the higher timeframe's trend [TJR Day 4, locked].
 3. **Confluence:** every indicator in `DecisionParams.confluences` must agree. Today that's `liquidity_swept`: liquidity on the other side was taken shortly before [TJR Days 8, 12]; "shortly" = within 10 candles [Bot].
 4. **Entry:** the trigger candle's close [Bot]. TJR enters on the retracement into a fair value gap or order block, triggered by a break of structure on a **lower** timeframe [TJR Day 12, 10:54; Day 14, 04:28]. The harness is single-timeframe for the trigger until those lessons are learned.
-5. **Stop:** beyond the most extreme price of the last 10 candles [Bot]. Day 38 teaches beyond the liquidity sweep; `models_study.py` uses that. Moving the harness onto it is next.
-6. **Target:** the draw on liquidity, the nearest untaken pool in the trade's direction [TJR Day 12]. None, no trade. Day 37's ladder (`exits.py`) beat this single target in `models_study.py --exits` (H19); making it the harness default is next.
+5. **Stop:** beyond the liquidity sweep [TJR Day 38] (`stop="sweep"`; identical in practice to the old 10-candle extreme).
+6. **Targets:** Day 37's ladder, the default since `v2-tjr-exits`: three take profits, the first the next higher-timeframe draw at least 1:1, then building blocks; equal thirds; break even after the first. No such first target, no trade. (`exits="single"` restores the nearest-liquidity target.)
 
 ## The continuation path (Days 14–24)
 

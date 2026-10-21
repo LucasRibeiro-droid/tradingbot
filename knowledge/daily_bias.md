@@ -48,6 +48,23 @@ Lesson notes: `day34_daily_bias_pt1.md`, `day35_daily_bias_pt2.md`, `day36_daily
 - **H33, with the bias and in the daily discount:** better on 2 of 6 charts, lower win rate on 5 of 6. Not supported.
 - None of the three filters improves the bot's entry models. Not yet tested: TJR's stacking of 4-hour and hourly order blocks with a lower-timeframe reaction, and his exits (daily targets, partials). Details in the three lesson files.
 
+## Retest with TJR's exits (2026-10-21)
+The weak results above used the old single-target exit. Rerun on SPY and GLD, 1-hour, 15-minute and 5-minute, all four models, with TJR's exits:
+
+| Filter | Better than its opposite (model × chart) | Model 1, pooled avg R per trade |
+|---|---|---|
+| H30: with the daily bias vs against | 4 of 24 | **with +0.08 (163 trades) vs against +0.49 (225)** |
+| H32: daily + 4-hour aligned vs not | 3 of 24 | aligned −0.05 (105) vs not +0.46 (283) |
+| H33: bias + daily discount vs not | 10 of 24 | located +0.28 (70) vs not +0.33 (318) |
+
+- **With the bot's definitions, setups *against* the daily bias did better.** Against beat with in 9 of 12 half-periods (each chart's period split in two), so it isn't one stretch of market. The samples are small (7–23 trades per cell).
+- **This contradicts TJR and a locked rule** (Day 4: never trade against the higher timeframe; the harness's reversal path applies it). Locked rules aren't changed by the bot; this is for the owner to decide.
+- **Possible reasons:**
+  - The bot's daily bias is a lagging, mechanical stand-in. A lower-timeframe sweep + break "against" it is often the start of the next daily leg, before the daily break confirms it. TJR reads that from context the bot doesn't have.
+  - SPY/GLD intraday mean reversion.
+  - In-sample, no costs.
+- Next: H34.
+
 ## Still open
 1. ~~Which daily swings define the structure (H31).~~ Day 35's frames: small daily swings, like the bot's.
 2. ~~Exactly when a 4-hour move against the daily may be traded.~~ Day 36: once it reaches the daily discount and a higher-timeframe area, on a lower-timeframe reaction.

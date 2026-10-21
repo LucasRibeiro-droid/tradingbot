@@ -26,7 +26,7 @@ hour's in an uptrend, the daily is in an uptrend", Day 35, 13:09-13:19) (H32).
 below the 50% of the daily swing, a short above it): "that's like the bare minimum that I look
 for for retracements: is it even in a discount" (Day 36, 11:22-11:27) (H33).
 
-With ``--exits``, each model's trade is also followed out with TJR's exits (Days 37, 38;
+By default each model's trade is also followed out with TJR's exits (Days 37, 38;
 `exits.py`): three take profits, the first the next higher-timeframe draw on liquidity at
 least 1:1, then building blocks; equal thirds; stop to break even after the first. The
 entries are identical, so the only change is the exit (H19).
@@ -176,6 +176,9 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
     summary = summarize(rows)
     if htf is not None:
         summary.update({k + " TJR exits": _summary([r[k + "x"] for r in rows]) for k in "1234"})
+    if htf is not None:  # the bias splits use TJR's exits, the default since v2
+        def summarize(rows):
+            return {k: _summary([r[k + "x"] for r in rows]) for k in "1234"}
     by_bias = {g: summarize([r for r in rows if r.get("bias") == g]) for g in ("with", "against")} if daily is not None else None
     if daily is not None:
         by_bias["daily bias + discount"] = summarize([r for r in rows if r.get("located")])
@@ -243,16 +246,17 @@ def main() -> None:
     ap.add_argument("--timeframe", default="1Hour")
     ap.add_argument("--days", type=int, default=365)
     ap.add_argument("--bias", action="store_true", help="label setups by the daily bias (Day 34)")
-    ap.add_argument("--exits", action="store_true", help="also follow every trade with TJR's exits (Days 37, 38)")
+    ap.add_argument("--single-exit", action="store_true", help="only the old single-target exit (no higher timeframe fetched)")
     args = ap.parse_args()
     start = datetime.now(timezone.utc) - timedelta(days=args.days)
     candles = fetch_bars(args.symbol, args.timeframe, start)
     daily = fetch_bars(args.symbol, "1Day", start - timedelta(days=120)) if args.bias else None
     four_hour = fetch_bars(args.symbol, "4Hour", start - timedelta(days=30)) if args.bias else None
     htf_tf = {"5Min": "15Min", "15Min": "1Hour", "1Hour": "4Hour", "4Hour": "1Day", "1Day": "1Week"}[args.timeframe]
-    htf = fetch_bars(args.symbol, htf_tf, start - timedelta(days=120)) if args.exits else None
+    exits = not args.single_exit
+    htf = fetch_bars(args.symbol, htf_tf, start - timedelta(days=120)) if exits else None
     result = run(candles, daily=daily, four_hour=four_hour, htf=htf,
-                 htf_length=timeframe_length(htf_tf) if args.exits else None)
+                 htf_length=timeframe_length(htf_tf) if exits else None)
     print(f"\n{args.symbol} {args.timeframe}: {len(candles)} candles")
     print(f"{'model':6} {'setups':>7} {'trades':>7} {'win':>6} {'avg R/trade':>12} {'avg R/setup':>12} {'med RR':>7}")
     for k, s in result["summary"].items():
@@ -266,7 +270,7 @@ def main() -> None:
             for k, s in summ.items()))
     JOURNAL_DIR.mkdir(parents=True, exist_ok=True)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    path = JOURNAL_DIR / f"{'day37_exits' if args.exits else 'day34_bias' if args.bias else 'day33'}_models_{args.symbol}_{args.timeframe}_{stamp}.json"
+    path = JOURNAL_DIR / f"{'bias_tjr_exits' if args.bias and exits else 'day37_exits' if exits else 'day34_bias' if args.bias else 'day33'}_models_{args.symbol}_{args.timeframe}_{stamp}.json"
     path.write_text(json.dumps({"symbol": args.symbol, "timeframe": args.timeframe, **result}, indent=1))
 
 

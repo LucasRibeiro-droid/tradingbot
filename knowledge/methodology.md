@@ -246,6 +246,7 @@ What TJR has named as a reason to enter, in his words:
 | Days 16, 22, 24: wait for a reaction or lower-timeframe break inside the zone. Days 26, 30: "enter at the order block"; a gap on a reaction "or just for it to get hit". | Settled for order blocks by Day 32: "we're executing when it comes into the order block", not on a lower-timeframe break [11:19]. The lower-timeframe break in Days 22/24 was optional extra confirmation [Inferred]. Gaps: on confirmation ("what are we waiting for? Some sort of reaction") [Day 33, 09:41]. So: blocks on the touch, gaps on confirmation [Inferred]. |
 | Day 26, 07:06 and Day 28, 02:06: shorts "in a discount", above 50%. | Not a mistake: TJR uses "discount" for a good price in the trade's direction ("on sale") [Inferred]. |
 | Day 34: daily bearish + 4-hour bullish = "probably wouldn't want to trade"; daily bullish + 4-hour bearish = "that's ideal". | One rule: a 4-hour move against the daily is a retracement; trade only once it confirms back in the daily's direction, with tentative targets [Inferred]. |
+| TJR: trade with the daily bias, setups against it are "short-lived" (Days 33–36; Day 4 locked). Bot data (TJR's exits, SPY/GLD intraday): setups against the bot's daily bias did better (model 1 +0.49R vs +0.08R per trade). | Not resolved. Likely the bot's mechanical daily bias lags TJR's reading (H34). The locked rule stays; flagged to the owner. |
 | Day 18 waits for the New York open; Day 22's 15-minute example waits for the London open. | Different markets (TJR trades GBP pairs). Which open for which instrument stays open. |
 
 ---
@@ -283,7 +284,7 @@ What TJR has named as a reason to enter, in his words:
 | News calendar | needed (TJR: no trading on PPI/FOMC days); waits for Day 19 |
 | Entry trigger on a lower timeframe inside a zone | ready in the harness (`decision.Continuation`), refinements wait for Days 30–33 |
 | Session times (market open) | used: no decisions before 9:30 New York [TJR Day 18]; which open for which market waits |
-| Stop, target, position size | stop and take-profit ladder ready (`exits.py`) [TJR Days 37, 38]; TJR's exits beat the single target (H19); size waits for Day 39 |
+| Stop, target, position size | TJR's exits are the default (`v2-tjr-exits`), better in the harness on 10 of 12 comparisons; size waits for Day 39 |
 
 ## 14. [Bot] choices currently in the code
 
