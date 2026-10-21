@@ -147,7 +147,7 @@ class Session:
             return
         open_ny = datetime.now(NY).replace(hour=0, minute=0, second=0, microsecond=0)
         try:
-            orders = self.broker.orders(status="all", after=open_ny.astimezone(timezone.utc).isoformat())
+            orders = self.broker.orders(status="all", after=open_ny.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
             positions = self.broker.positions()
         except BrokerError as e:
             event(f"start reconcile unavailable: {e}", "instrument cap from saved state only", "")
