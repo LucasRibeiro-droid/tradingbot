@@ -63,7 +63,10 @@ The weak results above used the old single-target exit. Rerun on SPY and GLD, 1-
   - The bot's daily bias is a lagging, mechanical stand-in. A lower-timeframe sweep + break "against" it is often the start of the next daily leg, before the daily break confirms it. TJR reads that from context the bot doesn't have.
   - SPY/GLD intraday mean reversion.
   - In-sample, no costs.
-- Next: H34.
+- **H34, does the bot's daily bias lag?** Not supported as an explanation (`bias_lag_study.py`).
+  - Within 3 days the daily flipped toward 46% of the "against" winners vs 21% of the losers. But a winning move often causes that flip, so this is circular.
+  - "Against" setups as a group were followed by a flip about 31% of the time, the same as any day.
+- **Still unexplained.** Next idea (H35): "with" setups come late in a daily leg, with less room left.
 
 ## Still open
 1. ~~Which daily swings define the structure (H31).~~ Day 35's frames: small daily swings, like the bot's.
