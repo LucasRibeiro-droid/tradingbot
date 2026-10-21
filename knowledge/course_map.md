@@ -33,6 +33,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 28 | Equilibrium pt.2 | Equilibrium on the chart | low → high in an uptrend, high → low in a downtrend; drag to each new extreme; Gann box / Fibonacci at 0, 0.5, 1; combine with a gap or block (equilibrium + break alone = "not much confirmation"); every timeframe (monthly gold to 5-minute); a Discord swing short with 4 take profits | Days 4, 6, 12, 14–26 | learned (**equilibrium complete**) | Completes the building blocks; next: trading plan and putting everything together |
 | 30 | Execution | Putting the pieces together | the five building blocks and what each says; four entry models (sweep + break; + order block on poor RR, stop above the highs; + fair value gap, on a reaction or the hit; + gap/block + discount); risk ladder from most risky to safest; choose your models | Days 6–28 | partial (part 1 of 3) | The methodology itself: how the pieces combine into entries |
 | 32 | Execution pt.2 | Models 1 and 2 on charts | sweep + break → execute at the break; sweep + break + order block → execute when price comes into the block, not on the break ("doesn't matter if it's exact"); the block can be one candle; some blocks aren't reached; building blocks are also targets; base strategy only (daily bias, stops, take profits later); homework 10 examples of each | Days 20–30 | partial (part 2 of 3) | Settles how models 1 and 2 execute |
+| 33 | Execution pt.3 | Models 3 and 4 on charts | gap entry waits for a reaction / lower-timeframe break; a gap price runs through is dropped; equilibrium lined up with the gap = high confluence; gaps and equilibrium are "last chance entries"; stacked confluences build confidence; setups against the daily bias are short-lived; homework 10 examples each | Days 14–32 | learned (**execution complete**) | Completes the entry models; next: daily bias, take profits, stops |
 
 ## Not yet received
 
@@ -47,7 +48,6 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 25 | Over Confidence | psychology |
 | 27 | Fear | psychology |
 | 29 | Trading Plan | the plan |
-| 33 | Execution Pt 3 | models 3 and 4 on charts (completes execution) |
 | 31 | Hard Work | psychology |
 | 34, 35, 36 | Daily Bias Pt 1–3 | daily bias |
 | 37 | Taking Profits | exits |

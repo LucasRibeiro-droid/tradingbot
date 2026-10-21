@@ -25,6 +25,7 @@ Key points:
 ## Code
 
 - Indicators: `tradingbot/candles.py`, `trend.py` (trend, break of structure), `liquidity.py`, `fvg.py`, `orderblocks.py`, `equilibrium.py`.
+- `tradingbot/models_study.py` runs TJR's four entry models (Days 30–33) on the same setups.
 - `tradingbot/decision.py` is a **test harness** for combining indicators. It contains [Bot] placeholders (entry, stop) until the lessons that teach them are learned.
 - Tests: `python -m unittest discover -s tests -t .`
 - Settings are versioned in `tradingbot/config.py`; `LOCKED` holds rules TJR states as absolutes.

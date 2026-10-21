@@ -45,7 +45,7 @@ against the higher timeframe (Day 4), closes only (Days 2 and 6), focus on two i
 
 ## How the paths map onto TJR's entry models (Day 30)
 
-Model 1 (sweep + break) ≈ the reversal path; models 2/3 (order block / gap) ≈ the continuation path with `zone="order_block"` / `"fvg"`; model 4 (+ discount) ≈ `in_discount=True`. Differences and open points: `execution.md`.
+Model 1 (sweep + break) ≈ the reversal path; models 2/3 (order block / gap) ≈ the continuation path with `zone="order_block"` / `"fvg"`; model 4 (+ discount) ≈ `in_discount=True`. Differences and open points: `execution.md`. `tradingbot/models_study.py` runs all four models on the same sweep + break setups with the same stop and target.
 
 ## How it improves
 

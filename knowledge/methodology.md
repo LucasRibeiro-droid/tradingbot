@@ -2,7 +2,7 @@
 
 TJR's bootcamp teaches **one** way of trading, built from pieces taught over many lessons.
 This file reconstructs it as far as the lessons received so far allow (Days 2–4, 6–8, 10,
-12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32; see `course_map.md`). It's updated with every lesson.
+12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 33; see `course_map.md`). It's updated with every lesson.
 
 Tags: **[TJR]** taught explicitly (Day, timestamp) · **[Inferred]** concluded from several
 lessons · **[Bot]** a choice made to make something testable, not from TJR.
@@ -43,7 +43,7 @@ equilibrium. Combined into four ways to enter, from most risky to safest:
 3. **Sweep + break** → a **fair value gap** filled (even after missing the block) → enter on a reaction or just the hit.
 4. **Sweep + break + gap or block filled + in the discount** (equilibrium): "ultimate confluence", "foolproof" for beginners.
 
-Models 2 and 3 are about equally risky. Day 32: model 1 executes at the break; model 2 executes when price comes into the block, not on the break ("doesn't matter if it's exact") [TJR Day 32, 05:02, 11:19–11:26, 15:24]. This is "the base strategy": daily bias, stops and take profits come later [TJR Day 32, 02:23–04:30].
+Models 2 and 3 are about equally risky. Day 32: model 1 executes at the break; model 2 executes when price comes into the block, not on the break ("doesn't matter if it's exact") [TJR Day 32, 05:02, 11:19–11:26, 15:24]. Model 3 waits for a reaction or lower-timeframe break inside the gap [TJR Day 33, 09:41–10:05]; model 4 is best when equilibrium lines up with the gap [TJR Day 33, 14:52]. This is "the base strategy": daily bias, stops and take profits come later [TJR Day 32, 02:23–04:30]; setups against the daily bias are "short-lived" [TJR Day 33, 23:27].
 
 Assembled, the decision chain taught so far is [Inferred from Days 4, 6, 8–28]:
 
@@ -55,7 +55,7 @@ Assembled, the decision chain taught so far is [Inferred from Days 4, 6, 8–28]
 6. **Stop** beyond the retracement's high or low [Day 18, 07:12 example], or beyond the whole order block "to play safe"; its size follows the timeframe being played [Day 22, 09:15–09:59, 23:21]. **Targets:** previous liquidity, accumulation areas, gap levels; several take profits, rest to break even [Day 12, 05:56–10:22; Day 18 examples].
 7. **No confirmation, no trade** at any step [Day 8, 08:38; Day 12, 07:20]. **No trades before the market opens** [Day 18, 03:13].
 
-Still to be taught: execution part 3 (33), daily bias (34–36),
+Still to be taught: daily bias (34–36),
 stop losses (38), take profits (37), position size (39).
 
 ---
@@ -241,7 +241,7 @@ What TJR has named as a reason to enter, in his words:
 | Day 22: on the 4-hour "this was the candle ... relatively precise"; but "it's the whole move". | The whole move; a higher timeframe can show it as one candle, so scale down [TJR Day 22, 07:49–08:15]. Where the move starts is not defined. |
 | Day 22: stop "above the order block itself if you want to play safe" vs "under here or underneath here, it doesn't really matter". | Both are examples; stops are taught on Day 38. |
 | Days 22, 24: after price reaches an order block, enter on a lower-timeframe break. Day 26: "even just hitting the order block, enter off that"; "if it hits the order block I'm instantly entering". | Both are taught. Possibly confidence or timeframe. H23 (bare entry at the block): better reward-to-risk, worse average R on 5 of 6 charts. Open. |
-| Days 16, 22, 24: wait for a reaction or lower-timeframe break inside the zone. Days 26, 30: "enter at the order block"; a gap on a reaction "or just for it to get hit". | Settled for order blocks by Day 32: "we're executing when it comes into the order block", not on a lower-timeframe break [11:19]. The lower-timeframe break in Days 22/24 was optional extra confirmation [Inferred]. Gaps: Day 33. |
+| Days 16, 22, 24: wait for a reaction or lower-timeframe break inside the zone. Days 26, 30: "enter at the order block"; a gap on a reaction "or just for it to get hit". | Settled for order blocks by Day 32: "we're executing when it comes into the order block", not on a lower-timeframe break [11:19]. The lower-timeframe break in Days 22/24 was optional extra confirmation [Inferred]. Gaps: on confirmation ("what are we waiting for? Some sort of reaction") [Day 33, 09:41]. So: blocks on the touch, gaps on confirmation [Inferred]. |
 | Day 26, 07:06 and Day 28, 02:06: shorts "in a discount", above 50%. | Not a mistake: TJR uses "discount" for a good price in the trade's direction ("on sale") [Inferred]. |
 | Day 18 waits for the New York open; Day 22's 15-minute example waits for the London open. | Different markets (TJR trades GBP pairs). Which open for which instrument stays open. |
 
@@ -261,7 +261,7 @@ What TJR has named as a reason to enter, in his words:
 10. Position management: how many partial profits, when to move the stop to break even (Day 18 examples only; Days 37, 38).
 11. Order blocks: where exactly the leg starts; a gap inside a block is "either or" [Day 24, 16:20]. TJR's "wick to start of body" box = the wick of the leg's candle nearest the retracement [Inferred from the owner's screenshots, Day 24 10:45/11:30].
 12. ~~Accumulation~~ = order block [Day 20, 11:08]. Distribution still open.
-14. Execution: touch or reaction for gap entries (model 3, Day 33); stops and targets per model (Days 37, 38).
+14. Execution: stops and targets per model (Days 37, 38). TJR's risk ladder isn't a win-rate ladder in the data (model 4 wins least, with the best reward-to-risk; H29).
 13. News days: which events, and how long to stay out (Day 19, not received).
 
 ---
