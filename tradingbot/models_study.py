@@ -19,6 +19,9 @@ With ``--bias``, each setup is also labelled by the daily bias when its break cl
 direction of the last daily break of structure ("what is the daily market structure? We get
 a break of structure to the downside, so I'm bearish on the daily", Day 34, 02:04-02:27).
 TJR: setups against it are "short-lived" (Day 33, 23:27; Day 34, 00:31) (H30).
+With ``--bias`` the 4-hour trend is read too: "aligned" = the daily and the 4-hour both agree
+with the setup ("the S&P looks great for longs today ... the hourly's in an uptrend, the four
+hour's in an uptrend, the daily is in an uptrend", Day 35, 13:09-13:19) (H32).
 
 Usage:
     python -m tradingbot.models_study SPY --timeframe 1Hour --days 365
@@ -67,7 +70,8 @@ def _wait(candles, setup: Decision, until: int, entry_at) -> dict:
     return {"r": 0.0, "exit": "no_entry"}
 
 
-def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | None = None) -> dict:
+def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | None = None,
+        four_hour: Sequence[Candle] | None = None) -> dict:
     states = trend_series(candles, config.trend)
     scanned = scan(candles, config.liquidity)
     eq = ranges(candles, states)
@@ -75,6 +79,8 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
     wait = config.decision.max_hold_bars
     if daily is not None:
         daily_states = trend_series(daily, config.trend)
+    if four_hour is not None:
+        h4_states = trend_series(four_hour, config.trend)
     rows = []
     for b in find_blocks(candles, states, [t for t, _ in scanned], config.trend, config.liquidity):
         i, d = b.confirmed_at, (1 if b.side == BULLISH else -1)
@@ -119,6 +125,9 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
             ds = state_at(daily, daily_states, timedelta(days=1), candles[i].t)
             bias = ds.direction if ds else NONE
             out["bias"] = "none" if bias == NONE else "with" if bias == b.side else "against"
+            if four_hour is not None:
+                h4 = state_at(four_hour, h4_states, timedelta(hours=4), candles[i].t)
+                out["aligned"] = bias == b.side and h4 is not None and h4.direction == b.side
         m1 = simulate(candles, setup, config.decision.max_hold_bars)
         out["1"] = m1 and {**m1, "rr": round(setup.reward_to_risk, 3)}
         out["2"] = block_trade(candles, setup, near, wait)
@@ -132,6 +141,9 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
 
     summary = summarize(rows)
     by_bias = {g: summarize([r for r in rows if r.get("bias") == g]) for g in ("with", "against")} if daily is not None else None
+    if four_hour is not None:
+        by_bias["daily+4h aligned"] = summarize([r for r in rows if r.get("aligned")])
+        by_bias["not aligned"] = summarize([r for r in rows if r.get("aligned") is False])
     return {"config": to_dict(config), "summary": summary, "by_bias": by_bias, "setups": rows}
 
 
@@ -158,7 +170,8 @@ def main() -> None:
     start = datetime.now(timezone.utc) - timedelta(days=args.days)
     candles = fetch_bars(args.symbol, args.timeframe, start)
     daily = fetch_bars(args.symbol, "1Day", start - timedelta(days=120)) if args.bias else None
-    result = run(candles, daily=daily)
+    four_hour = fetch_bars(args.symbol, "4Hour", start - timedelta(days=30)) if args.bias else None
+    result = run(candles, daily=daily, four_hour=four_hour)
     print(f"\n{args.symbol} {args.timeframe}: {len(candles)} candles")
     print(f"{'model':6} {'setups':>7} {'trades':>7} {'win':>6} {'avg R/trade':>12} {'avg R/setup':>12} {'med RR':>7}")
     for k, s in result["summary"].items():

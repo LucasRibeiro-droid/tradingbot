@@ -2,7 +2,7 @@
 
 TJR's bootcamp teaches **one** way of trading, built from pieces taught over many lessons.
 This file reconstructs it as far as the lessons received so far allow (Days 2–4, 6–8, 10,
-12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 33, 34; see `course_map.md`). It's updated with every lesson.
+12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 33, 34, 35; see `course_map.md`). It's updated with every lesson.
 
 Tags: **[TJR]** taught explicitly (Day, timestamp) · **[Inferred]** concluded from several
 lessons · **[Bot]** a choice made to make something testable, not from TJR.
@@ -55,7 +55,7 @@ Assembled, the decision chain taught so far is [Inferred from Days 4, 6, 8–28]
 6. **Stop** beyond the retracement's high or low [Day 18, 07:12 example], or beyond the whole order block "to play safe"; its size follows the timeframe being played [Day 22, 09:15–09:59, 23:21]. **Targets:** previous liquidity, accumulation areas, gap levels; several take profits, rest to break even [Day 12, 05:56–10:22; Day 18 examples].
 7. **No confirmation, no trade** at any step [Day 8, 08:38; Day 12, 07:20]. **No trades before the market opens** [Day 18, 03:13].
 
-Still to be taught: daily bias parts 2–3 (35, 36),
+Still to be taught: daily bias part 3 (36),
 stop losses (38), take profits (37), position size (39).
 
 ---
@@ -131,7 +131,7 @@ stop losses (38), take profits (37), position size (39).
 - **Understand the timeframe you're playing:** it sets the size of the order block, the stop and the targets [TJR Day 22, 09:15–10:39].
 - Focus on one or two instruments [TJR Day 4, 27:04].
 - Trade in line with the **daily and weekly bias**; a daily bias shift is a daily break of structure [TJR Day 24, 20:23–20:36].
-- **Daily bias** (details: `daily_bias.md`) = the daily market structure, the last daily break [TJR Day 34, 02:07–02:27]. Top-down: the weekly trend (line chart) for long-term targets, the daily for the bias, the 4-hour ideally agreeing. A 4-hour move against the daily is a daily retracement: wait for higher-timeframe building blocks and an hourly break back in the daily's direction, then execute on the 15/5-minute; keep take profits tentative until the 4-hour agrees [TJR Day 34, 02:59–05:21, 08:50–10:42, 13:46–14:31]. Ignore lower-timeframe setups against the bias [TJR Day 34, 17:23]. The S&P's daily move is made in the New York session; "everything else is just chop" [TJR Day 34, 05:37].
+- **Daily bias** (details: `daily_bias.md`) = the daily market structure, the last daily break [TJR Day 34, 02:07–02:27]. Top-down: the weekly trend (line chart) for long-term targets, the daily for the bias, the 4-hour ideally agreeing. A 4-hour move against the daily is a daily retracement: wait for higher-timeframe building blocks and an hourly break back in the daily's direction, then execute on the 15/5-minute; keep take profits tentative until the 4-hour agrees [TJR Day 34, 02:59–05:21, 08:50–10:42, 13:46–14:31]. Ignore lower-timeframe setups against the bias [TJR Day 34, 17:23]. The S&P's daily move is made in the New York session; "everything else is just chop" [TJR Day 34, 05:37]. Day 35: the daily governs the weekly; trade the extension, not the retracement; bias is also a *location*: a high-confluence building block on the 4-hour / 1-hour within the bias, then the same building blocks on the 15/5-minute (S&P 5/1-minute), a 5-minute break as the "sniper entry", higher-timeframe targets [TJR Day 35, 03:12, 05:31, 06:51–08:15, 11:43]. Don't force a bias from fundamentals [TJR Day 35, 04:13].
 
 ---
 
@@ -278,7 +278,7 @@ What TJR has named as a reason to enter, in his words:
 | Fair value gaps | ready (`fvg.py`), definition [TJR Day 16]; "filled" and "invalidated" are [Bot] |
 | Order blocks | detection ready (`orderblocks.py`), definition [TJR Days 20–24], exact leg boundaries [Bot]; in the harness as an alternative continuation zone (H24) |
 | Equilibrium | ready (`equilibrium.py`), [TJR Days 26, 28]; anchors and wicks [Inferred from frames]; tested as a continuation filter (H28) |
-| Daily bias | the harness's higher-timeframe filter already = the last daily break [TJR Day 34]; but two-candle daily swings flip every few days (H31); Days 35, 36 to come |
+| Daily bias | direction: the harness's daily filter = the last daily break [TJR Day 34]; as sensitive as TJR's (Day 35 frames). Location (a higher-timeframe building block within the bias, H33) not built yet. Day 36 to come |
 | News calendar | needed (TJR: no trading on PPI/FOMC days); waits for Day 19 |
 | Entry trigger on a lower timeframe inside a zone | ready in the harness (`decision.Continuation`), refinements wait for Days 30–33 |
 | Session times (market open) | used: no decisions before 9:30 New York [TJR Day 18]; which open for which market waits |

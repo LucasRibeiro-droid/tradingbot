@@ -34,7 +34,8 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 30 | Execution | Putting the pieces together | the five building blocks and what each says; four entry models (sweep + break; + order block on poor RR, stop above the highs; + fair value gap, on a reaction or the hit; + gap/block + discount); risk ladder from most risky to safest; choose your models | Days 6–28 | partial (part 1 of 3) | The methodology itself: how the pieces combine into entries |
 | 32 | Execution pt.2 | Models 1 and 2 on charts | sweep + break → execute at the break; sweep + break + order block → execute when price comes into the block, not on the break ("doesn't matter if it's exact"); the block can be one candle; some blocks aren't reached; building blocks are also targets; base strategy only (daily bias, stops, take profits later); homework 10 examples of each | Days 20–30 | partial (part 2 of 3) | Settles how models 1 and 2 execute |
 | 33 | Execution pt.3 | Models 3 and 4 on charts | gap entry waits for a reaction / lower-timeframe break; a gap price runs through is dropped; equilibrium lined up with the gap = high confluence; gaps and equilibrium are "last chance entries"; stacked confluences build confidence; setups against the daily bias are short-lived; homework 10 examples each | Days 14–32 | learned (**execution complete**) | Completes the entry models; next: daily bias, take profits, stops |
-| 34 | Daily Bias | Where the market wants to go today | daily bias = the last daily break of structure; top-down weekly (trend, line chart) → daily → 4-hour; 4-hour against daily = a daily retracement, wait for confirmation, tentative targets; imagine a higher-timeframe trade, execute on 15/5-minute; ignore lower-timeframe setups against the bias; the S&P moves in the New York session | Days 4, 6, 30–33 | partial (part 1 of 2–3) | The filter on top of the entry models |
+| 34 | Daily Bias | Where the market wants to go today | daily bias = the last daily break of structure; top-down weekly (trend, line chart) → daily → 4-hour; 4-hour against daily = a daily retracement, wait for confirmation, tentative targets; imagine a higher-timeframe trade, execute on 15/5-minute; ignore lower-timeframe setups against the bias; the S&P moves in the New York session | Days 4, 6, 30–33 | partial (part 1 of 3) | The filter on top of the entry models |
+| 35 | Daily Bias pt. 2 | Daily bias live, with charts | weekly overview, the daily governs; trade the extension; small daily swings flip the bias within days; don't force a bias; lower-timeframe confirmation required; bias as a location: 4-hour/1-hour building block within the bias → 15/5-minute building blocks → 5-minute break; all timeframes aligned = "looks great"; execution TFs Forex 15/5, S&P 5/1 | Days 4, 20–34 | partial (part 2 of 3) | Shows the whole top-down process on S&P, GBPUSD, gold |
 
 ## Not yet received
 
@@ -50,7 +51,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 27 | Fear | psychology |
 | 29 | Trading Plan | the plan |
 | 31 | Hard Work | psychology |
-| 35, 36 | Daily Bias Pt 2–3 | daily bias (completes the topic) |
+| 36 | Daily Bias Pt 3 | daily bias (completes the topic) |
 | 37 | Taking Profits | exits |
 | 38 | Stop Losses | stops |
 | 39 | Calculating Lot Size | position sizing |
