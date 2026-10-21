@@ -1,0 +1,73 @@
+# Runs the paper-trading session on GitHub's servers so it doesn't depend on a Claude container.
+#
+# - Fires every 15 minutes on weekdays; `--only-in-session` makes a run exit at once unless the
+#   market opens within 45 minutes or is open before the flatten time.
+# - One session at a time (concurrency group). A runner job is capped at 6 hours and the day is
+#   6.5, so the bot hands off after 345 minutes; the next queued run resumes from the saved state.
+# - Every 2 minutes the journal (state, setups, trades, events) is pushed to TRADING_BRANCH, so a
+#   restart anywhere resumes from it. Stops and take profits are gtc brackets held by Alpaca, so a
+#   position stays protected between runs.
+#
+# Needs repository secrets ALPACA_API_KEY and ALPACA_SECRET_KEY (paper account; the broker refuses
+# anything else). Scheduled workflows only run from the default branch's copy of this file.
+name: trading-session
+
+on:
+  schedule:
+    - cron: "*/15 12-20 * * 1-5"
+  workflow_dispatch:
+
+concurrency:
+  group: trading-session
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  TRADING_BRANCH: claude/dreamy-euler-tv1yn1
+
+jobs:
+  session:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TRADING_BRANCH }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install numpy pandas requests
+
+      - name: Run the session
+        env:
+          ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        run: |
+          git config user.name "trading-session"
+          git config user.email "trading-session@users.noreply.github.com"
+          sync() {
+            git add journal/trading
+            git diff --cached --quiet && return 0
+            git commit -qm "Trading journal $(date -u +%H:%M) UTC (GitHub Actions session)"
+            for i in 1 2 3 4; do
+              if git pull -q --rebase --autostash origin "$TRADING_BRANCH"; then
+                git push -q origin "HEAD:$TRADING_BRANCH" && return 0
+              else
+                git rebase --abort 2>/dev/null
+              fi
+              sleep $((2 ** i))
+            done
+            echo "journal push failed; will retry at the next sync"
+          }
+          python -u -m tradingbot.live.run --only-in-session --max-minutes 345 &
+          bot=$!
+          while kill -0 "$bot" 2>/dev/null; do sleep 120; sync; done
+          wait "$bot"; status=$?
+          sync
+          exit $status
