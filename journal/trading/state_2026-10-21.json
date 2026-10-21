@@ -35,12 +35,53 @@
    "be_moved": false,
    "closed": false,
    "page": "/home/user/tradingbot/journal/trading/trades/2026-10-21_1400_NVDA.md"
+  },
+  {
+   "symbol": "MU",
+   "setup_t": "2026-10-21T15:30:00Z",
+   "direction": 1,
+   "planned_entry": 913.08,
+   "stop": 892.75,
+   "targets": [
+    956.57,
+    983.93,
+    994.85
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-21-MU-1530-0",
+     "order_id": "77c4fc5e-2988-4cd5-9def-ee2bf63ad13f",
+     "qty": 16,
+     "target": 956.57
+    },
+    {
+     "client_id": "tjr-2026-10-21-MU-1530-1",
+     "order_id": "2b4179da-4838-4853-938d-bd5cfb545037",
+     "qty": 16,
+     "target": 983.93
+    },
+    {
+     "client_id": "tjr-2026-10-21-MU-1530-2",
+     "order_id": "53de9f67-8959-4c6c-87f8-8352ffcb56e3",
+     "qty": 16,
+     "target": 994.85
+    }
+   ],
+   "entry_fill": 915.2904166666667,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-21_1530_MU.md"
   }
  ],
  "traded_symbols": [
+  "MU",
   "NVDA"
  ],
  "seen": [
+  [
+   "MU",
+   "2026-10-21T15:30:00Z"
+  ],
   [
    "NVDA",
    "2026-10-21T14:00:00Z"
