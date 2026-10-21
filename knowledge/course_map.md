@@ -32,6 +32,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 26 | Equilibrium | What equilibrium is | 50% of a swing; discount (below, buy) and premium (above, sell); a gauge not an entry; pair with a gap, block or break in the discount; gap + equilibrium "perfect"; sweep = inducement; touching an order block can be the entry | Days 4, 6, 14–24 | learned (part 1 of 2) | The third retracement tool; where in a pullback to look |
 | 28 | Equilibrium pt.2 | Equilibrium on the chart | low → high in an uptrend, high → low in a downtrend; drag to each new extreme; Gann box / Fibonacci at 0, 0.5, 1; combine with a gap or block (equilibrium + break alone = "not much confirmation"); every timeframe (monthly gold to 5-minute); a Discord swing short with 4 take profits | Days 4, 6, 12, 14–26 | learned (**equilibrium complete**) | Completes the building blocks; next: trading plan and putting everything together |
 | 30 | Execution | Putting the pieces together | the five building blocks and what each says; four entry models (sweep + break; + order block on poor RR, stop above the highs; + fair value gap, on a reaction or the hit; + gap/block + discount); risk ladder from most risky to safest; choose your models | Days 6–28 | partial (part 1 of 3) | The methodology itself: how the pieces combine into entries |
+| 32 | Execution pt.2 | Models 1 and 2 on charts | sweep + break → execute at the break; sweep + break + order block → execute when price comes into the block, not on the break ("doesn't matter if it's exact"); the block can be one candle; some blocks aren't reached; building blocks are also targets; base strategy only (daily bias, stops, take profits later); homework 10 examples of each | Days 20–30 | partial (part 2 of 3) | Settles how models 1 and 2 execute |
 
 ## Not yet received
 
@@ -46,7 +47,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 25 | Over Confidence | psychology |
 | 27 | Fear | psychology |
 | 29 | Trading Plan | the plan |
-| 32, 33 | Execution Pt 2–3 | the entry models on charts (completes execution) |
+| 33 | Execution Pt 3 | models 3 and 4 on charts (completes execution) |
 | 31 | Hard Work | psychology |
 | 34, 35, 36 | Daily Bias Pt 1–3 | daily bias |
 | 37 | Taking Profits | exits |

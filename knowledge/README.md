@@ -49,7 +49,9 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 28 | Equilibrium pt.2 | learned; **equilibrium complete**; measurement built, tested as a continuation filter | `tradingbot/equilibrium.py`, `tradingbot/decision.py` |
 | 29 | Trading Plan | not yet studied | — |
 | 30 | Execution | learned (entry models, no charts); topic file `execution.md` | — |
-| 31–55 | … | not yet studied | — |
+| 31 | Hard Work | not yet studied | — |
+| 32 | Execution pt.2 | learned (models 1 and 2 on charts); homework matches `orderblock_study.py` | `tradingbot/orderblock_study.py` |
+| 33–55 | … | not yet studied | — |
 
 ## How the bot learns
 
