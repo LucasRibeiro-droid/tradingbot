@@ -102,6 +102,16 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Top-down analysis** | Weekly → daily → 4-hour → 1-hour → execution timeframe [TJR Day 34, 00:45]. | — | — |
 | **Tentative take profits** | Short targets while the 4-hour still disagrees with the daily [TJR Day 34, 05:16]. | not yet | — |
 
+## Exits (Days 37, 38)
+
+| Term | Meaning | How the bot measures it | Signals |
+|---|---|---|---|
+| **Take-profit ladder** | 3–4 take profits at building blocks; the first is the next higher-timeframe draw on liquidity, minimum 1:1 [TJR Day 37]. | `exits.take_profits()` | — |
+| **Partials** | Closing part of the position at each take profit [TJR Day 36, 20:51; Day 18]. | `exits.simulate_partials()` (thirds) | — |
+| **Invalidation point** | Where the idea is proven wrong: beyond the liquidity sweep. The stop goes there [TJR Day 38, 02:47]. | the sweep's extreme | — |
+| **Spread buffer** | Extra room beyond the invalidation so the spread doesn't stop you out (0.5 points on the S&P) [TJR Day 38, 06:05]. | not used (bar data) | — |
+| **De-risk** | Trade a smaller size on high-impact news days and before bank holidays [TJR Day 38, 10:01]. | not yet | — |
+
 ## Results
 
 | Term | Meaning |

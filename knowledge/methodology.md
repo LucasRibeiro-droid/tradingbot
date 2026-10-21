@@ -2,7 +2,7 @@
 
 TJR's bootcamp teaches **one** way of trading, built from pieces taught over many lessons.
 This file reconstructs it as far as the lessons received so far allow (Days 2–4, 6–8, 10,
-12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 33, 34, 35, 36; see `course_map.md`). It's updated with every lesson.
+12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 33, 34, 35, 36, 37, 38; see `course_map.md`). It's updated with every lesson.
 
 Tags: **[TJR]** taught explicitly (Day, timestamp) · **[Inferred]** concluded from several
 lessons · **[Bot]** a choice made to make something testable, not from TJR.
@@ -55,8 +55,7 @@ Assembled, the decision chain taught so far is [Inferred from Days 4, 6, 8–28]
 6. **Stop** beyond the retracement's high or low [Day 18, 07:12 example], or beyond the whole order block "to play safe"; its size follows the timeframe being played [Day 22, 09:15–09:59, 23:21]. **Targets:** previous liquidity, accumulation areas, gap levels; several take profits, rest to break even [Day 12, 05:56–10:22; Day 18 examples].
 7. **No confirmation, no trade** at any step [Day 8, 08:38; Day 12, 07:20]. **No trades before the market opens** [Day 18, 03:13].
 
-Still to be taught:
-stop losses (38), take profits (37), position size (39).
+Still to be taught: position size (39).
 
 ---
 
@@ -168,6 +167,8 @@ What TJR has named as a reason to enter, in his words:
 - Fair value gaps are "for retracements", "not for entries necessarily", or "for a secondary entry"; liquidity sweeps tell where the market is going [TJR Day 14, 03:52–04:22].
 - **Never enter just because price reached a gap;** wait for a reaction or a lower-timeframe break [TJR Day 16, 07:58–08:41]. Later softened: an order block or gap can be entered on the hit [TJR Day 26, 09:28; Day 30, 04:35, 05:27] (see contradictions).
 - Homework example only (not a rule): enter on a bearish close inside a bearish gap after a break down, stop above the previous high, target the previous lows [TJR Day 16, 09:13–09:28].
+- **Take profits** [TJR Day 37; details `exits.md`]: at building blocks on the execution timeframe or one higher; TP1 = the next higher-timeframe draw on liquidity, minimum 1:1 "most of the time"; 3–4 take profits; partials (Day 36); not on 1-minute confluences.
+- **Stops** [TJR Day 38]: beyond the liquidity sweep, the invalidation point, whatever the entry; plus the spread; never by fixed points. Disliked exception: above a closer block or gap when the sweep gives a terrible reward-to-risk.
 - **Target:** the liquidity on the other side [TJR Day 12, 08:20–10:22]. Fair value gaps are also places to take profit [TJR Day 12, 13:55], including a gap's start, 50% or end [TJR Day 18, 10:32]; accumulation areas too [TJR Day 18, 07:22, 10:26]. Taking profits is taught on Day 37.
 - **Position management shown (examples):** several take profits, the rest stopped at break even [TJR Day 18, 04:33–04:48].
 - **Reward-to-risk** matters: waiting for a retracement is how TJR gets a better one [TJR Day 18, 05:28]. No minimum stated yet.
@@ -180,7 +181,7 @@ What TJR has named as a reason to enter, in his words:
 ## 7. Risk management
 
 - Professional traders trade "with risk management, with no emotion, with discipline"; no over-trading, no over-leveraging [TJR Day 3, 24:38].
-- Concrete rules come on Days 13, 38, 39. Nothing numeric has been taught yet.
+- Stops by invalidation, never by points; risk set by your tolerance; TJR uses a set lot size scaled by confidence, and halves it on high-impact news and before bank holidays; no trading on US bank holidays [TJR Day 38, 09:22–12:58]. Lot sizing: Day 39.
 
 ---
 
@@ -282,7 +283,7 @@ What TJR has named as a reason to enter, in his words:
 | News calendar | needed (TJR: no trading on PPI/FOMC days); waits for Day 19 |
 | Entry trigger on a lower timeframe inside a zone | ready in the harness (`decision.Continuation`), refinements wait for Days 30–33 |
 | Session times (market open) | used: no decisions before 9:30 New York [TJR Day 18]; which open for which market waits |
-| Stop, target, position size | target [TJR]; stop and size waiting (Days 37–39) |
+| Stop, target, position size | stop and take-profit ladder ready (`exits.py`) [TJR Days 37, 38]; TJR's exits beat the single target (H19); size waits for Day 39 |
 
 ## 14. [Bot] choices currently in the code
 
