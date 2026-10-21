@@ -13,3 +13,6 @@
 | 2026-10-21 13:36 | session start (paper): equity 100000, buying power 400000, shorting on |  |  |
 | 2026-10-21 14:24 | Container restarted (uptime 16 s); session process gone, last state write 13:43 | no trading 13:43–14:25 | Alpaca reconciled: no positions, no orders; session relaunched (unbuffered output) |
 | 2026-10-21 14:24 | session start (paper): equity 100000, buying power 400000, shorting on |  |  |
+| 2026-10-21 15:00 | Container restarted again (uptime 14 s); bot last wrote state 14:35:54, about 5 min after the conversation went idle | no setup scanning or management ~14:36–15:00; NVDA short protected by its Alpaca stops (222.20) and take profits | Alpaca reconciled (NVDA −230, 3 brackets live, nothing else); session relaunched from saved state |
+| 2026-10-21 15:00 | session start (paper): equity 99615.9, buying power 337677.36, shorting on |  |  |
+| 2026-10-21 15:00 | start reconcile unavailable: GET /v2/orders?status=all&nested=true&limit=500&after=2026-10-21T04:00:00+00:00: HTTP 422: {"code":40010001,"message":"invalid format for after; format: '2006-01-02T15:04:05Z'"} | instrument cap from saved state only |  |
