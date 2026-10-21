@@ -2,6 +2,10 @@
 
     python -m tradingbot.live.run            # trade on the paper account
     python -m tradingbot.live.run --dry-run  # assess and record, place no orders
+    python -m tradingbot.live.run --max-minutes 345  # hand off before a runner's time limit
+
+A session can stop and restart at any time: the watchlist and state files resume it, Alpaca
+holds every stop and take profit (gtc brackets), and start/flatten reconcile with Alpaca.
 
 Cycle (owner's brief, section 11), every ``execution_tf`` candle close:
   1. assess each watched stock (signals.assess): APPROVED or REJECTED, recorded in setups.jsonl
@@ -105,9 +109,10 @@ class Trade:
 
 
 class Session:
-    def __init__(self, config: Config = BASELINE, dry_run: bool = False):
+    def __init__(self, config: Config = BASELINE, dry_run: bool = False, max_minutes: float | None = None):
         self.config = config
         self.dry_run = dry_run
+        self.max_minutes = max_minutes
         self.broker = Paper()
         self.trades: list[Trade] = []
         self.traded_symbols: set[str] = set()
@@ -132,7 +137,29 @@ class Session:
             wl.write_text(json.dumps(result, indent=1))
         self.watch = [r["symbol"] for r in result["watch"]]
         self._load_state()
+        self._reconcile_start()
         return acct
+
+    def _reconcile_start(self) -> None:
+        """After a restart, Alpaca is the truth: count today's filled symbols toward the instrument
+        cap, and report positions the saved state doesn't know (it was lost before a save)."""
+        if self.dry_run:
+            return
+        open_ny = datetime.now(NY).replace(hour=0, minute=0, second=0, microsecond=0)
+        try:
+            orders = self.broker.orders(status="all", after=open_ny.astimezone(timezone.utc).isoformat())
+            positions = self.broker.positions()
+        except BrokerError as e:
+            event(f"start reconcile unavailable: {e}", "instrument cap from saved state only", "")
+            return
+        filled = {o["symbol"] for o in orders if float(o.get("filled_qty") or 0) > 0}
+        self.traded_symbols |= filled
+        known = {t.symbol for t in self.trades if not t.closed}
+        for pos in positions:
+            if pos["symbol"] not in known:
+                event(f"position {pos['symbol']} {pos['qty']} at Alpaca is not in the saved state",
+                      "not managed by this session (its bracket stop and take profit stay live at Alpaca)",
+                      "closed at flatten; reconcile in the review")
 
     def _load_state(self) -> None:
         if self.state_path.exists():
@@ -276,7 +303,13 @@ class Session:
 
     # ---- end of day ----
     def flatten(self) -> None:
-        if not self.dry_run and any(not t.closed for t in self.trades):
+        if self.dry_run:
+            return
+        try:
+            at_broker = bool(self.broker.positions())
+        except BrokerError:
+            at_broker = True  # can't see: close anyway
+        if at_broker or any(not t.closed for t in self.trades):
             self.broker.close_all()
             event("flattened before the close", "open positions closed at market", "")
             time.sleep(5)
@@ -285,6 +318,7 @@ class Session:
     def run(self) -> None:
         tp = self.config.trading
         self.start()
+        deadline = _now() + timedelta(minutes=self.max_minutes) if self.max_minutes else None
         step = timeframe_length(tp.execution_tf)
         fh, fm = map(int, tp.flatten_at.split(":"))
         while True:
@@ -292,6 +326,11 @@ class Session:
             flatten = now_ny.replace(hour=fh, minute=fm, second=0, microsecond=0)
             if now_ny >= flatten:
                 break
+            if deadline and _now() >= deadline:
+                self._save_state()
+                event("session hand-off (runner time limit)", "positions stay protected at Alpaca",
+                      "next run resumes from the saved state")
+                return
             clock = self.broker.clock()
             if clock["is_open"]:
                 self.cycle()
@@ -300,7 +339,8 @@ class Session:
             # Sleep to just after the next candle close (or the open), managing every minute.
             nxt = (_now() + step).replace(second=20, microsecond=0)
             nxt -= timedelta(minutes=nxt.minute % int(step.total_seconds() // 60))
-            while _now() < min(nxt, flatten.astimezone(timezone.utc)):
+            until = min(nxt, flatten.astimezone(timezone.utc), deadline or nxt)
+            while _now() < until:
                 time.sleep(60)
                 if clock["is_open"] and not self.dry_run:
                     self.manage()
@@ -311,8 +351,27 @@ class Session:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--max-minutes", type=float, help="exit cleanly (no flatten) after this long")
+    ap.add_argument("--only-in-session", action="store_true",
+                    help="do nothing unless the market opens within 45 minutes or is open before the flatten time")
     args = ap.parse_args()
-    Session(dry_run=args.dry_run).run()
+    if args.only_in_session and not in_session_window():
+        print("outside the session window: nothing to do")
+        return
+    Session(dry_run=args.dry_run, max_minutes=args.max_minutes).run()
+
+
+def in_session_window(config: Config = BASELINE) -> bool:
+    """For schedulers that fire repeatedly (GitHub Actions): start only around a real session."""
+    clock = Paper().clock()
+    fh, fm = map(int, config.trading.flatten_at.split(":"))
+    now_ny = datetime.now(NY)
+    if now_ny >= now_ny.replace(hour=fh, minute=fm, second=0, microsecond=0):
+        return False
+    if clock["is_open"]:
+        return True
+    next_open = datetime.fromisoformat(clock["next_open"])
+    return next_open - _now() <= timedelta(minutes=45)
 
 
 if __name__ == "__main__":

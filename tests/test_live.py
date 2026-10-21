@@ -42,5 +42,42 @@ class Assessment(unittest.TestCase):
         self.assertIsNone(assess("X", candles, candles, candles, ltf_length=timedelta(minutes=15)))
 
 
+class Restart(unittest.TestCase):
+    """The session must survive being stopped and restarted (GitHub Actions hand-offs)."""
+
+    def _clock(self, is_open, next_open_in):
+        from datetime import datetime, timezone
+        nxt = (datetime.now(timezone.utc) + next_open_in).isoformat()
+        return lambda self: {"is_open": is_open, "next_open": nxt}
+
+    def _window(self, clock):
+        from unittest import mock
+        from tradingbot.live import run
+        with mock.patch.object(run.Paper, "__init__", lambda self: None), \
+                mock.patch.object(run.Paper, "clock", clock):
+            return run.in_session_window()
+
+    def test_window_far_from_open(self):
+        self.assertFalse(self._window(self._clock(False, timedelta(hours=10))))
+
+    def test_window_near_open(self):
+        from datetime import datetime
+        from tradingbot.live.run import NY
+        if datetime.now(NY).strftime("%H:%M") >= "15:55":
+            self.skipTest("past the flatten time in New York")
+        self.assertTrue(self._window(self._clock(False, timedelta(minutes=30))))
+
+    def test_reconcile_counts_filled_symbols(self):
+        from tradingbot.live.run import Session
+        s = Session.__new__(Session)
+        s.dry_run, s.trades, s.traded_symbols = False, [], set()
+        s.broker = type("B", (), {
+            "orders": lambda self, status, after: [{"symbol": "NVDA", "filled_qty": "77"},
+                                                   {"symbol": "AMD", "filled_qty": "0"}],
+            "positions": lambda self: []})()
+        s._reconcile_start()
+        self.assertEqual(s.traded_symbols, {"NVDA"})
+
+
 if __name__ == "__main__":
     unittest.main()
