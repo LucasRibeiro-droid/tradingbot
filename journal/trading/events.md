@@ -22,3 +22,4 @@
 | 2026-10-21 15:16 | Bot relaunched as a session-tracked background task (test: does it keep the container from being reclaimed when the conversation is idle?) | a few seconds without management | watch whether state keeps updating while idle |
 | 2026-10-21 15:16 | session start (paper): equity 99581.4, buying power 337497.96, shorting on |  |  |
 | 2026-10-21 15:20 | Workflow trading-session merged to the default branch (PR #1); container bot stopped so only the GitHub Actions session trades | seconds without management; NVDA protected at Alpaca | GitHub Actions run started manually; scheduled runs every 15 min take over |
+| 2026-10-21 15:20 | session start (paper): equity 99691.8, buying power 338072.04, shorting on |  |  |
