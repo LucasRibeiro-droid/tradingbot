@@ -52,7 +52,7 @@ TJR: 10 examples of each, and look at what price does after [Day 32, 08:05, 12:0
 
 ## All four models on the same setups (Day 33 homework, `models_study.py`, 2026-10-21)
 For each sweep + break on SPY and GLD (daily, 4-hour, 1-hour, 15-minute; 34–67 setups per chart), the bot entered each model's way. All four use the same stop (beyond the sweep) and target (the nearest liquidity). Full table: `day33_execution_pt3.md`.
-- **Win rate:** model 4 (the "safest") has the lowest on 7 of 8 charts. Its deeper entries give the highest reward-to-risk on 7 of 8 (median 2.07–2.62).
+- **Win rate:** model 4 (the "safest") has the lowest on 7 of 8 charts. Its deeper entries give the highest reward-to-risk on 8 of 8 (median 2.07–2.62).
 - **Best average R per trade:** model 3 on 3 charts, model 1 on 2, model 4 on 2, model 2 on 1.
 - **Model 3 (gap + reaction)** is positive on 6 of 8 charts; **model 2 (block on the touch)** on 2 of 8.
 - **H29 (the ladder as win rate): not supported.** No model dominates. Without daily bias and TJR's exits these are base-strategy numbers only.

@@ -62,7 +62,7 @@ All four use the same stop (beyond the sweep: "stops above the highs") and targe
 | GLD 15Min (56) | 48% / +0.20 / 1.09 | 42% / +0.12 / 1.27 | 43% / +0.23 / 1.37 | 24% / **+0.29** / 2.59 |
 
 **What the data say:**
-- **The risk ladder, read as "wins more often", is not supported** (H29). Model 4 has the *lowest* win rate on 7 of 8 charts. Its entries are deeper, so it has the highest reward-to-risk on 7 of 8 (median 2.07–2.62) and needs fewer wins.
+- **The risk ladder, read as "wins more often", is not supported** (H29). Model 4 has the *lowest* win rate on 7 of 8 charts. Its entries are deeper, so it has the highest reward-to-risk on 8 of 8 (median 2.07–2.62) and needs fewer wins.
 - **No model wins everywhere** on average R per trade:
   - Model 3 is best on 3 charts.
   - Model 1 on 2.
