@@ -22,6 +22,9 @@ TJR: setups against it are "short-lived" (Day 33, 23:27; Day 34, 00:31) (H30).
 With ``--bias`` the 4-hour trend is read too: "aligned" = the daily and the 4-hour both agree
 with the setup ("the S&P looks great for longs today ... the hourly's in an uptrend, the four
 hour's in an uptrend, the daily is in an uptrend", Day 35, 13:09-13:19) (H32).
+"Located" = with the daily bias AND the setup's sweep happened in the daily discount (a long
+below the 50% of the daily swing, a short above it): "that's like the bare minimum that I look
+for for retracements: is it even in a discount" (Day 36, 11:22-11:27) (H33).
 
 Usage:
     python -m tradingbot.models_study SPY --timeframe 1Hour --days 365
@@ -79,6 +82,7 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
     wait = config.decision.max_hold_bars
     if daily is not None:
         daily_states = trend_series(daily, config.trend)
+        daily_eq = ranges(daily, daily_states)
     if four_hour is not None:
         h4_states = trend_series(four_hour, config.trend)
     rows = []
@@ -125,6 +129,11 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
             ds = state_at(daily, daily_states, timedelta(days=1), candles[i].t)
             bias = ds.direction if ds else NONE
             out["bias"] = "none" if bias == NONE else "with" if bias == b.side else "against"
+            k = _last_closed(daily, timedelta(days=1), candles[i].t)
+            r = daily_eq[k] if k is not None else None
+            sweep_price = candles[b.sweep].l if d == 1 else candles[b.sweep].h
+            out["located"] = (bias == b.side and r is not None and r.direction == b.side
+                              and r.depth(sweep_price) >= 0.5)
             if four_hour is not None:
                 h4 = state_at(four_hour, h4_states, timedelta(hours=4), candles[i].t)
                 out["aligned"] = bias == b.side and h4 is not None and h4.direction == b.side
@@ -141,10 +150,25 @@ def run(candles: Sequence[Candle], config=BASELINE, daily: Sequence[Candle] | No
 
     summary = summarize(rows)
     by_bias = {g: summarize([r for r in rows if r.get("bias") == g]) for g in ("with", "against")} if daily is not None else None
+    if daily is not None:
+        by_bias["daily bias + discount"] = summarize([r for r in rows if r.get("located")])
+        by_bias["not located"] = summarize([r for r in rows if r.get("located") is False])
     if four_hour is not None:
         by_bias["daily+4h aligned"] = summarize([r for r in rows if r.get("aligned")])
         by_bias["not aligned"] = summarize([r for r in rows if r.get("aligned") is False])
     return {"config": to_dict(config), "summary": summary, "by_bias": by_bias, "setups": rows}
+
+
+def _last_closed(htf: Sequence[Candle], length: timedelta, when: str) -> int | None:
+    """Index of the last higher-timeframe candle closed by ``when``."""
+    from .trend import _ts
+    t, k = _ts(when), None
+    for j, c in enumerate(htf):
+        if _ts(c.t) + length <= t:
+            k = j
+        else:
+            break
+    return k
 
 
 def _summary(res: list[dict]) -> dict:

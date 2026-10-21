@@ -54,7 +54,8 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 33 | Execution pt.3 | learned; **execution complete**; all four entry models compared on the same setups | `tradingbot/models_study.py` |
 | 34 | Daily Bias | learned (part 1); topic file `daily_bias.md`; first test of the bias on the entry models | `tradingbot/models_study.py --bias` |
 | 35 | Daily Bias pt. 2 | learned (live, with charts); H31 weakened, H32 tested | `tradingbot/models_study.py --bias` |
-| 36–55 | … | not yet studied | — |
+| 36 | Daily Bias pt. 3 | learned; **daily bias complete**; H33 tested | `tradingbot/models_study.py --bias` |
+| 37–55 | … | not yet studied | — |
 
 ## How the bot learns
 

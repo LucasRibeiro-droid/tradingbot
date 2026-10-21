@@ -1,7 +1,7 @@
 # Daily bias (topic file: Days 34, 35, 36)
 
-**Status: incomplete.** Days 34 and 35 are learned; Day 36 hasn't been received.
-Lesson notes: `day34_daily_bias_pt1.md`, `day35_daily_bias_pt2.md`.
+**Status: complete** (Days 34, 35, 36).
+Lesson notes: `day34_daily_bias_pt1.md`, `day35_daily_bias_pt2.md`, `day36_daily_bias_pt3.md`.
 
 ## What it is [TJR Day 34]
 - Where the market wants to go for the day. Trades against it are likely "short-lived" or losers [00:15–00:43; Day 33, 23:27].
@@ -29,6 +29,14 @@ Lesson notes: `day34_daily_bias_pt1.md`, `day35_daily_bias_pt2.md`.
 - **Execution timeframes:** Forex 15/5-minute; S&P 5/1-minute [Day 35, 11:43].
 - **The daily structure is sensitive:** in the 04:08 frame a pullback of 4–5 daily candles below a recent small low is a daily break, and one close back above flips it [Inferred from frames].
 
+## Added by Day 36
+- **The weekly sets the context:** a daily break against the weekly trend is a weekly retracement. Use the weekly retracement tools to see how far it goes [Day 36, 00:24–01:08].
+- **The timeframe ladder:** a 15-minute break = a 1-hour retrace; a 1-hour break = a 4-hour retrace; a 4-hour break = a daily retrace; a daily break = a weekly retrace. Don't get trapped by lower-timeframe breaks [Day 36, 07:41–08:30].
+- **The discount is "the bare minimum"** for a retracement trade [Day 36, 11:22].
+- **No reaction in the area = "like it was never there"** [Day 36, 09:56].
+- **The bias changes on a daily break back** in the weekly's direction: "the weekly retracement is over" [Day 36, 14:52–15:30].
+- **Targets in the bias:** the most recent low, the discount level, daily liquidity, daily order blocks. Partials; no multi-day holds [Day 36, 14:30–14:40, 19:41–20:53].
+
 ## How the bot measures it so far
 - The harness's higher-timeframe filter (`trend.state_at` on daily candles) is already "the last daily break of structure".
 - `models_study.py --bias` labels setups with / against it.
@@ -37,10 +45,11 @@ Lesson notes: `day34_daily_bias_pt1.md`, `day35_daily_bias_pt2.md`.
 ## Tests so far (2026-10-21)
 - **H30, with the daily bias vs against it:** model 1 better with it on 2 of 5 charts. Not supported.
 - **H32, daily and 4-hour aligned:** better on 3 of 6 charts, two of those with 5–7 trades. Not supported.
-- **What's missing is the location** (H33): TJR takes the setup only *inside* a higher-timeframe building block within the bias. Details: `day34_daily_bias_pt1.md`, `day35_daily_bias_pt2.md`.
+- **H33, with the bias and in the daily discount:** better on 2 of 6 charts, lower win rate on 5 of 6. Not supported.
+- None of the three filters improves the bot's entry models. Not yet tested: TJR's stacking of 4-hour and hourly order blocks with a lower-timeframe reaction, and his exits (daily targets, partials). Details in the three lesson files.
 
-## Open until Days 35, 36
+## Still open
 1. ~~Which daily swings define the structure (H31).~~ Day 35's frames: small daily swings, like the bot's.
-2. Exactly when a 4-hour move against the daily may be traded.
-3. How the weekly enters (targets only, or a filter).
+2. ~~Exactly when a 4-hour move against the daily may be traded.~~ Day 36: once it reaches the daily discount and a higher-timeframe area, on a lower-timeframe reaction.
+3. ~~How the weekly enters.~~ Day 36: context and targets; the daily decides.
 4. Take-profit rules when the timeframes disagree (Day 37).
