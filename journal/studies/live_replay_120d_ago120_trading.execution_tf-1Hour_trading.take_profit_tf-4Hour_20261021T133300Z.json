@@ -1,0 +1,5137 @@
+{
+ "summary": {
+  "SPY": {
+   "setups": 22,
+   "approved": 5,
+   "avg_r": -0.124,
+   "total_r": -0.62,
+   "win": 0.4,
+   "top_rejections": [
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     11
+    ],
+    [
+     "short setup, but shorting is disabled on the account",
+     10
+    ],
+    [
+     "no first take profit at least 1:1",
+     5
+    ]
+   ]
+  },
+  "GLD": {
+   "setups": 19,
+   "approved": 3,
+   "avg_r": 0.132,
+   "total_r": 0.4,
+   "win": 0.67,
+   "top_rejections": [
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     10
+    ],
+    [
+     "short setup, but shorting is disabled on the account",
+     9
+    ]
+   ]
+  },
+  "AMZN": {
+   "setups": 20,
+   "approved": 5,
+   "avg_r": 0.203,
+   "total_r": 1.02,
+   "win": 0.8,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     11
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     7
+    ],
+    [
+     "no first take profit at least 1:1",
+     1
+    ]
+   ]
+  },
+  "TSM": {
+   "setups": 24,
+   "approved": 4,
+   "avg_r": -0.163,
+   "total_r": -0.65,
+   "win": 0.0,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     13
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     12
+    ],
+    [
+     "no first take profit at least 1:1",
+     2
+    ]
+   ]
+  },
+  "MRNA": {
+   "setups": 27,
+   "approved": 8,
+   "avg_r": -0.015,
+   "total_r": -0.12,
+   "win": 0.5,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     13
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     3
+    ],
+    [
+     "no first take profit at least 1:1",
+     1
+    ]
+   ]
+  },
+  "WMT": {
+   "setups": 21,
+   "approved": 4,
+   "avg_r": -0.015,
+   "total_r": -0.06,
+   "win": 0.75,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     12
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     5
+    ]
+   ]
+  },
+  "EWZ": {
+   "setups": 17,
+   "approved": 5,
+   "avg_r": 0.097,
+   "total_r": 0.49,
+   "win": 0.6,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     7
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     3
+    ],
+    [
+     "no first take profit at least 1:1",
+     2
+    ]
+   ]
+  },
+  "KO": {
+   "setups": 21,
+   "approved": 9,
+   "avg_r": 0.056,
+   "total_r": 0.5,
+   "win": 0.67,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     10
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     3
+    ],
+    [
+     "no first take profit at least 1:1",
+     2
+    ]
+   ]
+  },
+  "CLF": {
+   "setups": 21,
+   "approved": 10,
+   "avg_r": -0.066,
+   "total_r": -0.66,
+   "win": 0.4,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     10
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     1
+    ]
+   ]
+  },
+  "RIG": {
+   "setups": 15,
+   "approved": 6,
+   "avg_r": 0.214,
+   "total_r": 1.28,
+   "win": 0.83,
+   "top_rejections": [
+    [
+     "short setup, but shorting is disabled on the account",
+     6
+    ],
+    [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]",
+     4
+    ],
+    [
+     "no first take profit at least 1:1",
+     1
+    ]
+   ]
+  }
+ },
+ "setups": {
+  "SPY": [
+   {
+    "t": "2026-02-24T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 678.25,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 674.94,
+     "invalidation": "beyond the sweep at 675.08 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      691.65,
+      691.82,
+      692.38
+     ],
+     "nearest_liquidity": 684.68,
+     "rr_first": 4.05,
+     "rr_last": 4.27
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-02T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 681.86,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 672.6,
+     "invalidation": "beyond the sweep at 672.74 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      691.65,
+      691.82,
+      692.38
+     ],
+     "nearest_liquidity": 689.65,
+     "rr_first": 1.06,
+     "rr_last": 1.14
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.105,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-03T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 675.94,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 664.31,
+     "invalidation": "beyond the sweep at 664.45 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      689.65,
+      689.92,
+      691.65
+     ],
+     "nearest_liquidity": 683.22,
+     "rr_first": 1.18,
+     "rr_last": 1.35
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.0,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-09T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 673.01,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 657.13,
+     "invalidation": "beyond the sweep at 657.26 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      689.65,
+      689.92,
+      691.65
+     ],
+     "nearest_liquidity": 681.73,
+     "rr_first": 1.05,
+     "rr_last": 1.17
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-18T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "no first take profit at least 1:1",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 662.13,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 669.27,
+     "invalidation": "beyond the sweep at 669.14 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 656.21,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-19T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 654.73,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 649.96,
+     "invalidation": "beyond the sweep at 650.09 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      669.14,
+      678,
+      680.22
+     ],
+     "nearest_liquidity": 669.14,
+     "rr_first": 3.02,
+     "rr_last": 5.34
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-24T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "no first take profit at least 1:1",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 649.88,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 659.4,
+     "invalidation": "beyond the sweep at 659.27 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 641.5,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-31T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 636.56,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 625.99,
+     "invalidation": "beyond the sweep at 626.12 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      659.27,
+      659.52,
+      664.43
+     ],
+     "nearest_liquidity": 657.5,
+     "rr_first": 2.15,
+     "rr_last": 2.64
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-07T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 649.32,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 656.21,
+     "invalidation": "beyond the sweep at 656.08 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      626.12
+     ],
+     "nearest_liquidity": 641.11,
+     "rr_first": 3.37,
+     "rr_last": 3.37
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-10T15:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 676.04,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 678.64,
+     "invalidation": "beyond the sweep at 678.5 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      647.78,
+      645.31,
+      641.11
+     ],
+     "nearest_liquidity": 647.78,
+     "rr_first": 10.87,
+     "rr_last": 13.43
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-22T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 704.96,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 698.99,
+     "invalidation": "beyond the sweep at 699.13 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 707.92,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-23T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 703.15,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 708.9,
+     "invalidation": "beyond the sweep at 708.76 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      647.78,
+      645.31,
+      641.11
+     ],
+     "nearest_liquidity": 671.04,
+     "rr_first": 9.63,
+     "rr_last": 10.79
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-24T15:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 710.19,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 702.57,
+     "invalidation": "beyond the sweep at 702.71 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": null,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-28T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 707.48,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 712.12,
+     "invalidation": "beyond the sweep at 711.98 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      698.8,
+      691.54,
+      690.66
+     ],
+     "nearest_liquidity": 698.8,
+     "rr_first": 1.87,
+     "rr_last": 3.63
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-30T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 711.51,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 704.72,
+     "invalidation": "beyond the sweep at 704.86 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": null,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-05-19T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 733.04,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 727.89,
+     "invalidation": "beyond the sweep at 728.04 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      745.69
+     ],
+     "nearest_liquidity": 739.68,
+     "rr_first": 2.46,
+     "rr_last": 2.46
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.441,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-21T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 734.45,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 738.21,
+     "invalidation": "beyond the sweep at 738.06 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      727.88,
+      726.07,
+      720.36
+     ],
+     "nearest_liquidity": 727.88,
+     "rr_first": 1.75,
+     "rr_last": 3.75
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-28T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 746.25,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 750.09,
+     "invalidation": "beyond the sweep at 749.94 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      727.88,
+      726.07,
+      720.36
+     ],
+     "nearest_liquidity": 733.48,
+     "rr_first": 4.78,
+     "rr_last": 6.74
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-02T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 755.05,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 756.72,
+     "invalidation": "beyond the sweep at 756.57 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      727.88,
+      726.07,
+      720.36
+     ],
+     "nearest_liquidity": 750.94,
+     "rr_first": 16.27,
+     "rr_last": 20.77
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-08T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 741.23,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 729.81,
+     "invalidation": "beyond the sweep at 729.96 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      756.57
+     ],
+     "nearest_liquidity": 754.48,
+     "rr_first": 1.34,
+     "rr_last": 1.34
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.348,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-11T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 731.26,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 718.81,
+     "invalidation": "beyond the sweep at 718.96 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      756.57
+     ],
+     "nearest_liquidity": 734.66,
+     "rr_first": 2.03,
+     "rr_last": 2.03
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.063,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-16T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 749.08,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 753.02,
+     "invalidation": "beyond the sweep at 752.87 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      718.96,
+      718.21,
+      717.94
+     ],
+     "nearest_liquidity": 720.81,
+     "rr_first": 7.64,
+     "rr_last": 7.9
+    },
+    "bias_relation": "with"
+   }
+  ],
+  "GLD": [
+   {
+    "t": "2026-03-03T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 472.06,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 458.98,
+     "invalidation": "beyond the sweep at 459.07 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      509.88
+     ],
+     "nearest_liquidity": 496.94,
+     "rr_first": 2.89,
+     "rr_last": 2.89
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.161,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-19T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 427.1,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 415.53,
+     "invalidation": "beyond the sweep at 415.62 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      481.28,
+      482.18,
+      488.35
+     ],
+     "nearest_liquidity": 462.1,
+     "rr_first": 4.68,
+     "rr_last": 5.29
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-24T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 411.27,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 399.26,
+     "invalidation": "beyond the sweep at 399.34 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      481.28,
+      482.18,
+      488.35
+     ],
+     "nearest_liquidity": 428.6,
+     "rr_first": 5.83,
+     "rr_last": 6.42
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-08T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 432.16,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 441.4,
+     "invalidation": "beyond the sweep at 441.31 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      400.28,
+      399.34,
+      395.62
+     ],
+     "nearest_liquidity": 423.12,
+     "rr_first": 3.45,
+     "rr_last": 3.95
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-16T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 439.85,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 445.26,
+     "invalidation": "beyond the sweep at 445.17 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      400.28,
+      399.34,
+      395.62
+     ],
+     "nearest_liquidity": 431.69,
+     "rr_first": 7.31,
+     "rr_last": 8.18
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-21T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 438.56,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 448.77,
+     "invalidation": "beyond the sweep at 448.68 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      400.28,
+      399.34,
+      395.62
+     ],
+     "nearest_liquidity": 438.18,
+     "rr_first": 3.75,
+     "rr_last": 4.21
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-30T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 424.66,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 414.84,
+     "invalidation": "beyond the sweep at 414.925 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      448.68,
+      462.1,
+      465.84
+     ],
+     "nearest_liquidity": 435.24,
+     "rr_first": 2.45,
+     "rr_last": 4.19
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-30T16:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 422.975,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 426.38,
+     "invalidation": "beyond the sweep at 426.3 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      400.28,
+      399.34,
+      395.62
+     ],
+     "nearest_liquidity": 414.175,
+     "rr_first": 6.67,
+     "rr_last": 8.03
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-05-04T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 419.29,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 426.91,
+     "invalidation": "beyond the sweep at 426.83 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      400.28,
+      399.34,
+      395.62
+     ],
+     "nearest_liquidity": 414.175,
+     "rr_first": 2.49,
+     "rr_last": 3.11
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-05T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 418.91,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 413.26,
+     "invalidation": "beyond the sweep at 413.345 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      448.68,
+      462.1,
+      465.84
+     ],
+     "nearest_liquidity": 427.83,
+     "rr_first": 5.27,
+     "rr_last": 8.31
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-07T15:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 434.095,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 437.4,
+     "invalidation": "beyond the sweep at 437.31 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      413.345,
+      412.69,
+      405.41
+     ],
+     "nearest_liquidity": 417.95,
+     "rr_first": 6.28,
+     "rr_last": 8.68
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-12T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 432.98,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 425.84,
+     "invalidation": "beyond the sweep at 425.93 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      448.68,
+      462.1,
+      465.84
+     ],
+     "nearest_liquidity": 435.81,
+     "rr_first": 2.2,
+     "rr_last": 4.6
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-18T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 419.48,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 414.1,
+     "invalidation": "beyond the sweep at 414.18 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      437.39,
+      440.19,
+      441.38
+     ],
+     "nearest_liquidity": 432.98,
+     "rr_first": 3.33,
+     "rr_last": 4.07
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-20T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 416.13,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 409.82,
+     "invalidation": "beyond the sweep at 409.905 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      437.39,
+      440.19,
+      441.38
+     ],
+     "nearest_liquidity": 420.8,
+     "rr_first": 3.37,
+     "rr_last": 4.0
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.151,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-22T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 414.405,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 418.45,
+     "invalidation": "beyond the sweep at 418.37 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      409.905,
+      405.41,
+      400.28
+     ],
+     "nearest_liquidity": 412.09,
+     "rr_first": 1.11,
+     "rr_last": 3.49
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-05-28T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 410.185,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 402.96,
+     "invalidation": "beyond the sweep at 403.04 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      418.37,
+      420.8,
+      425.04
+     ],
+     "nearest_liquidity": 415.89,
+     "rr_first": 1.13,
+     "rr_last": 2.06
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.405,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-29T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 417.18,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 421.89,
+     "invalidation": "beyond the sweep at 421.81 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      400.28,
+      399.34,
+      395.62
+     ],
+     "nearest_liquidity": 403.04,
+     "rr_first": 3.59,
+     "rr_last": 4.58
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-06-04T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 413.82,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 406.17,
+     "invalidation": "beyond the sweep at 406.25 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      421.81,
+      425.04,
+      427.31
+     ],
+     "nearest_liquidity": 415.43,
+     "rr_first": 1.04,
+     "rr_last": 1.76
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-17T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 393.31,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 402.06,
+     "invalidation": "beyond the sweep at 401.98 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      371.915
+     ],
+     "nearest_liquidity": 371.915,
+     "rr_first": 2.45,
+     "rr_last": 2.45
+    },
+    "bias_relation": "none"
+   }
+  ],
+  "AMZN": [
+   {
+    "t": "2026-02-26T15:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 208.055,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 211.62,
+     "invalidation": "beyond the sweep at 211.58 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      203.13,
+      202.87,
+      196.13
+     ],
+     "nearest_liquidity": 203.13,
+     "rr_first": 1.38,
+     "rr_last": 3.35
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-03T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 206.39,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 202.51,
+     "invalidation": "beyond the sweep at 202.55 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      211.58,
+      212.8,
+      228.85
+     ],
+     "nearest_liquidity": 210.33,
+     "rr_first": 1.34,
+     "rr_last": 5.79
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.567,
+     "exit": "time",
+     "bars": 3,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-06T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 214.7,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 220.51,
+     "invalidation": "beyond the sweep at 220.47 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      202.55,
+      196.13
+     ],
+     "nearest_liquidity": 202.55,
+     "rr_first": 2.09,
+     "rr_last": 3.2
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-16T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 208.9,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 206.19,
+     "invalidation": "beyond the sweep at 206.235 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      216.95,
+      219.73,
+      220.47
+     ],
+     "nearest_liquidity": 216.95,
+     "rr_first": 2.97,
+     "rr_last": 4.27
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 1.011,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-23T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 208.02,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 204.28,
+     "invalidation": "beyond the sweep at 204.32 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      215.69,
+      216.95,
+      219.73
+     ],
+     "nearest_liquidity": 209.12,
+     "rr_first": 2.05,
+     "rr_last": 3.13
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-24T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 207.74,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 212.8,
+     "invalidation": "beyond the sweep at 212.76 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      202.55,
+      196.13
+     ],
+     "nearest_liquidity": 204.32,
+     "rr_first": 1.03,
+     "rr_last": 2.29
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-26T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 209.4,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 213.04,
+     "invalidation": "beyond the sweep at 213 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      204.32,
+      202.55,
+      196.13
+     ],
+     "nearest_liquidity": 206.74,
+     "rr_first": 1.4,
+     "rr_last": 3.65
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-02T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 207.94,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 213.62,
+     "invalidation": "beyond the sweep at 213.575 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      199.155,
+      196.13
+     ],
+     "nearest_liquidity": 199.99,
+     "rr_first": 1.55,
+     "rr_last": 2.08
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-13T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 237.285,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 240.47,
+     "invalidation": "beyond the sweep at 240.425 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      199.155,
+      196.13
+     ],
+     "nearest_liquidity": 209.09,
+     "rr_first": 11.97,
+     "rr_last": 12.92
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-15T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 247.92,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 252.22,
+     "invalidation": "beyond the sweep at 252.175 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      199.155,
+      196.13
+     ],
+     "nearest_liquidity": 235.82,
+     "rr_first": 11.34,
+     "rr_last": 12.04
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-16T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 249.18,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 244.17,
+     "invalidation": "beyond the sweep at 244.22 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 252.175,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-29T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 254.02,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 265.94,
+     "invalidation": "beyond the sweep at 265.89 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      199.155,
+      196.13
+     ],
+     "nearest_liquidity": 249.14,
+     "rr_first": 4.6,
+     "rr_last": 4.86
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-01T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 267.44,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 273.91,
+     "invalidation": "beyond the sweep at 273.86 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      249.81,
+      249.14,
+      247.44
+     ],
+     "nearest_liquidity": 249.81,
+     "rr_first": 2.72,
+     "rr_last": 3.09
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-05T16:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 273.16,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 278.58,
+     "invalidation": "beyond the sweep at 278.53 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      249.81,
+      249.14,
+      247.44
+     ],
+     "nearest_liquidity": 267.44,
+     "rr_first": 4.31,
+     "rr_last": 4.75
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-15T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 264.22,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 261.01,
+     "invalidation": "beyond the sweep at 261.06 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      278.53
+     ],
+     "nearest_liquidity": 270.765,
+     "rr_first": 4.46,
+     "rr_last": 4.46
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-21T15:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 265.64,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 255.15,
+     "invalidation": "beyond the sweep at 255.205 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      278.53
+     ],
+     "nearest_liquidity": 268.835,
+     "rr_first": 1.23,
+     "rr_last": 1.23
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.155,
+     "exit": "time",
+     "bars": 3,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-29T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 269.86,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 274.73,
+     "invalidation": "beyond the sweep at 274.68 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      255.205,
+      249.81,
+      249.14
+     ],
+     "nearest_liquidity": 267.465,
+     "rr_first": 3.01,
+     "rr_last": 4.25
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-06-03T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 249.99,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 247.67,
+     "invalidation": "beyond the sweep at 247.72 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      274.68,
+      277.8,
+      278.53
+     ],
+     "nearest_liquidity": 274.68,
+     "rr_first": 10.64,
+     "rr_last": 12.3
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-09T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 248.67,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 243.33,
+     "invalidation": "beyond the sweep at 243.38 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      274.68,
+      277.8,
+      278.53
+     ],
+     "nearest_liquidity": 256.3,
+     "rr_first": 4.87,
+     "rr_last": 5.59
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-11T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 238.765,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 235.15,
+     "invalidation": "beyond the sweep at 235.2 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      274.68,
+      277.8,
+      278.53
+     ],
+     "nearest_liquidity": 250.415,
+     "rr_first": 9.93,
+     "rr_last": 11.0
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.284,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   }
+  ],
+  "TSM": [
+   {
+    "t": "2026-02-26T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 373.52,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 389.67,
+     "invalidation": "beyond the sweep at 389.6 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      355.29,
+      354.14,
+      352.03
+     ],
+     "nearest_liquidity": 363.4,
+     "rr_first": 1.13,
+     "rr_last": 1.33
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-03T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 352.58,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 342.0,
+     "invalidation": "beyond the sweep at 342.07 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      389.6
+     ],
+     "nearest_liquidity": 389.6,
+     "rr_first": 3.5,
+     "rr_last": 3.5
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.005,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-09T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 346.62,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 329.89,
+     "invalidation": "beyond the sweep at 329.96 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      389.6
+     ],
+     "nearest_liquidity": 359.52,
+     "rr_first": 2.57,
+     "rr_last": 2.57
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-12T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 348.35,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 355.19,
+     "invalidation": "beyond the sweep at 355.12 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      329.96,
+      323.2,
+      322.39
+     ],
+     "nearest_liquidity": 329.96,
+     "rr_first": 2.69,
+     "rr_last": 3.8
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-19T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 337.5,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 324.35,
+     "invalidation": "beyond the sweep at 324.42 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      355.12,
+      359.52,
+      363.32
+     ],
+     "nearest_liquidity": 346.45,
+     "rr_first": 1.34,
+     "rr_last": 1.96
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-26T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 338.75,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 349.08,
+     "invalidation": "beyond the sweep at 349.01 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      324.42,
+      323.2,
+      322.39
+     ],
+     "nearest_liquidity": 332.81,
+     "rr_first": 1.39,
+     "rr_last": 1.58
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-27T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 327.52,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 321.05,
+     "invalidation": "beyond the sweep at 321.12 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      349.01,
+      355.12,
+      359.52
+     ],
+     "nearest_liquidity": 349.01,
+     "rr_first": 3.32,
+     "rr_last": 4.95
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.301,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-07T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 344.01,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 334.3,
+     "invalidation": "beyond the sweep at 334.37 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      355.12,
+      359.52,
+      363.32
+     ],
+     "nearest_liquidity": 347.31,
+     "rr_first": 1.14,
+     "rr_last": 1.99
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-09T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 362.8,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 372.84,
+     "invalidation": "beyond the sweep at 372.77 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      312.58,
+      273.42
+     ],
+     "nearest_liquidity": 334.37,
+     "rr_first": 5.0,
+     "rr_last": 8.9
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-10T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 369.13,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 376.58,
+     "invalidation": "beyond the sweep at 376.51 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      312.58,
+      273.42
+     ],
+     "nearest_liquidity": 359.4,
+     "rr_first": 7.59,
+     "rr_last": 12.85
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-17T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 370.28,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 359.09,
+     "invalidation": "beyond the sweep at 359.16 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      389.6
+     ],
+     "nearest_liquidity": 381.23,
+     "rr_first": 1.73,
+     "rr_last": 1.73
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-01T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 396.05,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 402.46,
+     "invalidation": "beyond the sweep at 402.38 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      359.16,
+      345.64,
+      343.87
+     ],
+     "nearest_liquidity": 384.23,
+     "rr_first": 5.76,
+     "rr_last": 8.14
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-05T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 394.04,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 406.13,
+     "invalidation": "beyond the sweep at 406.05 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      359.16,
+      345.64,
+      343.87
+     ],
+     "nearest_liquidity": 384.23,
+     "rr_first": 2.89,
+     "rr_last": 4.15
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-13T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 397.17,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 384.6,
+     "invalidation": "beyond the sweep at 384.68 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      418.32
+     ],
+     "nearest_liquidity": 415.11,
+     "rr_first": 1.68,
+     "rr_last": 1.68
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-15T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 403.66,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 420.33,
+     "invalidation": "beyond the sweep at 420.25 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      384.68,
+      384.23,
+      383.21
+     ],
+     "nearest_liquidity": 384.68,
+     "rr_first": 1.14,
+     "rr_last": 1.23
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-19T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 394.91,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 383.51,
+     "invalidation": "beyond the sweep at 383.59 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      420.25
+     ],
+     "nearest_liquidity": 408.24,
+     "rr_first": 2.22,
+     "rr_last": 2.22
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.208,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-22T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 403.67,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 409.91,
+     "invalidation": "beyond the sweep at 409.83 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      383.59,
+      383.21,
+      380.45
+     ],
+     "nearest_liquidity": 383.59,
+     "rr_first": 3.22,
+     "rr_last": 3.72
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-27T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 416.18,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 430.73,
+     "invalidation": "beyond the sweep at 430.65 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      383.59,
+      383.21,
+      380.45
+     ],
+     "nearest_liquidity": 401.36,
+     "rr_first": 2.24,
+     "rr_last": 2.46
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-03T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 436.86,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 447.67,
+     "invalidation": "beyond the sweep at 447.58 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      383.59,
+      383.21,
+      380.45
+     ],
+     "nearest_liquidity": 415.68,
+     "rr_first": 4.93,
+     "rr_last": 5.22
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-04T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 440.57,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 425.72,
+     "invalidation": "beyond the sweep at 425.81 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 448.34,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-06-08T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 430.29,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 407.84,
+     "invalidation": "beyond the sweep at 407.93 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 446.26,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-06-09T15:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 413.68,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 432.19,
+     "invalidation": "beyond the sweep at 432.11 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      383.59,
+      383.21,
+      380.45
+     ],
+     "nearest_liquidity": 407.93,
+     "rr_first": 1.63,
+     "rr_last": 1.8
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-06-11T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 418.57,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 404.04,
+     "invalidation": "beyond the sweep at 404.12 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      448.34
+     ],
+     "nearest_liquidity": 436.35,
+     "rr_first": 2.05,
+     "rr_last": 2.05
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.136,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-23T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 442.23,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 476.45,
+     "invalidation": "beyond the sweep at 476.36 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      404.12,
+      403.32,
+      401.36
+     ],
+     "nearest_liquidity": 430.75,
+     "rr_first": 1.11,
+     "rr_last": 1.19
+    },
+    "bias_relation": "against"
+   }
+  ],
+  "MRNA": [
+   {
+    "t": "2026-03-03T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 49.13,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 54.94,
+     "invalidation": "beyond the sweep at 54.935 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      36.655,
+      32.38,
+      29.07
+     ],
+     "nearest_liquidity": 48.695,
+     "rr_first": 2.15,
+     "rr_last": 3.45
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-04T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 53.53,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 48.18,
+     "invalidation": "beyond the sweep at 48.19 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": null,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-12T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 53.85,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 57.87,
+     "invalidation": "beyond the sweep at 57.86 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      49.25,
+      48.19,
+      47.77
+     ],
+     "nearest_liquidity": 49.25,
+     "rr_first": 1.14,
+     "rr_last": 1.51
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-16T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 53.3,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 51.45,
+     "invalidation": "beyond the sweep at 51.465 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      57.86,
+      59.505
+     ],
+     "nearest_liquidity": 53.9,
+     "rr_first": 2.46,
+     "rr_last": 3.35
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-03-18T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 51.58,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 56.46,
+     "invalidation": "beyond the sweep at 56.45 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      36.655,
+      32.38,
+      29.07
+     ],
+     "nearest_liquidity": 49.25,
+     "rr_first": 3.06,
+     "rr_last": 4.61
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-31T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 50.86,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 47.13,
+     "invalidation": "beyond the sweep at 47.14 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      54.66,
+      56.45,
+      57.86
+     ],
+     "nearest_liquidity": 54.66,
+     "rr_first": 1.02,
+     "rr_last": 1.88
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-04-07T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 49.33,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 47.56,
+     "invalidation": "beyond the sweep at 47.57 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      52.735,
+      52.83,
+      54.66
+     ],
+     "nearest_liquidity": 49.77,
+     "rr_first": 1.92,
+     "rr_last": 3.01
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.017,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-10T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 52.095,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 50.04,
+     "invalidation": "beyond the sweep at 50.05 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      54.66,
+      56.45,
+      57.86
+     ],
+     "nearest_liquidity": 52.38,
+     "rr_first": 1.25,
+     "rr_last": 2.81
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.513,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-10T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 51.04,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 52.87,
+     "invalidation": "beyond the sweep at 52.86 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      47.57,
+      47.14,
+      45.68
+     ],
+     "nearest_liquidity": 50.05,
+     "rr_first": 1.9,
+     "rr_last": 2.93
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-16T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 53.21,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 55.0,
+     "invalidation": "beyond the sweep at 54.99 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      47.57,
+      47.14,
+      45.68
+     ],
+     "nearest_liquidity": 50.05,
+     "rr_first": 3.15,
+     "rr_last": 4.21
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-21T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 53.1,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 56.01,
+     "invalidation": "beyond the sweep at 56 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      47.57,
+      47.14,
+      45.68
+     ],
+     "nearest_liquidity": 50.05,
+     "rr_first": 1.9,
+     "rr_last": 2.55
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-21T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 55.01,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 53.13,
+     "invalidation": "beyond the sweep at 53.14 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      57.86,
+      59.505
+     ],
+     "nearest_liquidity": 56.45,
+     "rr_first": 1.52,
+     "rr_last": 2.39
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-04-23T16:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 54.08,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 56.1,
+     "invalidation": "beyond the sweep at 56.09 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      47.57,
+      47.14,
+      45.68
+     ],
+     "nearest_liquidity": 51.795,
+     "rr_first": 3.22,
+     "rr_last": 4.16
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-29T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 45.715,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 44.64,
+     "invalidation": "beyond the sweep at 44.645 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      56.18,
+      56.45,
+      57.86
+     ],
+     "nearest_liquidity": 56.09,
+     "rr_first": 9.73,
+     "rr_last": 11.3
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-11T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 52.65,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 58.88,
+     "invalidation": "beyond the sweep at 58.865 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      43.72,
+      41.26,
+      38.85
+     ],
+     "nearest_liquidity": 47.8,
+     "rr_first": 1.43,
+     "rr_last": 2.22
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-15T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 48.935,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 47.93,
+     "invalidation": "beyond the sweep at 47.935 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      59.4,
+      59.505
+     ],
+     "nearest_liquidity": 54.61,
+     "rr_first": 10.41,
+     "rr_last": 10.52
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-05-20T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 48.06,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 45.62,
+     "invalidation": "beyond the sweep at 45.625 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      59.4,
+      59.505
+     ],
+     "nearest_liquidity": 50.45,
+     "rr_first": 4.65,
+     "rr_last": 4.69
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.066,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-26T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 48.33,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 46.22,
+     "invalidation": "beyond the sweep at 46.23 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      59.4,
+      59.505
+     ],
+     "nearest_liquidity": 48.76,
+     "rr_first": 5.25,
+     "rr_last": 5.3
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.393,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-26T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 47.025,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 48.45,
+     "invalidation": "beyond the sweep at 48.44 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      43.72,
+      41.26,
+      38.85
+     ],
+     "nearest_liquidity": 46.23,
+     "rr_first": 2.32,
+     "rr_last": 5.74
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-27T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 47.67,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 49.08,
+     "invalidation": "beyond the sweep at 49.075 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      45.625,
+      45.5,
+      43.72
+     ],
+     "nearest_liquidity": 46.23,
+     "rr_first": 1.45,
+     "rr_last": 2.8
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-28T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 46.93,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 45.91,
+     "invalidation": "beyond the sweep at 45.92 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      59.4,
+      59.505
+     ],
+     "nearest_liquidity": 49.075,
+     "rr_first": 12.23,
+     "rr_last": 12.33
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.294,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-01T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 44.81,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 49.24,
+     "invalidation": "beyond the sweep at 49.23 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      36.655,
+      32.38,
+      29.07
+     ],
+     "nearest_liquidity": 43.72,
+     "rr_first": 1.84,
+     "rr_last": 3.55
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-06-01T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 46.39,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 44.22,
+     "invalidation": "beyond the sweep at 44.23 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      59.4,
+      59.505
+     ],
+     "nearest_liquidity": 49.23,
+     "rr_first": 6.0,
+     "rr_last": 6.04
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.115,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-02T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 45.36,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 44.03,
+     "invalidation": "beyond the sweep at 44.04 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      59.4,
+      59.505
+     ],
+     "nearest_liquidity": 49.23,
+     "rr_first": 10.56,
+     "rr_last": 10.64
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.256,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-11T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 47.55,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 45.51,
+     "invalidation": "beyond the sweep at 45.515 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      51.87,
+      52.55,
+      54.61
+     ],
+     "nearest_liquidity": 48.35,
+     "rr_first": 2.12,
+     "rr_last": 3.46
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.858,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-12T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 49.935,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 51.63,
+     "invalidation": "beyond the sweep at 51.62 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      45.515,
+      45.12,
+      44.04
+     ],
+     "nearest_liquidity": 45.7,
+     "rr_first": 2.61,
+     "rr_last": 3.48
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-06-22T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 60.03,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 67.65,
+     "invalidation": "beyond the sweep at 67.635 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      45.515,
+      45.12,
+      44.04
+     ],
+     "nearest_liquidity": 49.66,
+     "rr_first": 1.9,
+     "rr_last": 2.1
+    },
+    "bias_relation": "against"
+   }
+  ],
+  "WMT": [
+   {
+    "t": "2026-02-27T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 126.49,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 127.18,
+     "invalidation": "beyond the sweep at 127.15 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      120.3,
+      119.77,
+      118.09
+     ],
+     "nearest_liquidity": 123.17,
+     "rr_first": 8.97,
+     "rr_last": 12.17
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-05T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 122.54,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 120.89,
+     "invalidation": "beyond the sweep at 120.91 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      127.89,
+      129.26,
+      129.82
+     ],
+     "nearest_liquidity": 127.55,
+     "rr_first": 3.24,
+     "rr_last": 4.41
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-17T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 124.35,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 126.3,
+     "invalidation": "beyond the sweep at 126.28 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      121.58,
+      120.87,
+      120.3
+     ],
+     "nearest_liquidity": 124.05,
+     "rr_first": 1.42,
+     "rr_last": 2.08
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-19T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 119.92,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 118.52,
+     "invalidation": "beyond the sweep at 118.54 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      127.89,
+      129.26,
+      129.82
+     ],
+     "nearest_liquidity": 126.28,
+     "rr_first": 5.69,
+     "rr_last": 7.07
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.014,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-23T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 120.22,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 117.65,
+     "invalidation": "beyond the sweep at 117.67 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      126.28,
+      127.55,
+      127.89
+     ],
+     "nearest_liquidity": 120.76,
+     "rr_first": 2.36,
+     "rr_last": 2.98
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.051,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-26T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 121.72,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 123.59,
+     "invalidation": "beyond the sweep at 123.57 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      117.67,
+      116.88,
+      115.88
+     ],
+     "nearest_liquidity": 121.44,
+     "rr_first": 2.17,
+     "rr_last": 3.12
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-27T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 123.01,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 121.32,
+     "invalidation": "beyond the sweep at 121.34 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      126.28,
+      127.55,
+      127.89
+     ],
+     "nearest_liquidity": 123.22,
+     "rr_first": 1.93,
+     "rr_last": 2.89
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.249,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-27T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 122.37,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 123.75,
+     "invalidation": "beyond the sweep at 123.73 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      117.67,
+      116.88,
+      115.88
+     ],
+     "nearest_liquidity": 121.3,
+     "rr_first": 3.41,
+     "rr_last": 4.7
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-30T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 122.95,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 124.14,
+     "invalidation": "beyond the sweep at 124.12 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      117.67,
+      116.88,
+      115.88
+     ],
+     "nearest_liquidity": 122.03,
+     "rr_first": 4.44,
+     "rr_last": 5.94
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-07T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 123.72,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 126.46,
+     "invalidation": "beyond the sweep at 126.44 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      117.67,
+      116.88,
+      115.88
+     ],
+     "nearest_liquidity": 122.63,
+     "rr_first": 2.21,
+     "rr_last": 2.86
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-08T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 125.47,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 120.91,
+     "invalidation": "beyond the sweep at 120.94 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      133.82
+     ],
+     "nearest_liquidity": 126.44,
+     "rr_first": 1.83,
+     "rr_last": 1.83
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.123,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-16T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 124,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 125.42,
+     "invalidation": "beyond the sweep at 125.4 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      120.94,
+      117.67,
+      116.88
+     ],
+     "nearest_liquidity": 122.69,
+     "rr_first": 2.15,
+     "rr_last": 5.01
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-01T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 130.71,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 132.79,
+     "invalidation": "beyond the sweep at 132.76 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      122.05,
+      120.94,
+      117.67
+     ],
+     "nearest_liquidity": 125.39,
+     "rr_first": 4.16,
+     "rr_last": 6.27
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-05-11T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 127.29,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 126.17,
+     "invalidation": "beyond the sweep at 126.2 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      132.76,
+      133.82
+     ],
+     "nearest_liquidity": 131.09,
+     "rr_first": 4.88,
+     "rr_last": 5.83
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-15T15:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 131.01,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 133.63,
+     "invalidation": "beyond the sweep at 133.6 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      126.08,
+      125.39,
+      124.71
+     ],
+     "nearest_liquidity": 128.49,
+     "rr_first": 1.88,
+     "rr_last": 2.4
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-20T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 131.54,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 134.85,
+     "invalidation": "beyond the sweep at 134.82 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      126.08,
+      125.39,
+      124.71
+     ],
+     "nearest_liquidity": 130.49,
+     "rr_first": 1.65,
+     "rr_last": 2.06
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-28T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 118.26,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 117.07,
+     "invalidation": "beyond the sweep at 117.09 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      134.82
+     ],
+     "nearest_liquidity": 118.84,
+     "rr_first": 13.92,
+     "rr_last": 13.92
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-05-29T18:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 115.19,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 114.42,
+     "invalidation": "beyond the sweep at 114.44 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      134.82
+     ],
+     "nearest_liquidity": 118.76,
+     "rr_first": 25.49,
+     "rr_last": 25.49
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-06-10T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 120.27,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 117.24,
+     "invalidation": "beyond the sweep at 117.26 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      134.82
+     ],
+     "nearest_liquidity": 120.59,
+     "rr_first": 4.8,
+     "rr_last": 4.8
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-16T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 119.98,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 121.56,
+     "invalidation": "beyond the sweep at 121.54 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      117.26,
+      117.01,
+      115.36
+     ],
+     "nearest_liquidity": 118.35,
+     "rr_first": 1.72,
+     "rr_last": 2.92
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-17T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 119.89,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 122.31,
+     "invalidation": "beyond the sweep at 122.29 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      117.26,
+      117.01,
+      115.36
+     ],
+     "nearest_liquidity": 118.35,
+     "rr_first": 1.09,
+     "rr_last": 1.87
+    },
+    "bias_relation": "against"
+   }
+  ],
+  "EWZ": [
+   {
+    "t": "2026-02-25T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 38.94,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 39.68,
+     "invalidation": "beyond the sweep at 39.67 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      36.88,
+      36.34,
+      32.16
+     ],
+     "nearest_liquidity": 38.31,
+     "rr_first": 2.78,
+     "rr_last": 9.16
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-02T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 38.23,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 37.5,
+     "invalidation": "beyond the sweep at 37.51 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      39.67
+     ],
+     "nearest_liquidity": 38.79,
+     "rr_first": 1.97,
+     "rr_last": 1.97
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.301,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-04T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 37.02,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 35.42,
+     "invalidation": "beyond the sweep at 35.43 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      39.67
+     ],
+     "nearest_liquidity": 38.5,
+     "rr_first": 1.66,
+     "rr_last": 1.66
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.162,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-06T19:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 35.98,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 35.32,
+     "invalidation": "beyond the sweep at 35.33 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      37.36,
+      38.5,
+      38.79
+     ],
+     "nearest_liquidity": 37.36,
+     "rr_first": 2.09,
+     "rr_last": 4.26
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.0,
+     "exit": "no_time"
+    }
+   },
+   {
+    "t": "2026-03-11T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 37.02,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 37.78,
+     "invalidation": "beyond the sweep at 37.77 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      35.33,
+      32.16,
+      30.88
+     ],
+     "nearest_liquidity": 35.63,
+     "rr_first": 2.22,
+     "rr_last": 8.08
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-24T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 36.1,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 36.83,
+     "invalidation": "beyond the sweep at 36.82 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      32.16,
+      30.88,
+      30.4
+     ],
+     "nearest_liquidity": 34.49,
+     "rr_first": 5.4,
+     "rr_last": 7.81
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-26T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 36.97,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 37.45,
+     "invalidation": "beyond the sweep at 37.44 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      34.49,
+      32.16,
+      30.88
+     ],
+     "nearest_liquidity": 35.77,
+     "rr_first": 5.17,
+     "rr_last": 12.69
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-30T12:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 36.75,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 36.11,
+     "invalidation": "beyond the sweep at 36.12 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      37.44,
+      37.77,
+      38.5
+     ],
+     "nearest_liquidity": 36.79,
+     "rr_first": 1.08,
+     "rr_last": 2.73
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-30T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 36.34,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 36.9,
+     "invalidation": "beyond the sweep at 36.89 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      34.49,
+      32.16,
+      30.88
+     ],
+     "nearest_liquidity": 36.12,
+     "rr_first": 3.3,
+     "rr_last": 9.75
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-17T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 41.38,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 40.79,
+     "invalidation": "beyond the sweep at 40.8 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 41.6,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-21T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 41.13,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 40.64,
+     "invalidation": "beyond the sweep at 40.65 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 41.5,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-28T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 39.36,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 38.86,
+     "invalidation": "beyond the sweep at 38.87 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      41.6
+     ],
+     "nearest_liquidity": 39.96,
+     "rr_first": 4.48,
+     "rr_last": 4.48
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.1,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-05T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 39.15,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 38.61,
+     "invalidation": "beyond the sweep at 38.62 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      41.6
+     ],
+     "nearest_liquidity": 39.33,
+     "rr_first": 4.54,
+     "rr_last": 4.54
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.389,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-18T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 36.17,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 35.53,
+     "invalidation": "beyond the sweep at 35.54 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      39.64,
+      39.96,
+      40.05
+     ],
+     "nearest_liquidity": 37.05,
+     "rr_first": 5.42,
+     "rr_last": 6.06
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": -0.266,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-20T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 36.4,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 36.56,
+     "invalidation": "beyond the sweep at 36.55 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      34.49,
+      32.16,
+      30.88
+     ],
+     "nearest_liquidity": 35.41,
+     "rr_first": 11.94,
+     "rr_last": 34.5
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-05-26T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 36.15,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 35.8,
+     "invalidation": "beyond the sweep at 35.81 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      39.64,
+      39.96,
+      40.05
+     ],
+     "nearest_liquidity": 36.41,
+     "rr_first": 9.97,
+     "rr_last": 11.14
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-15T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 34.615,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 35.61,
+     "invalidation": "beyond the sweep at 35.6 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      33.22,
+      32.16,
+      30.88
+     ],
+     "nearest_liquidity": 33.26,
+     "rr_first": 1.4,
+     "rr_last": 3.75
+    },
+    "bias_relation": "none"
+   }
+  ],
+  "KO": [
+   {
+    "t": "2026-02-26T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 79.07,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 78.02,
+     "invalidation": "beyond the sweep at 78.04 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 79.36,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-02T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 79.33,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 80.15,
+     "invalidation": "beyond the sweep at 80.13 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      78.04,
+      77.58,
+      77.09
+     ],
+     "nearest_liquidity": 78.5,
+     "rr_first": 1.57,
+     "rr_last": 2.73
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-13T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 76.39,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 77.1,
+     "invalidation": "beyond the sweep at 77.08 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      74.9,
+      74.59,
+      72.97
+     ],
+     "nearest_liquidity": 75.43,
+     "rr_first": 2.1,
+     "rr_last": 4.82
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-27T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 74.61,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 73.15,
+     "invalidation": "beyond the sweep at 73.16 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      77.46,
+      77.79,
+      78.23
+     ],
+     "nearest_liquidity": 74.81,
+     "rr_first": 1.95,
+     "rr_last": 2.48
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.178,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-02T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 75.58,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 74.32,
+     "invalidation": "beyond the sweep at 74.34 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      77.46,
+      77.79,
+      78.23
+     ],
+     "nearest_liquidity": 76.06,
+     "rr_first": 1.49,
+     "rr_last": 2.1
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.23,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-10T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 76.86,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 77.35,
+     "invalidation": "beyond the sweep at 77.33 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      74.34,
+      73.73,
+      73.16
+     ],
+     "nearest_liquidity": 75.46,
+     "rr_first": 5.14,
+     "rr_last": 7.55
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-16T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 74.83,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 73.79,
+     "invalidation": "beyond the sweep at 73.8 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      77.33,
+      77.46,
+      77.79
+     ],
+     "nearest_liquidity": 75.67,
+     "rr_first": 2.4,
+     "rr_last": 2.85
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": -0.74,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-17T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 74.81,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 75.12,
+     "invalidation": "beyond the sweep at 75.11 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      73.8,
+      73.73,
+      73.16
+     ],
+     "nearest_liquidity": 73.88,
+     "rr_first": 3.26,
+     "rr_last": 5.32
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-21T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 74.08,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 73.7,
+     "invalidation": "beyond the sweep at 73.71 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      77.33,
+      77.46,
+      77.79
+     ],
+     "nearest_liquidity": 75.28,
+     "rr_first": 8.55,
+     "rr_last": 9.76
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.211,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-23T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 75.11,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 73.61,
+     "invalidation": "beyond the sweep at 73.63 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      77.33,
+      77.46,
+      77.79
+     ],
+     "nearest_liquidity": 75.28,
+     "rr_first": 1.48,
+     "rr_last": 1.79
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.3,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-28T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 78.57,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 79.35,
+     "invalidation": "beyond the sweep at 79.33 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      73.63,
+      73.16,
+      72.97
+     ],
+     "nearest_liquidity": 74.47,
+     "rr_first": 6.33,
+     "rr_last": 7.18
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-05-05T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 77.45,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 76.78,
+     "invalidation": "beyond the sweep at 76.8 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      79.33,
+      79.63,
+      80.13
+     ],
+     "nearest_liquidity": 78.65,
+     "rr_first": 2.81,
+     "rr_last": 4.0
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.433,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-07T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 77.55,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 78.37,
+     "invalidation": "beyond the sweep at 78.35 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      73.63,
+      73.16,
+      72.97
+     ],
+     "nearest_liquidity": 76.8,
+     "rr_first": 4.78,
+     "rr_last": 5.59
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-11T17:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 77.48,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 76.87,
+     "invalidation": "beyond the sweep at 76.89 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      78.35,
+      78.65,
+      79.33
+     ],
+     "nearest_liquidity": 78.21,
+     "rr_first": 1.43,
+     "rr_last": 3.03
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.41,
+     "exit": "time",
+     "bars": 1,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-19T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 80.8,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 81.65,
+     "invalidation": "beyond the sweep at 81.63 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      76.89,
+      76.8,
+      76.63
+     ],
+     "nearest_liquidity": 79.42,
+     "rr_first": 4.6,
+     "rr_last": 4.91
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-28T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 79.47,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 81.51,
+     "invalidation": "beyond the sweep at 81.49 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      76.89,
+      76.8,
+      76.63
+     ],
+     "nearest_liquidity": 79.25,
+     "rr_first": 1.26,
+     "rr_last": 1.39
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-06-03T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 77.92,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 77.26,
+     "invalidation": "beyond the sweep at 77.28 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      81.49,
+      81.63
+     ],
+     "nearest_liquidity": 78.2,
+     "rr_first": 5.41,
+     "rr_last": 5.62
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.121,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-04T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 76.76,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 79.05,
+     "invalidation": "beyond the sweep at 79.03 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      73.63,
+      73.16,
+      68.51
+     ],
+     "nearest_liquidity": 74.47,
+     "rr_first": 1.37,
+     "rr_last": 3.6
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-06-05T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 78.2,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 75.84,
+     "invalidation": "beyond the sweep at 75.86 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      81.49,
+      81.63
+     ],
+     "nearest_liquidity": 79.03,
+     "rr_first": 1.39,
+     "rr_last": 1.45
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.419,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-11T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 81.51,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 83.03,
+     "invalidation": "beyond the sweep at 83.01 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      75.86,
+      74.47,
+      74.27
+     ],
+     "nearest_liquidity": 75.86,
+     "rr_first": 3.72,
+     "rr_last": 4.76
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-12T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 81.51,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 80.85,
+     "invalidation": "beyond the sweep at 80.87 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 83.01,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "none"
+   }
+  ],
+  "CLF": [
+   {
+    "t": "2026-02-25T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 10.535,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 10.93,
+     "invalidation": "beyond the sweep at 10.925 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      9.945
+     ],
+     "nearest_liquidity": 10.16,
+     "rr_first": 1.49,
+     "rr_last": 1.49
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-02-27T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 10.705,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 11.15,
+     "invalidation": "beyond the sweep at 11.15 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      10.16,
+      10.02,
+      9.945
+     ],
+     "nearest_liquidity": 10.51,
+     "rr_first": 1.22,
+     "rr_last": 1.71
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-02T15:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 10.95,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 10.39,
+     "invalidation": "beyond the sweep at 10.395 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      12.975,
+      13.965,
+      14.47
+     ],
+     "nearest_liquidity": 11.15,
+     "rr_first": 3.62,
+     "rr_last": 6.29
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.75,
+     "exit": "time",
+     "bars": 4,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-05T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 10.67,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 10.5,
+     "invalidation": "beyond the sweep at 10.505 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      11.445,
+      11.615,
+      12.55
+     ],
+     "nearest_liquidity": 11.325,
+     "rr_first": 4.56,
+     "rr_last": 11.06
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-23T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 8.2,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 7.74,
+     "invalidation": "beyond the sweep at 7.74 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      11.445,
+      11.615,
+      12.55
+     ],
+     "nearest_liquidity": 8.22,
+     "rr_first": 7.05,
+     "rr_last": 9.46
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.0,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-27T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 8.4,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 8.65,
+     "invalidation": "beyond the sweep at 8.65 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      7.74
+     ],
+     "nearest_liquidity": 7.955,
+     "rr_first": 2.64,
+     "rr_last": 2.64
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-31T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 8.41,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 8.0,
+     "invalidation": "beyond the sweep at 8.005 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      11.445,
+      11.615,
+      12.55
+     ],
+     "nearest_liquidity": 8.665,
+     "rr_first": 7.4,
+     "rr_last": 10.1
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.0,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-08T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 9.02,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 9.33,
+     "invalidation": "beyond the sweep at 9.325 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      8.005,
+      7.955,
+      7.85
+     ],
+     "nearest_liquidity": 8.61,
+     "rr_first": 3.27,
+     "rr_last": 3.77
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-10T18:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 9.145,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 9.36,
+     "invalidation": "beyond the sweep at 9.36 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      8.005,
+      7.955,
+      7.85
+     ],
+     "nearest_liquidity": 9,
+     "rr_first": 5.3,
+     "rr_last": 6.02
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-13T15:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 9.255,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 8.94,
+     "invalidation": "beyond the sweep at 8.94 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      11.445,
+      11.615,
+      12.55
+     ],
+     "nearest_liquidity": 9.36,
+     "rr_first": 6.95,
+     "rr_last": 10.46
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.079,
+     "exit": "time",
+     "bars": 3,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-04-28T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 9.93,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 10.93,
+     "invalidation": "beyond the sweep at 10.925 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      8.89,
+      8.61,
+      8.405
+     ],
+     "nearest_liquidity": 9.045,
+     "rr_first": 1.04,
+     "rr_last": 1.53
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-01T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 10.405,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 9.9,
+     "invalidation": "beyond the sweep at 9.905 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      10.925,
+      11.325,
+      11.445
+     ],
+     "nearest_liquidity": 10.925,
+     "rr_first": 1.03,
+     "rr_last": 2.06
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": -0.079,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-07T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 10.86,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 11.42,
+     "invalidation": "beyond the sweep at 11.415 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      8.89,
+      8.61,
+      8.405
+     ],
+     "nearest_liquidity": 10.135,
+     "rr_first": 3.52,
+     "rr_last": 4.38
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-05-13T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 10.88,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 10.5,
+     "invalidation": "beyond the sweep at 10.5 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      11.415,
+      11.445,
+      11.615
+     ],
+     "nearest_liquidity": 11.335,
+     "rr_first": 1.41,
+     "rr_last": 1.93
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.079,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-18T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 10.555,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 10.22,
+     "invalidation": "beyond the sweep at 10.225 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      11.335,
+      11.415,
+      11.445
+     ],
+     "nearest_liquidity": 11.24,
+     "rr_first": 2.33,
+     "rr_last": 2.66
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.06,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-28T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 12.675,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 13.04,
+     "invalidation": "beyond the sweep at 13.04 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      10.08,
+      10.065,
+      9.905
+     ],
+     "nearest_liquidity": 10.16,
+     "rr_first": 7.11,
+     "rr_last": 7.59
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-04T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 13.995,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 15.06,
+     "invalidation": "beyond the sweep at 15.055 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      10.08,
+      10.065,
+      9.905
+     ],
+     "nearest_liquidity": 12.975,
+     "rr_first": 3.68,
+     "rr_last": 3.84
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-09T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 13.05,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 12.45,
+     "invalidation": "beyond the sweep at 12.45 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      15.055,
+      15.235
+     ],
+     "nearest_liquidity": 14.68,
+     "rr_first": 3.34,
+     "rr_last": 3.64
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": -1.0,
+     "exit": "stop",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-15T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 13.36,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 14.2,
+     "invalidation": "beyond the sweep at 14.2 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      12.125,
+      11.92,
+      11.5
+     ],
+     "nearest_liquidity": 12.39,
+     "rr_first": 1.47,
+     "rr_last": 2.21
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-06-17T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 13.36,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 12.79,
+     "invalidation": "beyond the sweep at 12.79 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      15.055,
+      15.235
+     ],
+     "nearest_liquidity": 13.81,
+     "rr_first": 2.97,
+     "rr_last": 3.29
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": -0.061,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-06-18T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 12.605,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 12.13,
+     "invalidation": "beyond the sweep at 12.13 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      14.2,
+      14.68,
+      15.055
+     ],
+     "nearest_liquidity": 13.435,
+     "rr_first": 3.36,
+     "rr_last": 5.16
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": -0.484,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   }
+  ],
+  "RIG": [
+   {
+    "t": "2026-02-23T20:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 6.39,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.96,
+     "invalidation": "beyond the sweep at 6.96 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      4.755,
+      4.16,
+      4.15
+     ],
+     "nearest_liquidity": 6.17,
+     "rr_first": 2.87,
+     "rr_last": 3.93
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-02-27T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 6.43,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.16,
+     "invalidation": "beyond the sweep at 6.16 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.96
+     ],
+     "nearest_liquidity": 6.62,
+     "rr_first": 1.96,
+     "rr_last": 1.96
+    },
+    "bias_relation": "with",
+    "result": {
+     "r": 0.037,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-04T14:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 6.21,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 5.94,
+     "invalidation": "beyond the sweep at 5.945 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.62,
+      6.96
+     ],
+     "nearest_liquidity": 6.62,
+     "rr_first": 1.52,
+     "rr_last": 2.78
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.648,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-09T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 6.125,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 5.85,
+     "invalidation": "beyond the sweep at 5.855 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.435,
+      6.62,
+      6.96
+     ],
+     "nearest_liquidity": 6.435,
+     "rr_first": 1.13,
+     "rr_last": 3.04
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.073,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-16T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 6.28,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.43,
+     "invalidation": "beyond the sweep at 6.425 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      5.855,
+      5.76,
+      5.59
+     ],
+     "nearest_liquidity": 6.16,
+     "rr_first": 2.83,
+     "rr_last": 4.6
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-03-17T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 6.4,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.15,
+     "invalidation": "beyond the sweep at 6.15 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.96
+     ],
+     "nearest_liquidity": 6.46,
+     "rr_first": 2.24,
+     "rr_last": 2.24
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": 0.7,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-03-18T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 6.465,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.67,
+     "invalidation": "beyond the sweep at 6.67 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      5.855,
+      5.76,
+      5.59
+     ],
+     "nearest_liquidity": 6.15,
+     "rr_first": 2.98,
+     "rr_last": 4.27
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-03-24T13:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "no first take profit at least 1:1"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 6.585,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.13,
+     "invalidation": "beyond the sweep at 6.135 (+0.02% for spread) [Day 38]",
+     "take_profits": [],
+     "nearest_liquidity": 6.665,
+     "rr_first": null,
+     "rr_last": null
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-03-30T14:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 6.855,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 7.12,
+     "invalidation": "beyond the sweep at 7.115 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.135,
+      6.07,
+      5.995
+     ],
+     "nearest_liquidity": 6.135,
+     "rr_first": 2.72,
+     "rr_last": 3.25
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-02T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account",
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 6.59,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.96,
+     "invalidation": "beyond the sweep at 6.955 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.135,
+      6.07,
+      5.995
+     ],
+     "nearest_liquidity": 6.425,
+     "rr_first": 1.23,
+     "rr_last": 1.61
+    },
+    "bias_relation": "none"
+   },
+   {
+    "t": "2026-04-08T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 6.7,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.45,
+     "invalidation": "beyond the sweep at 6.455 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      7.01,
+      7.115
+     ],
+     "nearest_liquidity": 6.755,
+     "rr_first": 1.24,
+     "rr_last": 1.66
+    },
+    "bias_relation": "with"
+   },
+   {
+    "t": "2026-04-09T17:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "short setup, but shorting is disabled on the account"
+    ],
+    "plan": {
+     "direction": "short",
+     "entry": 6.58,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.82,
+     "invalidation": "beyond the sweep at 6.82 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.135,
+      6.07,
+      5.995
+     ],
+     "nearest_liquidity": 6.29,
+     "rr_first": 1.85,
+     "rr_last": 2.44
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-04-15T16:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 6.24,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.1,
+     "invalidation": "beyond the sweep at 6.1 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.82,
+      7.01,
+      7.115
+     ],
+     "nearest_liquidity": 6.745,
+     "rr_first": 4.14,
+     "rr_last": 6.25
+    },
+    "bias_relation": "none",
+    "result": {
+     "r": -0.607,
+     "exit": "time",
+     "bars": 2,
+     "hit": 0
+    }
+   },
+   {
+    "t": "2026-05-07T19:00:00Z",
+    "decision": "REJECTED",
+    "reasons": [
+     "outside the entry window (New York open to 15:30 ET) [Day 18]"
+    ],
+    "plan": {
+     "direction": "long",
+     "entry": 6.17,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 6.01,
+     "invalidation": "beyond the sweep at 6.01 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.98,
+      7.01,
+      7.115
+     ],
+     "nearest_liquidity": 6.385,
+     "rr_first": 5.06,
+     "rr_last": 5.91
+    },
+    "bias_relation": "against"
+   },
+   {
+    "t": "2026-06-10T13:00:00Z",
+    "decision": "APPROVED",
+    "reasons": [],
+    "plan": {
+     "direction": "long",
+     "entry": 5.96,
+     "entry_condition": "market order on the break candle's close",
+     "stop": 5.81,
+     "invalidation": "beyond the sweep at 5.815 (+0.02% for spread) [Day 38]",
+     "take_profits": [
+      6.43,
+      6.645,
+      7.015
+     ],
+     "nearest_liquidity": 6.22,
+     "rr_first": 3.13,
+     "rr_last": 7.03
+    },
+    "bias_relation": "against",
+    "result": {
+     "r": 0.433,
+     "exit": "time",
+     "bars": 5,
+     "hit": 0
+    }
+   }
+  ]
+ }
+}
