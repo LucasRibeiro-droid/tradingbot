@@ -69,16 +69,17 @@ def screen(config: Config = BASELINE, shorting_enabled: bool = False, extra: tup
             why.append(f"dollar volume {dollar_vol / 1e6:.0f}M < {tp.min_dollar_volume / 1e6:.0f}M")
         if range_pct < tp.min_range_pct:
             why.append(f"average daily range {range_pct:.2f}% < {tp.min_range_pct}%")
-        if bias == NONE:
-            why.append("no clear daily bias")
-        elif bias != UP and not shorting_enabled:
-            why.append("daily bias down; shorting disabled")
+        if config.trading.daily_bias_filter:
+            if bias == NONE:
+                why.append("no clear daily bias")
+            elif bias != UP and not shorting_enabled:
+                why.append("daily bias down; shorting disabled")
         if why:
             rejected[sym] = "; ".join(why)
             continue
         rows.append({"symbol": sym, "price": round(price, 2), "dollar_volume_m": round(dollar_vol / 1e6, 1),
                      "range_pct": round(range_pct, 2),
-                     "daily_bias": "up" if bias == UP else "down", "name": asset.get("name")})
+                     "daily_bias": "up" if bias == UP else "down" if bias != NONE else "none", "name": asset.get("name")})
     rows.sort(key=lambda r: -r["dollar_volume_m"])
     return {"t": datetime.now(timezone.utc).isoformat(timespec="seconds"), "watch": rows[:tp.shortlist],
             "also_qualified": rows[tp.shortlist:], "rejected": rejected}

@@ -128,6 +128,11 @@ class TradingParams:
     flatten_at: str = "15:55"
     # Day 38: room beyond the sweep for the spread. TJR used 0.5 points on the S&P (~0.01%).
     stop_buffer_pct: float = 0.02
+    # Overrides of the TJR baseline, from evidence (rule_changes.md).
+    # TJR (LOCKED.trade_against_htf_trend = False, Days 4, 34): only with the daily bias. The
+    # research found setups against the bot's daily bias did better (H30 retest), so the
+    # filter is off and every trade records its relation to the bias, to keep testing it.
+    daily_bias_filter: bool = False
     # [Bot] Screening filters.
     min_price: float = 5.0
     min_dollar_volume: float = 50_000_000.0  # average daily, last 20 days
@@ -137,7 +142,12 @@ class TradingParams:
 
 @dataclass(frozen=True)
 class Locked:
-    """Rules stated directly in the lessons. Not tunable."""
+    """TJR's absolutes: the baseline, as he states them in the lessons.
+
+    Owner, 2026-10-21: TJR is the baseline, not instructions to follow; the bot learns from its
+    trades and keeps whatever is most profitable. So these are the starting point and the
+    reference, and live trading may override one (``TradingParams``) when the evidence says so,
+    recorded in journal/trading/rule_changes.md."""
 
     # Day 2, 16:50: "We can only make bias and decision on candles that have formed."
     closed_candles_only: bool = True

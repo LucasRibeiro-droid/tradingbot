@@ -1,11 +1,13 @@
 # Trading operations: readiness and records
 
-The application phase: the bot trades TJR's methodology on Alpaca. This folder holds the
+The application phase: the bot trades on Alpaca, starting from TJR's methodology as the
+baseline and keeping whatever its own trades and tests show is more profitable (owner, 2026-10-21). This folder holds the
 persistent records the owner's operating brief requires (2026-10-21). Nothing has been traded yet.
 
 ## Records (persistent: committed to git and pushed)
 | File | What it holds |
 |---|---|
+| `TRADES.md` + `trades/` | **The readable record**: one page per trade with why the bot took it, the plan, the result, and what it learned; an index table. |
 | `setups.jsonl` | Every evaluated setup: context, confluences, missing ones, plan, decision (APPROVED / WAIT / REJECTED). One JSON object per line. |
 | `trades.jsonl` | Every executed trade: orders, fills, exits, P/L, MFE/MAE, link to its setup. |
 | `reviews/YYYY-MM-DD.md` | Daily review: market conditions, setups found, trades taken, missed valid setups, risk-limit status, execution quality, and the post-trade review of each completed trade (validity class 1–4, what went right/wrong, lesson). |

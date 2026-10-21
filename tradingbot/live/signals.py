@@ -17,7 +17,7 @@ from typing import Sequence
 from zoneinfo import ZoneInfo
 
 from ..candles import BULLISH, Candle
-from ..config import BASELINE, LOCKED, Config
+from ..config import BASELINE, Config
 from ..exits import gap_edges, take_profits
 from ..fvg import find_gaps
 from ..liquidity import draw, scan
@@ -89,8 +89,8 @@ def assess(symbol: str, ltf: Sequence[Candle], tp_tf: Sequence[Candle], daily: S
     else:
         conflicts.append({"concept": "daily bias", "evidence": "daily structure " +
                           ("has no clear direction" if bias == NONE else f"is {'up' if bias == UP else 'down'}") + " [Day 34]"})
-        if not LOCKED.trade_against_htf_trend:
-            reasons.append("against or without the daily bias (LOCKED, Day 4 / Day 34)")
+        if tp.daily_bias_filter:
+            reasons.append("against or without the daily bias (TJR Day 4 / Day 34; filter on)")
     if d == -1 and not shorting_enabled:
         reasons.append("short setup, but shorting is disabled on the account")
     if not tps:
@@ -106,6 +106,7 @@ def assess(symbol: str, ltf: Sequence[Candle], tp_tf: Sequence[Candle], daily: S
     return {
         "symbol": symbol, "t": c.t, "price": entry,
         "context": {"ltf": tp.execution_tf, "ltf_trend": states[i].direction, "daily_bias": bias,
+                    "bias_relation": "with" if bias == d else "none" if bias == NONE else "against",
                     "consolidating": states[i].consolidating},
         "setup": f"entry model {tp.entry_model}: liquidity sweep + break of structure "
                  f"{'up (long)' if d == 1 else 'down (short)'} [Day 30]",

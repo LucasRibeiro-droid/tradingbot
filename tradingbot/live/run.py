@@ -43,6 +43,47 @@ def _append(path: Path, obj: dict) -> None:
         f.write(json.dumps(obj) + "\n")
 
 
+def trade_page(a: dict, parts: list[dict], dry_run: bool) -> Path:
+    """The readable record of one trade (the owner reads these): why it was taken and the plan.
+    The result and what was learned are added at the exit and in the after-close review."""
+    folder = ROOT / "trades"
+    folder.mkdir(exist_ok=True)
+    stamp = a["t"][:16].replace(":", "").replace("T", "_")
+    path = folder / f"{stamp}_{a['symbol']}.md"
+    p, ctx = a["plan"], a["context"]
+    lines = [f"# {a['symbol']} {p['direction']} · setup candle {a['t']} UTC" + (" · DRY RUN" if dry_run else ""), "",
+             "## Why the bot took it", f"- **Setup:** {a['setup']}"]
+    lines += [f"- **{x['concept']}:** {x['evidence']}" for x in a["present"]]
+    lines += [f"- **Conflicting – {x['concept']}:** {x['evidence']}" for x in a["conflicts"]]
+    lines += [f"- **Daily bias relation:** {ctx['bias_relation']} (traded either way since 2026-10-21; every trade tests it)",
+              f"- **Decision:** {a['decision']}", "",
+              "## The plan",
+              f"- Entry {p['entry']} ({p['entry_condition']}); stop {p['stop']}: {p['invalidation']}",
+              f"- Take profits {', '.join(f'{x:.2f}' for x in p['take_profits'])}: first at {p['rr_first']}R, last at {p['rr_last']}R",
+              f"- Size: {a['size']['qty']} shares, risking ${a['size']['risk_dollars']} (1% of equity {a['size']['equity']}), "
+              f"in {len(parts)} parts: " + ", ".join(f"{x['qty']} @ {x['target']:.2f}" for x in parts),
+              "", "## Result", "_open_", "", "## What it learned", "_written in the after-close review_", ""]
+    path.write_text("\n".join(lines))
+    return path
+
+
+def finish_page(path: Path, exit_rec: dict) -> None:
+    """Fill in the result section and the index row (journal/trading/TRADES.md)."""
+    if not path.exists():
+        return
+    res = (f"- Entry fill {exit_rec['entry']}, exits " + ", ".join(f"{q:g} @ {px} ({kind})" for px, q, kind in exit_rec["exits"])
+           + f"\n- P/L ${exit_rec['pnl']}, **{exit_rec['r']}R**; stop moved to break even: {exit_rec['be_moved']}")
+    path.write_text(path.read_text().replace("## Result\n_open_", "## Result\n" + res))
+    index = ROOT / "TRADES.md"
+    if not index.exists():
+        index.write_text("# Trades\n\nEvery trade the bot takes: why, result, lesson (click the trade).\n\n"
+                         "| Date (UTC) | Stock | Direction | Bias relation | R | P/L | Record |\n|---|---|---|---|---|---|---|\n")
+    head = path.read_text().splitlines()[0]
+    rel = next((l.split(":** ")[1].split(" ")[0] for l in path.read_text().splitlines() if l.startswith("- **Daily bias relation")), "")
+    with index.open("a") as f:
+        f.write(f"| {exit_rec['t'][:16]} | {exit_rec['symbol']} | {head.split(' ')[2]} | {rel} | {exit_rec['r']} | {exit_rec['pnl']} | [page](trades/{path.name}) |\n")
+
+
 def event(what: str, impact: str = "", action: str = "") -> None:
     with (ROOT / "events.md").open("a") as f:
         f.write(f"| {_now().strftime('%Y-%m-%d %H:%M')} | {what} | {impact} | {action} |\n")
@@ -60,6 +101,7 @@ class Trade:
     entry_fill: float | None = None
     be_moved: bool = False
     closed: bool = False
+    page: str = ""
 
 
 class Session:
@@ -165,6 +207,7 @@ class Session:
                     self.halted = True
                     event("3 failed submissions: new entries halted", "no new trades today", "review before next session")
         if trade.parts:
+            trade.page = str(trade_page(a, trade.parts, self.dry_run))
             self.trades.append(trade)
             self.traded_symbols.add(sym)
             _append(ROOT / "trades.jsonl", {"type": "entry_submitted", "t": _now().isoformat(timespec="seconds"),
@@ -223,10 +266,13 @@ class Session:
         pnl = sum((p - t.entry_fill) * q * t.direction for p, q, _ in exits) if t.entry_fill else 0.0
         risk = abs(t.entry_fill - t.stop) * qty if t.entry_fill else 0.0
         t.closed = True
-        _append(ROOT / "trades.jsonl", {"type": "exit", "t": _now().isoformat(timespec="seconds"), "symbol": t.symbol,
-                                        "setup_t": t.setup_t, "entry": t.entry_fill, "stop": t.stop, "targets": t.targets,
-                                        "exits": exits, "qty": qty, "pnl": round(pnl, 2),
-                                        "r": round(pnl / risk, 3) if risk else None, "be_moved": t.be_moved})
+        rec = {"type": "exit", "t": _now().isoformat(timespec="seconds"), "symbol": t.symbol,
+               "setup_t": t.setup_t, "entry": t.entry_fill, "stop": t.stop, "targets": t.targets,
+               "exits": exits, "qty": qty, "pnl": round(pnl, 2),
+               "r": round(pnl / risk, 3) if risk else None, "be_moved": t.be_moved}
+        _append(ROOT / "trades.jsonl", rec)
+        if t.page:
+            finish_page(Path(t.page), rec)
 
     # ---- end of day ----
     def flatten(self) -> None:

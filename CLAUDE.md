@@ -1,7 +1,20 @@
 # tradingbot
 
-A self-improving trading bot for Alpaca paper trading, learning one methodology from TJR's
-56-video bootcamp.
+A self-improving trading bot for Alpaca paper trading. It learned TJR's 56-video bootcamp as
+its **baseline**, and now learns from its own trades to become as profitable as it can.
+
+**Owner's direction (2026-10-21):** TJR's methodology is the baseline, not instructions to
+follow. Use what was learned (the terms, what they mean, when to enter and exit), but keep
+whatever the evidence from trades and tests shows is more profitable. Change one thing at a
+time, check it out of sample, and record every change in `journal/trading/rule_changes.md`.
+
+## Trading records (the owner reads these)
+
+- `journal/trading/TRADES.md`: index of every trade; each links to a page in
+  `journal/trading/trades/` with why the bot took it, the plan, the result, and what it learned.
+- `journal/trading/reviews/`: daily reviews; `performance.md`, `lessons.md`, `events.md`.
+- Live engine: `tradingbot/live/` (`run.py` session, `signals.py` assessment, `screener.py`,
+  `broker.py` paper-only client, `replay.py` to test a setting change on history).
 
 ## Before working on a bootcamp lesson
 
@@ -28,5 +41,5 @@ Key points:
 - `tradingbot/models_study.py` runs TJR's four entry models (Days 30–33) on the same setups.
 - `tradingbot/decision.py` is a **test harness** for combining indicators. It contains [Bot] placeholders (entry, stop) until the lessons that teach them are learned.
 - Tests: `python -m unittest discover -s tests -t .`
-- Settings are versioned in `tradingbot/config.py`; `LOCKED` holds rules TJR states as absolutes.
+- Settings are versioned in `tradingbot/config.py`; `LOCKED` holds TJR's absolutes as the baseline reference; `TradingParams` holds the live settings, which may override them on evidence.
 - Alpaca keys: `ALPACA_API_KEY`, `ALPACA_SECRET_KEY` (paper account).
