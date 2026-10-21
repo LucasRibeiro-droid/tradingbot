@@ -23,7 +23,7 @@ Key points:
 
 ## Code
 
-- Indicators: `tradingbot/candles.py`, `trend.py` (trend, break of structure), `liquidity.py`.
+- Indicators: `tradingbot/candles.py`, `trend.py` (trend, break of structure), `liquidity.py`, `fvg.py`, `orderblocks.py`.
 - `tradingbot/decision.py` is a **test harness** for combining indicators. It contains [Bot] placeholders (entry, stop) until the lessons that teach them are learned.
 - Tests: `python -m unittest discover -s tests -t .`
 - Settings are versioned in `tradingbot/config.py`; `LOCKED` holds rules TJR states as absolutes.

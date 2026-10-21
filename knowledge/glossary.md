@@ -60,7 +60,19 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **Market open** | The session open; TJR only takes trades from the open on [TJR Day 18]. | `after_market_open()`: 9:30 New York | Its full value is taught later. |
 | **Take profit / partials** | Closing part of a position at a target; TJR used several [TJR Day 18 example]. | not yet | — |
 | **Break even** | Moving the stop to the entry price so the rest of the trade can't lose [TJR Day 18 example]. | not yet | — |
-| **Accumulation** | An area where orders built up before a move; used as a target [TJR Day 18]. Taught later. | — | — |
+| **Accumulation** | An area where orders built up before a move; used as a target [TJR Day 18]. Day 20: the same as an order block. | — | — |
+
+## Order blocks (Days 20, 22; Day 24 to come)
+
+| Term | Meaning | How the bot measures it | Signals |
+|---|---|---|---|
+| **Order block** | The whole move that caused a liquidity sweep, before the break of structure that shifted the market: the leg up that took the highs (before a break down), or the leg down that took the lows (before a break up). Orders were filled there [TJR Days 20, 22]. | `find_blocks()`: leg from the last two-candle low/high to the sweep's extreme, wick to wick, must take a pool [Bot] | Price tends to retrace into it and continue the new way. TJR's first-choice retracement area. One per trend. |
+| **Accumulation area** | Same as an order block [TJR Day 20, 11:08]. | — | Also a target (Day 18). |
+| **Retracement tools** | Order blocks, fair value gaps and equilibrium, in TJR's order of preference [TJR Day 20, 06:24–07:49]. | — | Where to re-enter after missing the sweep-and-break entry. |
+| **Disrespected** | Price pushed straight past a gap or block instead of reacting [TJR Day 22, 11:46, 17:05]. | `follow()` "broken" [Bot] | Drop it. |
+| **Pre-market** | Before the session open; TJR doesn't trade it [TJR Days 18, 22]. | `after_market_open()` | — |
+| **London session** | The London open; TJR waited for it on a GBPUSD 15-minute example [TJR Day 22, 16:17]. | not used (US instruments) | — |
+| **News days** | Days with major releases (PPI, FOMC); TJR says not to trade them [TJR Day 20, 11:41]. | not yet (Day 19) | — |
 
 ## Results
 

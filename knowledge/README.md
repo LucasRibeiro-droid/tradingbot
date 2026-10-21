@@ -13,7 +13,7 @@ What the bot knows, one TJR Boot Camp lesson at a time
 
 Each lesson file says what was taught (with video timestamps), which rule or code it
 became, and what the bot's own study of it found on real charts. Topics taught over
-several lessons also get one combined file (e.g. `liquidity.md` for Days 8, 10 and 12).
+several lessons also get one combined file (`liquidity.md`, `fair_value_gaps.md`, `order_blocks.md`).
 `sources/` holds transcripts: written by Gemini (`scripts/gemini_watch.py`) for YouTube links,
 or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with audio.
 
@@ -37,7 +37,11 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 16 | FVG Pt. 2 | learned; detection built, homework study run; topic file `fair_value_gaps.md` | `tradingbot/fvg.py`, `tradingbot/fvg_study.py` |
 | 17 | Patience | not yet studied | — |
 | 18 | FVG Pt. 3 | learned; fair value gaps complete; continuation path in the harness | `tradingbot/decision.py` |
-| 19–55 | … | not yet studied | — |
+| 19 | How to Read News Data | not yet studied | — |
+| 20 | Order Blocks | learned (concept); topic file `order_blocks.md` | — |
+| 21 | How to Take a Win | not yet studied | — |
+| 22 | Order Blocks pt.2 | learned; detection built, homework study run | `tradingbot/orderblocks.py`, `tradingbot/orderblock_study.py` |
+| 23–55 | … | not yet studied | — |
 
 ## How the bot learns
 

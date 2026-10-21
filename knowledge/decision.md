@@ -16,7 +16,7 @@ the reasons each indicator gave.
 | Break of structure | Day 6 | The trigger: a candle closes past the most recent high or low. | `day06_break_of_structure.md` |
 | Liquidity | Days 8, 10, 12 | Evidence that orders were just filled on the other side (a sweep), and where price is drawn to next (the target). | `liquidity.md` |
 | Fair value gaps | Days 14, 16, 18 | The continuation path: a higher-timeframe gap in the trend's direction, price retraces in, lower-timeframe break of structure | `fair_value_gaps.md` |
-| Order blocks | Days 20, 22, 24 | to come | |
+| Order blocks | Days 20, 22, 24 | Detected (`orderblocks.py`) and studied, **not used in decisions** until Day 24 teaches how to put them together. | `order_blocks.md` |
 | Equilibrium | Days 26, 28 | to come | |
 | Daily bias | Days 34, 35, 36 | to come | |
 
