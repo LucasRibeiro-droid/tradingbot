@@ -29,6 +29,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 20 | Order Blocks | What an order block is | order block = the leg that caused the liquidity sweep, before the break; price retraces into it to fill more orders; ranking: sweep + break starts the move, then order block > fair value gap > equilibrium for retracements; one per trend; every timeframe; = accumulation area; no trading on news days | Days 6, 8–12, 14–18 | partial (part 1 of 3) | The first-choice retracement area; names Day 18's "accumulation" |
 | 22 | Order Blocks pt.2 | How to spot order blocks | find the break, mark the whole move before it that swept liquidity; several candles; scale down for precision; stop size follows the timeframe played; stop beyond the block "to play safe"; targets at higher-timeframe liquidity; wait for the open (NY or London); lower-timeframe break inside the block; some blocks never get hit; homework 5 blocks × 3 timeframes | Days 4, 6, 12, 18, 20 | partial (part 2 of 3) | Makes order blocks detectable; first rules on stop size |
 | 24 | Order Blocks Pt 3 | Putting order blocks together | summary; best with a sweep; box the whole leg (beginners) or wick to start of body (TJR); tap in → break → enter; order blocks as take profit; gaps for any retracement, block for the first; daily block not enough alone → 4h break → 1h block → break; daily/weekly bias; already inside → double confirmation | Days 4, 6, 8–22 | learned (**order blocks complete**) | Completes the first-choice retracement area; previews daily bias and equilibrium |
+| 26 | Equilibrium | What equilibrium is | 50% of a swing; discount (below, buy) and premium (above, sell); a gauge not an entry; pair with a gap, block or break in the discount; gap + equilibrium "perfect"; sweep = inducement; touching an order block can be the entry | Days 4, 6, 14–24 | partial (part 1 of 2) | The third retracement tool; where in a pullback to look |
 
 ## Not yet received
 
@@ -41,7 +42,7 @@ order blocks → equilibrium, then execution, daily bias, risk, and backtesting.
 | 21 | How to Take a Win & Life Lessons | psychology |
 | 23 | Check In / Be my boy | psychology |
 | 25 | Over Confidence | psychology |
-| 26, 28 | Equilibrium Pt 1–2 | equilibrium |
+| 28 | Equilibrium Pt 2 | equilibrium on the chart (completes the topic) |
 | 27 | Fear | psychology |
 | 29 | Trading Plan | the plan |
 | 30, 32, 33 | Execution Pt 1–3 | execution |

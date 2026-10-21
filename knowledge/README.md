@@ -43,7 +43,9 @@ or offline by Whisper (`scripts/transcribe_local.py`) for uploaded videos with a
 | 22 | Order Blocks pt.2 | learned; detection built, homework study run | `tradingbot/orderblocks.py`, `tradingbot/orderblock_study.py` |
 | 23 | Check In | not yet studied | — |
 | 24 | Order Blocks Pt 3 | learned (via captions + Gemini screen log); **order blocks complete**; order-block continuation path added to the harness | `tradingbot/decision.py` |
-| 25–55 | … | not yet studied | — |
+| 25 | Over Confidence | not yet studied | — |
+| 26 | Equilibrium | learned (concept); topic file `equilibrium.md` | — |
+| 27–55 | … | not yet studied | — |
 
 ## How the bot learns
 

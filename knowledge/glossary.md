@@ -76,6 +76,15 @@ signals. Updated as lessons are learned. Lesson notes have the full detail and t
 | **London session** | The London open; TJR waited for it on a GBPUSD 15-minute example [TJR Day 22, 16:17]. | not used (US instruments) | — |
 | **News days** | Days with major releases (PPI, FOMC); TJR says not to trade them [TJR Day 20, 11:41]. | not yet (Day 19) | — |
 
+## Equilibrium (Day 26; Day 28 to come)
+
+| Term | Meaning | How the bot measures it | Signals |
+|---|---|---|---|
+| **Equilibrium** | The 50% level of a swing (high to low or low to high) [TJR Day 26, 06:32]. | not yet (which swing: Day 28) | — |
+| **Discount** | Below equilibrium: the cheap half, where big money buys in an uptrend [TJR Day 26, 08:13]. | — | Look for a buy reason here. |
+| **Premium** | Above equilibrium: the expensive half, where big money sells in a downtrend [TJR Day 26, 06:50, 11:16]. | — | Look for a sell reason here. |
+| **Inducement** | TJR's name for the liquidity sweep [TJR Day 26, 09:08]. | `Taken` | — |
+
 ## Results
 
 | Term | Meaning |
