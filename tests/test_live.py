@@ -83,5 +83,58 @@ class Restart(unittest.TestCase):
         self.assertEqual(s.traded_symbols, {"NVDA"})
 
 
+class FakeAlpaca:
+    """Like Alpaca: bracket legs hold the shares, so a close fails while orders are open, and a
+    cancel takes effect a moment later."""
+
+    def __init__(self, positions, open_orders):
+        self._positions = {p: q for p, q in positions.items()}
+        self._orders, self._cancelling, self.closed = open_orders, False, []
+
+    def positions(self):
+        return [{"symbol": s, "qty": str(q)} for s, q in self._positions.items()]
+
+    def orders(self, status="open", after=None):
+        if self._cancelling:  # the cancel lands on the next look
+            self._orders, self._cancelling = 0, False
+            return [{"id": "leg"}]
+        return [{"id": "leg"}] * self._orders
+
+    def cancel_all(self):
+        self._cancelling = bool(self._orders)
+
+    def close_position(self, symbol):
+        if self._orders:
+            raise BrokerError("insufficient qty available for order (held by open orders)")
+        self.closed.append(symbol)
+        del self._positions[symbol]
+        return {}
+
+
+class Flatten(unittest.TestCase):
+    def _session(self, broker):
+        from unittest import mock
+        from tradingbot.live import run
+        s = run.Session.__new__(run.Session)
+        s.dry_run, s.trades, s.broker = False, [], broker
+        s.manage = lambda: None
+        return s, mock.patch.object(run, "event", lambda *a, **k: None)
+
+    def test_waits_for_cancels_then_closes_and_verifies(self):
+        broker = FakeAlpaca({"MU": 48, "NVDA": -230}, open_orders=6)
+        s, quiet = self._session(broker)
+        with quiet:
+            self.assertTrue(s.flatten(pause=0))
+        self.assertEqual(broker.positions(), [])
+        self.assertEqual(sorted(broker.closed), ["MU", "NVDA"])
+
+    def test_reports_failure_when_positions_stay(self):
+        broker = FakeAlpaca({"MU": 48}, open_orders=1)
+        broker.cancel_all = lambda: None  # cancels never land
+        s, quiet = self._session(broker)
+        with quiet:
+            self.assertFalse(s.flatten(attempts=2, pause=0))
+
+
 if __name__ == "__main__":
     unittest.main()

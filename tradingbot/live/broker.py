@@ -100,5 +100,7 @@ class Paper:
     def cancel_all(self) -> None:
         self._call("DELETE", "/v2/orders")
 
-    def close_all(self) -> None:
-        self._call("DELETE", "/v2/positions?cancel_orders=true")
+    def close_position(self, symbol: str) -> dict:
+        """Market order closing the whole position. Fails while open orders (bracket legs)
+        still hold the shares: cancel them first and wait until they are gone."""
+        return self._call("DELETE", f"/v2/positions/{symbol}", retries=0)

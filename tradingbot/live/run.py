@@ -277,6 +277,14 @@ class Session:
             done = all(o["status"] in ("filled", "canceled", "expired", "rejected") for o in orders) and \
                 all(leg["status"] in ("filled", "canceled", "expired", "rejected") for _, leg in legs)
             if done and legs:
+                # Legs cancelled (e.g. by the flatten) don't mean the position is closed: only
+                # record the exit once Alpaca holds nothing in this stock.
+                try:
+                    held = any(p["symbol"] == t.symbol for p in self.broker.positions())
+                except BrokerError:
+                    held = True
+                if held:
+                    continue
                 self._record_exit(t, legs)
         self._save_state()
 
@@ -304,18 +312,37 @@ class Session:
             finish_page(Path(t.page), rec)
 
     # ---- end of day ----
-    def flatten(self) -> None:
+    def flatten(self, attempts: int = 5, pause: float = 3.0) -> bool:
+        """Close everything before the close and verify it with Alpaca. The bracket legs hold
+        the shares, so: cancel all orders, wait until none are open, then close each position.
+        (2026-10-21: closing with cancel_orders in one call cancelled the stops but sold
+        nothing, and five positions were held overnight unprotected.)"""
         if self.dry_run:
-            return
-        try:
-            at_broker = bool(self.broker.positions())
-        except BrokerError:
-            at_broker = True  # can't see: close anyway
-        if at_broker or any(not t.closed for t in self.trades):
-            self.broker.close_all()
-            event("flattened before the close", "open positions closed at market", "")
-            time.sleep(5)
-            self.manage()
+            return True
+        for attempt in range(attempts):
+            try:
+                positions = self.broker.positions()
+                if not positions:
+                    if attempt:
+                        event("flattened before the close", f"verified flat after {attempt} round(s)", "")
+                    self.manage()
+                    return True
+                self.broker.cancel_all()
+                for _ in range(10):
+                    if not self.broker.orders():
+                        break
+                    time.sleep(pause)
+                for p in positions:
+                    try:
+                        self.broker.close_position(p["symbol"])
+                    except BrokerError as e:
+                        event(f"close failed {p['symbol']} {p['qty']}: {e}", "position still open", "retrying")
+            except BrokerError as e:
+                event(f"flatten round {attempt + 1} failed: {e}", "positions may still be open", "retrying")
+            time.sleep(pause * 2)
+        event("FLATTEN FAILED: positions still open after the close", "held overnight without stops",
+              "close them by hand at Alpaca")
+        return False
 
     def run(self) -> None:
         tp = self.config.trading
