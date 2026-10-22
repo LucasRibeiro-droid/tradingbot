@@ -42,6 +42,10 @@ hypothesis.
    wrong; entry timing; the exit; costs and the result after costs; decision quality vs outcome
    (judged on what was known at entry); the most plausible explanation and how sure; validity
    class 1–4; the lesson; whether more evidence is needed. When the cause is unclear, it says so.
+   **Validity classes:** 1 = valid setup, executed as planned; 2 = valid setup, execution flawed
+   (late, slippage, system failure); 3 = met the rules but weak on what was known at entry
+   (unrealistic target, high cost in R, conflicting evidence); 4 = shouldn't have been taken
+   (broke the rules or a bug).
 3. **Two scorecards** in `performance.md`: trading (win rate, average win/loss, expectancy,
    P/L after costs, max drawdown, by strategy/exit/setup/market condition) and learning
    (documented trades, diversity of strategies and conditions, prediction accuracy, repeated

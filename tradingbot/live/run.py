@@ -172,7 +172,9 @@ class Session:
         except BrokerError as e:
             event(f"start reconcile unavailable: {e}", "instrument cap from saved state only", "")
             return
-        filled = {o["symbol"] for o in orders if float(o.get("filled_qty") or 0) > 0}
+        # Only the bot's own entries (manual or other orders don't count as instruments traded).
+        filled = {o["symbol"] for o in orders if float(o.get("filled_qty") or 0) > 0
+                  and str(o.get("client_order_id", "")).startswith(("tjr-", "orb30-"))}
         self.traded_symbols |= filled
         known = {t.symbol for t in self.trades if not t.closed}
         for pos in positions:

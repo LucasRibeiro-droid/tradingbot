@@ -76,8 +76,9 @@ class Restart(unittest.TestCase):
         s = Session.__new__(Session)
         s.dry_run, s.trades, s.traded_symbols = False, [], set()
         s.broker = type("B", (), {
-            "orders": lambda self, status, after: [{"symbol": "NVDA", "filled_qty": "77"},
-                                                   {"symbol": "AMD", "filled_qty": "0"}],
+            "orders": lambda self, status, after: [{"symbol": "NVDA", "filled_qty": "77", "client_order_id": "tjr-x-0"},
+                                                   {"symbol": "AMD", "filled_qty": "0", "client_order_id": "tjr-y-0"},
+                                                   {"symbol": "MU", "filled_qty": "48", "client_order_id": "manual-close"}],
             "positions": lambda self: []})()
         s._reconcile_start()
         self.assertEqual(s.traded_symbols, {"NVDA"})
