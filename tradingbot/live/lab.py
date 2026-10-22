@@ -12,6 +12,7 @@ Bars are cached under ~/.cache/tradingbot (IEX, as live). Research only; nothing
 from __future__ import annotations
 
 import argparse
+import gzip
 import json
 import pickle
 from dataclasses import dataclass
@@ -231,6 +232,10 @@ def main() -> None:
     args = ap.parse_args()
     res = run(args.symbols.split(","), args.days, args.cost_bps)
     out = STUDIES / f"lab_{args.days}d_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.json"
+    rows = res.pop("rows")
+    res["rows_file"] = out.with_suffix(".rows.jsonl.gz").name  # every setup × exit, for breakdowns
+    with gzip.open(out.with_suffix(".rows.jsonl.gz"), "wt") as f:
+        f.writelines(json.dumps(r) + "\n" for r in rows)
     out.write_text(json.dumps(res, indent=1))
     for k, v in res["summary"].items():
         print(k, v)
