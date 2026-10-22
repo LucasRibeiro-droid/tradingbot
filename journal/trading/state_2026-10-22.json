@@ -28,6 +28,78 @@
    "be_moved": false,
    "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-22_1500_META.md"
+  },
+  {
+   "symbol": "MU",
+   "setup_t": "2026-10-22T17:15:00Z",
+   "direction": 1,
+   "planned_entry": 863.48,
+   "stop": 854.56,
+   "targets": [
+    920.02,
+    928.4,
+    931.7
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-22-MU-1715-0",
+     "order_id": "e49032a5-3573-482d-afeb-ac65b49116b7",
+     "qty": 4,
+     "target": 920.02
+    },
+    {
+     "client_id": "tjr-2026-10-22-MU-1715-1",
+     "order_id": "1502fe8a-cca9-4efa-8c5d-7852780c8aa3",
+     "qty": 4,
+     "target": 928.4
+    },
+    {
+     "client_id": "tjr-2026-10-22-MU-1715-2",
+     "order_id": "bd5e5686-5372-4c60-9731-993df22a9612",
+     "qty": 3,
+     "target": 931.7
+    }
+   ],
+   "entry_fill": 864.4918181818182,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-22_1715_MU.md"
+  },
+  {
+   "symbol": "NVDA",
+   "setup_t": "2026-10-22T17:15:00Z",
+   "direction": 1,
+   "planned_entry": 213.145,
+   "stop": 212.22,
+   "targets": [
+    222.33,
+    222.82,
+    223.17
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-22-NVDA-1715-0",
+     "order_id": "203ff5f5-8c5b-4620-a5a1-4db9a9b8292d",
+     "qty": 16,
+     "target": 222.33
+    },
+    {
+     "client_id": "tjr-2026-10-22-NVDA-1715-1",
+     "order_id": "2abe313d-4776-4c30-8a75-cd1648ffde7e",
+     "qty": 15,
+     "target": 222.82
+    },
+    {
+     "client_id": "tjr-2026-10-22-NVDA-1715-2",
+     "order_id": "5fe42fde-3d60-4696-98b7-850fe2a4ecf7",
+     "qty": 15,
+     "target": 223.17
+    }
+   ],
+   "entry_fill": 213.11000000000004,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-22_1715_NVDA.md"
   }
  ],
  "traded_symbols": [
@@ -46,6 +118,14 @@
   [
    "META",
    "2026-10-22T15:00:00Z"
+  ],
+  [
+   "MU",
+   "2026-10-22T17:15:00Z"
+  ],
+  [
+   "NVDA",
+   "2026-10-22T17:15:00Z"
   ]
  ]
 }
