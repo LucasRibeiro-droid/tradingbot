@@ -119,6 +119,15 @@ class TradingParams:
     # Owner, 2026-10-21: "the bot does not have to buy big positions". Each position's cost is
     # capped at this % of equity; the 1% risk stays the ceiling. Results are measured in R.
     max_position_pct: float = 10.0
+    # Owner's directive, 2026-10-22: experiment to learn. Entry strategies traded live (each
+    # trade tests a hypothesis, journal/hypotheses.md) and, per strategy, the exit methods
+    # under test, split evenly across its trades (live/experiments.py). TJR's model 1 with
+    # TJR's ladder stays in as the baseline.
+    strategies: tuple[str, ...] = ("tjr_m1", "orb30")
+    exits_under_test: tuple[tuple[str, tuple[str, ...]], ...] = (
+        ("tjr_m1", ("tjr_ladder", "ladder_0.5_1_2R")),
+        ("orb30", ("ladder_1_2_3R", "2R")),
+    )
     # [Bot] Execution on the 15-minute: the entry models with TJR's exits were positive on
     # SPY and GLD 15-minute and 1-hour, not on the 5-minute for SPY (knowledge/exits.md).
     # Take profit 1 from the next timeframe up (Day 37).
@@ -142,7 +151,8 @@ class TradingParams:
     min_price: float = 5.0
     min_dollar_volume: float = 50_000_000.0  # average daily, last 20 days
     min_range_pct: float = 1.0  # average daily high-low range, last 20 days, % of price
-    shortlist: int = 8
+    shortlist: int = 25  # owner, 2026-10-22: a wider universe for more, more varied evidence
+    movers: int = 10  # of which up to this many are the day's biggest movers (relative strength/weakness)
 
 
 @dataclass(frozen=True)

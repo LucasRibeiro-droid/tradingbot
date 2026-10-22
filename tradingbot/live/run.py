@@ -32,6 +32,7 @@ from ..config import BASELINE, Config
 from ..data import fetch_bars, timeframe_length
 from .broker import BrokerError, Paper
 from .screener import screen
+from .experiments import exit_for, orb_assess, pre_trade, targets_for
 from .signals import assess, size, split
 
 ROOT = Path(__file__).resolve().parent.parent.parent / "journal" / "trading"
@@ -59,14 +60,30 @@ def trade_page(a: dict, parts: list[dict], dry_run: bool) -> Path:
              "## Why the bot took it", f"- **Setup:** {a['setup']}"]
     lines += [f"- **{x['concept']}:** {x['evidence']}" for x in a["present"]]
     lines += [f"- **Conflicting – {x['concept']}:** {x['evidence']}" for x in a["conflicts"]]
+    ex, mkt = a.get("experiment") or {}, ctx.get("market") or {}
     lines += [f"- **Daily bias relation:** {ctx['bias_relation']} (traded either way since 2026-10-21; every trade tests it)",
-              f"- **Decision:** {a['decision']}", "",
-              "## The plan",
+              f"- **Market:** SPY {mkt.get('spy_today_pct', '?')}% today at {mkt.get('time_ny', '?')} ET; "
+              f"open positions {mkt.get('open_long', 0)} long / {mkt.get('open_short', 0)} short before this one",
+              f"- **Decision:** {a['decision']}", ""]
+    if ex:
+        lines += ["## Experiment (before entry)",
+                  f"- **Strategy:** `{ex['strategy']}`: {ex['hypothesis']}",
+                  f"- **Exit tested:** `{ex['exit']}`: {ex['exit_hypothesis']}",
+                  f"- **Expectation:** {ex['expect']}",
+                  f"- **Invalidated if:** {ex['invalidation']}",
+                  f"- **Expected outcome and uncertainty:** {ex['expected_outcome']}", ""]
+    lines += ["## The plan",
               f"- Entry {p['entry']} ({p['entry_condition']}); stop {p['stop']}: {p['invalidation']}",
-              f"- Take profits {', '.join(f'{x:.2f}' for x in p['take_profits'])}: first at {p['rr_first']}R, last at {p['rr_last']}R",
-              f"- Size: {a['size']['qty']} shares, risking ${a['size']['risk_dollars']} (1% of equity {a['size']['equity']}), "
-              f"in {len(parts)} parts: " + ", ".join(f"{x['qty']} @ {x['target']:.2f}" for x in parts),
-              "", "## Result", "_open_", "", "## What it learned", "_written in the after-close review_", ""]
+              f"- Take profits {', '.join(f'{x:.2f}' for x in p['take_profits'])}: first at {p['rr_first']}R, last at {p['rr_last']}R"
+              + (f" (strategy's own ladder was {', '.join(f'{x:.2f}' for x in p['ladder'])})" if p.get("ladder") and p["ladder"] != p["take_profits"] else ""),
+              f"- Size: {a['size']['qty']} shares, risking ${a['size']['risk_dollars']} (max 1% of equity {a['size']['equity']}; "
+              f"positions max 10% of equity), in {len(parts)} parts: " + ", ".join(f"{x['qty']} @ {x['target']:.2f}" for x in parts),
+              "", "## Result", "_open_", "",
+              "## What it learned",
+              "_The after-close review answers, from what was known at entry:_ what happened; did the thesis play out; "
+              "which parts of the analysis were right or wrong; entry timing; exit; costs (slippage, spread) and the result "
+              "after costs; decision quality vs outcome (good decision / bad luck or the reverse); the most plausible "
+              "explanation and how sure; validity class 1–4; the lesson; more evidence needed.", ""]
     path.write_text("\n".join(lines))
     return path
 
@@ -81,11 +98,12 @@ def finish_page(path: Path, exit_rec: dict) -> None:
     index = ROOT / "TRADES.md"
     if not index.exists():
         index.write_text("# Trades\n\nEvery trade the bot takes: why, result, lesson (click the trade).\n\n"
-                         "| Date (UTC) | Stock | Direction | Bias relation | R | P/L | Record |\n|---|---|---|---|---|---|---|\n")
+                         "| Date (UTC) | Stock | Direction | Bias relation | R | P/L | Record | Strategy / exit |\n|---|---|---|---|---|---|---|---|\n")
     head = path.read_text().splitlines()[0]
     rel = next((l.split(":** ")[1].split(" ")[0] for l in path.read_text().splitlines() if l.startswith("- **Daily bias relation")), "")
     with index.open("a") as f:
-        f.write(f"| {exit_rec['t'][:16]} | {exit_rec['symbol']} | {head.split(' ')[2]} | {rel} | {exit_rec['r']} | {exit_rec['pnl']} | [page](trades/{path.name}) |\n")
+        f.write(f"| {exit_rec['t'][:16]} | {exit_rec['symbol']} | {head.split(' ')[2]} | {rel} | {exit_rec['r']} | {exit_rec['pnl']} "
+                f"| [page](trades/{path.name}) | {exit_rec.get('strategy', 'tjr_m1')} / {exit_rec.get('exit_name', 'tjr_ladder')} |\n")
 
 
 def event(what: str, impact: str = "", action: str = "") -> None:
@@ -106,6 +124,8 @@ class Trade:
     be_moved: bool = False
     closed: bool = False
     page: str = ""
+    strategy: str = "tjr_m1"
+    exit_name: str = "tjr_ladder"
 
 
 class Session:
@@ -116,7 +136,7 @@ class Session:
         self.broker = Paper()
         self.trades: list[Trade] = []
         self.traded_symbols: set[str] = set()
-        self.seen: set[tuple[str, str]] = set()
+        self.seen: set[tuple[str, str, str]] = set()
         self.failures = 0
         self.halted = False
         self.watch: list[str] = []
@@ -166,7 +186,8 @@ class Session:
             s = json.loads(self.state_path.read_text())
             self.trades = [Trade(**t) for t in s["trades"]]
             self.traded_symbols = set(s["traded_symbols"])
-            self.seen = {tuple(x) for x in s["seen"]}
+            # (symbol, candle) keys from before the strategies existed belong to TJR's model 1.
+            self.seen = {tuple(x) if len(x) == 3 else (x[0], x[1], "tjr_m1") for x in s["seen"]}
 
     def _save_state(self) -> None:
         self.state_path.write_text(json.dumps({"trades": [t.__dict__ for t in self.trades],
@@ -178,6 +199,7 @@ class Session:
         tp = self.config.trading
         now = _now()
         ltf_len, tp_len = timeframe_length(tp.execution_tf), timeframe_length(tp.take_profit_tf)
+        market = self._market_context(now)
         for sym in self.watch:
             try:
                 ltf = fetch_bars(sym, tp.execution_tf, now - timedelta(days=20))
@@ -188,15 +210,42 @@ class Session:
                 continue
             if not ltf or (now - datetime.fromisoformat(ltf[-1].t.replace("Z", "+00:00"))) > timedelta(hours=1):
                 continue  # stale or no data: never act on it
-            a = assess(sym, ltf, htf, daily, self.config, self.shorting, ltf_len, tp_len)
-            if a is None or (sym, a["t"]) in self.seen:
-                continue
-            self.seen.add((sym, a["t"]))
-            if a["decision"] == "APPROVED":
-                self._approve(a)
-            a["dry_run"] = self.dry_run
-            _append(ROOT / "setups.jsonl", a)
+            found = []
+            if "tjr_m1" in tp.strategies:
+                a = assess(sym, ltf, htf, daily, self.config, self.shorting, ltf_len, tp_len)
+                if a is not None:
+                    a["strategy"] = "tjr_m1"
+                    found.append(a)
+            if "orb30" in tp.strategies:
+                a = orb_assess(sym, ltf, self.shorting)
+                if a is not None:
+                    found.append(a)
+            for a in found:
+                key = (sym, a["t"], a["strategy"])
+                if key in self.seen:
+                    continue
+                self.seen.add(key)
+                a["context"]["market"] = market
+                if a["decision"] == "APPROVED":
+                    self._approve(a)
+                a["dry_run"] = self.dry_run
+                _append(ROOT / "setups.jsonl", a)
         self._save_state()
+
+    def _market_context(self, now: datetime) -> dict:
+        """Broad conditions at the decision: SPY's move today, time of day, open positions."""
+        ctx = {"time_ny": datetime.now(NY).strftime("%H:%M"),
+               "open_long": sum(1 for t in self.trades if not t.closed and t.direction == 1),
+               "open_short": sum(1 for t in self.trades if not t.closed and t.direction == -1)}
+        try:
+            ny = lambda c: datetime.fromisoformat(c.t.replace("Z", "+00:00")).astimezone(NY)
+            session = [c for c in fetch_bars("SPY", "15Min", now - timedelta(days=1)) if c.closed
+                       and ny(c).date() == datetime.now(NY).date() and (ny(c).hour, ny(c).minute) >= (9, 30)]
+            if session:
+                ctx["spy_today_pct"] = round((session[-1].c / session[0].o - 1) * 100, 2)
+        except Exception:
+            pass  # context only; never blocks a decision
+        return ctx
 
     def _approve(self, a: dict) -> None:
         tp = self.config.trading
@@ -211,6 +260,19 @@ class Session:
         if any(t.symbol == sym and not t.closed for t in self.trades):
             a["decision"], a["reasons"] = "REJECTED", ["a position in this stock is still open"]
             return
+        strategy = a.get("strategy", "tjr_m1")
+        exits = dict(tp.exits_under_test).get(strategy, ("tjr_ladder",))
+        exit_name = exit_for(strategy, exits, f"{sym}-{a['t']}")
+        d = 1 if plan["direction"] == "long" else -1
+        plan["ladder"] = list(plan.get("take_profits") or [])
+        plan["take_profits"] = targets_for(exit_name, d, plan["entry"], plan["stop"], plan["ladder"])
+        if not plan["take_profits"]:
+            a["decision"], a["reasons"] = "REJECTED", [f"exit {exit_name}: no target"]
+            return
+        risk = abs(plan["entry"] - plan["stop"])
+        plan["rr_first"] = round(abs(plan["take_profits"][0] - plan["entry"]) / risk, 2)
+        plan["rr_last"] = round(abs(plan["take_profits"][-1] - plan["entry"]) / risk, 2)
+        a["experiment"] = pre_trade(a, exit_name)
         acct = self.broker.account()
         qty = size(float(acct["equity"]), float(acct["buying_power"]), plan["entry"], plan["stop"],
                    tp.risk_per_trade_pct, tp.max_position_pct)
@@ -222,10 +284,11 @@ class Session:
             return
         if self.dry_run:
             return
-        d = 1 if plan["direction"] == "long" else -1
-        trade = Trade(sym, a["t"], d, plan["entry"], plan["stop"], [t for _, t in parts])
+        trade = Trade(sym, a["t"], d, plan["entry"], plan["stop"], [t for _, t in parts],
+                      strategy=strategy, exit_name=exit_name)
+        prefix = "tjr" if strategy == "tjr_m1" else strategy
         for k, (q, target) in enumerate(parts):
-            cid = f"tjr-{self.today}-{sym}-{a['t'][11:16].replace(':', '')}-{k}"
+            cid = f"{prefix}-{self.today}-{sym}-{a['t'][11:16].replace(':', '')}-{k}"
             try:
                 o = self.broker.bracket(sym, q, "buy" if d == 1 else "sell", target, plan["stop"], cid)
                 trade.parts.append({"client_id": cid, "order_id": o["id"], "qty": q, "target": target})
@@ -306,7 +369,8 @@ class Session:
         rec = {"type": "exit", "t": _now().isoformat(timespec="seconds"), "symbol": t.symbol,
                "setup_t": t.setup_t, "entry": t.entry_fill, "stop": t.stop, "targets": t.targets,
                "exits": exits, "qty": qty, "pnl": round(pnl, 2),
-               "r": round(pnl / risk, 3) if risk else None, "be_moved": t.be_moved}
+               "r": round(pnl / risk, 3) if risk else None, "be_moved": t.be_moved,
+               "strategy": t.strategy, "exit_name": t.exit_name}
         _append(ROOT / "trades.jsonl", rec)
         if t.page:
             finish_page(Path(t.page), rec)

@@ -8,8 +8,10 @@ research tested). Kept if [Bot filters, config.TradingParams]:
     (consolidated SIP daily bars, which are allowed once 15+ minutes old)
   - a daily bias the account can trade: the last daily break of structure up when shorting is
     disabled [TJR Day 34; LOCKED: never against the higher timeframe]
-Ranked by dollar volume; the top ``shortlist`` are watched. At most
-any of them may be traded (``max_instruments_per_day``; owner: no limit since 2026-10-21).
+Also the day's biggest movers (gainers and losers: relative strength and weakness). The watch
+list is the ``shortlist - movers`` most liquid by dollar volume, plus up to ``movers`` of the
+biggest movers by absolute % change (owner, 2026-10-22: a wider, more varied universe). Any of
+them may be traded (``max_instruments_per_day``; owner: no limit since 2026-10-21).
 """
 from __future__ import annotations
 
@@ -24,6 +26,7 @@ from ..data import fetch_bars
 from ..trend import NONE, UP, trend_series
 
 SCREENER_URL = "https://data.alpaca.markets/v1beta1/screener/stocks/most-actives?by={by}&top=50"
+MOVERS_URL = "https://data.alpaca.markets/v1beta1/screener/stocks/movers?top=50"
 ASSET_URL = "https://paper-api.alpaca.markets/v2/assets/{symbol}"
 LEVERAGED = re.compile(r"\b(2x|3x|ultra|ultrapro|inverse|short|bull|bear|leveraged|-1x|daily)\b", re.I)
 
@@ -41,9 +44,17 @@ def screen(config: Config = BASELINE, shorting_enabled: bool = False, extra: tup
     tp = config.trading
     actives = [x["symbol"] for by in ("volume", "trades")
                for x in _get(SCREENER_URL.format(by=by)).get("most_actives", [])]
+    moves: dict[str, float] = {}
+    try:
+        m = _get(MOVERS_URL)
+        for x in m.get("gainers", []) + m.get("losers", []):
+            if x.get("price", 0) >= tp.min_price:
+                moves[x["symbol"]] = x["percent_change"]
+    except Exception:
+        pass  # movers are extra candidates; the screen works without them
     end = datetime.now(timezone.utc) - timedelta(minutes=20)
     rows, rejected = [], {}
-    for sym in dict.fromkeys(list(extra) + actives):
+    for sym in dict.fromkeys(list(extra) + actives + list(moves)):
         try:
             asset = _get(ASSET_URL.format(symbol=sym))
         except Exception as e:  # unknown or unsupported symbol
@@ -84,10 +95,22 @@ def screen(config: Config = BASELINE, shorting_enabled: bool = False, extra: tup
             continue
         rows.append({"symbol": sym, "price": round(price, 2), "dollar_volume_m": round(dollar_vol / 1e6, 1),
                      "range_pct": round(range_pct, 2),
-                     "daily_bias": "up" if bias == UP else "down" if bias != NONE else "none", "name": asset.get("name")})
+                     "daily_bias": "up" if bias == UP else "down" if bias != NONE else "none", "name": asset.get("name"),
+                     "change_pct": moves.get(sym)})
     rows.sort(key=lambda r: -r["dollar_volume_m"])
-    return {"t": datetime.now(timezone.utc).isoformat(timespec="seconds"), "watch": rows[:tp.shortlist],
-            "also_qualified": rows[tp.shortlist:], "rejected": rejected}
+    liquid = rows[:tp.shortlist - tp.movers]
+    for r in liquid:
+        r["why"] = "liquid"
+    rest = sorted((r for r in rows[len(liquid):] if r["change_pct"] is not None), key=lambda r: -abs(r["change_pct"]))
+    movers = rest[:tp.movers]
+    for r in movers:
+        r["why"] = f"mover {r['change_pct']:+.1f}%"
+    fill = [r for r in rows[len(liquid):] if r not in movers][:tp.shortlist - len(liquid) - len(movers)]
+    for r in fill:
+        r["why"] = "liquid"
+    watch = liquid + movers + fill
+    return {"t": datetime.now(timezone.utc).isoformat(timespec="seconds"), "watch": watch,
+            "also_qualified": [r for r in rows if r not in watch], "rejected": rejected}
 
 
 def _daily_volumes(symbol: str, end: datetime) -> list[tuple[float, float]]:

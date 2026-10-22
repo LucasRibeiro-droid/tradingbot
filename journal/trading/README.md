@@ -18,28 +18,48 @@ persistent records the owner's operating brief requires (2026-10-21). Nothing ha
 
 The research history (studies, hypotheses H1–H35) stays in `journal/studies/` and `journal/hypotheses.md`.
 
-## How the bot learns from its trades (owner, 2026-10-21)
-Goal: learn from mistakes and be as profitable as possible, measured in R (profit or loss ÷ the
-risk planned at entry), within the owner's guidelines. Positions are small on purpose (≤10% of
-equity each); there is no cap on trades or instruments as long as each trade follows the logic.
+## How the bot learns (owner's directives, 2026-10-21 and 2026-10-22)
+Full text of the 2026-10-22 directive: `journal/DIRECTIVE_2026-10-22.md`. In short: TJR is the
+foundation, not a rulebook; the priority is to **learn through many well-documented trades**;
+every trade tests a hypothesis or applies an identifiable approach; conclusions stay
+proportional to the evidence. Results are in R (profit or loss ÷ the risk planned at entry),
+after costs. Paper only; max 1% risk per trade, positions ≤10% of equity, no trade cap.
 
-1. **Every trade is reviewed** after the close (a scheduled session every weekday, 16:20 ET):
-   reconciled with Alpaca; its page gets MFE/MAE, what went right and wrong, validity class 1–4
-   judged on what was known at entry, and the lesson. `performance.md` is updated by direction,
-   bias relation, time of day, stock and setup.
-2. **One trade never changes a rule.** A lesson that repeats becomes a hypothesis in
-   `journal/hypotheses.md` with a test: one setting changed, everything else the same.
-3. **The test** is `tradingbot.live.replay` on the same stocks, shorts included: the last 120
-   days (in sample) and the 120 days before (`--ago 120`, out of sample).
-4. **Adopted only if** the change has a higher average R per trade in *both* periods, with at
-   least 30 trades in each, and total R is not lower out of sample. Otherwise it is rejected or
-   left open, with the numbers. At most one change at a time, recorded in `rule_changes.md`, and
-   applied in `config.TradingParams` with a comment pointing to the evidence.
-5. **Checked live:** after 20 live trades under a change, live average R is compared with the
-   replay's; if live is worse than the previous setting's replay average, the change is reverted.
-6. Mistakes of execution (the bot not doing what its logic says: missed setups from outages,
-   wrong sizes, orders not reconciled) are fixed in code at once, logged in `events.md`; they are
-   not rule changes.
+**Baseline and experiments.** The baseline is TJR's model 1 with TJR's exit ladder (`tjr_m1`
++ `tjr_ladder`); it always keeps trading so every experiment has a reference. Experimental
+strategies and exits trade alongside it (`config.TradingParams.strategies`,
+`exits_under_test`; `tradingbot/live/experiments.py`). A strategy's exits are split evenly
+across its trades by a fixed hash, so exits are compared on the same kind of entries. Only one
+position per stock at a time. Anything that deviates from TJR is labelled [Bot] with its
+hypothesis.
+
+1. **Before entry** each trade page records: the hypothesis, the market context (SPY's move,
+   time of day, open positions), the expectation, what invalidates it, the plan (entry, stop,
+   exits, size) and the expected outcome with its uncertainty (the lab's numbers for that
+   strategy and exit).
+2. **After the close** (the daily review, 16:20 ET) each trade is reconciled with Alpaca and
+   answers: what happened; did the thesis play out; which parts of the analysis were right or
+   wrong; entry timing; the exit; costs and the result after costs; decision quality vs outcome
+   (judged on what was known at entry); the most plausible explanation and how sure; validity
+   class 1–4; the lesson; whether more evidence is needed. When the cause is unclear, it says so.
+3. **Two scorecards** in `performance.md`: trading (win rate, average win/loss, expectancy,
+   P/L after costs, max drawdown, by strategy/exit/setup/market condition) and learning
+   (documented trades, diversity of strategies and conditions, prediction accuracy, repeated
+   errors, execution quality, the evidence for or against each hypothesis). Trades of the same
+   hypothesis on the same candle/direction count as correlated, not independent.
+4. **One trade never changes a rule.** Repeated observations become hypotheses in
+   `journal/hypotheses.md`, each changing one variable against the baseline.
+5. **Tests:** `tradingbot.live.lab` (strategies × exits, with costs) and `tradingbot.live.replay`,
+   on the last 120 days (in sample) and the 120 days before (out of sample).
+6. **New experiments** may trade on paper once they have a written hypothesis and a lab run
+   (positive or not: the point is to learn). **Promotion to the baseline** needs a higher
+   average R after costs than the baseline in *both* periods, ≥30 trades each, total R not lower
+   out of sample, and live results after ≥20 trades not worse than the lab's. A strategy or exit
+   that fails both the lab and ≥30 live trades is retired, with its numbers kept.
+7. Every change is recorded in `rule_changes.md` (original, modification, reason, evidence,
+   metrics, result, keep / reject / investigate).
+8. Mistakes of execution (the bot not doing what its logic says) are fixed in code at once and
+   logged in `events.md`; they are not rule changes.
 
 ## Inspection, 2026-10-21 (before the session)
 **Knowledge base:** `knowledge/methodology.md` and the topic files cover the building blocks, execution models, daily bias and exits (Days 2–4, 6–8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32–38).

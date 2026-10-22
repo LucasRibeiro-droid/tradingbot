@@ -3,18 +3,23 @@
 A self-improving trading bot for Alpaca paper trading. It learned TJR's 56-video bootcamp as
 its **baseline**, and now learns from its own trades to become as profitable as it can.
 
-**Owner's direction (2026-10-21):** TJR's methodology is the baseline, not instructions to
-follow. Use what was learned (the terms, what they mean, when to enter and exit), but keep
-whatever the evidence from trades and tests shows is more profitable. Change one thing at a
-time, check it out of sample, and record every change in `journal/trading/rule_changes.md`.
+**Owner's direction (2026-10-21, widened 2026-10-22):** TJR's methodology is the foundation,
+not a rulebook. The priority now is to **learn through many well-documented paper trades**:
+every trade tests a hypothesis or applies an identifiable approach, is recorded before entry
+(expectation, invalidation, uncertainty) and reviewed after (decision quality vs outcome).
+The baseline (TJR model 1 + TJR's exits) keeps trading as the reference; experiments trade
+beside it. Change one thing at a time, check it out of sample, keep conclusions proportional
+to the evidence, and record every change in `journal/trading/rule_changes.md`. Full text:
+`journal/DIRECTIVE_2026-10-22.md`; protocol: `journal/trading/README.md` ("How the bot learns").
 
 ## Trading records (the owner reads these)
 
 - `journal/trading/TRADES.md`: index of every trade; each links to a page in
   `journal/trading/trades/` with why the bot took it, the plan, the result, and what it learned.
 - `journal/trading/reviews/`: daily reviews; `performance.md`, `lessons.md`, `events.md`.
-- Live engine: `tradingbot/live/` (`run.py` session, `signals.py` assessment, `screener.py`,
-  `broker.py` paper-only client, `replay.py` to test a setting change on history).
+- Live engine: `tradingbot/live/` (`run.py` session, `signals.py` TJR assessment, `experiments.py`
+  strategies/exits under test and the pre-trade record, `screener.py`, `broker.py` paper-only
+  client, `replay.py` and `lab.py` (strategies × exits with costs) to test on history).
 - **The session runs on GitHub Actions** (`.github/workflows/trading-session.yml` on the default
   branch; every 15 min on weekdays, one run at a time, journal pushed here every 2 min). Claude
   containers are shut down minutes after a conversation goes idle, so **don't start the bot in a
