@@ -1,0 +1,47 @@
+{
+ "trades": [
+  {
+   "symbol": "META",
+   "setup_t": "2026-10-22T15:00:00Z",
+   "direction": 1,
+   "planned_entry": 654.98,
+   "stop": 648.23,
+   "targets": [
+    771.15,
+    779.8
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-22-META-1500-0",
+     "order_id": "d60a58c6-25df-4c30-93be-769ab76b3da7",
+     "qty": 8,
+     "target": 771.15
+    },
+    {
+     "client_id": "tjr-2026-10-22-META-1500-1",
+     "order_id": "19d3e2be-f46b-4103-a77b-099d1ec9d1b1",
+     "qty": 7,
+     "target": 779.8
+    }
+   ],
+   "entry_fill": 656.98,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-22_1500_META.md"
+  }
+ ],
+ "traded_symbols": [
+  "AAPL",
+  "META",
+  "MU",
+  "NVDA",
+  "SPCX",
+  "TSLA"
+ ],
+ "seen": [
+  [
+   "META",
+   "2026-10-22T15:00:00Z"
+  ]
+ ]
+}
