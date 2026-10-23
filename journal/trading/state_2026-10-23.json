@@ -1054,7 +1054,7 @@
     }
    ],
    "entry_fill": 520.047894368421,
-   "be_moved": false,
+   "be_moved": true,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1547_AMD.md",
    "strategy": "tjr_m1_1m",
@@ -1266,6 +1266,11 @@
    "orb30"
   ],
   [
+   "META",
+   "2026-10-23T15:49:00Z",
+   "tjr_m3_1m"
+  ],
+  [
    "MRNA",
    "2026-10-23T14:45:00Z",
    "orb30"
@@ -1351,6 +1356,11 @@
    "tjr_m1_1m"
   ],
   [
+   "MU",
+   "2026-10-23T15:49:00Z",
+   "tjr_m1_1m"
+  ],
+  [
    "NBIS",
    "2026-10-23T14:30:00Z",
    "orb30"
@@ -1428,6 +1438,11 @@
   [
    "QQQ",
    "2026-10-23T15:41:00Z",
+   "tjr_m3_1m"
+  ],
+  [
+   "QQQ",
+   "2026-10-23T15:49:00Z",
    "tjr_m3_1m"
   ],
   [
