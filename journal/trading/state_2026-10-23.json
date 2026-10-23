@@ -537,7 +537,7 @@
    ],
    "entry_fill": 325.9,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_AVGO.md",
    "strategy": "orb30",
    "exit_name": "2R",
@@ -1617,6 +1617,45 @@
    "strategy": "tjr_m2_1m",
    "exit_name": "tjr_ladder",
    "expires_at": "2026-10-23T19:39:23+00:00"
+  },
+  {
+   "symbol": "SPCX",
+   "setup_t": "2026-10-23T19:27:00Z",
+   "direction": -1,
+   "planned_entry": 146.615,
+   "stop": 146.87,
+   "targets": [
+    146.49,
+    146.36,
+    146.11
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-SPCX-1927-0",
+     "order_id": "3a1fec39-64ea-489f-9c77-f45b93deba8a",
+     "qty": 23,
+     "target": 146.49
+    },
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-SPCX-1927-1",
+     "order_id": "8dd6087b-9980-42c1-91e0-6852d96670d0",
+     "qty": 22,
+     "target": 146.36
+    },
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-SPCX-1927-2",
+     "order_id": "5e4da803-ef8c-41ba-9d5b-6141c0d55ce0",
+     "qty": 22,
+     "target": 146.11
+    }
+   ],
+   "entry_fill": 146.57,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1927_SPCX.md",
+   "strategy": "tjr_m3_1m",
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
@@ -2866,6 +2905,11 @@
    "SPCX",
    "2026-10-23T17:53:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "SPCX",
+   "2026-10-23T19:27:00Z",
+   "tjr_m3_1m"
   ],
   [
    "TSLA",
