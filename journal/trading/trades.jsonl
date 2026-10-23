@@ -90,3 +90,4 @@
 {"type": "entry_filled", "t": "2026-10-23T15:48:37+00:00", "symbol": "AMD", "avg_price": 520.0479, "slippage": 0.3979}
 {"type": "stop_to_break_even", "t": "2026-10-23T15:50:47+00:00", "symbol": "AMD", "stop": 520.05}
 {"type": "exit", "t": "2026-10-23T15:56:33+00:00", "symbol": "AMD", "setup_t": "2026-10-23T15:47:00Z", "entry": 520.047894368421, "stop": 518.09, "targets": [520.43, 521.21, 522.77], "exits": [[520.475714, 7.0, "limit"], [521.22, 6.0, "limit"], [520.05, 6.0, "stop"]], "qty": 19.0, "pnl": 10.04, "r": 0.27, "be_moved": true, "strategy": "tjr_m1_1m", "exit_name": "ladder_0.5_1_2R"}
+{"type": "stop_to_break_even", "t": "2026-10-23T16:06:26+00:00", "symbol": "AMZN", "stop": 248.25}

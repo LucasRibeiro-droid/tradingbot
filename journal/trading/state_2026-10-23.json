@@ -408,7 +408,7 @@
     }
    ],
    "entry_fill": 248.25,
-   "be_moved": false,
+   "be_moved": true,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1444_AMZN.md",
    "strategy": "tjr_m2_1m",
