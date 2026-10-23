@@ -138,3 +138,4 @@
 {"type": "entry_filled", "t": "2026-10-23T19:19:37+00:00", "symbol": "AMD", "avg_price": 517.27, "slippage": 0.2}
 {"type": "entry_filled", "t": "2026-10-23T19:19:37+00:00", "symbol": "GOOGL", "avg_price": 321.69, "slippage": -0.01}
 {"type": "entry_filled", "t": "2026-10-23T19:19:38+00:00", "symbol": "GOOG", "avg_price": 318.579, "slippage": -0.009}
+{"type": "stop_to_break_even", "t": "2026-10-23T19:23:33+00:00", "symbol": "GOOGL", "stop": 321.69}
