@@ -1195,7 +1195,7 @@
      "target": 321.79
     }
    ],
-   "entry_fill": null,
+   "entry_fill": 322.39666666666665,
    "be_moved": false,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1750_GOOGL.md",
@@ -2170,6 +2170,11 @@
    "TSM",
    "2026-10-23T17:31:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "TSM",
+   "2026-10-23T17:57:00Z",
+   "tjr_m3_1m"
   ],
   [
    "TTMI",
