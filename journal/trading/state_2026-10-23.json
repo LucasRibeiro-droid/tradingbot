@@ -840,6 +840,70 @@
    "strategy": "orb30",
    "exit_name": "2R",
    "expires_at": ""
+  },
+  {
+   "symbol": "TSLA",
+   "setup_t": "2026-10-23T14:45:00Z",
+   "direction": 1,
+   "planned_entry": 373.45,
+   "stop": 365.24,
+   "targets": [
+    394.19
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m1_15m-2026-10-23-TSLA-1445-0",
+     "order_id": "ef56e5e0-630c-46f4-b349-676ad2c41389",
+     "qty": 26,
+     "target": 394.19
+    }
+   ],
+   "entry_fill": 373.585385,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1445_TSLA.md",
+   "strategy": "tjr_m1_15m",
+   "exit_name": "tjr_ladder",
+   "expires_at": ""
+  },
+  {
+   "symbol": "MRNA",
+   "setup_t": "2026-10-23T14:45:00Z",
+   "direction": 1,
+   "planned_entry": 203.12,
+   "stop": 192.87,
+   "targets": [
+    213.37,
+    223.62,
+    233.87
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-MRNA-1445-0",
+     "order_id": "2defec39-79e8-4e08-b31c-164e2b3de4df",
+     "qty": 17,
+     "target": 213.37
+    },
+    {
+     "client_id": "orb30-2026-10-23-MRNA-1445-1",
+     "order_id": "9de096a3-1de5-4508-9fac-e011c70d3624",
+     "qty": 16,
+     "target": 223.62
+    },
+    {
+     "client_id": "orb30-2026-10-23-MRNA-1445-2",
+     "order_id": "26e301e0-30b3-40eb-86f3-f8071c53a694",
+     "qty": 16,
+     "target": 233.87
+    }
+   ],
+   "entry_fill": 202.83795918367346,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1445_MRNA.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
@@ -852,6 +916,7 @@
   "INTC",
   "IWM",
   "META",
+  "MRNA",
   "MRVL",
   "MSFT",
   "MU",
@@ -864,6 +929,7 @@
   "SNDK",
   "SOXX",
   "SPCX",
+  "TSLA",
   "TSM",
   "TTMI"
  ],
@@ -927,6 +993,16 @@
    "META",
    "2026-10-23T14:30:00Z",
    "orb30"
+  ],
+  [
+   "MRNA",
+   "2026-10-23T14:45:00Z",
+   "orb30"
+  ],
+  [
+   "MRNA",
+   "2026-10-23T15:01:00Z",
+   "tjr_m1_1m"
   ],
   [
    "MRVL",
@@ -1029,9 +1105,19 @@
    "tjr_m3_1m"
   ],
   [
+   "TSLA",
+   "2026-10-23T14:45:00Z",
+   "tjr_m1_15m"
+  ],
+  [
    "TSM",
    "2026-10-23T14:30:00Z",
    "orb30"
+  ],
+  [
+   "TSM",
+   "2026-10-23T14:59:00Z",
+   "tjr_m3_1m"
   ],
   [
    "TTMI",
