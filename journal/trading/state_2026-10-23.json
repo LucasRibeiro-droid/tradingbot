@@ -1280,6 +1280,45 @@
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
    "expires_at": "2026-10-23T18:25:25+00:00"
+  },
+  {
+   "symbol": "GOOG",
+   "setup_t": "2026-10-23T18:17:00Z",
+   "direction": 1,
+   "planned_entry": 319.12,
+   "stop": 318.84,
+   "targets": [
+    319.26,
+    319.4,
+    319.68
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-GOOG-1817-0",
+     "order_id": "c7a94f19-7a23-4213-8d9e-6baa32dc598a",
+     "qty": 11,
+     "target": 319.26
+    },
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-GOOG-1817-1",
+     "order_id": "67c317cb-ae70-4617-b953-6660c5278120",
+     "qty": 10,
+     "target": 319.4
+    },
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-GOOG-1817-2",
+     "order_id": "6741db35-a78b-437c-ad56-8a4cb7d73fca",
+     "qty": 10,
+     "target": 319.68
+    }
+   ],
+   "entry_fill": 319.14,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1817_GOOG.md",
+   "strategy": "tjr_m1_1m",
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
@@ -1426,6 +1465,11 @@
    "tjr_m1_1m"
   ],
   [
+   "AMZN",
+   "2026-10-23T18:17:00Z",
+   "tjr_m3_1m"
+  ],
+  [
    "AVGO",
    "2026-10-23T14:30:00Z",
    "orb30"
@@ -1529,6 +1573,11 @@
    "GOOG",
    "2026-10-23T17:52:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "GOOG",
+   "2026-10-23T18:17:00Z",
+   "tjr_m1_1m"
   ],
   [
    "GOOGL",
