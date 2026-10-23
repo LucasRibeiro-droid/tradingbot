@@ -330,7 +330,7 @@
     }
    ],
    "entry_fill": 518.64,
-   "be_moved": false,
+   "be_moved": true,
    "closed": false,
    "page": "",
    "strategy": "orb30",
@@ -375,19 +375,497 @@
    "strategy": "orb30",
    "exit_name": "unknown (adopted after a restart)",
    "expires_at": ""
+  },
+  {
+   "symbol": "AMZN",
+   "setup_t": "2026-10-23T14:44:00Z",
+   "direction": 1,
+   "planned_entry": 248.41,
+   "stop": 247.76,
+   "targets": [
+    249.5,
+    250.4,
+    250.5
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-AMZN-1444-0",
+     "order_id": "410bce3e-c9ee-44ba-96d5-226df80110a2",
+     "qty": 14,
+     "target": 249.5
+    },
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-AMZN-1444-1",
+     "order_id": "32c27b81-e8e3-4fca-94e8-32d02aab5d9b",
+     "qty": 13,
+     "target": 250.4
+    },
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-AMZN-1444-2",
+     "order_id": "cdcc24f5-f456-401b-b0fa-d8fb39d10735",
+     "qty": 13,
+     "target": 250.5
+    }
+   ],
+   "entry_fill": 248.25,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1444_AMZN.md",
+   "strategy": "tjr_m2_1m",
+   "exit_name": "tjr_ladder",
+   "expires_at": "2026-10-23T15:05:22+00:00"
+  },
+  {
+   "symbol": "MU",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 889.69,
+   "stop": 872.01,
+   "targets": [
+    907.37,
+    925.05,
+    942.73
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-MU-1430-0",
+     "order_id": "8ec0bef7-1d19-4447-813d-2e9ae86c64e5",
+     "qty": 4,
+     "target": 907.37
+    },
+    {
+     "client_id": "orb30-2026-10-23-MU-1430-1",
+     "order_id": "488c0757-c9a8-4061-a32d-bdd6ac2e695f",
+     "qty": 4,
+     "target": 925.05
+    },
+    {
+     "client_id": "orb30-2026-10-23-MU-1430-2",
+     "order_id": "388ee818-bbc3-407b-bdf4-11bc03b7683a",
+     "qty": 3,
+     "target": 942.73
+    }
+   ],
+   "entry_fill": 887.2827272727274,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_MU.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "META",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 645.495,
+   "stop": 639.29,
+   "targets": [
+    657.91
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-META-1430-0",
+     "order_id": "9e6205e7-c25b-4c5b-827a-a906bcf65220",
+     "qty": 15,
+     "target": 657.91
+    }
+   ],
+   "entry_fill": 645.300001,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_META.md",
+   "strategy": "orb30",
+   "exit_name": "2R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "SNDK",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 1297.14,
+   "stop": 1276.15,
+   "targets": [
+    1318.13,
+    1339.12,
+    1360.11
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-SNDK-1430-0",
+     "order_id": "3e1553b6-12cc-4149-a840-f828f27fdddc",
+     "qty": 3,
+     "target": 1318.13
+    },
+    {
+     "client_id": "orb30-2026-10-23-SNDK-1430-1",
+     "order_id": "7d43f695-f127-49c3-9671-6f6a88a2e737",
+     "qty": 2,
+     "target": 1339.12
+    },
+    {
+     "client_id": "orb30-2026-10-23-SNDK-1430-2",
+     "order_id": "3cb80dc5-e35b-43e5-93bb-fced59449283",
+     "qty": 2,
+     "target": 1360.11
+    }
+   ],
+   "entry_fill": 1292.6771430000001,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_SNDK.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "AVGO",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 326.065,
+   "stop": 322.8,
+   "targets": [
+    332.59
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-AVGO-1430-0",
+     "order_id": "f66c590e-5c33-423f-9efc-4912a3628c9a",
+     "qty": 30,
+     "target": 332.59
+    }
+   ],
+   "entry_fill": 325.9,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_AVGO.md",
+   "strategy": "orb30",
+   "exit_name": "2R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "TTMI",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 79.005,
+   "stop": 75.86,
+   "targets": [
+    82.15,
+    85.29,
+    88.44
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-TTMI-1430-0",
+     "order_id": "289e2899-e7dd-4fa6-88b0-db9f9f8fa3fe",
+     "qty": 42,
+     "target": 82.15
+    },
+    {
+     "client_id": "orb30-2026-10-23-TTMI-1430-1",
+     "order_id": "c7d12e2e-8f7c-43ff-a39a-faf6b66ff61c",
+     "qty": 42,
+     "target": 85.29
+    },
+    {
+     "client_id": "orb30-2026-10-23-TTMI-1430-2",
+     "order_id": "e4f5cca5-c224-4e58-b41e-ac2cee3bec05",
+     "qty": 42,
+     "target": 88.44
+    }
+   ],
+   "entry_fill": 78.87619033333334,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_TTMI.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "MRVL",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 231.33,
+   "stop": 224.52,
+   "targets": [
+    238.14,
+    244.95,
+    251.76
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-MRVL-1430-0",
+     "order_id": "86e04803-ff75-4a28-a323-358316ea0224",
+     "qty": 15,
+     "target": 238.14
+    },
+    {
+     "client_id": "orb30-2026-10-23-MRVL-1430-1",
+     "order_id": "95ce173a-f9df-4637-a46e-48f01c0bd846",
+     "qty": 14,
+     "target": 244.95
+    },
+    {
+     "client_id": "orb30-2026-10-23-MRVL-1430-2",
+     "order_id": "65a14ebb-a9b1-47b5-b7f1-45dd3226f939",
+     "qty": 14,
+     "target": 251.76
+    }
+   ],
+   "entry_fill": 231.091860372093,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_MRVL.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "TSM",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 420.13,
+   "stop": 415.7,
+   "targets": [
+    424.56,
+    428.99,
+    433.42
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-TSM-1430-0",
+     "order_id": "3e89fbcb-6417-4943-a8be-cc523365e7c3",
+     "qty": 8,
+     "target": 424.56
+    },
+    {
+     "client_id": "orb30-2026-10-23-TSM-1430-1",
+     "order_id": "fbb9a00b-c19d-4cdf-8702-20a95833903b",
+     "qty": 8,
+     "target": 428.99
+    },
+    {
+     "client_id": "orb30-2026-10-23-TSM-1430-2",
+     "order_id": "e7be8b1b-36fc-4539-8953-20125878f382",
+     "qty": 7,
+     "target": 433.42
+    }
+   ],
+   "entry_fill": 419.96869565217384,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_TSM.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "SMH",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 532.17,
+   "stop": 525.38,
+   "targets": [
+    538.96,
+    545.75,
+    552.54
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-SMH-1430-0",
+     "order_id": "f3cac8af-ee4e-463a-8b6d-0ee4ae9909d5",
+     "qty": 6,
+     "target": 538.96
+    },
+    {
+     "client_id": "orb30-2026-10-23-SMH-1430-1",
+     "order_id": "8d49be5f-f07a-40fc-9ea1-8e46032282ee",
+     "qty": 6,
+     "target": 545.75
+    },
+    {
+     "client_id": "orb30-2026-10-23-SMH-1430-2",
+     "order_id": "d10f5b49-9806-45f2-80b3-1fb61f23cc2f",
+     "qty": 6,
+     "target": 552.54
+    }
+   ],
+   "entry_fill": 531.416111,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_SMH.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "SOXX",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 484.14,
+   "stop": 477.09,
+   "targets": [
+    491.19,
+    498.24,
+    505.29
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-SOXX-1430-0",
+     "order_id": "3e8e654b-9303-44b1-b245-dc908f77331b",
+     "qty": 7,
+     "target": 491.19
+    },
+    {
+     "client_id": "orb30-2026-10-23-SOXX-1430-1",
+     "order_id": "6042ffa8-1f0e-4f5e-ad88-8a7b27147812",
+     "qty": 7,
+     "target": 498.24
+    },
+    {
+     "client_id": "orb30-2026-10-23-SOXX-1430-2",
+     "order_id": "736cba3d-099e-46b5-a9f9-908bda98094c",
+     "qty": 6,
+     "target": 505.29
+    }
+   ],
+   "entry_fill": 483.3914999500001,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_SOXX.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "PLTR",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 196.51,
+   "stop": 192.91,
+   "targets": [
+    200.11,
+    203.71,
+    207.31
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-PLTR-1430-0",
+     "order_id": "faa96256-f8e2-46ef-a515-b2cc9ad0a5c1",
+     "qty": 17,
+     "target": 200.11
+    },
+    {
+     "client_id": "orb30-2026-10-23-PLTR-1430-1",
+     "order_id": "e83bd055-230f-49ec-a4f1-9a27104cf6f8",
+     "qty": 17,
+     "target": 203.71
+    },
+    {
+     "client_id": "orb30-2026-10-23-PLTR-1430-2",
+     "order_id": "1fee7706-07b4-4f8c-aa60-69ffd67cdb2e",
+     "qty": 16,
+     "target": 207.31
+    }
+   ],
+   "entry_fill": 196.80039992,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_PLTR.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "NBIS",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 162.805,
+   "stop": 159.32,
+   "targets": [
+    166.29,
+    169.78,
+    173.26
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-NBIS-1430-0",
+     "order_id": "84b96514-ed4e-404c-a22f-8bb584c1caf7",
+     "qty": 21,
+     "target": 166.29
+    },
+    {
+     "client_id": "orb30-2026-10-23-NBIS-1430-1",
+     "order_id": "8bee16b1-ccc0-4456-995f-84cd9c05cce7",
+     "qty": 20,
+     "target": 169.78
+    },
+    {
+     "client_id": "orb30-2026-10-23-NBIS-1430-2",
+     "order_id": "83994aaa-f3b6-4098-9001-0c11308f83ec",
+     "qty": 20,
+     "target": 173.26
+    }
+   ],
+   "entry_fill": 162.2065572622951,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_NBIS.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "ORCL",
+   "setup_t": "2026-10-23T14:30:00Z",
+   "direction": 1,
+   "planned_entry": 126.93,
+   "stop": 125.59,
+   "targets": [
+    129.61
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-ORCL-1430-0",
+     "order_id": "46bfc386-4cd8-4873-9a4b-7064e8745155",
+     "qty": 78,
+     "target": 129.61
+    }
+   ],
+   "entry_fill": 126.83,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_ORCL.md",
+   "strategy": "orb30",
+   "exit_name": "2R",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
   "AAPL",
   "AMD",
+  "AMZN",
+  "AVGO",
   "GOOG",
   "GOOGL",
   "INTC",
   "IWM",
+  "META",
+  "MRVL",
   "MSFT",
+  "MU",
+  "NBIS",
   "NVDA",
+  "ORCL",
+  "PLTR",
   "QQQ",
-  "SPCX"
+  "SMH",
+  "SNDK",
+  "SOXX",
+  "SPCX",
+  "TSM",
+  "TTMI"
  ],
  "seen": [
   [
@@ -406,6 +884,16 @@
    "tjr_m1"
   ],
   [
+   "AMZN",
+   "2026-10-23T14:44:00Z",
+   "tjr_m2_1m"
+  ],
+  [
+   "AVGO",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
    "GOOG",
    "2026-10-23T14:00:00Z",
    "orb30"
@@ -416,6 +904,16 @@
    "orb30"
   ],
   [
+   "META",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "MRVL",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
    "MSFT",
    "2026-10-23T14:00:00Z",
    "orb30"
@@ -426,9 +924,34 @@
    "tjr_m1"
   ],
   [
+   "MU",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "NBIS",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
    "NVDA",
    "2026-10-23T13:45:00Z",
    "tjr_m1"
+  ],
+  [
+   "NVDA",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "ORCL",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "PLTR",
+   "2026-10-23T14:30:00Z",
+   "orb30"
   ],
   [
    "QQQ",
@@ -438,6 +961,31 @@
   [
    "QQQ",
    "2026-10-23T14:00:00Z",
+   "orb30"
+  ],
+  [
+   "SMH",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "SNDK",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "SOXX",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "TSM",
+   "2026-10-23T14:30:00Z",
+   "orb30"
+  ],
+  [
+   "TTMI",
+   "2026-10-23T14:30:00Z",
    "orb30"
   ]
  ]
