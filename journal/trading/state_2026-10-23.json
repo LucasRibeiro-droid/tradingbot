@@ -1197,7 +1197,7 @@
    ],
    "entry_fill": 322.39666666666665,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1750_GOOGL.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -1691,6 +1691,11 @@
   ],
   [
    "INTC",
+   "2026-10-23T18:35:00Z",
+   "tjr_m2_5m"
+  ],
+  [
+   "INTC",
    "2026-10-23T18:36:00Z",
    "tjr_m1_1m"
   ],
@@ -2025,6 +2030,11 @@
    "tjr_m2_1m"
   ],
   [
+   "NBIS",
+   "2026-10-23T18:35:00Z",
+   "tjr_m1_5m"
+  ],
+  [
    "NVDA",
    "2026-10-23T13:45:00Z",
    "tjr_m1"
@@ -2068,6 +2078,11 @@
    "NVDA",
    "2026-10-23T18:10:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "NVDA",
+   "2026-10-23T18:35:00Z",
+   "tjr_m1_5m"
   ],
   [
    "ORCL",
@@ -2463,6 +2478,11 @@
    "TTMI",
    "2026-10-23T17:38:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "TTMI",
+   "2026-10-23T18:38:00Z",
+   "tjr_m2_1m"
   ]
  ]
 }
