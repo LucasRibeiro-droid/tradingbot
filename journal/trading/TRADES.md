@@ -15,3 +15,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-22 17:15 | NVDA | long | tjr_m1 / tjr_ladder | none | -1.02 | -1.00 | -41.66 | [page](trades/2026-10-22_1715_NVDA.md) |
 | 2026-10-23T15:04 | SNDK | long | n/a | -1.07 | -123.74 | [page](trades/2026-10-23_1430_SNDK.md) | orb30 / ladder_1_2_3R |
 | 2026-10-23T15:18 | SNDK | long | against | -1.119 | -52.91 | [page](trades/2026-10-23_1507_SNDK.md) | tjr_m2_1m / tjr_ladder |
+| 2026-10-23T15:36 | AMD | long | against | 0.073 | 1.63 | [page](trades/2026-10-23_1527_AMD.md) | tjr_m2_1m / ladder_0.5_1_2R |
