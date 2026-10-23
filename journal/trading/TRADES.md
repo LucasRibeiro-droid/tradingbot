@@ -21,3 +21,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-23T17:32 | GOOGL | long | n/a | -1.026 | -58.5 | [page](trades/2026-10-23_1400_GOOGL.md) | orb30 / 2R |
 | 2026-10-23T17:33 | GOOG | long | n/a | -1.023 | -62.41 | [page](trades/2026-10-23_1400_GOOG.md) | orb30 / ladder_1_2_3R |
 | 2026-10-23T18:06 | GOOG | short | with | 0.027 | 0.36 | [page](trades/2026-10-23_1752_GOOG.md) | tjr_m3_1m / ladder_0.5_1_2R |
+| 2026-10-23T18:22 | GOOG | long | against | -1.112 | -10.34 | [page](trades/2026-10-23_1817_GOOG.md) | tjr_m1_1m / ladder_0.5_1_2R |
