@@ -61,3 +61,4 @@
 | 2026-10-23 19:55 | close failed TSM 23: DELETE /v2/positions/TSM: HTTP 404: {"code":40410000,"message":"position not found: TSM"} | position still open | retrying |
 | 2026-10-23 19:55 | close failed TTMI 126: DELETE /v2/positions/TTMI: HTTP 404: {"code":40410000,"message":"position not found: TTMI"} | position still open | retrying |
 | 2026-10-23 19:55 | flattened before the close | verified flat after 2 round(s) |  |
+| 2026-10-23 19:56 | session end | 45 trades, 25 instruments | review to write |
