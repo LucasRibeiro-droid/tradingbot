@@ -409,7 +409,7 @@
    ],
    "entry_fill": 248.25,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1444_AMZN.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "tjr_ladder",
@@ -1690,6 +1690,11 @@
    "tjr_m2_1m"
   ],
   [
+   "INTC",
+   "2026-10-23T18:36:00Z",
+   "tjr_m1_1m"
+  ],
+  [
    "IWM",
    "2026-10-23T15:15:00Z",
    "tjr_m2_1m"
@@ -1968,6 +1973,11 @@
    "MU",
    "2026-10-23T18:18:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "MU",
+   "2026-10-23T18:36:00Z",
+   "tjr_m1_1m"
   ],
   [
    "NBIS",
