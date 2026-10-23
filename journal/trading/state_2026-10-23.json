@@ -1275,7 +1275,7 @@
    ],
    "entry_fill": 517.4831578947369,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1804_AMD.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -1923,6 +1923,11 @@
    "MSFT",
    "2026-10-23T18:23:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "MSFT",
+   "2026-10-23T18:32:00Z",
+   "tjr_m2_1m"
   ],
   [
    "MU",
