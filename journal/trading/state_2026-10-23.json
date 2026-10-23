@@ -1,10 +1,100 @@
 {
- "trades": [],
- "traded_symbols": [],
+ "trades": [
+  {
+   "symbol": "QQQ",
+   "setup_t": "2026-10-23T13:45:00Z",
+   "direction": 1,
+   "planned_entry": 705.37,
+   "stop": 701.04,
+   "targets": [
+    727.95,
+    729.375,
+    730.04
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-23-QQQ-1345-0",
+     "order_id": "7459a08f-0c9f-4e19-8cc0-ac625d19ee53",
+     "qty": 5,
+     "target": 727.95
+    },
+    {
+     "client_id": "tjr-2026-10-23-QQQ-1345-1",
+     "order_id": "89429968-08ec-43c9-aea6-224c35e25c7b",
+     "qty": 5,
+     "target": 729.375
+    },
+    {
+     "client_id": "tjr-2026-10-23-QQQ-1345-2",
+     "order_id": "50cd8a06-7905-4e14-8da4-32f8d90aadac",
+     "qty": 4,
+     "target": 730.04
+    }
+   ],
+   "entry_fill": 704.6442857142857,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1345_QQQ.md",
+   "strategy": "tjr_m1",
+   "exit_name": "tjr_ladder"
+  },
+  {
+   "symbol": "NVDA",
+   "setup_t": "2026-10-23T13:45:00Z",
+   "direction": 1,
+   "planned_entry": 212.905,
+   "stop": 210.18,
+   "targets": [
+    214.27,
+    215.63,
+    218.35
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-23-NVDA-1345-0",
+     "order_id": "584a7e69-e06a-4472-bb70-35cae5ce0d61",
+     "qty": 16,
+     "target": 214.27
+    },
+    {
+     "client_id": "tjr-2026-10-23-NVDA-1345-1",
+     "order_id": "c20bf017-6e5b-40bc-b2dc-5f125fd6dc8e",
+     "qty": 15,
+     "target": 215.63
+    },
+    {
+     "client_id": "tjr-2026-10-23-NVDA-1345-2",
+     "order_id": "23a94c03-bf7b-4a48-9940-de2c441ff9b7",
+     "qty": 15,
+     "target": 218.35
+    }
+   ],
+   "entry_fill": 212.88804347826087,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1345_NVDA.md",
+   "strategy": "tjr_m1",
+   "exit_name": "ladder_0.5_1_2R"
+  }
+ ],
+ "traded_symbols": [
+  "NVDA",
+  "QQQ"
+ ],
  "seen": [
   [
    "AMZN",
    "2026-10-22T19:45:00Z",
+   "tjr_m1"
+  ],
+  [
+   "NVDA",
+   "2026-10-23T13:45:00Z",
+   "tjr_m1"
+  ],
+  [
+   "QQQ",
+   "2026-10-23T13:45:00Z",
    "tjr_m1"
   ]
  ]
