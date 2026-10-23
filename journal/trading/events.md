@@ -32,3 +32,4 @@
 | 2026-10-22 15:17 | Owner chose to close all 5; closed at market: NVDA +$1,223.60, MU −$1,888.82, SPCX +$707.77, TSLA +$108.01, AAPL −$27.54 = **+$123.02**; equity $100,121.47; verified flat, no open orders | the overnight result was luck: at the 2026-10-21 close these were −$904 | flatten fixed (cancel → wait until no open orders → close each → verify, retry; exits recorded only when Alpaca holds nothing); corrected exit records appended to trades.jsonl; trade pages annotated |
 | 2026-10-22 15:19 | session start (paper): equity 100121.47, buying power 400485.88, shorting on |  |  |
 | 2026-10-22 19:55 | session end | 3 trades, 6 instruments | review to write |
+| 2026-10-23 13:22 | session start (paper): equity 99835.19, buying power 399340.76, shorting on |  |  |
