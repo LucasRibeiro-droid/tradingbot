@@ -982,6 +982,45 @@
    "strategy": "tjr_m2_1m",
    "exit_name": "tjr_ladder",
    "expires_at": "2026-10-23T15:36:21+00:00"
+  },
+  {
+   "symbol": "AMD",
+   "setup_t": "2026-10-23T15:27:00Z",
+   "direction": 1,
+   "planned_entry": 519.41,
+   "stop": 518.24,
+   "targets": [
+    519.99,
+    520.58,
+    521.75
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-AMD-1527-0",
+     "order_id": "dcf237fc-50d2-4dc7-a4ee-9d160d9511ec",
+     "qty": 7,
+     "target": 519.99
+    },
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-AMD-1527-1",
+     "order_id": "93c1ac9f-7e23-4d76-ac7c-ea9a87f38d95",
+     "qty": 6,
+     "target": 520.58
+    },
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-AMD-1527-2",
+     "order_id": "bcb911b5-6f24-4541-846d-3b21e8615e91",
+     "qty": 6,
+     "target": 521.75
+    }
+   ],
+   "entry_fill": 519.4100000000001,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1527_AMD.md",
+   "strategy": "tjr_m2_1m",
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": "2026-10-23T15:48:20+00:00"
   }
  ],
  "traded_symbols": [
@@ -1028,6 +1067,11 @@
    "tjr_m1_1m"
   ],
   [
+   "AMD",
+   "2026-10-23T15:27:00Z",
+   "tjr_m2_1m"
+  ],
+  [
    "AMZN",
    "2026-10-22T19:45:00Z",
    "tjr_m1"
@@ -1051,6 +1095,11 @@
    "AVGO",
    "2026-10-23T14:30:00Z",
    "orb30"
+  ],
+  [
+   "AVGO",
+   "2026-10-23T15:26:00Z",
+   "tjr_m1_1m"
   ],
   [
    "GOOG",
@@ -1183,6 +1232,11 @@
    "tjr_m2_1m"
   ],
   [
+   "NVDA",
+   "2026-10-23T15:26:00Z",
+   "tjr_m1_1m"
+  ],
+  [
    "ORCL",
    "2026-10-23T14:30:00Z",
    "orb30"
@@ -1256,6 +1310,11 @@
    "SOXX",
    "2026-10-23T14:56:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "SOXX",
+   "2026-10-23T15:26:00Z",
+   "tjr_m1_1m"
   ],
   [
    "SPCX",
