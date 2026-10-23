@@ -159,5 +159,24 @@ class Cache(unittest.TestCase):
         self.assertEqual(calls[1][1], datetime(2026, 10, 23, 14, 4, tzinfo=timezone.utc))  # only from the last candle
 
 
+class Adopt(unittest.TestCase):
+    def test_rebuilds_a_lost_trade_from_alpaca_orders(self):
+        from unittest import mock
+        from tradingbot.live import run
+        s = run.Session.__new__(run.Session)
+        s.trades = []
+        legs = lambda tp: [{"type": "limit", "status": "new", "limit_price": tp}, {"type": "stop", "status": "held", "stop_price": "40.5"}]
+        orders = [{"id": f"o{k}", "client_order_id": f"orb30-2026-10-23-INTC-1415-{k}", "symbol": "INTC", "side": "buy",
+                   "qty": "38", "status": "filled", "filled_avg_price": "42.0", "legs": legs(str(43 + k))} for k in range(3)]
+        orders.append({"id": "x", "client_order_id": "tjr_m1_15m-2026-10-23-AAPL-1400-0", "symbol": "AAPL", "side": "sell",
+                       "qty": "5", "status": "filled", "legs": [{"type": "stop", "status": "filled", "stop_price": "350"}]})
+        with mock.patch.object(run, "event", lambda *a, **k: None):
+            s._adopt(orders, held={"INTC"})
+        self.assertEqual(len(s.trades), 1)  # AAPL finished and isn't held: left to the review
+        t = s.trades[0]
+        self.assertEqual((t.symbol, t.direction, t.stop, t.setup_t, t.strategy), ("INTC", 1, 40.5, "2026-10-23T14:15:00Z", "orb30"))
+        self.assertEqual(t.targets, [43.0, 44.0, 45.0])
+
+
 if __name__ == "__main__":
     unittest.main()

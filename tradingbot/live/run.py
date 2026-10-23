@@ -220,12 +220,44 @@ class Session:
         filled = {o["symbol"] for o in orders if float(o.get("filled_qty") or 0) > 0
                   and str(o.get("client_order_id", "")).startswith(("tjr", "orb30"))}
         self.traded_symbols |= filled
+        self._adopt(orders, {p["symbol"] for p in positions})
         known = {t.symbol for t in self.trades if not t.closed}
         for pos in positions:
             if pos["symbol"] not in known:
                 event(f"position {pos['symbol']} {pos['qty']} at Alpaca is not in the saved state",
                       "not managed by this session (its bracket stop and take profit stay live at Alpaca)",
                       "closed at flatten; reconcile in the review")
+
+    def _adopt(self, orders: list[dict], held: set[str]) -> None:
+        """Rebuild trades the saved state lost (e.g. a run stopped before it saved), from the
+        bot's own orders at Alpaca: the client order id is <strategy>-<date>-<symbol>-<hhmm>-<part>."""
+        mine = {p["order_id"] for t in self.trades for p in t.parts}
+        groups: dict[str, list[dict]] = {}
+        for o in orders:
+            cid = str(o.get("client_order_id", ""))
+            if not cid.startswith(("tjr", "orb30")) or cid.count("-") < 5 or o.get("id") in mine:
+                continue
+            groups.setdefault(cid.rsplit("-", 1)[0], []).append(o)
+        terminal = ("filled", "canceled", "expired", "rejected")
+        for key, group in groups.items():
+            strategy, y, m, d, sym, hhmm = key.split("-", 5)
+            strategy = "tjr_m1_15m" if strategy == "tjr" else strategy  # ids from before the playbooks
+            legs = [leg for o in group for leg in (o.get("legs") or [])]
+            if sym not in held and all(o["status"] in terminal for o in group) and all(l["status"] in terminal for l in legs):
+                continue  # finished while no one was watching: the review reconciles it
+            stops = [float(l["stop_price"]) for l in legs if l["type"] in ("stop", "stop_limit")]
+            parts = []
+            for o in sorted(group, key=lambda o: o["client_order_id"]):
+                target = next((float(l["limit_price"]) for l in (o.get("legs") or []) if l["type"] == "limit"), None)
+                parts.append({"client_id": o["client_order_id"], "order_id": o["id"], "qty": int(float(o["qty"])), "target": target})
+            first = group[0]
+            trade = Trade(sym, f"{y}-{m}-{d}T{hhmm[:2]}:{hhmm[2:]}:00Z", 1 if first["side"] == "buy" else -1,
+                          float(first.get("limit_price") or first.get("filled_avg_price") or 0), stops[0] if stops else 0.0,
+                          [p["target"] for p in parts if p["target"] is not None], parts,
+                          strategy=strategy, exit_name="unknown (adopted after a restart)")
+            self.trades.append(trade)
+            event(f"adopted {sym} {strategy} ({len(parts)} parts) from Alpaca's orders",
+                  "the saved state had lost it; managed again from now", "")
 
     def _load_state(self) -> None:
         if self.state_path.exists():
@@ -338,6 +370,14 @@ class Session:
         if any(t.symbol == sym and not t.closed for t in self.trades):
             a["decision"], a["reasons"] = "REJECTED", ["a position in this stock is still open"]
             return
+        if not self.dry_run:
+            try:  # Alpaca is the truth: never stack a second position or order on a stock
+                busy = {p["symbol"] for p in self.broker.positions()} | {o["symbol"] for o in self.broker.orders()}
+            except BrokerError:
+                busy = {sym}
+            if sym in busy:
+                a["decision"], a["reasons"] = "REJECTED", ["Alpaca already holds a position or open order in this stock"]
+                return
         strategy = a.get("strategy", "tjr_m1")
         family = "tjr" if strategy.startswith("tjr") else strategy
         exits = dict(tp.exits_under_test).get(family, ("tjr_ladder",))
