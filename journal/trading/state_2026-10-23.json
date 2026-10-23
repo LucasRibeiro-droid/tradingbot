@@ -1430,7 +1430,7 @@
     }
    ],
    "entry_fill": 318.63,
-   "be_moved": false,
+   "be_moved": true,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1907_GOOG.md",
    "strategy": "tjr_m2_1m",
@@ -1468,7 +1468,7 @@
      "target": 322.69
     }
    ],
-   "entry_fill": null,
+   "entry_fill": 321.849,
    "be_moved": false,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1908_GOOGL.md",
@@ -2211,6 +2211,11 @@
    "tjr_m1_1m"
   ],
   [
+   "MU",
+   "2026-10-23T19:09:00Z",
+   "tjr_m2_1m"
+  ],
+  [
    "NBIS",
    "2026-10-23T14:30:00Z",
    "orb30"
@@ -2314,6 +2319,11 @@
    "NVDA",
    "2026-10-23T18:35:00Z",
    "tjr_m1_5m"
+  ],
+  [
+   "NVDA",
+   "2026-10-23T19:09:00Z",
+   "tjr_m1_1m"
   ],
   [
    "ORCL",
@@ -2608,6 +2618,11 @@
   [
    "SOXX",
    "2026-10-23T18:44:00Z",
+   "tjr_m2_1m"
+  ],
+  [
+   "SOXX",
+   "2026-10-23T19:09:00Z",
    "tjr_m2_1m"
   ],
   [
