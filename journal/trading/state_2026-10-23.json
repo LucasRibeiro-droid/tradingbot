@@ -36,7 +36,8 @@
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1345_QQQ.md",
    "strategy": "tjr_m1",
-   "exit_name": "tjr_ladder"
+   "exit_name": "tjr_ladder",
+   "expires_at": ""
   },
   {
    "symbol": "NVDA",
@@ -74,7 +75,8 @@
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1345_NVDA.md",
    "strategy": "tjr_m1",
-   "exit_name": "ladder_0.5_1_2R"
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": ""
   },
   {
    "symbol": "AAPL",
@@ -112,7 +114,8 @@
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_AAPL.md",
    "strategy": "tjr_m1",
-   "exit_name": "tjr_ladder"
+   "exit_name": "tjr_ladder",
+   "expires_at": ""
   },
   {
    "symbol": "MSFT",
@@ -150,7 +153,8 @@
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_MSFT.md",
    "strategy": "tjr_m1",
-   "exit_name": "tjr_ladder"
+   "exit_name": "tjr_ladder",
+   "expires_at": ""
   },
   {
    "symbol": "GOOGL",
@@ -174,7 +178,8 @@
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_GOOGL.md",
    "strategy": "orb30",
-   "exit_name": "2R"
+   "exit_name": "2R",
+   "expires_at": ""
   },
   {
    "symbol": "GOOG",
@@ -212,16 +217,177 @@
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_GOOG.md",
    "strategy": "orb30",
-   "exit_name": "ladder_1_2_3R"
+   "exit_name": "ladder_1_2_3R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "IWM",
+   "setup_t": "2026-10-23T14:15:00Z",
+   "direction": -1,
+   "planned_entry": 273.956667,
+   "stop": 274.65,
+   "targets": [
+    272.98,
+    272.15,
+    271.31
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-IWM-1415-0",
+     "order_id": "c11af451-0501-418f-8c2f-606289edc428",
+     "qty": 12,
+     "target": 272.98
+    },
+    {
+     "client_id": "orb30-2026-10-23-IWM-1415-1",
+     "order_id": "c3834c7f-e26b-47e0-b3ab-be636921af13",
+     "qty": 12,
+     "target": 272.15
+    },
+    {
+     "client_id": "orb30-2026-10-23-IWM-1415-2",
+     "order_id": "164938e5-9162-41a5-9305-e2fa07057d23",
+     "qty": 12,
+     "target": 271.31
+    }
+   ],
+   "entry_fill": 273.971667,
+   "be_moved": false,
+   "closed": false,
+   "page": "",
+   "strategy": "orb30",
+   "exit_name": "unknown (adopted after a restart)",
+   "expires_at": ""
+  },
+  {
+   "symbol": "INTC",
+   "setup_t": "2026-10-23T14:15:00Z",
+   "direction": 1,
+   "planned_entry": 87.002368,
+   "stop": 85.78,
+   "targets": [
+    87.98,
+    89.08,
+    90.18
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-INTC-1415-0",
+     "order_id": "df9eb1bd-cd81-4d89-be07-90cfe85cfe63",
+     "qty": 38,
+     "target": 87.98
+    },
+    {
+     "client_id": "orb30-2026-10-23-INTC-1415-1",
+     "order_id": "61b828a5-e27c-443e-954e-4740f75b8d26",
+     "qty": 38,
+     "target": 89.08
+    },
+    {
+     "client_id": "orb30-2026-10-23-INTC-1415-2",
+     "order_id": "c0f4bc26-f237-42d1-9f50-bcda60e45d8b",
+     "qty": 38,
+     "target": 90.18
+    }
+   ],
+   "entry_fill": 87.017456,
+   "be_moved": false,
+   "closed": false,
+   "page": "",
+   "strategy": "orb30",
+   "exit_name": "unknown (adopted after a restart)",
+   "expires_at": ""
+  },
+  {
+   "symbol": "AMD",
+   "setup_t": "2026-10-23T14:15:00Z",
+   "direction": 1,
+   "planned_entry": 518.64,
+   "stop": 512.81,
+   "targets": [
+    522.79,
+    527.78,
+    532.77
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-AMD-1415-0",
+     "order_id": "ffd0fafb-5368-4032-8c6b-39beecb3d7f8",
+     "qty": 7,
+     "target": 522.79
+    },
+    {
+     "client_id": "orb30-2026-10-23-AMD-1415-1",
+     "order_id": "701069c2-27ca-4443-954f-b4df41b32107",
+     "qty": 6,
+     "target": 527.78
+    },
+    {
+     "client_id": "orb30-2026-10-23-AMD-1415-2",
+     "order_id": "67a71828-34b3-486c-b888-f7e88c155737",
+     "qty": 6,
+     "target": 532.77
+    }
+   ],
+   "entry_fill": 518.64,
+   "be_moved": false,
+   "closed": false,
+   "page": "",
+   "strategy": "orb30",
+   "exit_name": "unknown (adopted after a restart)",
+   "expires_at": ""
+  },
+  {
+   "symbol": "SPCX",
+   "setup_t": "2026-10-23T14:15:00Z",
+   "direction": 1,
+   "planned_entry": 148.19,
+   "stop": 146.07,
+   "targets": [
+    150.58,
+    152.83,
+    155.09
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-SPCX-1415-0",
+     "order_id": "42f601f0-e47c-4698-bc4b-7957b366a0db",
+     "qty": 23,
+     "target": 150.58
+    },
+    {
+     "client_id": "orb30-2026-10-23-SPCX-1415-1",
+     "order_id": "5ae068ef-38ed-4b50-9f9e-9a0991807906",
+     "qty": 22,
+     "target": 152.83
+    },
+    {
+     "client_id": "orb30-2026-10-23-SPCX-1415-2",
+     "order_id": "c0d59968-4e55-4f13-a8ae-3eeb1898faf6",
+     "qty": 22,
+     "target": 155.09
+    }
+   ],
+   "entry_fill": 148.18940302985075,
+   "be_moved": false,
+   "closed": false,
+   "page": "",
+   "strategy": "orb30",
+   "exit_name": "unknown (adopted after a restart)",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
   "AAPL",
+  "AMD",
   "GOOG",
   "GOOGL",
+  "INTC",
+  "IWM",
   "MSFT",
   "NVDA",
-  "QQQ"
+  "QQQ",
+  "SPCX"
  ],
  "seen": [
   [

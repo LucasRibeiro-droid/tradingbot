@@ -39,3 +39,7 @@
 {"type": "entry_filled", "t": "2026-10-23T14:16:54+00:00", "symbol": "MSFT", "avg_price": 522.82, "slippage": -0.77}
 {"type": "entry_filled", "t": "2026-10-23T14:16:54+00:00", "symbol": "GOOGL", "avg_price": 323.84, "slippage": -0.035}
 {"type": "entry_filled", "t": "2026-10-23T14:16:55+00:00", "symbol": "GOOG", "avg_price": 320.6771, "slippage": -0.0329}
+{"type": "entry_filled", "t": "2026-10-23T14:40:06+00:00", "symbol": "IWM", "avg_price": 273.9717, "slippage": -0.015}
+{"type": "entry_filled", "t": "2026-10-23T14:40:07+00:00", "symbol": "INTC", "avg_price": 87.0175, "slippage": 0.0151}
+{"type": "entry_filled", "t": "2026-10-23T14:40:07+00:00", "symbol": "AMD", "avg_price": 518.64, "slippage": 0.0}
+{"type": "entry_filled", "t": "2026-10-23T14:40:08+00:00", "symbol": "SPCX", "avg_price": 148.1894, "slippage": -0.0006}
