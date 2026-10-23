@@ -105,3 +105,4 @@
 {"type": "entry_filled", "t": "2026-10-23T17:53:34+00:00", "symbol": "GOOG", "avg_price": 319.18, "slippage": 0.05}
 {"type": "entry_filled", "t": "2026-10-23T17:58:33+00:00", "symbol": "GOOGL", "avg_price": 322.3967, "slippage": -0.0067}
 {"type": "stop_to_break_even", "t": "2026-10-23T18:02:38+00:00", "symbol": "GOOGL", "stop": 322.4}
+{"type": "stop_to_break_even", "t": "2026-10-23T18:03:37+00:00", "symbol": "GOOG", "stop": 319.18}
