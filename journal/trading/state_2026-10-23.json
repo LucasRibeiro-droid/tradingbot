@@ -1509,7 +1509,7 @@
    ],
    "entry_fill": 1248.56,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1914_SNDK.md",
    "strategy": "tjr_m1_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -2690,6 +2690,11 @@
    "PLTR",
    "2026-10-23T19:20:00Z",
    "tjr_m1_5m"
+  ],
+  [
+   "PLTR",
+   "2026-10-23T19:32:00Z",
+   "tjr_m1_1m"
   ],
   [
    "QQQ",
