@@ -43,3 +43,4 @@
 {"type": "entry_filled", "t": "2026-10-23T14:40:07+00:00", "symbol": "INTC", "avg_price": 87.0175, "slippage": 0.0151}
 {"type": "entry_filled", "t": "2026-10-23T14:40:07+00:00", "symbol": "AMD", "avg_price": 518.64, "slippage": 0.0}
 {"type": "entry_filled", "t": "2026-10-23T14:40:08+00:00", "symbol": "SPCX", "avg_price": 148.1894, "slippage": -0.0006}
+{"type": "exit", "t": "2026-10-23T14:42:23+00:00", "symbol": "IWM", "setup_t": "2026-10-23T14:15:00Z", "entry": 273.971667, "stop": 274.65, "targets": [272.98, 272.15, 271.31], "exits": [[274.66, 12.0, "stop"], [274.66, 12.0, "stop"], [274.643333, 12.0, "stop"]], "qty": 36.0, "pnl": -24.58, "r": -1.007, "be_moved": false, "strategy": "orb30", "exit_name": "unknown (adopted after a restart)"}
