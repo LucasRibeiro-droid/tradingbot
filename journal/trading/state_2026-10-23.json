@@ -370,7 +370,7 @@
    ],
    "entry_fill": 148.18940302985075,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "",
    "strategy": "orb30",
    "exit_name": "unknown (adopted after a restart)",
