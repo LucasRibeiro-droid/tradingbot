@@ -62,3 +62,5 @@
 | 2026-10-23 19:55 | close failed TTMI 126: DELETE /v2/positions/TTMI: HTTP 404: {"code":40410000,"message":"position not found: TTMI"} | position still open | retrying |
 | 2026-10-23 19:55 | flattened before the close | verified flat after 2 round(s) |  |
 | 2026-10-23 19:56 | session end | 45 trades, 25 instruments | review to write |
+| 2026-10-23 14:31 | Restart to deploy the multi-timeframe playbooks lost the record of 4 trades opened minutes before (IWM, INTC, AMD, SPCX: the cancelled run hadn't pushed its state) | 4 trades unmanaged ~5 minutes (brackets live at Alpaca) | rebuild-from-Alpaca + broker position check added; second restart at 14:36 adopted all 4 |
+| 2026-10-23 19:55 | Flatten round 2 logged 404 "position not found" for 17 stocks: round 1's close orders had already filled | none (verified flat) | 404 on close now treated as closed |

@@ -11,3 +11,7 @@ One trade never changes a rule; lessons from fewer than ~10 independent trades a
 | L4 | Tight stops make costs a big share of R (AAPL 0.36% stop ≈ 0.17R round trip) | 10-21 AAPL, 10-22 NVDA | methodology | H41 (lab: cost >0.2R → −0.39R) | strong (lab) |
 | L5 | Same-candle, same-sector trades are one bet | 10-22 MU + NVDA | evaluation | correlation counted in the scorecard | certain |
 | L6 | A loss pattern in a few trades (longs on a down day) didn't survive the lab test | 10-22: 3 longs | evaluation | H43 rejected | lab n≈6,000 |
+| L7 | A restart must not lose trades: rebuild them from the broker, and check the broker before entering | 10-23: IWM, INTC, AMD, SPCX | execution | fixed in code + tests | certain |
+| L8 | Many stocks breaking out on the same candle is one market bet (12 longs at 10:30 ET, all reversed) | 10-23: 12 breakouts | evaluation / risk | H48 | one day: a lead |
+| L9 | A small gross edge doesn't survive costs: lower timeframes are +0.03 to +0.07R gross, negative at any realistic cost | lab 10-23 | methodology | H47 rejected | strong (lab n≈20,000) |
+| L10 | On 1-minute, R and dollars diverge: 10% position cap × 0.1–0.2% stops = $2–5 per R | 10-23: 1m trades | evaluation | report $ beside R | certain |

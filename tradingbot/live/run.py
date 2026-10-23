@@ -72,6 +72,14 @@ def _now() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _page(path: str) -> Path:
+    """A trade page from its stored path: repo-relative (or absolute, from older records)."""
+    p = Path(path)
+    if p.is_absolute() and "journal/trading/trades/" in path and not p.exists():
+        p = Path("journal/trading/trades/" + path.split("journal/trading/trades/", 1)[1])
+    return p if p.is_absolute() else ROOT.parent.parent / p
+
+
 def _append(path: Path, obj: dict) -> None:
     with path.open("a") as f:
         f.write(json.dumps(obj) + "\n")
@@ -83,7 +91,7 @@ def trade_page(a: dict, parts: list[dict], dry_run: bool) -> Path:
     folder = ROOT / "trades"
     folder.mkdir(exist_ok=True)
     stamp = a["t"][:16].replace(":", "").replace("T", "_")
-    path = folder / f"{stamp}_{a['symbol']}.md"
+    path = folder / f"{stamp}_{a['symbol']}_{a.get('strategy', 'tjr_m1')}.md"
     p, ctx = a["plan"], a["context"]
     lines = [f"# {a['symbol']} {p['direction']} · setup candle {a['t']} UTC" + (" · DRY RUN" if dry_run else ""), "",
              "## Why the bot took it", f"- **Setup:** {a['setup']}"]
@@ -126,13 +134,17 @@ def finish_page(path: Path, exit_rec: dict) -> None:
     path.write_text(path.read_text().replace("## Result\n_open_", "## Result\n" + res))
     index = ROOT / "TRADES.md"
     if not index.exists():
-        index.write_text("# Trades\n\nEvery trade the bot takes: why, result, lesson (click the trade).\n\n"
-                         "| Date (UTC) | Stock | Direction | Bias relation | R | P/L | Record | Strategy / exit |\n|---|---|---|---|---|---|---|---|\n")
-    head = path.read_text().splitlines()[0]
-    rel = next((l.split(":** ")[1].split(" ")[0] for l in path.read_text().splitlines() if l.startswith("- **Daily bias relation")), "")
-    with index.open("a") as f:
-        f.write(f"| {exit_rec['t'][:16]} | {exit_rec['symbol']} | {head.split(' ')[2]} | {rel} | {exit_rec['r']} | {exit_rec['pnl']} "
-                f"| [page](trades/{path.name}) | {exit_rec.get('strategy', 'tjr_m1')} / {exit_rec.get('exit_name', 'tjr_ladder')} |\n")
+        index.write_text("# Trades\n\nEvery trade the bot takes: why, the plan, the result, and what it learned (click the trade).\n\n"
+                         "| Setup (UTC) | Stock | Direction | Strategy / exit | Bias relation | R actual | R as planned | P/L actual | Record |\n"
+                         "|---|---|---|---|---|---|---|---|---|\n")
+    text = path.read_text()
+    head = text.splitlines()[0]
+    rel = next((l.split(":** ")[1].split(" ")[0] for l in text.splitlines() if l.startswith("- **Daily bias relation")), "n/a")
+    r = f"{exit_rec['r']:+.2f}" if exit_rec["r"] is not None else "?"
+    with index.open("a") as f:  # "as planned" is filled in by the after-close review
+        f.write(f"| {exit_rec['setup_t'][:16].replace('T', ' ')} | {exit_rec['symbol']} | {head.split(' ')[2]} | "
+                f"{exit_rec.get('strategy', 'tjr_m1')} / {exit_rec.get('exit_name', 'tjr_ladder')} | {rel} | {r} | (review) | "
+                f"{exit_rec['pnl']:+,.2f} | [page](trades/{path.name}) |\n")
 
 
 def event(what: str, impact: str = "", action: str = "") -> None:
@@ -422,7 +434,8 @@ class Session:
                     self.halted = True
                     event("3 failed submissions: new entries halted", "no new trades today", "review before next session")
         if trade.parts:
-            trade.page = str(trade_page(a, trade.parts, self.dry_run))
+            page = trade_page(a, trade.parts, self.dry_run)
+            trade.page = str(page.relative_to(ROOT.parent.parent)) if page.is_relative_to(ROOT.parent.parent) else str(page)
             self.trades.append(trade)
             self.traded_symbols.add(sym)
             _append(ROOT / "trades.jsonl", {"type": "entry_submitted", "t": _now().isoformat(timespec="seconds"),
@@ -455,8 +468,8 @@ class Session:
                 _append(ROOT / "trades.jsonl", {"type": "not_filled", "t": _now().isoformat(timespec="seconds"),
                                                 "symbol": t.symbol, "setup_t": t.setup_t, "strategy": t.strategy,
                                                 "limit": t.planned_entry})
-                if t.page and Path(t.page).exists():
-                    Path(t.page).write_text(Path(t.page).read_text().replace(
+                if t.page and _page(t.page).exists():
+                    _page(t.page).write_text(_page(t.page).read_text().replace(
                         "## Result\n_open_", "## Result\n- Limit entry not filled before it expired: no trade (0R)."))
                 continue
             fills = [o for o in orders if o.get("filled_avg_price")]
@@ -515,7 +528,7 @@ class Session:
                "strategy": t.strategy, "exit_name": t.exit_name}
         _append(ROOT / "trades.jsonl", rec)
         if t.page:
-            finish_page(Path(t.page), rec)
+            finish_page(_page(t.page), rec)
 
     # ---- end of day ----
     def flatten(self, attempts: int = 5, pause: float = 3.0) -> bool:
@@ -542,6 +555,8 @@ class Session:
                     try:
                         self.broker.close_position(p["symbol"])
                     except BrokerError as e:
+                        if "HTTP 404" in str(e):
+                            continue  # already closed (the previous round's order filled)
                         event(f"close failed {p['symbol']} {p['qty']}: {e}", "position still open", "retrying")
             except BrokerError as e:
                 event(f"flatten round {attempt + 1} failed: {e}", "positions may still be open", "retrying")
