@@ -38,3 +38,8 @@
 | 2026-10-23 14:32 | position INTC 114 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
 | 2026-10-23 14:32 | position IWM -36 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
 | 2026-10-23 14:32 | position SPCX 67 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-23 14:36 | session start (paper): equity 99865.08, buying power 281250.84, shorting on |  |  |
+| 2026-10-23 14:36 | adopted IWM orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
+| 2026-10-23 14:36 | adopted INTC orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
+| 2026-10-23 14:36 | adopted AMD orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
+| 2026-10-23 14:36 | adopted SPCX orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
