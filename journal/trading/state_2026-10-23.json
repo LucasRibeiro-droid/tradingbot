@@ -1202,6 +1202,45 @@
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
    "expires_at": "2026-10-23T18:11:21+00:00"
+  },
+  {
+   "symbol": "GOOG",
+   "setup_t": "2026-10-23T17:52:00Z",
+   "direction": -1,
+   "planned_entry": 319.23,
+   "stop": 319.61,
+   "targets": [
+    319.04,
+    318.85,
+    318.47
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-GOOG-1752-0",
+     "order_id": "327ad79e-db33-40a6-b7e0-0a04b047fe5f",
+     "qty": 11,
+     "target": 319.04
+    },
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-GOOG-1752-1",
+     "order_id": "774d253b-f5b1-4b2f-94b5-defb7bd2552e",
+     "qty": 10,
+     "target": 318.85
+    },
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-GOOG-1752-2",
+     "order_id": "e06057e7-236d-4d3e-af51-76bfdd693f4d",
+     "qty": 10,
+     "target": 318.47
+    }
+   ],
+   "entry_fill": 319.18,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1752_GOOG.md",
+   "strategy": "tjr_m3_1m",
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
@@ -1428,6 +1467,11 @@
    "tjr_m3_1m"
   ],
   [
+   "GOOG",
+   "2026-10-23T17:52:00Z",
+   "tjr_m3_1m"
+  ],
+  [
    "GOOGL",
    "2026-10-23T14:00:00Z",
    "orb30"
@@ -1546,6 +1590,11 @@
    "IWM",
    "2026-10-23T17:47:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "IWM",
+   "2026-10-23T17:52:00Z",
+   "tjr_m1_1m"
   ],
   [
    "META",
@@ -1893,6 +1942,11 @@
    "tjr_m1_1m"
   ],
   [
+   "PLTR",
+   "2026-10-23T17:52:00Z",
+   "tjr_m1_1m"
+  ],
+  [
    "QQQ",
    "2026-10-23T13:45:00Z",
    "tjr_m1"
@@ -2050,6 +2104,11 @@
   [
    "SPCX",
    "2026-10-23T17:45:00Z",
+   "tjr_m2_1m"
+  ],
+  [
+   "SPCX",
+   "2026-10-23T17:53:00Z",
    "tjr_m2_1m"
   ],
   [
