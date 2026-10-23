@@ -43,3 +43,21 @@
 | 2026-10-23 14:36 | adopted INTC orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
 | 2026-10-23 14:36 | adopted AMD orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
 | 2026-10-23 14:36 | adopted SPCX orb30 (3 parts) from Alpaca's orders | the saved state had lost it; managed again from now |  |
+| 2026-10-23 19:55 | close failed AAPL -28: DELETE /v2/positions/AAPL: HTTP 404: {"code":40410000,"message":"position not found: AAPL"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed GOOG -31: DELETE /v2/positions/GOOG: HTTP 404: {"code":40410000,"message":"position not found: GOOG"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed INTC 114: DELETE /v2/positions/INTC: HTTP 404: {"code":40410000,"message":"position not found: INTC"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed IWM 36: DELETE /v2/positions/IWM: HTTP 404: {"code":40410000,"message":"position not found: IWM"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed META 15: DELETE /v2/positions/META: HTTP 404: {"code":40410000,"message":"position not found: META"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed MRNA 49: DELETE /v2/positions/MRNA: HTTP 404: {"code":40410000,"message":"position not found: MRNA"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed MRVL 43: DELETE /v2/positions/MRVL: HTTP 404: {"code":40410000,"message":"position not found: MRVL"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed MSFT 19: DELETE /v2/positions/MSFT: HTTP 404: {"code":40410000,"message":"position not found: MSFT"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed MU 11: DELETE /v2/positions/MU: HTTP 404: {"code":40410000,"message":"position not found: MU"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed NVDA 46: DELETE /v2/positions/NVDA: HTTP 404: {"code":40410000,"message":"position not found: NVDA"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed ORCL 78: DELETE /v2/positions/ORCL: HTTP 404: {"code":40410000,"message":"position not found: ORCL"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed PLTR 50: DELETE /v2/positions/PLTR: HTTP 404: {"code":40410000,"message":"position not found: PLTR"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed QQQ 14: DELETE /v2/positions/QQQ: HTTP 404: {"code":40410000,"message":"position not found: QQQ"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed SMH 18: DELETE /v2/positions/SMH: HTTP 404: {"code":40410000,"message":"position not found: SMH"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed TSLA 26: DELETE /v2/positions/TSLA: HTTP 404: {"code":40410000,"message":"position not found: TSLA"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed TSM 23: DELETE /v2/positions/TSM: HTTP 404: {"code":40410000,"message":"position not found: TSM"} | position still open | retrying |
+| 2026-10-23 19:55 | close failed TTMI 126: DELETE /v2/positions/TTMI: HTTP 404: {"code":40410000,"message":"position not found: TTMI"} | position still open | retrying |
+| 2026-10-23 19:55 | flattened before the close | verified flat after 2 round(s) |  |
