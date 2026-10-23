@@ -8,7 +8,7 @@ not a rulebook. The priority now is to **learn through many well-documented pape
 every trade tests a hypothesis or applies an identifiable approach, is recorded before entry
 (expectation, invalidation, uncertainty) and reviewed after (decision quality vs outcome).
 The baseline (TJR model 1 + TJR's exits) keeps trading as the reference; experiments trade
-beside it. Change one thing at a time, check it out of sample, keep conclusions proportional
+beside it, on every timeframe (TJR's entry models 1–3 on 1m/5m/15m/1h, owner 2026-10-23). Change one thing at a time, check it out of sample, keep conclusions proportional
 to the evidence, and record every change in `journal/trading/rule_changes.md`. Full text:
 `journal/DIRECTIVE_2026-10-22.md`; protocol: `journal/trading/README.md` ("How the bot learns").
 

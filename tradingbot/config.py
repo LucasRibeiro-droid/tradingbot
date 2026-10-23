@@ -123,9 +123,16 @@ class TradingParams:
     # trade tests a hypothesis, journal/hypotheses.md) and, per strategy, the exit methods
     # under test, split evenly across its trades (live/experiments.py). TJR's model 1 with
     # TJR's ladder stays in as the baseline.
-    strategies: tuple[str, ...] = ("tjr_m1", "orb30")
+    # Owner, 2026-10-23: "trade in every way" with TJR's core fundamentals on all candles: TJR's
+    # entry models 1-3 (Days 30-33) on the 1-minute, 5-minute, 15-minute and 1-hour, each its
+    # own playbook (tjr_m<model>_<timeframe>; tjr_m1_15m is the baseline, the old "tjr_m1").
+    # Take profit 1 comes from the next timeframe up (Day 37).
+    strategies: tuple[str, ...] = ("tjr", "orb30")
+    tjr_models: tuple[int, ...] = (1, 2, 3)
+    tjr_timeframes: tuple[str, ...] = ("1Min", "5Min", "15Min", "1Hour")
+    model_wait_candles: int = 20  # model 2's limit order and model 3's window, in candles
     exits_under_test: tuple[tuple[str, tuple[str, ...]], ...] = (
-        ("tjr_m1", ("tjr_ladder", "ladder_0.5_1_2R")),
+        ("tjr", ("tjr_ladder", "ladder_0.5_1_2R")),
         ("orb30", ("ladder_1_2_3R", "2R")),
     )
     # [Bot] Execution on the 15-minute: the entry models with TJR's exits were positive on

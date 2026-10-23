@@ -23,7 +23,7 @@ from statistics import mean, median
 from ..candles import Candle
 from ..config import BASELINE
 from ..data import fetch_bars, timeframe_length
-from .signals import NY, assess
+from .signals import NY, assess_all
 
 CACHE = Path.home() / ".cache" / "tradingbot"
 STUDIES = Path(__file__).resolve().parent.parent.parent / "journal" / "studies"
@@ -69,24 +69,30 @@ def _session_minute(t: str) -> int:
 
 # ---- entry strategies ----
 
-def tjr_model1(symbol: str, ltf: list[Candle], htf: list[Candle], daily: list[Candle], first: datetime) -> list[Signal]:
-    """The live baseline: sweep + break of structure on the 15-minute (signals.assess)."""
-    tp = BASELINE.trading
-    ltf_len, tp_len = timeframe_length(tp.execution_tf), timeframe_length(tp.take_profit_tf)
+TP_TIMEFRAME = {"1Min": "5Min", "5Min": "15Min", "15Min": "1Hour", "1Hour": "4Hour"}
+SHORT = {"1Min": "1m", "5Min": "5m", "15Min": "15m", "1Hour": "1h"}
+
+
+def tjr_models(symbol: str, ltf: list[Candle], htf: list[Candle], daily: list[Candle], first: datetime,
+               tf: str = "15Min", models: tuple[int, ...] = (1, 2, 3), wait: int = 20) -> list[Signal]:
+    """TJR's entry models 1-3 on any timeframe, exactly as live (signals.assess_all). Every
+    model is evaluated on every setup here (live splits the setups between them)."""
+    ltf_len, tp_len = timeframe_length(tf), timeframe_length(TP_TIMEFRAME[tf])
     out = []
     for i, c in enumerate(ltf):
         if _ts(c.t) < first:
             continue
         lo = max(0, i - 600)
         t_close = _ts(c.t) + ltf_len
-        h = [x for x in htf if _ts(x.t) + tp_len <= t_close]
+        h = [x for x in htf if _ts(x.t) + tp_len <= t_close][-600:]
         dly = [x for x in daily if _ts(x.t) < t_close]
-        a = assess(symbol, ltf[lo:i + 1], h, dly, BASELINE, True, ltf_len, tp_len)
-        if a is None or a["decision"] != "APPROVED":
-            continue
-        p = a["plan"]
-        out.append(Signal(symbol, "tjr_m1", i, c.t, 1 if p["direction"] == "long" else -1, p["entry"], p["stop"],
-                          list(p["take_profits"]), {"bias_relation": a["context"]["bias_relation"]}))
+        for a in assess_all(symbol, ltf[lo:i + 1], h, dly, BASELINE, True, ltf_len, tp_len, models=models, wait=wait):
+            if a["decision"] != "APPROVED":
+                continue
+            p = a["plan"]
+            out.append(Signal(symbol, f"tjr_m{a['model']}_{SHORT[tf]}", i, c.t, 1 if p["direction"] == "long" else -1,
+                              p["entry"], p["stop"], list(p["take_profits"]),
+                              {"bias_relation": a["context"]["bias_relation"], "entry_type": p["entry_type"], "wait": wait}))
     return out
 
 
@@ -120,12 +126,27 @@ def opening_range_breakout(symbol: str, ltf: list[Candle], htf, daily, first: da
     return out
 
 
-STRATEGIES = {"tjr_m1": tjr_model1, "orb30": opening_range_breakout}
+STRATEGIES = {"tjr": tjr_models, "orb30": opening_range_breakout}
 
 
 # ---- exits ----
 
-def follow(ltf: list[Candle], s: Signal, targets: list[float], break_even: bool, flatten: str = "15:55") -> dict:
+def fill_limit(ltf: list[Candle], s: Signal, flatten: str = "15:55", bar_minutes: int = 15) -> Signal | None:
+    """A limit entry (model 2): filled on the first later candle that trades through the limit,
+    within ``wait`` candles and the same day (the flatten cancels it). None if never filled."""
+    fh, fm = map(int, flatten.split(":"))
+    day = _ny(s.t).date()
+    for j in range(s.i + 1, min(len(ltf), s.i + 1 + s.context.get("wait", 20))):
+        c, ny = ltf[j], _ny(ltf[j].t)
+        if ny.date() != day or ny.hour * 60 + ny.minute + bar_minutes > fh * 60 + fm:
+            return None
+        if (c.l <= s.entry) if s.direction == 1 else (c.h >= s.entry):
+            return Signal(s.symbol, s.strategy, j, c.t, s.direction, s.entry, s.stop, s.ladder, s.context)
+    return None
+
+
+def follow(ltf: list[Candle], s: Signal, targets: list[float], break_even: bool, flatten: str = "15:55",
+           bar_minutes: int = 15, entry_candle: bool = False) -> dict:
     """Equal parts at each target (none = hold to the flatten); stop to break even after the
     first target if ``break_even``. R before costs, plus MFE/MAE in R until the exit."""
     risk = abs(s.entry - s.stop)
@@ -134,9 +155,13 @@ def follow(ltf: list[Candle], s: Signal, targets: list[float], break_even: bool,
     part = 1 / len(targets) if targets else 1.0
     r, hit, stop, mfe, mae = 0.0, 0, s.stop, 0.0, 0.0
     last = s.entry
+    if entry_candle:  # filled inside this candle (a limit): it can also reach the stop (counted first)
+        c = ltf[s.i]
+        if ((c.l if d == 1 else c.h) - stop) * d <= 0:
+            return {"r": -1.0, "exit": "stop", "hit": 0, "mfe": 0.0, "mae": 1.0}
     for c in ltf[s.i + 1:]:
         ny = _ny(c.t)
-        if ny.date() != day or ny.hour * 60 + ny.minute + 15 > fh * 60 + fm:
+        if ny.date() != day or ny.hour * 60 + ny.minute + bar_minutes > fh * 60 + fm:
             break
         last = c.c
         adverse = (c.l if d == 1 else c.h)
@@ -185,25 +210,38 @@ def summarize(rs: list[float]) -> dict:
             "avg_loss": round(mean(losses), 2) if losses else None, "max_dd_r": round(dd, 1)}
 
 
-def run(symbols: list[str], days: int, cost_bps: float) -> dict:
+def run(symbols: list[str], days: int, cost_bps: float, tf: str = "15Min", strategies: tuple[str, ...] = ("tjr", "orb30"),
+        models: tuple[int, ...] = (1, 2, 3)) -> dict:
     now = datetime.now(timezone.utc)
     split, first = now - timedelta(days=days), now - timedelta(days=2 * days)
-    rows = []
+    bar_minutes = int(timeframe_length(tf).total_seconds() // 60)
+    lead = {"1Min": 3, "5Min": 8, "15Min": 30, "1Hour": 80}[tf]  # history before the first signal
+    rows, unfilled = [], {}
     for sym in symbols:
         try:
-            ltf = load(sym, "15Min", 2 * days + 30)
-            htf = load(sym, "1Hour", 2 * days + 80)
+            ltf = load(sym, tf, 2 * days + lead)
+            htf = load(sym, TP_TIMEFRAME[tf], 2 * days + lead * 3)
             daily = load(sym, "1Day", 2 * days + 240)
         except Exception as e:
             print(f"{sym}: data error {e}")
             continue
-        for name, fn in STRATEGIES.items():
-            for s in fn(sym, ltf, htf, daily, first):
+        for name in strategies:
+            if name == "orb30" and tf != "15Min":
+                continue
+            sigs = tjr_models(sym, ltf, htf, daily, first, tf, models) if name == "tjr" else STRATEGIES[name](sym, ltf, htf, daily, first)
+            for s in sigs:
+                limit = s.context.get("entry_type") == "limit"
+                if limit:
+                    filled = fill_limit(ltf, s, bar_minutes=bar_minutes)
+                    if filled is None:
+                        unfilled[s.strategy] = unfilled.get(s.strategy, 0) + 1
+                        continue
+                    s = filled
                 cost = 2 * cost_bps / 1e4 * s.entry / abs(s.entry - s.stop)
                 period = "in_sample" if _ts(s.t) >= split else "out_of_sample"
                 for ex, (targets, be) in exit_methods(s).items():
-                    res = follow(ltf, s, targets, be)
-                    rows.append({"symbol": sym, "strategy": name, "exit": ex, "period": period, "t": s.t,
+                    res = follow(ltf, s, targets, be, bar_minutes=bar_minutes, entry_candle=limit)
+                    rows.append({"symbol": sym, "strategy": s.strategy, "exit": ex, "period": period, "t": s.t,
                                  "direction": s.direction, "r": round(res["r"] - cost, 3), "r_gross": round(res["r"], 3),
                                  "cost_r": round(cost, 3), "mfe": round(res["mfe"], 2), "mae": round(res["mae"], 2),
                                  "how": res["exit"], "context": s.context})
@@ -220,8 +258,8 @@ def run(symbols: list[str], days: int, cost_bps: float) -> dict:
                        "reach_0.5R": round(sum(x >= 0.5 for x in v) / len(v), 2),
                        "reach_1R": round(sum(x >= 1 for x in v) / len(v), 2),
                        "reach_2R": round(sum(x >= 2 for x in v) / len(v), 2)} for k, v in mfe.items()}
-    return {"summary": summary, "mfe_hold_to_close": mfe_summary, "rows": rows,
-            "params": {"symbols": symbols, "days": days, "cost_bps_per_side": cost_bps, "run_at": now.isoformat()}}
+    return {"summary": summary, "mfe_hold_to_close": mfe_summary, "limit_not_filled": unfilled, "rows": rows,
+            "params": {"symbols": symbols, "days": days, "timeframe": tf, "cost_bps_per_side": cost_bps, "run_at": now.isoformat()}}
 
 
 def main() -> None:
@@ -229,9 +267,13 @@ def main() -> None:
     ap.add_argument("--days", type=int, default=120)
     ap.add_argument("--symbols", required=True)
     ap.add_argument("--cost-bps", type=float, default=3.0, help="spread + slippage per side, basis points")
+    ap.add_argument("--timeframe", default="15Min", choices=list(TP_TIMEFRAME))
+    ap.add_argument("--strategies", default="tjr,orb30")
+    ap.add_argument("--models", default="1,2,3")
     args = ap.parse_args()
-    res = run(args.symbols.split(","), args.days, args.cost_bps)
-    out = STUDIES / f"lab_{args.days}d_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.json"
+    res = run(args.symbols.split(","), args.days, args.cost_bps, args.timeframe, tuple(args.strategies.split(",")),
+              tuple(int(m) for m in args.models.split(",")))
+    out = STUDIES / f"lab_{args.timeframe}_{args.days}d_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.json"
     rows = res.pop("rows")
     res["rows_file"] = out.with_suffix(".rows.jsonl.gz").name  # every setup × exit, for breakdowns
     with gzip.open(out.with_suffix(".rows.jsonl.gz"), "wt") as f:

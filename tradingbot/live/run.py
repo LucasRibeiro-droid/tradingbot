@@ -29,14 +29,43 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from ..config import BASELINE, Config
-from ..data import fetch_bars, timeframe_length
+from ..data import fetch_bars, fetch_bars_multi, timeframe_length
 from .broker import BrokerError, Paper
 from .screener import screen
-from .experiments import exit_for, orb_assess, pre_trade, targets_for
-from .signals import assess, size, split
+from .experiments import exit_for, model_for, orb_assess, pre_trade, targets_for
+from .signals import assess_all, size, split
 
 ROOT = Path(__file__).resolve().parent.parent.parent / "journal" / "trading"
 NY = ZoneInfo("America/New_York")
+# Take profit 1 comes from the next timeframe up (Day 37); how far back each timeframe is read.
+TP_TIMEFRAME = {"1Min": "5Min", "5Min": "15Min", "15Min": "1Hour", "1Hour": "4Hour"}
+LOOKBACK = {"1Min": timedelta(days=3), "5Min": timedelta(days=12), "15Min": timedelta(days=20),
+            "1Hour": timedelta(days=60), "4Hour": timedelta(days=200)}
+SHORT = {"1Min": "1m", "5Min": "5m", "15Min": "15m", "1Hour": "1h"}
+
+
+class BarCache:
+    """Candles per timeframe and stock: loaded once, then only the newest candles are fetched
+    (one request per timeframe for all stocks). The last stored candle is re-read, since it may
+    have been still open."""
+
+    def __init__(self, fetch=fetch_bars_multi, keep: int = 800):
+        self.fetch, self.keep, self.bars = fetch, keep, {}
+
+    def get(self, symbols: list[str], tf: str, now: datetime) -> dict[str, list]:
+        have = self.bars.setdefault(tf, {})
+        missing = [s for s in symbols if not have.get(s)]
+        if missing:
+            have.update(self.fetch(missing, tf, now - LOOKBACK[tf]))
+        known = [s for s in symbols if s not in missing and have.get(s)]
+        if known:
+            since = min(datetime.fromisoformat(have[s][-1].t.replace("Z", "+00:00")) for s in known)
+            for sym, new in self.fetch(known, tf, since).items():
+                old = have.get(sym, [])
+                if new:
+                    old = [c for c in old if c.t < new[0].t] + new
+                have[sym] = old[-self.keep:]
+        return {s: have.get(s, []) for s in symbols}
 
 
 def _now() -> datetime:
@@ -126,6 +155,7 @@ class Trade:
     page: str = ""
     strategy: str = "tjr_m1"
     exit_name: str = "tjr_ladder"
+    expires_at: str = ""  # a limit entry (model 2) not filled by then is cancelled
 
 
 class Session:
@@ -141,6 +171,8 @@ class Session:
         self.halted = False
         self.watch: list[str] = []
         self.today = datetime.now(NY).strftime("%Y-%m-%d")
+        self._daily, self._daily_day = None, None
+        self.cache = BarCache()
         self.state_path = ROOT / f"state_{self.today}.json"
 
     # ---- start ----
@@ -158,7 +190,19 @@ class Session:
         self.watch = [r["symbol"] for r in result["watch"]]
         self._load_state()
         self._reconcile_start()
+        self._warm_up()
         return acct
+
+    def _warm_up(self) -> None:
+        """Load every timeframe's candles before the open, so the first cycles are quick."""
+        tp = self.config.trading
+        now = _now()
+        for tf in sorted(set(tp.tjr_timeframes) | {TP_TIMEFRAME[x] for x in tp.tjr_timeframes} | {"15Min"},
+                         key=lambda x: timeframe_length(x)):
+            try:
+                self.cache.get(self.watch, tf, now)
+            except Exception as e:
+                event(f"warm-up failed for {tf}: {e}", "loaded at the first cycle instead", "")
 
     def _reconcile_start(self) -> None:
         """After a restart, Alpaca is the truth: count today's filled symbols toward the instrument
@@ -174,7 +218,7 @@ class Session:
             return
         # Only the bot's own entries (manual or other orders don't count as instruments traded).
         filled = {o["symbol"] for o in orders if float(o.get("filled_qty") or 0) > 0
-                  and str(o.get("client_order_id", "")).startswith(("tjr-", "orb30-"))}
+                  and str(o.get("client_order_id", "")).startswith(("tjr", "orb30"))}
         self.traded_symbols |= filled
         known = {t.symbol for t in self.trades if not t.closed}
         for pos in positions:
@@ -197,41 +241,73 @@ class Session:
                                                "seen": sorted(self.seen)}, indent=1))
 
     # ---- assess + execute ----
-    def cycle(self) -> None:
+    def due_timeframes(self, now: datetime) -> list[str]:
+        """Timeframes whose candle closed at the last minute boundary (bars are clock-aligned)."""
+        tp = self.config.trading
+        minute = int(now.timestamp() // 60)
+        tfs = set(tp.tjr_timeframes if "tjr" in tp.strategies else ()) | ({"15Min"} if "orb30" in tp.strategies else set())
+        return sorted((tf for tf in tfs if minute % int(timeframe_length(tf).total_seconds() // 60) == 0),
+                      key=lambda tf: timeframe_length(tf))
+
+    def cycle(self, timeframes: list[str] | None = None) -> None:
+        """Assess every playbook whose candle just closed: TJR's models on each timeframe, and
+        the opening-range breakout on the 15-minute. One request per timeframe for all stocks."""
         tp = self.config.trading
         now = _now()
-        ltf_len, tp_len = timeframe_length(tp.execution_tf), timeframe_length(tp.take_profit_tf)
-        market = self._market_context(now)
-        for sym in self.watch:
+        timeframes = self.due_timeframes(now) if timeframes is None else timeframes
+        if not timeframes:
+            return
+        market = None
+        try:
+            if self._daily is None or self._daily_day != datetime.now(NY).date():
+                self._daily = fetch_bars_multi(self.watch, "1Day", now - timedelta(days=200))
+                self._daily_day = datetime.now(NY).date()
+        except Exception as e:
+            event(f"data error (daily bars): {e}", "cycle skipped", "retry next minute")
+            return
+        for tf in timeframes:
+            length = timeframe_length(tf)
+            up = TP_TIMEFRAME[tf]
             try:
-                ltf = fetch_bars(sym, tp.execution_tf, now - timedelta(days=20))
-                htf = fetch_bars(sym, tp.take_profit_tf, now - timedelta(days=60))
-                daily = fetch_bars(sym, "1Day", now - timedelta(days=200))
+                bars = self.cache.get(self.watch, tf, now)
+                upper = self.cache.get(self.watch, up, now)
             except Exception as e:
-                event(f"data error {sym}: {e}", "symbol skipped this cycle", "retry next cycle")
+                event(f"data error ({tf} bars): {e}", f"{tf} skipped this cycle", "retry at the next close")
                 continue
-            if not ltf or (now - datetime.fromisoformat(ltf[-1].t.replace("Z", "+00:00"))) > timedelta(hours=1):
-                continue  # stale or no data: never act on it
-            found = []
-            if "tjr_m1" in tp.strategies:
-                a = assess(sym, ltf, htf, daily, self.config, self.shorting, ltf_len, tp_len)
-                if a is not None:
-                    a["strategy"] = "tjr_m1"
-                    found.append(a)
-            if "orb30" in tp.strategies:
-                a = orb_assess(sym, ltf, self.shorting)
-                if a is not None:
-                    found.append(a)
-            for a in found:
-                key = (sym, a["t"], a["strategy"])
-                if key in self.seen:
+            for sym in self.watch:
+                ltf = [c for c in bars.get(sym, [])][-600:]
+                closed = [c for c in ltf if c.closed]
+                # Only a candle that closed at this boundary is news; thin stocks may have none.
+                if not closed or datetime.fromisoformat(closed[-1].t.replace("Z", "+00:00")) + length < now - timedelta(minutes=1):
                     continue
-                self.seen.add(key)
-                a["context"]["market"] = market
-                if a["decision"] == "APPROVED":
-                    self._approve(a)
-                a["dry_run"] = self.dry_run
-                _append(ROOT / "setups.jsonl", a)
+                found = []
+                if "tjr" in tp.strategies and tf in tp.tjr_timeframes:
+                    for a in assess_all(sym, ltf, upper.get(sym, []), self._daily.get(sym, []), self.config, self.shorting,
+                                        length, timeframe_length(up), models=tp.tjr_models, wait=tp.model_wait_candles):
+                        # Each setup is traded with one entry model, by a fixed even split, so the
+                        # models are compared on the same kind of setups (one position per stock).
+                        if model_for(f"{sym}-{tf}-{a['block_t']}", tp.tjr_models) != a["model"]:
+                            continue
+                        a["strategy"] = f"tjr_m{a['model']}_{SHORT[tf]}"
+                        a["timeframe"] = tf
+                        found.append(a)
+                if "orb30" in tp.strategies and tf == "15Min":
+                    a = orb_assess(sym, ltf, self.shorting)
+                    if a is not None:
+                        a["timeframe"] = tf
+                        found.append(a)
+                for a in found:
+                    key = (sym, a["t"], a["strategy"])
+                    if key in self.seen:
+                        continue
+                    self.seen.add(key)
+                    if market is None:
+                        market = self._market_context(now)
+                    a["context"]["market"] = market
+                    if a["decision"] == "APPROVED":
+                        self._approve(a)
+                    a["dry_run"] = self.dry_run
+                    _append(ROOT / "setups.jsonl", a)
         self._save_state()
 
     def _market_context(self, now: datetime) -> dict:
@@ -263,7 +339,8 @@ class Session:
             a["decision"], a["reasons"] = "REJECTED", ["a position in this stock is still open"]
             return
         strategy = a.get("strategy", "tjr_m1")
-        exits = dict(tp.exits_under_test).get(strategy, ("tjr_ladder",))
+        family = "tjr" if strategy.startswith("tjr") else strategy
+        exits = dict(tp.exits_under_test).get(family, ("tjr_ladder",))
         exit_name = exit_for(strategy, exits, f"{sym}-{a['t']}")
         d = 1 if plan["direction"] == "long" else -1
         plan["ladder"] = list(plan.get("take_profits") or [])
@@ -286,13 +363,17 @@ class Session:
             return
         if self.dry_run:
             return
+        limit = plan["entry"] if plan.get("entry_type") == "limit" else None
+        expires = ""
+        if limit is not None:
+            expires = (_now() + timeframe_length(a.get("timeframe", "15Min")) * (plan.get("valid_candles") or tp.model_wait_candles)
+                       ).isoformat(timespec="seconds")
         trade = Trade(sym, a["t"], d, plan["entry"], plan["stop"], [t for _, t in parts],
-                      strategy=strategy, exit_name=exit_name)
-        prefix = "tjr" if strategy == "tjr_m1" else strategy
+                      strategy=strategy, exit_name=exit_name, expires_at=expires)
         for k, (q, target) in enumerate(parts):
-            cid = f"{prefix}-{self.today}-{sym}-{a['t'][11:16].replace(':', '')}-{k}"
+            cid = f"{strategy}-{self.today}-{sym}-{a['t'][11:16].replace(':', '')}-{k}"
             try:
-                o = self.broker.bracket(sym, q, "buy" if d == 1 else "sell", target, plan["stop"], cid)
+                o = self.broker.bracket(sym, q, "buy" if d == 1 else "sell", target, plan["stop"], cid, limit_price=limit)
                 trade.parts.append({"client_id": cid, "order_id": o["id"], "qty": q, "target": target})
             except BrokerError as e:
                 self.failures += 1
@@ -318,6 +399,25 @@ class Session:
                 orders = [self.broker.order(p["order_id"]) for p in t.parts]
             except BrokerError as e:
                 event(f"order status unavailable {t.symbol}: {e}", "can't reconcile this cycle", "retry next cycle")
+                continue
+            if t.expires_at and _now() >= datetime.fromisoformat(t.expires_at) and \
+                    any(o["status"] in ("new", "accepted", "pending_new", "partially_filled") for o in orders):
+                for o in orders:
+                    if o["status"] in ("new", "accepted", "pending_new", "partially_filled"):
+                        try:
+                            self.broker.cancel(o["id"])
+                        except BrokerError as e:
+                            event(f"cancel failed {t.symbol} {o['id']}: {e}", "limit entry may still fill", "retry next minute")
+                continue  # look again next minute, once the cancels have landed
+            if t.expires_at and all(o["status"] in ("canceled", "expired", "rejected") and not float(o.get("filled_qty") or 0)
+                                    for o in orders):
+                t.closed = True
+                _append(ROOT / "trades.jsonl", {"type": "not_filled", "t": _now().isoformat(timespec="seconds"),
+                                                "symbol": t.symbol, "setup_t": t.setup_t, "strategy": t.strategy,
+                                                "limit": t.planned_entry})
+                if t.page and Path(t.page).exists():
+                    Path(t.page).write_text(Path(t.page).read_text().replace(
+                        "## Result\n_open_", "## Result\n- Limit entry not filled before it expired: no trade (0R)."))
                 continue
             fills = [o for o in orders if o.get("filled_avg_price")]
             if fills and t.entry_fill is None:
@@ -414,7 +514,6 @@ class Session:
         tp = self.config.trading
         self.start()
         deadline = _now() + timedelta(minutes=self.max_minutes) if self.max_minutes else None
-        step = timeframe_length(tp.execution_tf)
         fh, fm = map(int, tp.flatten_at.split(":"))
         while True:
             now_ny = datetime.now(NY)
@@ -426,19 +525,19 @@ class Session:
                 event("session hand-off (runner time limit)", "positions stay protected at Alpaca",
                       "next run resumes from the saved state")
                 return
-            clock = self.broker.clock()
-            if clock["is_open"]:
-                self.cycle()
-                if not self.dry_run:
-                    self.manage()
-            # Sleep to just after the next candle close (or the open), managing every minute.
-            nxt = (_now() + step).replace(second=20, microsecond=0)
-            nxt -= timedelta(minutes=nxt.minute % int(step.total_seconds() // 60))
+            try:
+                clock = self.broker.clock()
+                if clock["is_open"]:
+                    self.cycle()
+                    if not self.dry_run:
+                        self.manage()
+            except BrokerError as e:
+                event(f"broker error in the cycle: {e}", "this minute skipped", "retry next minute")
+            # Every minute, just after the candle closes (bars are clock-aligned).
+            nxt = (_now() + timedelta(minutes=1)).replace(second=15, microsecond=0)
             until = min(nxt, flatten.astimezone(timezone.utc), deadline or nxt)
             while _now() < until:
-                time.sleep(60)
-                if clock["is_open"] and not self.dry_run:
-                    self.manage()
+                time.sleep(max(0.5, min(5.0, (until - _now()).total_seconds())))
         self.flatten()
         event("session end", f"{len(self.trades)} trades, {len(self.traded_symbols)} instruments", "review to write")
 

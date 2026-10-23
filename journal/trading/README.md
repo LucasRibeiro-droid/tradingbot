@@ -27,7 +27,9 @@ after costs. Paper only; max 1% risk per trade, positions ≤10% of equity, no t
 
 **Baseline and experiments.** The baseline is TJR's model 1 with TJR's exit ladder (`tjr_m1`
 + `tjr_ladder`); it always keeps trading so every experiment has a reference. Experimental
-strategies and exits trade alongside it (`config.TradingParams.strategies`,
+strategies and exits trade alongside it: TJR's entry models 1–3 on the 1-minute, 5-minute,
+15-minute and 1-hour (`tjr_m<model>_<tf>`; each setup gets one model by a fixed split) and the
+opening-range breakout (`config.TradingParams.strategies`,
 `exits_under_test`; `tradingbot/live/experiments.py`). A strategy's exits are split evenly
 across its trades by a fixed hash, so exits are compared on the same kind of entries. Only one
 position per stock at a time. Anything that deviates from TJR is labelled [Bot] with its

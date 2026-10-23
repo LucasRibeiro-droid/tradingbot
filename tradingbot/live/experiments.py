@@ -25,13 +25,27 @@ STUDIES = Path(__file__).resolve().parent.parent.parent / "journal" / "studies"
 
 # Hypotheses the live strategies and exits test (full text and status in journal/hypotheses.md).
 HYPOTHESES = {
-    "tjr_m1": "H36: TJR's entry model 1 (sweep + break of structure, 15-minute) has positive expectancy on liquid US stocks (the baseline).",
+    "tjr_m1_15m": "H36: TJR's entry model 1 (sweep + break of structure, 15-minute) has positive expectancy on liquid US stocks (the baseline).",
     "orb30": "H39: momentum: the first 15-minute close beyond the 30-minute opening range continues in that direction for the rest of the day.",
     "tjr_ladder": "baseline exit: TJR's Day 37 ladder (first target the 1-hour draw on liquidity >= 1R, then building blocks; break even after the first).",
     "ladder_0.5_1_2R": "H38: the setups rarely reach 1R intraday (lab median MFE ~0.35R), so near targets (0.5R, 1R, 2R; break even after the first) do better than TJR's far ladder.",
     "ladder_1_2_3R": "H40: thirds at 1R, 2R, 3R with break even after the first capture momentum days better than a single target.",
     "2R": "H40 (control): everything at 2R, or at the close.",
 }
+
+
+def hypothesis(strategy: str) -> str:
+    if strategy.startswith("tjr_m") and "_" in strategy[5:]:
+        model, tf = strategy[5:].split("_", 1)
+        base = " (the baseline)" if strategy == "tjr_m1_15m" else ""
+        return (f"H44: TJR's entry model {model} on the {tf} candles{base} has positive expectancy after costs "
+                f"(owner 2026-10-23: trade TJR's fundamentals on every timeframe; H45 for model 2, H46 for model 3).")
+    return HYPOTHESES.get(strategy, strategy)
+
+
+def model_for(setup_key: str, models: Sequence[int]) -> int:
+    """The TJR entry model a setup is traded with: a fixed, even split by the setup's id."""
+    return models[int(hashlib.sha256(f"model:{setup_key}".encode()).hexdigest(), 16) % len(models)]
 
 
 def exit_for(strategy: str, exits: Sequence[str], key: str) -> str:
@@ -54,19 +68,19 @@ def targets_for(exit_name: str, direction: int, entry: float, stop: float, ladde
 
 def lab_expectation(strategy: str, exit_name: str) -> dict | None:
     """The latest lab numbers for this strategy and exit (journal/studies/lab_*.json)."""
-    files = sorted(glob.glob(str(STUDIES / "lab_*.json")))
-    if not files:
-        return None
-    try:
-        summary = json.loads(Path(files[-1]).read_text())["summary"]
-    except (OSError, ValueError, KeyError):
-        return None
-    out = {}
-    for period in ("in_sample", "out_of_sample"):
-        s = summary.get(f"{strategy} | {exit_name} | {period}")
-        if s and s.get("n"):
-            out[period] = {k: s[k] for k in ("n", "avg_r", "win", "avg_win", "avg_loss")}
-    return out or None
+    for f in sorted(glob.glob(str(STUDIES / "lab_*.json")), key=lambda f: Path(f).stat().st_mtime, reverse=True):
+        try:
+            summary = json.loads(Path(f).read_text())["summary"]
+        except (OSError, ValueError, KeyError):
+            continue
+        out = {}
+        for period in ("in_sample", "out_of_sample"):
+            s = summary.get(f"{strategy} | {exit_name} | {period}")
+            if s and s.get("n"):
+                out[period] = {k: s[k] for k in ("n", "avg_r", "win", "avg_win", "avg_loss")}
+        if out:
+            return out
+    return None
 
 
 def orb_assess(symbol: str, ltf: Sequence[Candle], shorting_enabled: bool, range_minutes: int = 30,
@@ -126,7 +140,7 @@ def pre_trade(a: dict, exit_name: str) -> dict:
         expected = "No lab numbers yet for this combination: the outcome is uncertain; this trade is exploratory."
     return {
         "strategy": strategy, "exit": exit_name,
-        "hypothesis": HYPOTHESES.get(strategy, strategy), "exit_hypothesis": HYPOTHESES.get(exit_name, exit_name),
+        "hypothesis": hypothesis(strategy), "exit_hypothesis": HYPOTHESES.get(exit_name, exit_name),
         "expect": f"price moves {'up' if p['direction'] == 'long' else 'down'} from {p['entry']} toward the targets before "
                   f"reaching the stop {p['stop']}",
         "invalidation": p["invalidation"], "expected_outcome": expected, "lab": lab,

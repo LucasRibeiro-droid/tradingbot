@@ -81,18 +81,25 @@ class Paper:
             return None
 
     def bracket(self, symbol: str, qty: int, side: str, take_profit: float, stop: float,
-                client_order_id: str) -> dict:
-        """Market entry with a take-profit limit and a stop: one part of the ladder."""
+                client_order_id: str, limit_price: float | None = None) -> dict:
+        """Market (or limit, if ``limit_price``) entry with a take-profit limit and a stop: one
+        part of the ladder."""
         existing = self.order_by_client_id(client_order_id)
         if existing:
             return existing  # already submitted (e.g. a retry after a timeout)
-        return self._call("POST", "/v2/orders", {
+        body = {
             # gtc: if the session process dies, the stop and take profit stay live at Alpaca.
             "symbol": symbol, "qty": str(qty), "side": side, "type": "market", "time_in_force": "gtc",
             "order_class": "bracket", "client_order_id": client_order_id,
             "take_profit": {"limit_price": f"{take_profit:.2f}"},
             "stop_loss": {"stop_price": f"{stop:.2f}"},
-        }, retries=0)
+        }
+        if limit_price is not None:
+            body.update(type="limit", limit_price=f"{limit_price:.2f}")
+        return self._call("POST", "/v2/orders", body, retries=0)
+
+    def cancel(self, order_id: str) -> None:
+        self._call("DELETE", f"/v2/orders/{order_id}", retries=0)
 
     def replace_stop(self, order_id: str, stop: float) -> dict:
         return self._call("PATCH", f"/v2/orders/{order_id}", {"stop_price": f"{stop:.2f}"})

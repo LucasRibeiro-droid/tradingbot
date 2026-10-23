@@ -137,5 +137,27 @@ class Flatten(unittest.TestCase):
             self.assertFalse(s.flatten(attempts=2, pause=0))
 
 
+class Cache(unittest.TestCase):
+    def test_loads_once_then_only_new_candles(self):
+        from datetime import datetime, timezone
+        from tradingbot.live.run import BarCache
+        calls = []
+        series = [Candle(f"2026-10-23T14:0{m}:00Z", 1, 2, 0.5, 1.5) for m in range(5)]
+
+        def fetch(symbols, tf, start):
+            calls.append((tuple(symbols), start))
+            return {s: [c for c in series if c.t >= start.strftime("%Y-%m-%dT%H:%M:%SZ")] for s in symbols}
+
+        cache = BarCache(fetch)
+        now = datetime(2026, 10, 23, 14, 5, 30, tzinfo=timezone.utc)
+        first = cache.get(["A"], "1Min", now)
+        self.assertEqual(len(first["A"]), 5)
+        series.append(Candle("2026-10-23T14:05:00Z", 1.5, 3, 1, 2.5))
+        second = cache.get(["A"], "1Min", now)
+        self.assertEqual([c.t[-9:-4] for c in second["A"]][-2:], ["14:04", "14:05"])
+        self.assertEqual(len(second["A"]), 6)  # no duplicates
+        self.assertEqual(calls[1][1], datetime(2026, 10, 23, 14, 4, tzinfo=timezone.utc))  # only from the last candle
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -48,6 +48,10 @@ def fetch_bars(symbol: str, timeframe: str, start: datetime, end: datetime | Non
             break
         params["page_token"] = token
 
+    return _candles(raw, timeframe)
+
+
+def _candles(raw: list[dict], timeframe: str) -> list[Candle]:
     now = datetime.now(timezone.utc)
     length = timeframe_length(timeframe)
     candles = []
@@ -57,3 +61,31 @@ def fetch_bars(symbol: str, timeframe: str, start: datetime, end: datetime | Non
         closes_at = opened + length if length < timedelta(days=1) else opened + length - timedelta(hours=4)
         candles.append(Candle(b["t"], b["o"], b["h"], b["l"], b["c"], closed=closes_at <= now))
     return candles
+
+
+MULTI_URL = "https://data.alpaca.markets/v2/stocks/bars"
+
+
+def fetch_bars_multi(symbols: list[str], timeframe: str, start: datetime, end: datetime | None = None,
+                     feed: str = "iex") -> dict[str, list[Candle]]:
+    """Bars for many symbols in as few requests as possible (one per page of 10,000 bars)."""
+    headers = {
+        "APCA-API-KEY-ID": os.environ["ALPACA_API_KEY"],
+        "APCA-API-SECRET-KEY": os.environ["ALPACA_SECRET_KEY"],
+    }
+    params = {"symbols": ",".join(symbols), "timeframe": timeframe, "start": start.isoformat(), "limit": 10000,
+              "feed": feed, "adjustment": "all"}
+    if end is not None:
+        params["end"] = end.isoformat()
+    raw: dict[str, list[dict]] = {s: [] for s in symbols}
+    while True:
+        url = MULTI_URL + "?" + urllib.parse.urlencode(params)
+        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=60) as r:
+            payload = json.load(r)
+        for sym, bars in (payload.get("bars") or {}).items():
+            raw.setdefault(sym, []).extend(bars)
+        token = payload.get("next_page_token")
+        if not token:
+            break
+        params["page_token"] = token
+    return {sym: _candles(bars, timeframe) for sym, bars in raw.items()}
