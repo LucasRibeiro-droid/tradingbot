@@ -26,3 +26,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-23T18:38 | AMZN | long | none | 0.873 | 17.12 | [page](trades/2026-10-23_1444_AMZN.md) | tjr_m2_1m / tjr_ladder |
 | 2026-10-23T18:39 | GOOGL | short | with | 1.239 | 10.9 | [page](trades/2026-10-23_1750_GOOGL.md) | tjr_m2_1m / ladder_0.5_1_2R |
 | 2026-10-23T19:08 | SNDK | short | with | 1.411 | 222.18 | [page](trades/2026-10-23_1620_SNDK.md) | tjr_m3_5m / tjr_ladder |
+| 2026-10-23T19:15 | GOOGL | long | against | 0.207 | 2.42 | [page](trades/2026-10-23_1908_GOOGL.md) | tjr_m1_1m / ladder_0.5_1_2R |

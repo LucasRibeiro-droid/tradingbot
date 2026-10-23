@@ -1470,8 +1470,47 @@
    ],
    "entry_fill": 321.849,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1908_GOOGL.md",
+   "strategy": "tjr_m1_1m",
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": ""
+  },
+  {
+   "symbol": "SNDK",
+   "setup_t": "2026-10-23T19:14:00Z",
+   "direction": 1,
+   "planned_entry": 1247.96,
+   "stop": 1244.05,
+   "targets": [
+    1249.91,
+    1251.87,
+    1255.78
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-SNDK-1914-0",
+     "order_id": "12046bdb-fa67-4be1-9675-80eb0235eac3",
+     "qty": 3,
+     "target": 1249.91
+    },
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-SNDK-1914-1",
+     "order_id": "80f31494-7450-4fbd-9520-a891cab106db",
+     "qty": 2,
+     "target": 1251.87
+    },
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-SNDK-1914-2",
+     "order_id": "1402df66-6728-4d84-bdfe-66904327a261",
+     "qty": 2,
+     "target": 1255.78
+    }
+   ],
+   "entry_fill": 1248.56,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1914_SNDK.md",
    "strategy": "tjr_m1_1m",
    "exit_name": "ladder_0.5_1_2R",
    "expires_at": ""
@@ -1899,6 +1938,11 @@
    "INTC",
    "2026-10-23T18:49:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "INTC",
+   "2026-10-23T19:15:00Z",
+   "tjr_m1_1m"
   ],
   [
    "IWM",
@@ -2599,6 +2643,11 @@
    "SNDK",
    "2026-10-23T18:42:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "SNDK",
+   "2026-10-23T19:14:00Z",
+   "tjr_m1_1m"
   ],
   [
    "SOXX",
