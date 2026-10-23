@@ -512,7 +512,7 @@
    ],
    "entry_fill": 1292.6771430000001,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_SNDK.md",
    "strategy": "orb30",
    "exit_name": "ladder_1_2_3R",
@@ -1023,6 +1023,11 @@
    "MU",
    "2026-10-23T14:30:00Z",
    "orb30"
+  ],
+  [
+   "MU",
+   "2026-10-23T15:02:00Z",
+   "tjr_m3_1m"
   ],
   [
    "NBIS",
