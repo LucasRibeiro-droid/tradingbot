@@ -1319,6 +1319,45 @@
    "strategy": "tjr_m1_1m",
    "exit_name": "ladder_0.5_1_2R",
    "expires_at": ""
+  },
+  {
+   "symbol": "AMZN",
+   "setup_t": "2026-10-23T18:48:00Z",
+   "direction": 1,
+   "planned_entry": 248.27,
+   "stop": 248.01,
+   "targets": [
+    249.83,
+    250,
+    250.4
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-AMZN-1848-0",
+     "order_id": "4c95d57f-cab5-4362-9a6c-07f4505490a1",
+     "qty": 13,
+     "target": 249.83
+    },
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-AMZN-1848-1",
+     "order_id": "10ce3817-12aa-44cc-9fb5-3b7c44962605",
+     "qty": 13,
+     "target": 250
+    },
+    {
+     "client_id": "tjr_m1_1m-2026-10-23-AMZN-1848-2",
+     "order_id": "d14b3ba6-b09c-42f9-afdf-1a8ef84f993d",
+     "qty": 13,
+     "target": 250.4
+    }
+   ],
+   "entry_fill": 248.2653846666667,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1848_AMZN.md",
+   "strategy": "tjr_m1_1m",
+   "exit_name": "tjr_ladder",
+   "expires_at": ""
   }
  ],
  "traded_symbols": [
@@ -1473,6 +1512,11 @@
    "AMZN",
    "2026-10-23T18:17:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "AMZN",
+   "2026-10-23T18:48:00Z",
+   "tjr_m1_1m"
   ],
   [
    "AVGO",
@@ -1708,6 +1752,11 @@
    "INTC",
    "2026-10-23T18:36:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "INTC",
+   "2026-10-23T18:49:00Z",
+   "tjr_m2_1m"
   ],
   [
    "IWM",
