@@ -1158,7 +1158,7 @@
    ],
    "entry_fill": 515.9552631578948,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1658_AMD.md",
    "strategy": "tjr_m1_1m",
    "exit_name": "tjr_ladder",
