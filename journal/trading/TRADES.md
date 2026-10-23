@@ -18,3 +18,5 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-23T15:36 | AMD | long | against | 0.073 | 1.63 | [page](trades/2026-10-23_1527_AMD.md) | tjr_m2_1m / ladder_0.5_1_2R |
 | 2026-10-23T15:56 | AMD | long | against | 0.27 | 10.04 | [page](trades/2026-10-23_1547_AMD.md) | tjr_m1_1m / ladder_0.5_1_2R |
 | 2026-10-23T17:13 | AMD | long | against | -1.167 | -16.08 | [page](trades/2026-10-23_1658_AMD.md) | tjr_m1_1m / tjr_ladder |
+| 2026-10-23T17:32 | GOOGL | long | n/a | -1.026 | -58.5 | [page](trades/2026-10-23_1400_GOOGL.md) | orb30 / 2R |
+| 2026-10-23T17:33 | GOOG | long | n/a | -1.023 | -62.41 | [page](trades/2026-10-23_1400_GOOG.md) | orb30 / ladder_1_2_3R |
