@@ -139,3 +139,5 @@
 {"type": "entry_filled", "t": "2026-10-23T19:19:37+00:00", "symbol": "GOOGL", "avg_price": 321.69, "slippage": -0.01}
 {"type": "entry_filled", "t": "2026-10-23T19:19:38+00:00", "symbol": "GOOG", "avg_price": 318.579, "slippage": -0.009}
 {"type": "stop_to_break_even", "t": "2026-10-23T19:23:33+00:00", "symbol": "GOOGL", "stop": 321.69}
+{"type": "exit", "t": "2026-10-23T19:27:27+00:00", "symbol": "NBIS", "setup_t": "2026-10-23T14:30:00Z", "entry": 162.2065572622951, "stop": 159.32, "targets": [166.29, 169.78, 173.26], "exits": [[159.359524, 21.0, "stop"], [159.37, 20.0, "stop"], [159.37, 20.0, "stop"]], "qty": 61.0, "pnl": -173.25, "r": -0.984, "be_moved": false, "strategy": "orb30", "exit_name": "ladder_1_2_3R"}
+{"type": "exit", "t": "2026-10-23T19:27:32+00:00", "symbol": "AMD", "setup_t": "2026-10-23T19:18:00Z", "entry": 517.27, "stop": 516.3, "targets": [521.71, 523.7, 529.64], "exits": [[516.24, 7.0, "stop"], [516.24, 6.0, "stop"], [516.24, 6.0, "stop"]], "qty": 19.0, "pnl": -19.57, "r": -1.062, "be_moved": false, "strategy": "tjr_m3_1m", "exit_name": "tjr_ladder"}

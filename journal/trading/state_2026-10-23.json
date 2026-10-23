@@ -810,7 +810,7 @@
    ],
    "entry_fill": 162.2065572622951,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_NBIS.md",
    "strategy": "orb30",
    "exit_name": "ladder_1_2_3R",
@@ -1548,7 +1548,7 @@
    ],
    "entry_fill": 517.27,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1918_AMD.md",
    "strategy": "tjr_m3_1m",
    "exit_name": "tjr_ladder",
@@ -1693,6 +1693,11 @@
    "tjr_m1_1m"
   ],
   [
+   "AAPL",
+   "2026-10-23T19:25:00Z",
+   "tjr_m2_1m"
+  ],
+  [
    "AMD",
    "2026-10-23T14:57:00Z",
    "tjr_m1_1m"
@@ -1741,6 +1746,11 @@
    "AMD",
    "2026-10-23T19:18:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "AMD",
+   "2026-10-23T19:25:00Z",
+   "tjr_m2_1m"
   ],
   [
    "AMZN",
@@ -2736,6 +2746,11 @@
    "SMH",
    "2026-10-23T19:11:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "SMH",
+   "2026-10-23T19:25:00Z",
+   "tjr_m1_1m"
   ],
   [
    "SNDK",
