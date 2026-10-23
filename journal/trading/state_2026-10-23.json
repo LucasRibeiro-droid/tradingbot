@@ -75,16 +75,188 @@
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1345_NVDA.md",
    "strategy": "tjr_m1",
    "exit_name": "ladder_0.5_1_2R"
+  },
+  {
+   "symbol": "AAPL",
+   "setup_t": "2026-10-23T14:00:00Z",
+   "direction": -1,
+   "planned_entry": 348.32,
+   "stop": 351.75,
+   "targets": [
+    342.29,
+    338.895,
+    338.71
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-23-AAPL-1400-0",
+     "order_id": "9baca53b-5833-4e7a-9983-ed03b8841b35",
+     "qty": 10,
+     "target": 342.29
+    },
+    {
+     "client_id": "tjr-2026-10-23-AAPL-1400-1",
+     "order_id": "b019de16-a25e-48ab-af80-ecaf57438bf2",
+     "qty": 9,
+     "target": 338.895
+    },
+    {
+     "client_id": "tjr-2026-10-23-AAPL-1400-2",
+     "order_id": "f8f803ba-4107-4581-b2bf-0108aee5597e",
+     "qty": 9,
+     "target": 338.71
+    }
+   ],
+   "entry_fill": 348.32750010714284,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_AAPL.md",
+   "strategy": "tjr_m1",
+   "exit_name": "tjr_ladder"
+  },
+  {
+   "symbol": "MSFT",
+   "setup_t": "2026-10-23T14:00:00Z",
+   "direction": 1,
+   "planned_entry": 523.59,
+   "stop": 515.69,
+   "targets": [
+    533.28,
+    534.14,
+    534.745
+   ],
+   "parts": [
+    {
+     "client_id": "tjr-2026-10-23-MSFT-1400-0",
+     "order_id": "5ceeeeaf-6f4a-4b5b-b50c-7da800d54dfc",
+     "qty": 7,
+     "target": 533.28
+    },
+    {
+     "client_id": "tjr-2026-10-23-MSFT-1400-1",
+     "order_id": "cf86b347-f7e8-4dd5-a254-b0b13658d349",
+     "qty": 6,
+     "target": 534.14
+    },
+    {
+     "client_id": "tjr-2026-10-23-MSFT-1400-2",
+     "order_id": "b2ccca27-c2f7-4144-b630-d2fded0d9aa9",
+     "qty": 6,
+     "target": 534.745
+    }
+   ],
+   "entry_fill": 522.82,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_MSFT.md",
+   "strategy": "tjr_m1",
+   "exit_name": "tjr_ladder"
+  },
+  {
+   "symbol": "GOOGL",
+   "setup_t": "2026-10-23T14:00:00Z",
+   "direction": 1,
+   "planned_entry": 323.875,
+   "stop": 321.94,
+   "targets": [
+    327.75
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-GOOGL-1400-0",
+     "order_id": "3c9f89ba-1980-4772-bf8d-9a7291f20b64",
+     "qty": 30,
+     "target": 327.75
+    }
+   ],
+   "entry_fill": 323.84,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_GOOGL.md",
+   "strategy": "orb30",
+   "exit_name": "2R"
+  },
+  {
+   "symbol": "GOOG",
+   "setup_t": "2026-10-23T14:00:00Z",
+   "direction": 1,
+   "planned_entry": 320.71,
+   "stop": 318.71,
+   "targets": [
+    322.71,
+    324.71,
+    326.71
+   ],
+   "parts": [
+    {
+     "client_id": "orb30-2026-10-23-GOOG-1400-0",
+     "order_id": "d8a9dcba-4c9d-4ba9-ab74-9fcc126a0afd",
+     "qty": 11,
+     "target": 322.71
+    },
+    {
+     "client_id": "orb30-2026-10-23-GOOG-1400-1",
+     "order_id": "cb0a38ae-8340-4dc4-aaf2-5759fe90085a",
+     "qty": 10,
+     "target": 324.71
+    },
+    {
+     "client_id": "orb30-2026-10-23-GOOG-1400-2",
+     "order_id": "a814a4c2-49d6-4564-bcf3-d740adef195e",
+     "qty": 10,
+     "target": 326.71
+    }
+   ],
+   "entry_fill": 320.6770967741936,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1400_GOOG.md",
+   "strategy": "orb30",
+   "exit_name": "ladder_1_2_3R"
   }
  ],
  "traded_symbols": [
+  "AAPL",
+  "GOOG",
+  "GOOGL",
+  "MSFT",
   "NVDA",
   "QQQ"
  ],
  "seen": [
   [
+   "AAPL",
+   "2026-10-23T14:00:00Z",
+   "orb30"
+  ],
+  [
+   "AAPL",
+   "2026-10-23T14:00:00Z",
+   "tjr_m1"
+  ],
+  [
    "AMZN",
    "2026-10-22T19:45:00Z",
+   "tjr_m1"
+  ],
+  [
+   "GOOG",
+   "2026-10-23T14:00:00Z",
+   "orb30"
+  ],
+  [
+   "GOOGL",
+   "2026-10-23T14:00:00Z",
+   "orb30"
+  ],
+  [
+   "MSFT",
+   "2026-10-23T14:00:00Z",
+   "orb30"
+  ],
+  [
+   "MSFT",
+   "2026-10-23T14:00:00Z",
    "tjr_m1"
   ],
   [
@@ -96,6 +268,11 @@
    "QQQ",
    "2026-10-23T13:45:00Z",
    "tjr_m1"
+  ],
+  [
+   "QQQ",
+   "2026-10-23T14:00:00Z",
+   "orb30"
   ]
  ]
 }
