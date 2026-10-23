@@ -732,7 +732,7 @@
    ],
    "entry_fill": 483.3914999500001,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1430_SOXX.md",
    "strategy": "orb30",
    "exit_name": "ladder_1_2_3R",
@@ -2189,6 +2189,11 @@
   [
    "IWM",
    "2026-10-23T19:23:00Z",
+   "tjr_m2_1m"
+  ],
+  [
+   "IWM",
+   "2026-10-23T19:51:00Z",
    "tjr_m2_1m"
   ],
   [
