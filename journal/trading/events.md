@@ -33,3 +33,8 @@
 | 2026-10-22 15:19 | session start (paper): equity 100121.47, buying power 400485.88, shorting on |  |  |
 | 2026-10-22 19:55 | session end | 3 trades, 6 instruments | review to write |
 | 2026-10-23 13:22 | session start (paper): equity 99835.19, buying power 399340.76, shorting on |  |  |
+| 2026-10-23 14:32 | session start (paper): equity 99792.73, buying power 281000.65, shorting on |  |  |
+| 2026-10-23 14:32 | position AMD 19 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-23 14:32 | position INTC 114 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-23 14:32 | position IWM -36 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-23 14:32 | position SPCX 67 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
