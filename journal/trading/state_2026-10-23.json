@@ -331,7 +331,7 @@
    ],
    "entry_fill": 518.64,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "",
    "strategy": "orb30",
    "exit_name": "unknown (adopted after a restart)",
@@ -938,7 +938,7 @@
    ],
    "entry_fill": 1281.577142857143,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1507_SNDK.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "tjr_ladder",
@@ -975,7 +975,7 @@
      "target": 277.27
     }
    ],
-   "entry_fill": null,
+   "entry_fill": 275.628571,
    "be_moved": false,
    "closed": false,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1515_IWM.md",
