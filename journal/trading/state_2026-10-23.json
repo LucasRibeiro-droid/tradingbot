@@ -1055,7 +1055,7 @@
    ],
    "entry_fill": 520.047894368421,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1547_AMD.md",
    "strategy": "tjr_m1_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -1431,6 +1431,11 @@
    "tjr_m1_1m"
   ],
   [
+   "PLTR",
+   "2026-10-23T15:55:00Z",
+   "tjr_m3_1m"
+  ],
+  [
    "QQQ",
    "2026-10-23T13:45:00Z",
    "tjr_m1"
@@ -1449,6 +1454,11 @@
    "QQQ",
    "2026-10-23T15:49:00Z",
    "tjr_m3_1m"
+  ],
+  [
+   "QQQ",
+   "2026-10-23T15:54:00Z",
+   "tjr_m1_1m"
   ],
   [
    "SMH",
