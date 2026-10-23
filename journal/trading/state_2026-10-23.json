@@ -1392,7 +1392,7 @@
    ],
    "entry_fill": null,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1856_AMD.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -1431,7 +1431,7 @@
    ],
    "entry_fill": 318.63,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1907_GOOG.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -1514,6 +1514,109 @@
    "strategy": "tjr_m1_1m",
    "exit_name": "ladder_0.5_1_2R",
    "expires_at": ""
+  },
+  {
+   "symbol": "AMD",
+   "setup_t": "2026-10-23T19:18:00Z",
+   "direction": 1,
+   "planned_entry": 517.07,
+   "stop": 516.3,
+   "targets": [
+    521.71,
+    523.7,
+    529.64
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-AMD-1918-0",
+     "order_id": "a171220c-c657-460d-8c80-c177f7da0027",
+     "qty": 7,
+     "target": 521.71
+    },
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-AMD-1918-1",
+     "order_id": "8d48c560-35e3-44d1-be47-ab21b097f0fd",
+     "qty": 6,
+     "target": 523.7
+    },
+    {
+     "client_id": "tjr_m3_1m-2026-10-23-AMD-1918-2",
+     "order_id": "3498f221-a2c8-4788-a08e-80d5856d0036",
+     "qty": 6,
+     "target": 529.64
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1918_AMD.md",
+   "strategy": "tjr_m3_1m",
+   "exit_name": "tjr_ladder",
+   "expires_at": ""
+  },
+  {
+   "symbol": "GOOGL",
+   "setup_t": "2026-10-23T19:18:00Z",
+   "direction": -1,
+   "planned_entry": 321.68,
+   "stop": 322.16,
+   "targets": [
+    321.44,
+    321.2,
+    320.72
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-GOOGL-1918-0",
+     "order_id": "ad82b8e2-66f3-4bac-ab0f-87f98b83846e",
+     "qty": 10,
+     "target": 321.44
+    },
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-GOOGL-1918-1",
+     "order_id": "9b8e2ff6-f8cb-484f-b851-fcb1c698afcf",
+     "qty": 10,
+     "target": 321.2
+    },
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-GOOGL-1918-2",
+     "order_id": "c8c78142-0ac7-434b-ae57-dee94ded43de",
+     "qty": 10,
+     "target": 320.72
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1918_GOOGL.md",
+   "strategy": "tjr_m2_1m",
+   "exit_name": "ladder_0.5_1_2R",
+   "expires_at": "2026-10-23T19:39:21+00:00"
+  },
+  {
+   "symbol": "GOOG",
+   "setup_t": "2026-10-23T19:18:00Z",
+   "direction": -1,
+   "planned_entry": 318.57,
+   "stop": 319.07,
+   "targets": [
+    317.04
+   ],
+   "parts": [
+    {
+     "client_id": "tjr_m2_1m-2026-10-23-GOOG-1918-0",
+     "order_id": "5c12108c-701c-428a-aac9-1e8caba74e5a",
+     "qty": 31,
+     "target": 317.04
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1918_GOOG.md",
+   "strategy": "tjr_m2_1m",
+   "exit_name": "tjr_ladder",
+   "expires_at": "2026-10-23T19:39:23+00:00"
   }
  ],
  "traded_symbols": [
@@ -1633,6 +1736,11 @@
    "AMD",
    "2026-10-23T18:56:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "AMD",
+   "2026-10-23T19:18:00Z",
+   "tjr_m3_1m"
   ],
   [
    "AMZN",
@@ -1820,6 +1928,11 @@
    "tjr_m2_1m"
   ],
   [
+   "GOOG",
+   "2026-10-23T19:18:00Z",
+   "tjr_m2_1m"
+  ],
+  [
    "GOOGL",
    "2026-10-23T14:00:00Z",
    "orb30"
@@ -1878,6 +1991,11 @@
    "GOOGL",
    "2026-10-23T19:08:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "GOOGL",
+   "2026-10-23T19:18:00Z",
+   "tjr_m2_1m"
   ],
   [
    "INTC",
