@@ -33,3 +33,5 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-23T19:29 | AVGO | long | n/a | -0.997 | -92.7 | [page](trades/2026-10-23_1430_AVGO.md) | orb30 / 2R |
 | 2026-10-23T19:30 | SPCX | short | none | -1.163 | -23.37 | [page](trades/2026-10-23_1927_SPCX.md) | tjr_m3_1m / ladder_0.5_1_2R |
 | 2026-10-23T19:32 | SNDK | long | against | -1.143 | -36.08 | [page](trades/2026-10-23_1914_SNDK.md) | tjr_m1_1m / ladder_0.5_1_2R |
+| 2026-10-23T19:41 | AMZN | long | none | -0.929 | -9.25 | [page](trades/2026-10-23_1848_AMZN.md) | tjr_m1_1m / tjr_ladder |
+| 2026-10-23T19:41 | GOOGL | short | with | 1.214 | 17.12 | [page](trades/2026-10-23_1918_GOOGL.md) | tjr_m2_1m / ladder_0.5_1_2R |

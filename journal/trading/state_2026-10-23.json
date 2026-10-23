@@ -1353,7 +1353,7 @@
    ],
    "entry_fill": 248.2653846666667,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1848_AMZN.md",
    "strategy": "tjr_m1_1m",
    "exit_name": "tjr_ladder",
@@ -1587,7 +1587,7 @@
    ],
    "entry_fill": 321.69,
    "be_moved": true,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1918_GOOGL.md",
    "strategy": "tjr_m2_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -3035,6 +3035,11 @@
    "TSM",
    "2026-10-23T19:19:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "TSM",
+   "2026-10-23T19:35:00Z",
+   "tjr_m2_5m"
   ],
   [
    "TTMI",
