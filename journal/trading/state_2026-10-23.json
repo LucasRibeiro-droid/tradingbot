@@ -1651,7 +1651,7 @@
    ],
    "entry_fill": 146.57,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "/home/runner/work/tradingbot/tradingbot/journal/trading/trades/2026-10-23_1927_SPCX.md",
    "strategy": "tjr_m3_1m",
    "exit_name": "ladder_0.5_1_2R",
@@ -1735,6 +1735,11 @@
    "AAPL",
    "2026-10-23T19:25:00Z",
    "tjr_m2_1m"
+  ],
+  [
+   "AAPL",
+   "2026-10-23T19:30:00Z",
+   "tjr_m1_1m"
   ],
   [
    "AMD",
@@ -1845,6 +1850,11 @@
    "AMZN",
    "2026-10-23T18:48:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "AMZN",
+   "2026-10-23T19:30:00Z",
+   "tjr_m2_1m"
   ],
   [
    "AVGO",
@@ -2612,6 +2622,11 @@
    "tjr_m2_1m"
   ],
   [
+   "ORCL",
+   "2026-10-23T19:15:00Z",
+   "tjr_m1_15m"
+  ],
+  [
    "PLTR",
    "2026-10-23T14:30:00Z",
    "orb30"
@@ -2665,6 +2680,11 @@
    "PLTR",
    "2026-10-23T18:58:00Z",
    "tjr_m1_1m"
+  ],
+  [
+   "PLTR",
+   "2026-10-23T19:15:00Z",
+   "tjr_m1_15m"
   ],
   [
    "PLTR",

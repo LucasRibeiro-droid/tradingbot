@@ -31,3 +31,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-23T19:27 | NBIS | long | n/a | -0.984 | -173.25 | [page](trades/2026-10-23_1430_NBIS.md) | orb30 / ladder_1_2_3R |
 | 2026-10-23T19:27 | AMD | long | against | -1.062 | -19.57 | [page](trades/2026-10-23_1918_AMD.md) | tjr_m3_1m / tjr_ladder |
 | 2026-10-23T19:29 | AVGO | long | n/a | -0.997 | -92.7 | [page](trades/2026-10-23_1430_AVGO.md) | orb30 / 2R |
+| 2026-10-23T19:30 | SPCX | short | none | -1.163 | -23.37 | [page](trades/2026-10-23_1927_SPCX.md) | tjr_m3_1m / ladder_0.5_1_2R |
