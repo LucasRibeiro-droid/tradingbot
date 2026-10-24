@@ -3,7 +3,9 @@
 # - Fires every 15 minutes on weekdays; `--only-in-session` makes a run exit at once unless the
 #   market opens within 45 minutes or is open before the flatten time.
 # - One session at a time (concurrency group). A runner job is capped at 6 hours and the day is
-#   6.5, so the bot hands off after 345 minutes; the next queued run resumes from the saved state.
+#   6.5, so the bot hands off after 345 minutes. About 10 minutes before that, the run queues its
+#   own successor (GitHub's schedule is too unreliable to count on), which starts as soon as this
+#   one ends and resumes from the saved state.
 # - Every 2 minutes the journal (state, setups, trades, events) is pushed to TRADING_BRANCH, so a
 #   restart anywhere resumes from it. Stops and take profits are gtc brackets held by Alpaca, so a
 #   position stays protected between runs.
@@ -23,6 +25,7 @@ concurrency:
 
 permissions:
   contents: write
+  actions: write  # to queue the next run before the hand-off
 
 env:
   TRADING_BRANCH: claude/dreamy-euler-tv1yn1
@@ -48,6 +51,7 @@ jobs:
         env:
           ALPACA_API_KEY: ${{ secrets.ALPACA_API_KEY }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "trading-session"
           git config user.email "trading-session@users.noreply.github.com"
@@ -67,7 +71,13 @@ jobs:
           }
           python -u -m tradingbot.live.run --only-in-session --max-minutes 345 &
           bot=$!
-          while kill -0 "$bot" 2>/dev/null; do sleep 120; sync; done
+          relayed=0
+          while kill -0 "$bot" 2>/dev/null; do
+            sleep 120; sync
+            if [ "$relayed" = 0 ] && [ "$SECONDS" -gt $((335 * 60)) ]; then
+              gh workflow run trading-session.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" && relayed=1
+            fi
+          done
           wait "$bot"; status=$?
           sync
           exit $status
