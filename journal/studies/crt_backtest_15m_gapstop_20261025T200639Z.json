@@ -1,0 +1,107 @@
+{
+ "params": {
+  "symbols": [
+   "BTC/USD"
+  ],
+  "days_per_period": 180,
+  "stop": "gap",
+  "entry_timeframe_min": 15,
+  "equity": 100000.0,
+  "risk_pct": 1.0,
+  "position_pct": 10.0,
+  "run_at": "2026-10-25T20:06:38+00:00"
+ },
+ "all": {
+  "trades": 48,
+  "win_rate": 0.188,
+  "avg_win_usd": 85.1,
+  "avg_loss_usd": -59.63,
+  "expectancy_r": -1.353,
+  "expectancy_r_gross": 0.05,
+  "total_pnl_usd": -1559.49,
+  "total_costs_usd": 1920.81,
+  "max_drawdown_usd": -1584.15,
+  "break_even_trades": 10,
+  "full_wins": 12,
+  "full_losses": 26
+ },
+ "recent": {
+  "trades": 26,
+  "win_rate": 0.192,
+  "avg_win_usd": 45.31,
+  "avg_loss_usd": -61.31,
+  "expectancy_r": -1.716,
+  "expectancy_r_gross": -0.161,
+  "total_pnl_usd": -1060.89,
+  "total_costs_usd": 1040.47,
+  "max_drawdown_usd": -1060.89,
+  "break_even_trades": 4,
+  "full_wins": 6,
+  "full_losses": 16
+ },
+ "earlier": {
+  "trades": 22,
+  "win_rate": 0.182,
+  "avg_win_usd": 134.85,
+  "avg_loss_usd": -57.67,
+  "expectancy_r": -0.926,
+  "expectancy_r_gross": 0.299,
+  "total_pnl_usd": -498.6,
+  "total_costs_usd": 880.34,
+  "max_drawdown_usd": -523.26,
+  "break_even_trades": 6,
+  "full_wins": 6,
+  "full_losses": 10
+ },
+ "long": {
+  "trades": 24,
+  "win_rate": 0.25,
+  "avg_win_usd": 88.77,
+  "avg_loss_usd": -62.02,
+  "expectancy_r": -1.278,
+  "expectancy_r_gross": 0.16,
+  "total_pnl_usd": -583.79,
+  "total_costs_usd": 960.78,
+  "max_drawdown_usd": -619.52,
+  "break_even_trades": 3,
+  "full_wins": 7,
+  "full_losses": 14
+ },
+ "short": {
+  "trades": 24,
+  "win_rate": 0.125,
+  "avg_win_usd": 77.78,
+  "avg_loss_usd": -57.57,
+  "expectancy_r": -1.429,
+  "expectancy_r_gross": -0.06,
+  "total_pnl_usd": -975.7,
+  "total_costs_usd": 960.03,
+  "max_drawdown_usd": -1133.12,
+  "break_even_trades": 7,
+  "full_wins": 5,
+  "full_losses": 12
+ },
+ "by_symbol": {
+  "BTC/USD": {
+   "trades": 48,
+   "win_rate": 0.188,
+   "avg_win_usd": 85.1,
+   "avg_loss_usd": -59.63,
+   "expectancy_r": -1.353,
+   "expectancy_r_gross": 0.05,
+   "total_pnl_usd": -1559.49,
+   "total_costs_usd": 1920.81,
+   "max_drawdown_usd": -1584.15,
+   "break_even_trades": 10,
+   "full_wins": 12,
+   "full_losses": 26
+  }
+ },
+ "orders_not_filled": 42,
+ "setups_skipped": {
+  "invalid (closed beyond the range)": 177,
+  "no gap after the sweep": 170,
+  "no room for 1:1": 6,
+  "daily level in the way": 12
+ }
+}

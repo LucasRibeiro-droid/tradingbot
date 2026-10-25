@@ -93,6 +93,24 @@ def five_minute(symbol: str, days: int) -> list[Candle]:
     return bars
 
 
+def aggregate(bars: list[Candle], minutes: int, crypto: bool) -> list[Candle]:
+    """Longer bars from 5-minute bars (stocks: buckets from 09:30 ET; crypto: clock-aligned)."""
+    if minutes == 5:
+        return bars
+    out, key_prev = [], None
+    for c in bars:
+        t = _ts(c.t)
+        n = t if crypto else t.astimezone(NY)
+        m = n.hour * 60 + n.minute - (0 if crypto else 570)
+        key = (n.date(), m // minutes)
+        if key != key_prev:
+            out.append(Candle(c.t, c.o, c.h, c.l, c.c)); key_prev = key
+        else:
+            last = out[-1]
+            out[-1] = Candle(last.t, last.o, max(last.h, c.h), min(last.l, c.l), c.c)
+    return out
+
+
 def hourly(bars: list[Candle], crypto: bool) -> tuple[list[Candle], list[int]]:
     """1-hour candles built from 5-minute bars, and the index of each one's first 5-minute bar.
     Stocks: 09:30-10:30 ... 15:30-16:00 ET; crypto: clock hours."""
@@ -279,14 +297,14 @@ def summarize(trades: list[dict]) -> dict:
             "full_losses": sum(1 for t in trades if t["legs"][0][2].startswith("stop"))}
 
 
-def run(symbols: list[str], days: int, stop_mode: str = "gap") -> dict:
+def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: int = 5) -> dict:
     now = datetime.now(timezone.utc)
     split = now - timedelta(days=days)
     trades, skipped, unfilled = [], {}, 0
     for sym in symbols:
         crypto = "/" in sym
         try:
-            bars = five_minute(sym, 2 * days + 30)
+            bars = aggregate(five_minute(sym, 2 * days + 30), entry_minutes, crypto)
         except Exception as e:
             print(f"{sym}: data error {e}", flush=True)
             continue
@@ -307,7 +325,7 @@ def run(symbols: list[str], days: int, stop_mode: str = "gap") -> dict:
                 trades.append(t); n += 1
         print(f"{sym}: {len(bars)} bars, {len(orders)} orders, {n} trades", flush=True)
     result = {
-        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "equity": EQUITY, "risk_pct": RISK_PCT,
+        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "entry_timeframe_min": entry_minutes, "equity": EQUITY, "risk_pct": RISK_PCT,
                    "position_pct": POSITION_PCT, "run_at": now.isoformat(timespec="seconds")},
         "all": summarize(trades),
         "recent": summarize([t for t in trades if t["period"] == "recent"]),
@@ -326,10 +344,12 @@ def main() -> None:
     ap.add_argument("--symbols", required=True)
     ap.add_argument("--stop", choices=["gap", "sweep"], default="gap",
                     help="gap: below the fair value gap's first candle; sweep: below the sweep candle's low")
+    ap.add_argument("--entry-minutes", type=int, choices=[5, 15], default=5,
+                    help="the lower timeframe for the fair value gap entry (the video: 5 or 15)")
     args = ap.parse_args()
-    result, trades = run(args.symbols.split(","), args.days, args.stop)
+    result, trades = run(args.symbols.split(","), args.days, args.stop, args.entry_minutes)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = STUDIES / f"crt_backtest_{args.stop}stop_{stamp}.json"
+    out = STUDIES / f"crt_backtest_{args.entry_minutes}m_{args.stop}stop_{stamp}.json"
     with gzip.open(out.with_suffix(".trades.jsonl.gz"), "wt") as f:
         f.writelines(json.dumps(t) + "\n" for t in trades)
     out.write_text(json.dumps(result, indent=1))
