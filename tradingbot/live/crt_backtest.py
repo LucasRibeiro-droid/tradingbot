@@ -217,7 +217,8 @@ def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap"
             if (target - tp1) * d <= 0:
                 skipped["no room for 1:1"] += 1
                 continue
-            day = (_ts(s.t) if crypto else _ts(s.t).astimezone(NY)).date()
+            third = H[i + 1]  # the previous day's levels as seen from the entry candle
+            day = (_ts(third.t) if crypto else _ts(third.t).astimezone(NY)).date()
             ph, pl = prev_day.get(day, (None, None))
             if any(lv is not None and min(entry, tp1) < lv < max(entry, tp1) for lv in (ph, pl)):
                 skipped["daily level in the way"] += 1
@@ -347,7 +348,8 @@ def main() -> None:
                     help="gap: below the fair value gap's first candle; sweep: below the sweep candle's low")
     ap.add_argument("--entry-minutes", type=int, choices=[5, 15], default=5,
                     help="the lower timeframe for the fair value gap entry (the video: 5 or 15)")
-    ap.add_argument("--range-hours", type=int, choices=[1, 4], default=1, help="the candle range timeframe (1-hour or 4-hour)")
+    ap.add_argument("--range-hours", type=int, choices=[1, 4, 24], default=1,
+                    help="the candle range timeframe: 1-hour, 4-hour, or 24 = daily (one candle per session)")
     args = ap.parse_args()
     result, trades = run(args.symbols.split(","), args.days, args.stop, args.entry_minutes, args.range_hours)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
