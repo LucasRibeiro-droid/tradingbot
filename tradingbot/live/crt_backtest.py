@@ -13,7 +13,8 @@ On the 5-minute chart (the entry):
      during the third 1-hour candle adds its own order; orders expire at the end of that candle
      [Bot: the video calls the third candle "the entry"];
   6. entry at the gap's near edge; stop beyond the gap: below the low of the gap's first candle
-     [Bot: the video's stop boxes sit 1-2 pips below the gap];
+     [Bot: the video's stop boxes sit 1-2 pips below the gap]; or, with ``--stop sweep``, below
+     the sweep candle's low (above its high for shorts) (owner, 2026-10-25);
   7. half closed at 1:1; the other half at "a strong level ahead": the CRH for longs (CRL for
      shorts), or the impulse leg's extreme if that is not beyond 1:1 [Bot: 2 of the video's 3
      examples target the CRH exactly]; the stop is not moved (a 1:1 then stop is break even);
@@ -132,8 +133,10 @@ class Order:
     crl: float
 
 
-def setups(symbol: str, bars: list[Candle], crypto: bool) -> tuple[list[Order], dict]:
-    """Every order the strategy would place, and why candidate setups were skipped."""
+def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap") -> tuple[list[Order], dict]:
+    """Every order the strategy would place, and why candidate setups were skipped.
+    ``stop_mode``: "gap" = below the gap's first candle; "sweep" = below the sweep candle's low
+    (above its high for shorts)."""
     H, first = hourly(bars, crypto)
     states = trend_series(H)
     rng = ranges(H, states)
@@ -181,7 +184,10 @@ def setups(symbol: str, bars: list[Candle], crypto: bool) -> tuple[list[Order], 
         for g in chosen:
             entry = g.top if d == 1 else g.bottom
             c1 = bars[g.index - 1]
-            stop = c1.l if d == 1 else c1.h
+            if stop_mode == "sweep":
+                stop = s.l if d == 1 else s.h
+            else:
+                stop = c1.l if d == 1 else c1.h
             risk = (entry - stop) * d
             if risk <= 0:
                 continue
@@ -273,7 +279,7 @@ def summarize(trades: list[dict]) -> dict:
             "full_losses": sum(1 for t in trades if t["legs"][0][2].startswith("stop"))}
 
 
-def run(symbols: list[str], days: int) -> dict:
+def run(symbols: list[str], days: int, stop_mode: str = "gap") -> dict:
     now = datetime.now(timezone.utc)
     split = now - timedelta(days=days)
     trades, skipped, unfilled = [], {}, 0
@@ -284,7 +290,7 @@ def run(symbols: list[str], days: int) -> dict:
         except Exception as e:
             print(f"{sym}: data error {e}", flush=True)
             continue
-        orders, sk = setups(sym, bars, crypto)
+        orders, sk = setups(sym, bars, crypto, stop_mode)
         for k, v in sk.items():
             skipped[k] = skipped.get(k, 0) + v
         n = 0
@@ -301,7 +307,7 @@ def run(symbols: list[str], days: int) -> dict:
                 trades.append(t); n += 1
         print(f"{sym}: {len(bars)} bars, {len(orders)} orders, {n} trades", flush=True)
     result = {
-        "params": {"symbols": symbols, "days_per_period": days, "equity": EQUITY, "risk_pct": RISK_PCT,
+        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "equity": EQUITY, "risk_pct": RISK_PCT,
                    "position_pct": POSITION_PCT, "run_at": now.isoformat(timespec="seconds")},
         "all": summarize(trades),
         "recent": summarize([t for t in trades if t["period"] == "recent"]),
@@ -318,10 +324,12 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--days", type=int, default=180, help="days per period (recent, and the same before it)")
     ap.add_argument("--symbols", required=True)
+    ap.add_argument("--stop", choices=["gap", "sweep"], default="gap",
+                    help="gap: below the fair value gap's first candle; sweep: below the sweep candle's low")
     args = ap.parse_args()
-    result, trades = run(args.symbols.split(","), args.days)
+    result, trades = run(args.symbols.split(","), args.days, args.stop)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = STUDIES / f"crt_backtest_{stamp}.json"
+    out = STUDIES / f"crt_backtest_{args.stop}stop_{stamp}.json"
     with gzip.open(out.with_suffix(".trades.jsonl.gz"), "wt") as f:
         f.writelines(json.dumps(t) + "\n" for t in trades)
     out.write_text(json.dumps(result, indent=1))
