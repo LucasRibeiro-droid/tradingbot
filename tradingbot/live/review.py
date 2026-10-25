@@ -32,6 +32,8 @@ TIMEFRAME = {"1m": "1Min", "5m": "5Min", "15m": "15Min", "1h": "1Hour"}
 
 def timeframe_of(strategy: str) -> str:
     """The candles a playbook trades on (tjr_m<model>_<tf>; the breakout and old ids: 15-minute)."""
+    if strategy.startswith("crt"):
+        return "5Min"
     return TIMEFRAME.get(strategy.rsplit("_", 1)[-1], "15Min") if strategy.startswith("tjr_m") else "15Min"
 
 

@@ -29,5 +29,13 @@ class OwnerExits(unittest.TestCase):
         self.assertAlmostEqual(simulate(bars, self.order, 3)["r_gross"], -1.0, places=2)
 
 
+class LiveBuckets(unittest.TestCase):
+    def test_third_candle_ends_on_the_half_hour_and_at_the_close(self):
+        from tradingbot.live.crt_live import _bucket_end
+        self.assertEqual(_bucket_end("2026-10-26T15:05:00Z").isoformat(), "2026-10-26T15:30:00+00:00")  # 11:05 ET -> 11:30
+        self.assertEqual(_bucket_end("2026-10-26T13:30:00Z").isoformat(), "2026-10-26T14:30:00+00:00")  # 09:30 -> 10:30
+        self.assertEqual(_bucket_end("2026-10-26T19:55:00Z").isoformat(), "2026-10-26T20:00:00+00:00")  # last: 16:00
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -31,7 +31,15 @@ HYPOTHESES = {
     "ladder_0.5_1_2R": "H38: the setups rarely reach 1R intraday (lab median MFE ~0.35R), so near targets (0.5R, 1R, 2R; break even after the first) do better than TJR's far ladder.",
     "ladder_1_2_3R": "H40: thirds at 1R, 2R, 3R with break even after the first capture momentum days better than a single target.",
     "2R": "H40 (control): everything at 2R, or at the close.",
+    "crt_1h5m": "H57: the owner's CRT (1-hour setup, 5-minute fair value gap entry in the third candle) is profitable "
+                "live on liquid US stocks (owner 2026-10-25: the only strategy traded this week).",
+    "1:1 + 3R, fixed stop": "Owner's exit: half at 1:1, half at 3R, the stop fixed at the gap's middle candle until the end "
+                            "(3R lost the least of 2/3/4/5R in the backtest, H56).",
 }
+# The backtest behind the live CRT (H56: 180 + 180 days, 1h -> 5m, SIP data, costs 3 bps a fill).
+CRT_BACKTEST = ("Backtest (H56, 451 trades, 2 x 180 days): -0.56R per trade after costs, about 0R before costs, "
+                "26% winners at 3R (about -0.2R if only stop exits pay costs, since entries and targets are limit orders); so this trade is expected to lose a little on average, and any single trade is "
+                "close to a coin flip. Live tests whether the backtest's costs and fills hold.")
 
 
 def hypothesis(strategy: str) -> str:
@@ -132,7 +140,9 @@ def pre_trade(a: dict, exit_name: str) -> dict:
     strategy = a.get("strategy", "tjr_m1")
     p = a["plan"]
     lab = lab_expectation(strategy, exit_name)
-    if lab:
+    if strategy.startswith("crt"):
+        expected = CRT_BACKTEST
+    elif lab:
         parts = [f"{k.replace('_', ' ')}: {v['avg_r']:+.2f}R per trade, {v['win']:.0%} winners over {v['n']} trades"
                  for k, v in lab.items()]
         expected = "Lab (with costs): " + "; ".join(parts) + ". Any single trade is close to a coin flip around that."

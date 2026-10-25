@@ -74,10 +74,12 @@ class Restart(unittest.TestCase):
     def test_reconcile_counts_filled_symbols(self):
         from tradingbot.live.run import Session
         s = Session.__new__(Session)
-        s.dry_run, s.trades, s.traded_symbols = False, [], set()
+        from tradingbot.config import BASELINE
+        s.dry_run, s.trades, s.traded_symbols, s.config, s.today = False, [], set(), BASELINE, "2026-10-26"
         s.broker = type("B", (), {
-            "orders": lambda self, status, after: [{"symbol": "NVDA", "filled_qty": "77", "client_order_id": "tjr-x-0"},
-                                                   {"symbol": "AMD", "filled_qty": "0", "client_order_id": "tjr-y-0"},
+            "orders": lambda self, status, after: [{"symbol": "NVDA", "filled_qty": "77", "client_order_id": "tjr_m1_15m-2026-10-26-NVDA-1000-0", "status": "filled"},
+                                                   {"symbol": "AMD", "filled_qty": "0", "client_order_id": "tjr_m1_15m-2026-10-26-AMD-1000-0", "status": "canceled"},
+                                                   {"symbol": "TSLA", "filled_qty": "9", "client_order_id": "crt_1h5m-2026-10-23-TSLA-1405-0", "status": "filled"},
                                                    {"symbol": "MU", "filled_qty": "48", "client_order_id": "manual-close"}],
             "positions": lambda self: []})()
         s._reconcile_start()
@@ -176,6 +178,82 @@ class Adopt(unittest.TestCase):
         t = s.trades[0]
         self.assertEqual((t.symbol, t.direction, t.stop, t.setup_t, t.strategy), ("INTC", 1, 40.5, "2026-10-23T14:15:00Z", "orb30"))
         self.assertEqual(t.targets, [43.0, 44.0, 45.0])
+
+
+class CrtLive(unittest.TestCase):
+    """CRT trades: same-direction trades stack on a stock, the stop stays fixed after 1:1, and a
+    trade is recorded when its own legs sold every filled share (another may still hold the stock)."""
+
+    def _session(self, broker):
+        from tradingbot.config import BASELINE
+        from tradingbot.live import run
+        s = run.Session.__new__(run.Session)
+        s.config, s.dry_run, s.trades, s.traded_symbols, s.halted, s.failures = BASELINE, False, [], set(), False, 0
+        s.today, s.broker = "2026-10-26", broker
+        s._save_state = lambda: None
+        return s
+
+    def _assessment(self, direction="long"):
+        d = 1 if direction == "long" else -1
+        return {"symbol": "MU", "t": "2026-10-26T15:05:00Z", "strategy": "crt_1h5m", "timeframe": "5Min",
+                "plan": {"direction": direction, "entry": 100.0, "entry_type": "limit", "stop": 100.0 - d * 0.2,
+                         "expires_at": "2026-10-26T15:30:00+00:00", "take_profits": [100.0 + d * 0.2, 100.0 + d * 0.6],
+                         "invalidation": "x", "entry_condition": "x", "rr_first": 1.0, "rr_last": 3.0},
+                "context": {"bias_relation": "n/a"}, "setup": "x", "present": [], "conflicts": [], "decision": "APPROVED"}
+
+    def test_stacks_same_direction_and_refuses_the_other(self):
+        from unittest import mock
+        from tradingbot.live import run
+        placed = []
+        broker = type("B", (), {
+            "positions": lambda self: [{"symbol": "MU", "qty": "50"}],
+            "account": lambda self: {"equity": "100000", "buying_power": "200000"},
+            "bracket": lambda self, *a, **k: placed.append((a, k)) or {"id": f"o{len(placed)}"}})()
+        s = self._session(broker)
+        s.trades = [run.Trade("MU", "2026-10-26T15:00:00Z", 1, 99.0, 98.8, [99.2, 99.6], strategy="crt_1h5m")]
+        with mock.patch.object(run, "event", lambda *a, **k: None), mock.patch.object(run, "trade_page", lambda *a: run.ROOT / "x.md"), \
+                mock.patch.object(run, "_append", lambda *a: None):
+            a = self._assessment("long")
+            s._approve(a)
+            self.assertEqual(a["decision"], "APPROVED")
+            self.assertEqual(len(placed), 2)  # half at 1:1, half at 3R
+            self.assertEqual([k["limit_price"] for _, k in placed], [100.0, 100.0])
+            self.assertEqual(s.trades[-1].expires_at, "2026-10-26T15:30:00+00:00")
+            self.assertEqual(s.trades[-1].targets, [100.2, 100.6])
+            b = self._assessment("short")
+            b["t"] = "2026-10-26T15:10:00Z"
+            s._approve(b)
+            self.assertEqual(b["decision"], "REJECTED")
+        self.assertEqual(len(placed), 2)
+
+    def test_stop_stays_fixed_and_exit_recorded_from_own_legs(self):
+        from unittest import mock
+        from tradingbot.live import run
+        orders = {"o1": {"id": "o1", "status": "filled", "filled_qty": "25", "filled_avg_price": "100.0",
+                         "legs": [{"id": "l1", "type": "limit", "status": "filled", "filled_qty": "25", "filled_avg_price": "100.2"},
+                                  {"id": "s1", "type": "stop", "status": "canceled", "filled_qty": "0"}]},
+                  "o2": {"id": "o2", "status": "filled", "filled_qty": "25", "filled_avg_price": "100.0",
+                         "legs": [{"id": "l2", "type": "limit", "status": "new", "filled_qty": "0"},
+                                  {"id": "s2", "type": "stop", "status": "held", "filled_qty": "0"}]}}
+        moved = []
+        broker = type("B", (), {"order": lambda self, i: orders[i], "replace_stop": lambda self, *a: moved.append(a),
+                                "positions": lambda self: [{"symbol": "MU", "qty": "75"}]})()
+        s = self._session(broker)
+        t = run.Trade("MU", "2026-10-26T15:05:00Z", 1, 100.0, 99.8, [100.2, 100.6], strategy="crt_1h5m",
+                      parts=[{"order_id": "o1"}, {"order_id": "o2"}])
+        s.trades = [t]
+        recs = []
+        with mock.patch.object(run, "event", lambda *a, **k: None), mock.patch.object(run, "_append", lambda p, r: recs.append(r)):
+            s.manage()
+            self.assertEqual(moved, [])  # 1:1 filled, the stop stays where it was
+            self.assertFalse(t.closed)
+            orders["o2"]["legs"] = [{"id": "l2", "type": "limit", "status": "canceled", "filled_qty": "0"},
+                                    {"id": "s2", "type": "stop", "status": "filled", "filled_qty": "25", "filled_avg_price": "99.8"}]
+            s.manage()  # MU is still held (another trade), but this trade's legs sold all 50 shares
+        self.assertTrue(t.closed)
+        exit_rec = recs[-1]
+        self.assertEqual(exit_rec["type"], "exit")
+        self.assertAlmostEqual(exit_rec["r"], 0.0)  # +1R on half, -1R on half
 
 
 if __name__ == "__main__":

@@ -52,6 +52,22 @@ class Order:
     setup_t: str
 
 
+def valid_setup(H: list[Candle], states, rng, i: int) -> int:
+    """The trade direction if candles i-1 (range) and i (sweep) form a CRT setup, else 0."""
+    r, s = H[i - 1], H[i]
+    d = states[i - 1].tradeable_direction
+    if d == 0 or states[i].direction != d:
+        return 0
+    if not ((r.c < r.o) if d == 1 else (r.c > r.o)):
+        return 0
+    zone = rng[i - 1]
+    if zone is None or zone.direction != d or zone.depth(r.l if d == 1 else r.h) < 0.5:
+        return 0
+    if not ((s.l < r.l) if d == 1 else (s.h > r.h)) or not (r.l < s.c <= r.h):
+        return 0
+    return d
+
+
 def orders_for(symbol: str, bars: list[Candle]) -> tuple[list[Order], dict]:
     H, first = hourly(bars, False, 1)
     states = trend_series(H)
@@ -67,16 +83,9 @@ def orders_for(symbol: str, bars: list[Candle]) -> tuple[list[Order], dict]:
     counts = {"valid setups": 0, "gaps inside the third candle": 0, "daily level in the way": 0}
     out = []
     for i in range(1, len(H) - 1):
-        r, s = H[i - 1], H[i]
-        d = states[i - 1].tradeable_direction
-        if d == 0 or states[i].direction != d:
-            continue
-        if not ((r.c < r.o) if d == 1 else (r.c > r.o)):
-            continue
-        zone = rng[i - 1]
-        if zone is None or zone.direction != d or zone.depth(r.l if d == 1 else r.h) < 0.5:
-            continue
-        if not ((s.l < r.l) if d == 1 else (s.h > r.h)) or not (r.l < s.c <= r.h):
+        s = H[i]
+        d = valid_setup(H, states, rng, i)
+        if not d:
             continue
         counts["valid setups"] += 1
         t0 = first[i + 1]  # the third candle's bars

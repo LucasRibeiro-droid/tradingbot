@@ -127,7 +127,15 @@ class TradingParams:
     # entry models 1-3 (Days 30-33) on the 1-minute, 5-minute, 15-minute and 1-hour, each its
     # own playbook (tjr_m<model>_<timeframe>; tjr_m1_15m is the baseline, the old "tjr_m1").
     # Take profit 1 comes from the next timeframe up (Day 37).
-    strategies: tuple[str, ...] = ("tjr", "orb30")
+    # Owner, 2026-10-25: "switch the live paper bot to CRT 1h to 5m. I only want you trading this
+    # strategy for the whole week" (rules: live/crt_owner.py, backtest H56: -0.56R per trade after
+    # costs at 3R with the stop fixed, the least negative target). "tjr" and "orb30" are off.
+    strategies: tuple[str, ...] = ("crt",)
+    crt_target_r: float = 3.0  # half at 1:1, half here; stop fixed at the gap's middle candle
+    # CRT trades are held until their stop or target, overnight too (no flatten); the session
+    # ends just after the last third candle's orders expire at 16:00.
+    hold_overnight: bool = True
+    session_end: str = "16:02"
     tjr_models: tuple[int, ...] = (1, 2, 3)
     tjr_timeframes: tuple[str, ...] = ("1Min", "5Min", "15Min", "1Hour")
     model_wait_candles: int = 20  # model 2's limit order and model 3's window, in candles

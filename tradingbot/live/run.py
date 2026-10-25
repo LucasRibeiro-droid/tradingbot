@@ -32,6 +32,7 @@ from ..config import BASELINE, Config
 from ..data import fetch_bars, fetch_bars_multi, timeframe_length
 from .broker import BrokerError, Paper
 from .screener import screen
+from .crt_live import _bucket_end, crt_assess
 from .experiments import exit_for, model_for, orb_assess, pre_trade, targets_for
 from .signals import assess_all, size, split
 
@@ -39,9 +40,12 @@ ROOT = Path(__file__).resolve().parent.parent.parent / "journal" / "trading"
 NY = ZoneInfo("America/New_York")
 # Take profit 1 comes from the next timeframe up (Day 37); how far back each timeframe is read.
 TP_TIMEFRAME = {"1Min": "5Min", "5Min": "15Min", "15Min": "1Hour", "1Hour": "4Hour"}
-LOOKBACK = {"1Min": timedelta(days=3), "5Min": timedelta(days=12), "15Min": timedelta(days=20),
+# 5-minute: enough 1-hour candles for CRT's trend and ranges (~30 sessions).
+LOOKBACK = {"1Min": timedelta(days=3), "5Min": timedelta(days=45), "15Min": timedelta(days=20),
             "1Hour": timedelta(days=60), "4Hour": timedelta(days=200)}
 SHORT = {"1Min": "1m", "5Min": "5m", "15Min": "15m", "1Hour": "1h"}
+BOT_IDS = ("tjr", "orb30", "crt")  # client order id prefixes of the bot's own orders
+CRT_EXIT = "1:1 + 3R, fixed stop"
 
 
 class BarCache:
@@ -49,7 +53,7 @@ class BarCache:
     (one request per timeframe for all stocks). The last stored candle is re-read, since it may
     have been still open."""
 
-    def __init__(self, fetch=fetch_bars_multi, keep: int = 800):
+    def __init__(self, fetch=fetch_bars_multi, keep: int = 8000):
         self.fetch, self.keep, self.bars = fetch, keep, {}
 
     def get(self, symbols: list[str], tf: str, now: datetime) -> dict[str, list]:
@@ -209,8 +213,10 @@ class Session:
         """Load every timeframe's candles before the open, so the first cycles are quick."""
         tp = self.config.trading
         now = _now()
-        for tf in sorted(set(tp.tjr_timeframes) | {TP_TIMEFRAME[x] for x in tp.tjr_timeframes} | {"15Min"},
-                         key=lambda x: timeframe_length(x)):
+        tfs = set(tp.tjr_timeframes) | {TP_TIMEFRAME[x] for x in tp.tjr_timeframes} if "tjr" in tp.strategies else set()
+        tfs |= {"15Min"} if "orb30" in tp.strategies else set()
+        tfs |= {"5Min"} if "crt" in tp.strategies else set()
+        for tf in sorted(tfs, key=lambda x: timeframe_length(x)):
             try:
                 self.cache.get(self.watch, tf, now)
             except Exception as e:
@@ -222,6 +228,8 @@ class Session:
         if self.dry_run:
             return
         open_ny = datetime.now(NY).replace(hour=0, minute=0, second=0, microsecond=0)
+        if self.config.trading.hold_overnight:
+            open_ny -= timedelta(days=10)  # trades held overnight may come from earlier days
         try:
             orders = self.broker.orders(status="all", after=open_ny.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"))
             positions = self.broker.positions()
@@ -230,7 +238,7 @@ class Session:
             return
         # Only the bot's own entries (manual or other orders don't count as instruments traded).
         filled = {o["symbol"] for o in orders if float(o.get("filled_qty") or 0) > 0
-                  and str(o.get("client_order_id", "")).startswith(("tjr", "orb30"))}
+                  and str(o.get("client_order_id", "")).startswith(BOT_IDS) and self.today in str(o.get("client_order_id"))}
         self.traded_symbols |= filled
         self._adopt(orders, {p["symbol"] for p in positions})
         known = {t.symbol for t in self.trades if not t.closed}
@@ -238,7 +246,7 @@ class Session:
             if pos["symbol"] not in known:
                 event(f"position {pos['symbol']} {pos['qty']} at Alpaca is not in the saved state",
                       "not managed by this session (its bracket stop and take profit stay live at Alpaca)",
-                      "closed at flatten; reconcile in the review")
+                      "reconcile in the review" if self.config.trading.hold_overnight else "closed at flatten; reconcile in the review")
 
     def _adopt(self, orders: list[dict], held: set[str]) -> None:
         """Rebuild trades the saved state lost (e.g. a run stopped before it saved), from the
@@ -247,7 +255,7 @@ class Session:
         groups: dict[str, list[dict]] = {}
         for o in orders:
             cid = str(o.get("client_order_id", ""))
-            if not cid.startswith(("tjr", "orb30")) or cid.count("-") < 5 or o.get("id") in mine:
+            if not cid.startswith(BOT_IDS) or cid.count("-") < 5 or o.get("id") in mine:
                 continue
             groups.setdefault(cid.rsplit("-", 1)[0], []).append(o)
         terminal = ("filled", "canceled", "expired", "rejected")
@@ -263,10 +271,13 @@ class Session:
                 target = next((float(l["limit_price"]) for l in (o.get("legs") or []) if l["type"] == "limit"), None)
                 parts.append({"client_id": o["client_order_id"], "order_id": o["id"], "qty": int(float(o["qty"])), "target": target})
             first = group[0]
-            trade = Trade(sym, f"{y}-{m}-{d}T{hhmm[:2]}:{hhmm[2:]}:00Z", 1 if first["side"] == "buy" else -1,
+            setup_t = f"{y}-{m}-{d}T{hhmm[:2]}:{hhmm[2:]}:00Z"
+            crt = strategy.startswith("crt")
+            trade = Trade(sym, setup_t, 1 if first["side"] == "buy" else -1,
                           float(first.get("limit_price") or first.get("filled_avg_price") or 0), stops[0] if stops else 0.0,
                           [p["target"] for p in parts if p["target"] is not None], parts,
-                          strategy=strategy, exit_name="unknown (adopted after a restart)")
+                          strategy=strategy, exit_name=CRT_EXIT if crt else "unknown (adopted after a restart)",
+                          expires_at=_bucket_end(setup_t).isoformat(timespec="seconds") if crt else "")
             self.trades.append(trade)
             event(f"adopted {sym} {strategy} ({len(parts)} parts) from Alpaca's orders",
                   "the saved state had lost it; managed again from now", "")
@@ -278,6 +289,14 @@ class Session:
             self.traded_symbols = set(s["traded_symbols"])
             # (symbol, candle) keys from before the strategies existed belong to TJR's model 1.
             self.seen = {tuple(x) if len(x) == 3 else (x[0], x[1], "tjr_m1") for x in s["seen"]}
+        elif self.config.trading.hold_overnight:
+            # A new day: trades still open from the last session are carried over and managed.
+            earlier = sorted(p for p in ROOT.glob("state_*.json") if p.name < self.state_path.name)
+            if earlier:
+                s = json.loads(earlier[-1].read_text())
+                self.trades = [Trade(**t) for t in s["trades"] if not t["closed"]]
+                if self.trades:
+                    event(f"carried over {len(self.trades)} open trade(s) from {earlier[-1].name}", "managed until stop or target", "")
 
     def _save_state(self) -> None:
         self.state_path.write_text(json.dumps({"trades": [t.__dict__ for t in self.trades],
@@ -290,6 +309,7 @@ class Session:
         tp = self.config.trading
         minute = int(now.timestamp() // 60)
         tfs = set(tp.tjr_timeframes if "tjr" in tp.strategies else ()) | ({"15Min"} if "orb30" in tp.strategies else set())
+        tfs |= {"5Min"} if "crt" in tp.strategies else set()
         return sorted((tf for tf in tfs if minute % int(timeframe_length(tf).total_seconds() // 60) == 0),
                       key=lambda tf: timeframe_length(tf))
 
@@ -314,7 +334,7 @@ class Session:
             up = TP_TIMEFRAME[tf]
             try:
                 bars = self.cache.get(self.watch, tf, now)
-                upper = self.cache.get(self.watch, up, now)
+                upper = self.cache.get(self.watch, up, now) if "tjr" in tp.strategies else {}
             except Exception as e:
                 event(f"data error ({tf} bars): {e}", f"{tf} skipped this cycle", "retry at the next close")
                 continue
@@ -325,6 +345,8 @@ class Session:
                 if not closed or datetime.fromisoformat(closed[-1].t.replace("Z", "+00:00")) + length < now - timedelta(minutes=1):
                     continue
                 found = []
+                if "crt" in tp.strategies and tf == "5Min":
+                    found += crt_assess(sym, bars.get(sym, []), self.shorting, tp.crt_target_r)
                 if "tjr" in tp.strategies and tf in tp.tjr_timeframes:
                     for a in assess_all(sym, ltf, upper.get(sym, []), self._daily.get(sym, []), self.config, self.shorting,
                                         length, timeframe_length(up), models=tp.tjr_models, wait=tp.model_wait_candles):
@@ -379,10 +401,27 @@ class Session:
         if cap is not None and sym not in self.traded_symbols and len(self.traded_symbols) >= cap:
             a["decision"], a["reasons"] = "REJECTED", [f"already traded {cap} instruments today"]
             return
-        if any(t.symbol == sym and not t.closed for t in self.trades):
+        strategy = a.get("strategy", "tjr_m1")
+        crt = strategy.startswith("crt")
+        d = 1 if plan["direction"] == "long" else -1
+        if crt:
+            # CRT: every gap in the third candle is its own trade, so trades in the same direction
+            # stack on a stock; never the opposite direction (Alpaca nets positions).
+            if any(t.symbol == sym and not t.closed and t.direction != d for t in self.trades):
+                a["decision"], a["reasons"] = "REJECTED", ["an open trade in this stock goes the other way"]
+                return
+            if not self.dry_run:
+                try:
+                    held = [float(p["qty"]) for p in self.broker.positions() if p["symbol"] == sym]
+                except BrokerError:
+                    held = [-d]
+                if any(q * d < 0 for q in held):
+                    a["decision"], a["reasons"] = "REJECTED", ["Alpaca holds a position in this stock the other way"]
+                    return
+        elif any(t.symbol == sym and not t.closed for t in self.trades):
             a["decision"], a["reasons"] = "REJECTED", ["a position in this stock is still open"]
             return
-        if not self.dry_run:
+        if not self.dry_run and not crt:
             try:  # Alpaca is the truth: never stack a second position or order on a stock
                 busy = {p["symbol"] for p in self.broker.positions()} | {o["symbol"] for o in self.broker.orders()}
             except BrokerError:
@@ -390,13 +429,14 @@ class Session:
             if sym in busy:
                 a["decision"], a["reasons"] = "REJECTED", ["Alpaca already holds a position or open order in this stock"]
                 return
-        strategy = a.get("strategy", "tjr_m1")
         family = "tjr" if strategy.startswith("tjr") else strategy
-        exits = dict(tp.exits_under_test).get(family, ("tjr_ladder",))
-        exit_name = exit_for(strategy, exits, f"{sym}-{a['t']}")
-        d = 1 if plan["direction"] == "long" else -1
-        plan["ladder"] = list(plan.get("take_profits") or [])
-        plan["take_profits"] = targets_for(exit_name, d, plan["entry"], plan["stop"], plan["ladder"])
+        if crt:  # the owner's exits: half at 1:1, half at the target, stop fixed
+            exit_name = CRT_EXIT
+        else:
+            exits = dict(tp.exits_under_test).get(family, ("tjr_ladder",))
+            exit_name = exit_for(strategy, exits, f"{sym}-{a['t']}")
+            plan["ladder"] = list(plan.get("take_profits") or [])
+            plan["take_profits"] = targets_for(exit_name, d, plan["entry"], plan["stop"], plan["ladder"])
         if not plan["take_profits"]:
             a["decision"], a["reasons"] = "REJECTED", [f"exit {exit_name}: no target"]
             return
@@ -416,8 +456,8 @@ class Session:
         if self.dry_run:
             return
         limit = plan["entry"] if plan.get("entry_type") == "limit" else None
-        expires = ""
-        if limit is not None:
+        expires = plan.get("expires_at", "")
+        if limit is not None and not expires:
             expires = (_now() + timeframe_length(a.get("timeframe", "15Min")) * (plan.get("valid_candles") or tp.model_wait_candles)
                        ).isoformat(timespec="seconds")
         trade = Trade(sym, a["t"], d, plan["entry"], plan["stop"], [t for _, t in parts],
@@ -428,7 +468,9 @@ class Session:
                 o = self.broker.bracket(sym, q, "buy" if d == 1 else "sell", target, plan["stop"], cid, limit_price=limit)
                 trade.parts.append({"client_id": cid, "order_id": o["id"], "qty": q, "target": target})
             except BrokerError as e:
-                self.failures += 1
+                # Alpaca's wash-trade guard can refuse an order next to the stock's other open
+                # orders: that is a refusal, not a technical failure.
+                self.failures += 0 if "wash" in str(e).lower() else 1
                 event(f"order rejected {sym} part {k}: {e}", "part not placed", "recorded; trade continues with placed parts")
                 if self.failures >= 3:
                     self.halted = True
@@ -480,7 +522,7 @@ class Session:
                                                 "slippage": round((t.entry_fill - t.planned_entry) * t.direction, 4)})
             legs = [(p, leg) for p, o in zip(t.parts, orders) for leg in (o.get("legs") or [])]
             tp_filled = any(leg["type"] == "limit" and leg["status"] == "filled" for _, leg in legs)
-            if tp_filled and not t.be_moved and t.entry_fill:
+            if tp_filled and not t.be_moved and t.entry_fill and not t.strategy.startswith("crt"):  # CRT: stop fixed
                 for _, leg in legs:
                     if leg["type"] in ("stop", "stop_limit") and leg["status"] in ("new", "accepted", "held"):
                         try:
@@ -495,23 +537,27 @@ class Session:
             done = all(o["status"] in ("filled", "canceled", "expired", "rejected") for o in orders) and \
                 all(leg["status"] in ("filled", "canceled", "expired", "rejected") for _, leg in legs)
             if done and legs:
-                # Legs cancelled (e.g. by the flatten) don't mean the position is closed: only
-                # record the exit once Alpaca holds nothing in this stock.
-                try:
-                    held = any(p["symbol"] == t.symbol for p in self.broker.positions())
-                except BrokerError:
-                    held = True
-                if held:
-                    continue
-                self._record_exit(t, legs)
+                # Legs cancelled (e.g. by the flatten) don't mean the position is closed: unless
+                # the legs sold every filled share, only record the exit once Alpaca holds
+                # nothing in this stock (other trades may share the stock).
+                bought = sum(float(o.get("filled_qty") or 0) for o in orders)
+                sold = sum(float(leg.get("filled_qty") or 0) for _, leg in legs)
+                if sold < bought:
+                    try:
+                        held = any(p["symbol"] == t.symbol for p in self.broker.positions())
+                    except BrokerError:
+                        held = True
+                    if held:
+                        continue
+                self._record_exit(t, legs, covered=sold >= bought)
         self._save_state()
 
-    def _record_exit(self, t: Trade, legs) -> None:
+    def _record_exit(self, t: Trade, legs, covered: bool = False) -> None:
         exits = [(float(leg["filled_avg_price"]), float(leg["filled_qty"]), leg["type"]) for _, leg in legs if leg["status"] == "filled"]
         # Parts closed by the end-of-day flatten are sold by separate orders, not by a leg.
         known = {p["order_id"] for p in t.parts} | {leg["id"] for _, leg in legs}
         try:
-            for o in self.broker.orders("closed", after=t.setup_t):
+            for o in ([] if covered else self.broker.orders("closed", after=t.setup_t)):
                 if (o["symbol"] == t.symbol and o["id"] not in known and o.get("filled_avg_price")
                         and o["side"] == ("sell" if t.direction == 1 else "buy")):
                     exits.append((float(o["filled_avg_price"]), float(o["filled_qty"]), "flatten"))
@@ -569,7 +615,7 @@ class Session:
         tp = self.config.trading
         self.start()
         deadline = _now() + timedelta(minutes=self.max_minutes) if self.max_minutes else None
-        fh, fm = map(int, tp.flatten_at.split(":"))
+        fh, fm = map(int, (tp.session_end if tp.hold_overnight else tp.flatten_at).split(":"))
         while True:
             now_ny = datetime.now(NY)
             flatten = now_ny.replace(hour=fh, minute=fm, second=0, microsecond=0)
@@ -593,6 +639,14 @@ class Session:
             until = min(nxt, flatten.astimezone(timezone.utc), deadline or nxt)
             while _now() < until:
                 time.sleep(max(0.5, min(5.0, (until - _now()).total_seconds())))
+        if tp.hold_overnight:
+            if not self.dry_run:
+                self.manage()  # cancels the last third candle's unfilled orders
+            self._save_state()
+            open_ = sum(1 for t in self.trades if not t.closed)
+            event("session end (no flatten: CRT trades are held until stop or target)",
+                  f"{open_} trade(s) still open, protected by their gtc stops at Alpaca", "review to write")
+            return
         self.flatten()
         event("session end", f"{len(self.trades)} trades, {len(self.traded_symbols)} instruments", "review to write")
 
@@ -613,7 +667,8 @@ def main() -> None:
 def in_session_window(config: Config = BASELINE) -> bool:
     """For schedulers that fire repeatedly (GitHub Actions): start only around a real session."""
     clock = Paper().clock()
-    fh, fm = map(int, config.trading.flatten_at.split(":"))
+    tp = config.trading
+    fh, fm = map(int, (tp.session_end if tp.hold_overnight else tp.flatten_at).split(":"))
     now_ny = datetime.now(NY)
     if now_ny >= now_ny.replace(hour=fh, minute=fm, second=0, microsecond=0):
         return False

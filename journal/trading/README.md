@@ -19,6 +19,8 @@ persistent records the owner's operating brief requires (2026-10-21). Nothing ha
 The research history (studies, hypotheses H1–H35) stays in `journal/studies/` and `journal/hypotheses.md`.
 
 ## How the bot learns (owner's directives, 2026-10-21 and 2026-10-22)
+
+**Week of 2026-10-26 (owner, 2026-10-25): only the owner's CRT 1-hour → 5-minute is traded** (`live/crt_live.py`, rules in `live/crt_owner.py`; H57). Every CRT trade is reviewed after it ends: did the setup follow the rules, was the fill and stop as planned, what went wrong, and does a pattern across trades justify a small change (one at a time, recorded in `rule_changes.md`). CRT trades are held overnight until stop or target.
 Full text of the 2026-10-22 directive: `journal/DIRECTIVE_2026-10-22.md`. In short: TJR is the
 foundation, not a rulebook; the priority is to **learn through many well-documented trades**;
 every trade tests a hypothesis or applies an identifiable approach; conclusions stay

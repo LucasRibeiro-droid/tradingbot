@@ -9,7 +9,8 @@ every trade tests a hypothesis or applies an identifiable approach, is recorded 
 (expectation, invalidation, uncertainty) and reviewed after (decision quality vs outcome).
 The baseline (TJR model 1 + TJR's exits) keeps trading as the reference; experiments trade
 beside it, on every timeframe (TJR's entry models 1–3 on 1m/5m/15m/1h, owner 2026-10-23). Stocks only, no crypto (owner, 2026-10-25). Change one thing at a time, check it out of sample, keep conclusions proportional
-to the evidence, and record every change in `journal/trading/rule_changes.md`. Full text:
+to the evidence, and record every change in `journal/trading/rule_changes.md`. **Week of 2026-10-26:** the live bot trades only the owner's CRT 1h → 5m (`live/crt_live.py`;
+half at 1:1, half at 3R, stop fixed, held overnight until stop or target; H57). Full text:
 `journal/DIRECTIVE_2026-10-22.md`; protocol: `journal/trading/README.md` ("How the bot learns").
 
 ## Trading records (the owner reads these)
