@@ -111,19 +111,20 @@ def aggregate(bars: list[Candle], minutes: int, crypto: bool) -> list[Candle]:
     return out
 
 
-def hourly(bars: list[Candle], crypto: bool) -> tuple[list[Candle], list[int]]:
-    """1-hour candles built from 5-minute bars, and the index of each one's first 5-minute bar.
-    Stocks: 09:30-10:30 ... 15:30-16:00 ET; crypto: clock hours."""
+def hourly(bars: list[Candle], crypto: bool, hours: int = 1) -> tuple[list[Candle], list[int]]:
+    """``hours``-hour candles built from lower-timeframe bars, and the index of each one's first
+    bar. Stocks: from 09:30 ET (1-hour: ... 15:30-16:00; 4-hour: 09:30-13:30, 13:30-16:00);
+    crypto: clock hours."""
     out, first = [], []
     key_prev = None
     for k, c in enumerate(bars):
         t = _ts(c.t)
         if crypto:
-            key = t.replace(minute=0, second=0, microsecond=0)
+            key = (t.date(), t.hour // hours)
         else:
             n = t.astimezone(NY)
             m = n.hour * 60 + n.minute - 570  # minutes since 09:30
-            key = (n.date(), m // 60)
+            key = (n.date(), m // (60 * hours))
         if key != key_prev:
             out.append(Candle(c.t, c.o, c.h, c.l, c.c))
             first.append(k)
@@ -151,11 +152,11 @@ class Order:
     crl: float
 
 
-def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap") -> tuple[list[Order], dict]:
+def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap", range_hours: int = 1) -> tuple[list[Order], dict]:
     """Every order the strategy would place, and why candidate setups were skipped.
     ``stop_mode``: "gap" = below the gap's first candle; "sweep" = below the sweep candle's low
     (above its high for shorts)."""
-    H, first = hourly(bars, crypto)
+    H, first = hourly(bars, crypto, range_hours)
     states = trend_series(H)
     rng = ranges(H, states)
     gaps = find_gaps(bars)
@@ -297,7 +298,7 @@ def summarize(trades: list[dict]) -> dict:
             "full_losses": sum(1 for t in trades if t["legs"][0][2].startswith("stop"))}
 
 
-def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: int = 5) -> dict:
+def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: int = 5, range_hours: int = 1) -> dict:
     now = datetime.now(timezone.utc)
     split = now - timedelta(days=days)
     trades, skipped, unfilled = [], {}, 0
@@ -308,7 +309,7 @@ def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: in
         except Exception as e:
             print(f"{sym}: data error {e}", flush=True)
             continue
-        orders, sk = setups(sym, bars, crypto, stop_mode)
+        orders, sk = setups(sym, bars, crypto, stop_mode, range_hours)
         for k, v in sk.items():
             skipped[k] = skipped.get(k, 0) + v
         n = 0
@@ -325,7 +326,7 @@ def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: in
                 trades.append(t); n += 1
         print(f"{sym}: {len(bars)} bars, {len(orders)} orders, {n} trades", flush=True)
     result = {
-        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "entry_timeframe_min": entry_minutes, "equity": EQUITY, "risk_pct": RISK_PCT,
+        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "entry_timeframe_min": entry_minutes, "range_timeframe_hours": range_hours, "equity": EQUITY, "risk_pct": RISK_PCT,
                    "position_pct": POSITION_PCT, "run_at": now.isoformat(timespec="seconds")},
         "all": summarize(trades),
         "recent": summarize([t for t in trades if t["period"] == "recent"]),
@@ -346,10 +347,11 @@ def main() -> None:
                     help="gap: below the fair value gap's first candle; sweep: below the sweep candle's low")
     ap.add_argument("--entry-minutes", type=int, choices=[5, 15], default=5,
                     help="the lower timeframe for the fair value gap entry (the video: 5 or 15)")
+    ap.add_argument("--range-hours", type=int, choices=[1, 4], default=1, help="the candle range timeframe (1-hour or 4-hour)")
     args = ap.parse_args()
-    result, trades = run(args.symbols.split(","), args.days, args.stop, args.entry_minutes)
+    result, trades = run(args.symbols.split(","), args.days, args.stop, args.entry_minutes, args.range_hours)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = STUDIES / f"crt_backtest_{args.entry_minutes}m_{args.stop}stop_{stamp}.json"
+    out = STUDIES / f"crt_backtest_{args.range_hours}h_{args.entry_minutes}m_{args.stop}stop_{stamp}.json"
     with gzip.open(out.with_suffix(".trades.jsonl.gz"), "wt") as f:
         f.writelines(json.dumps(t) + "\n" for t in trades)
     out.write_text(json.dumps(result, indent=1))
