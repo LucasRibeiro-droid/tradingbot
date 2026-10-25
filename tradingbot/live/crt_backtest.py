@@ -152,7 +152,14 @@ class Order:
     crl: float
 
 
-def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap", range_hours: int = 1) -> tuple[list[Order], dict]:
+def market_trend(bars: list[Candle], range_hours: int) -> dict[str, int]:
+    """SPY's trend (last break of structure) at each range-timeframe candle, by candle start."""
+    H, _ = hourly(bars, False, range_hours)
+    return {c.t: st.direction for c, st in zip(H, trend_series(H))}
+
+
+def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap", range_hours: int = 1,
+           market: dict[str, int] | None = None) -> tuple[list[Order], dict]:
     """Every order the strategy would place, and why candidate setups were skipped.
     ``stop_mode``: "gap" = below the gap's first candle; "sweep" = below the sweep candle's low
     (above its high for shorts)."""
@@ -160,7 +167,7 @@ def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap"
     states = trend_series(H)
     rng = ranges(H, states)
     gaps = find_gaps(bars)
-    skipped = {"invalid (closed beyond the range)": 0, "no gap after the sweep": 0, "no room for 1:1": 0,
+    skipped = {"against the SPY trend": 0, "invalid (closed beyond the range)": 0, "no gap after the sweep": 0, "no room for 1:1": 0,
                "daily level in the way": 0}
     days = {}
     for c in bars:  # each day's high and low, for the "strong level" filter
@@ -183,6 +190,9 @@ def setups(symbol: str, bars: list[Candle], crypto: bool, stop_mode: str = "gap"
         crh, crl = r.h, r.l
         swept = (s.l < crl) if d == 1 else (s.h > crh)
         if not swept:
+            continue
+        if market is not None and market.get(r.t) != d:  # [Bot, owner 2026-10-25] SPY must trend the same way
+            skipped["against the SPY trend"] += 1
             continue
         if not (crl < s.c <= crh):
             skipped["invalid (closed beyond the range)"] += 1
@@ -299,10 +309,12 @@ def summarize(trades: list[dict]) -> dict:
             "full_losses": sum(1 for t in trades if t["legs"][0][2].startswith("stop"))}
 
 
-def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: int = 5, range_hours: int = 1) -> dict:
+def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: int = 5, range_hours: int = 1,
+        spy_filter: bool = False) -> dict:
     now = datetime.now(timezone.utc)
     split = now - timedelta(days=days)
     trades, skipped, unfilled = [], {}, 0
+    market = market_trend(aggregate(five_minute("SPY", 2 * days + 30), entry_minutes, False), range_hours) if spy_filter else None
     for sym in symbols:
         crypto = "/" in sym
         try:
@@ -310,7 +322,7 @@ def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: in
         except Exception as e:
             print(f"{sym}: data error {e}", flush=True)
             continue
-        orders, sk = setups(sym, bars, crypto, stop_mode, range_hours)
+        orders, sk = setups(sym, bars, crypto, stop_mode, range_hours, None if crypto else market)
         for k, v in sk.items():
             skipped[k] = skipped.get(k, 0) + v
         n = 0
@@ -327,7 +339,7 @@ def run(symbols: list[str], days: int, stop_mode: str = "gap", entry_minutes: in
                 trades.append(t); n += 1
         print(f"{sym}: {len(bars)} bars, {len(orders)} orders, {n} trades", flush=True)
     result = {
-        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "entry_timeframe_min": entry_minutes, "range_timeframe_hours": range_hours, "equity": EQUITY, "risk_pct": RISK_PCT,
+        "params": {"symbols": symbols, "days_per_period": days, "stop": stop_mode, "entry_timeframe_min": entry_minutes, "range_timeframe_hours": range_hours, "spy_filter": spy_filter, "equity": EQUITY, "risk_pct": RISK_PCT,
                    "position_pct": POSITION_PCT, "run_at": now.isoformat(timespec="seconds")},
         "all": summarize(trades),
         "recent": summarize([t for t in trades if t["period"] == "recent"]),
@@ -350,10 +362,11 @@ def main() -> None:
                     help="the lower timeframe for the fair value gap entry (the video: 5 or 15)")
     ap.add_argument("--range-hours", type=int, choices=[1, 4, 24], default=1,
                     help="the candle range timeframe: 1-hour, 4-hour, or 24 = daily (one candle per session)")
+    ap.add_argument("--spy-filter", action="store_true", help="only trade in the direction of SPY's trend on the range timeframe")
     args = ap.parse_args()
-    result, trades = run(args.symbols.split(","), args.days, args.stop, args.entry_minutes, args.range_hours)
+    result, trades = run(args.symbols.split(","), args.days, args.stop, args.entry_minutes, args.range_hours, args.spy_filter)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    out = STUDIES / f"crt_backtest_{args.range_hours}h_{args.entry_minutes}m_{args.stop}stop_{stamp}.json"
+    out = STUDIES / f"crt_backtest_{args.range_hours}h_{args.entry_minutes}m_{args.stop}stop{'_spy' if args.spy_filter else ''}_{stamp}.json"
     with gzip.open(out.with_suffix(".trades.jsonl.gz"), "wt") as f:
         f.writelines(json.dumps(t) + "\n" for t in trades)
     out.write_text(json.dumps(result, indent=1))
