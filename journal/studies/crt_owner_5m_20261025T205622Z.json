@@ -1,0 +1,289 @@
+{
+ "params": {
+  "symbols": [
+   "SPY",
+   "QQQ",
+   "GLD",
+   "AMZN",
+   "TSM",
+   "MRNA",
+   "WMT",
+   "EWZ",
+   "KO",
+   "CLF",
+   "RIG",
+   "MU",
+   "NVDA",
+   "META",
+   "TSLA",
+   "SNDK",
+   "AAPL",
+   "AMD",
+   "MSFT",
+   "GOOGL",
+   "INTC",
+   "NFLX",
+   "XOM",
+   "JPM",
+   "AVGO"
+  ],
+  "days_per_period": 180,
+  "entry_minutes": 5,
+  "run_at": "2026-10-25T20:56:20.914245+00:00"
+ },
+ "setup_counts": {
+  "valid setups": 1055,
+  "gaps inside the third candle": 955,
+  "daily level in the way": 62
+ },
+ "by_target": {
+  "2R": {
+   "all": {
+    "trades": 451,
+    "win_rate": 0.353,
+    "full_wins": 90,
+    "break_even_after_1to1": 106,
+    "stopped": 255,
+    "expectancy_r": -0.653,
+    "expectancy_r_gross": -0.095,
+    "expectancy_r_limit_costs": -0.284,
+    "total_pnl_usd": -3421.53,
+    "t_stat": -10.32
+   },
+   "recent": {
+    "trades": 235,
+    "win_rate": 0.332,
+    "full_wins": 47,
+    "break_even_after_1to1": 52,
+    "stopped": 136,
+    "expectancy_r": -0.719,
+    "expectancy_r_gross": -0.075,
+    "expectancy_r_limit_costs": -0.294,
+    "total_pnl_usd": -1722.45,
+    "t_stat": -7.42
+   },
+   "earlier": {
+    "trades": 216,
+    "win_rate": 0.375,
+    "full_wins": 43,
+    "break_even_after_1to1": 54,
+    "stopped": 119,
+    "expectancy_r": -0.581,
+    "expectancy_r_gross": -0.118,
+    "expectancy_r_limit_costs": -0.272,
+    "total_pnl_usd": -1699.08,
+    "t_stat": -7.33
+   },
+   "long": {
+    "trades": 229,
+    "win_rate": 0.336,
+    "full_wins": 41,
+    "break_even_after_1to1": 52,
+    "stopped": 136,
+    "expectancy_r": -0.681,
+    "expectancy_r_gross": -0.121,
+    "expectancy_r_limit_costs": -0.314,
+    "total_pnl_usd": -1656.13,
+    "t_stat": -7.14
+   },
+   "short": {
+    "trades": 222,
+    "win_rate": 0.369,
+    "full_wins": 49,
+    "break_even_after_1to1": 54,
+    "stopped": 119,
+    "expectancy_r": -0.624,
+    "expectancy_r_gross": -0.069,
+    "expectancy_r_limit_costs": -0.253,
+    "total_pnl_usd": -1765.4,
+    "t_stat": -7.56
+   }
+  },
+  "3R": {
+   "all": {
+    "trades": 451,
+    "win_rate": 0.333,
+    "full_wins": 66,
+    "break_even_after_1to1": 130,
+    "stopped": 255,
+    "expectancy_r": -0.641,
+    "expectancy_r_gross": -0.083,
+    "expectancy_r_limit_costs": -0.279,
+    "total_pnl_usd": -3319.91,
+    "t_stat": -9.76
+   },
+   "recent": {
+    "trades": 235,
+    "win_rate": 0.315,
+    "full_wins": 35,
+    "break_even_after_1to1": 64,
+    "stopped": 136,
+    "expectancy_r": -0.707,
+    "expectancy_r_gross": -0.063,
+    "expectancy_r_limit_costs": -0.289,
+    "total_pnl_usd": -1899.78,
+    "t_stat": -7.08
+   },
+   "earlier": {
+    "trades": 216,
+    "win_rate": 0.352,
+    "full_wins": 31,
+    "break_even_after_1to1": 66,
+    "stopped": 119,
+    "expectancy_r": -0.569,
+    "expectancy_r_gross": -0.106,
+    "expectancy_r_limit_costs": -0.269,
+    "total_pnl_usd": -1420.13,
+    "t_stat": -6.82
+   },
+   "long": {
+    "trades": 229,
+    "win_rate": 0.328,
+    "full_wins": 31,
+    "break_even_after_1to1": 62,
+    "stopped": 136,
+    "expectancy_r": -0.666,
+    "expectancy_r_gross": -0.105,
+    "expectancy_r_limit_costs": -0.304,
+    "total_pnl_usd": -1564.96,
+    "t_stat": -6.76
+   },
+   "short": {
+    "trades": 222,
+    "win_rate": 0.338,
+    "full_wins": 35,
+    "break_even_after_1to1": 68,
+    "stopped": 119,
+    "expectancy_r": -0.615,
+    "expectancy_r_gross": -0.061,
+    "expectancy_r_limit_costs": -0.254,
+    "total_pnl_usd": -1754.95,
+    "t_stat": -7.12
+   }
+  },
+  "4R": {
+   "all": {
+    "trades": 451,
+    "win_rate": 0.315,
+    "full_wins": 46,
+    "break_even_after_1to1": 150,
+    "stopped": 255,
+    "expectancy_r": -0.659,
+    "expectancy_r_gross": -0.101,
+    "expectancy_r_limit_costs": -0.304,
+    "total_pnl_usd": -3467.64,
+    "t_stat": -9.86
+   },
+   "recent": {
+    "trades": 235,
+    "win_rate": 0.285,
+    "full_wins": 23,
+    "break_even_after_1to1": 76,
+    "stopped": 136,
+    "expectancy_r": -0.739,
+    "expectancy_r_gross": -0.095,
+    "expectancy_r_limit_costs": -0.331,
+    "total_pnl_usd": -1949.06,
+    "t_stat": -7.37
+   },
+   "earlier": {
+    "trades": 216,
+    "win_rate": 0.347,
+    "full_wins": 23,
+    "break_even_after_1to1": 74,
+    "stopped": 119,
+    "expectancy_r": -0.57,
+    "expectancy_r_gross": -0.108,
+    "expectancy_r_limit_costs": -0.275,
+    "total_pnl_usd": -1518.58,
+    "t_stat": -6.61
+   },
+   "long": {
+    "trades": 229,
+    "win_rate": 0.306,
+    "full_wins": 20,
+    "break_even_after_1to1": 73,
+    "stopped": 136,
+    "expectancy_r": -0.699,
+    "expectancy_r_gross": -0.139,
+    "expectancy_r_limit_costs": -0.346,
+    "total_pnl_usd": -1712.03,
+    "t_stat": -7.07
+   },
+   "short": {
+    "trades": 222,
+    "win_rate": 0.324,
+    "full_wins": 26,
+    "break_even_after_1to1": 77,
+    "stopped": 119,
+    "expectancy_r": -0.616,
+    "expectancy_r_gross": -0.062,
+    "expectancy_r_limit_costs": -0.26,
+    "total_pnl_usd": -1755.61,
+    "t_stat": -6.9
+   }
+  },
+  "5R": {
+   "all": {
+    "trades": 451,
+    "win_rate": 0.304,
+    "full_wins": 37,
+    "break_even_after_1to1": 159,
+    "stopped": 255,
+    "expectancy_r": -0.66,
+    "expectancy_r_gross": -0.102,
+    "expectancy_r_limit_costs": -0.309,
+    "total_pnl_usd": -3439.45,
+    "t_stat": -9.63
+   },
+   "recent": {
+    "trades": 235,
+    "win_rate": 0.277,
+    "full_wins": 20,
+    "break_even_after_1to1": 79,
+    "stopped": 136,
+    "expectancy_r": -0.727,
+    "expectancy_r_gross": -0.082,
+    "expectancy_r_limit_costs": -0.321,
+    "total_pnl_usd": -1852.9,
+    "t_stat": -7.0
+   },
+   "earlier": {
+    "trades": 216,
+    "win_rate": 0.333,
+    "full_wins": 17,
+    "break_even_after_1to1": 80,
+    "stopped": 119,
+    "expectancy_r": -0.587,
+    "expectancy_r_gross": -0.124,
+    "expectancy_r_limit_costs": -0.295,
+    "total_pnl_usd": -1586.55,
+    "t_stat": -6.71
+   },
+   "long": {
+    "trades": 229,
+    "win_rate": 0.301,
+    "full_wins": 17,
+    "break_even_after_1to1": 76,
+    "stopped": 136,
+    "expectancy_r": -0.693,
+    "expectancy_r_gross": -0.132,
+    "expectancy_r_limit_costs": -0.34,
+    "total_pnl_usd": -1825.63,
+    "t_stat": -6.85
+   },
+   "short": {
+    "trades": 222,
+    "win_rate": 0.306,
+    "full_wins": 20,
+    "break_even_after_1to1": 83,
+    "stopped": 119,
+    "expectancy_r": -0.626,
+    "expectancy_r_gross": -0.072,
+    "expectancy_r_limit_costs": -0.276,
+    "total_pnl_usd": -1613.82,
+    "t_stat": -6.79
+   }
+  }
+ }
+}
