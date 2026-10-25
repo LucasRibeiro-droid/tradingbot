@@ -103,7 +103,8 @@ def orders_for(symbol: str, bars: list[Candle]) -> tuple[list[Order], dict]:
     return out, counts
 
 
-def simulate(bars: list[Candle], o: Order, target_r: float) -> dict | None:
+def simulate(bars: list[Candle], o: Order, target_r: float, break_even: bool = True) -> dict | None:
+    """``break_even``: after 1:1 the stop moves to the entry price; False keeps it fixed."""
     d = o.direction
     fill = next((k for k in range(o.placed, min(o.expires, len(bars) - 1) + 1)
                  if ((bars[k].l <= o.entry) if d == 1 else (bars[k].h >= o.entry))), None)
@@ -119,16 +120,17 @@ def simulate(bars: list[Candle], o: Order, target_r: float) -> dict | None:
     for k in range(fill, len(bars)):
         c = bars[k]
         if k > fill and ((c.o <= stop) if d == 1 else (c.o >= stop)):  # gap through the stop at the open
-            legs.append((c.o, open_qty, "stop" if not hit1 else "break even")); open_qty = 0
+            legs.append((c.o, open_qty, "stop" if not (hit1 and break_even) else "break even")); open_qty = 0
         elif (c.l <= stop) if d == 1 else (c.h >= stop):
-            legs.append((stop, open_qty, "stop" if not hit1 else "break even")); open_qty = 0
+            legs.append((stop, open_qty, "stop" if not (hit1 and break_even) else "break even")); open_qty = 0
         elif k > fill:
             if not hit1 and ((c.h >= tp1) if d == 1 else (c.l <= tp1)):
                 px = c.o if ((c.o >= tp1) if d == 1 else (c.o <= tp1)) else tp1
                 legs.append((px, half, "1:1")); open_qty -= half; hit1 = True
-                stop = o.entry  # the rest is now risk-free
-                if not ((c.h >= tp2) if d == 1 else (c.l <= tp2)) and ((c.l <= stop) if d == 1 else (c.h >= stop)):
-                    legs.append((stop, open_qty, "break even")); open_qty = 0  # back to entry in the same bar
+                if break_even:
+                    stop = o.entry  # the rest is now risk-free
+                    if not ((c.h >= tp2) if d == 1 else (c.l <= tp2)) and ((c.l <= stop) if d == 1 else (c.h >= stop)):
+                        legs.append((stop, open_qty, "break even")); open_qty = 0  # back to entry in the same bar
             if open_qty and hit1 and ((c.h >= tp2) if d == 1 else (c.l <= tp2)):
                 px = c.o if ((c.o >= tp2) if d == 1 else (c.o <= tp2)) else tp2
                 legs.append((px, open_qty, f"{target_r:g}R")); open_qty = 0
@@ -154,7 +156,8 @@ def summary(ts: list[dict]) -> dict:
     out = {"trades": len(ts), "win_rate": round(sum(t["pnl"] > 0 for t in ts) / len(ts), 3),
            "full_wins": sum(1 for t in ts if t["outcome"].endswith("R")),
            "break_even_after_1to1": sum(1 for t in ts if t["outcome"] == "break even"),
-           "stopped": sum(1 for t in ts if t["outcome"] == "stop"),
+           "stopped_after_1to1": sum(1 for t in ts if t["outcome"] == "stop" and t["legs"][0][2] == "1:1"),
+           "stopped": sum(1 for t in ts if t["outcome"] == "stop" and t["legs"][0][2] != "1:1"),
            "expectancy_r": round(mean(rs), 3), "expectancy_r_gross": round(mean(t["r_gross"] for t in ts), 3),
            "expectancy_r_limit_costs": round(mean(t["r_limit_costs"] for t in ts), 3),
            "total_pnl_usd": round(sum(t["pnl"] for t in ts), 2)}
@@ -163,7 +166,7 @@ def summary(ts: list[dict]) -> dict:
     return out
 
 
-def run(symbols: list[str], days: int, entry_minutes: int, targets: list[float]) -> dict:
+def run(symbols: list[str], days: int, entry_minutes: int, targets: list[float], break_even: bool = True) -> dict:
     now = datetime.now(timezone.utc)
     split, start = now - timedelta(days=days), now - timedelta(days=2 * days)
     res = {r: [] for r in targets}
@@ -176,12 +179,12 @@ def run(symbols: list[str], days: int, entry_minutes: int, targets: list[float])
         orders = [o for o in orders if _ts(o.setup_t) >= start]
         for r in targets:
             for o in orders:
-                t = simulate(bars, o, r)
+                t = simulate(bars, o, r, break_even)
                 if t and "skipped" not in t:
                     t["period"] = "recent" if _ts(o.setup_t) >= split else "earlier"
                     res[r].append(t)
         print(f"{sym}: {len(orders)} orders, {len(res[targets[0]])} trades so far", flush=True)
-    out = {"params": {"symbols": symbols, "days_per_period": days, "entry_minutes": entry_minutes, "run_at": now.isoformat()},
+    out = {"params": {"symbols": symbols, "days_per_period": days, "entry_minutes": entry_minutes, "break_even": break_even, "run_at": now.isoformat()},
            "setup_counts": counts, "by_target": {}}
     for r, ts in res.items():
         out["by_target"][f"{r:g}R"] = {p: summary([t for t in ts if p == "all" or t["period"] == p or t["direction"] == p])
@@ -195,10 +198,12 @@ def main() -> None:
     ap.add_argument("--entry-minutes", type=int, choices=[5, 15], default=5)
     ap.add_argument("--targets", default="2,3,4,5")
     ap.add_argument("--symbols", required=True)
+    ap.add_argument("--fixed-stop", action="store_true", help="keep the stop where it is after 1:1 (no move to entry)")
     args = ap.parse_args()
-    out, res = run(args.symbols.split(","), args.days, args.entry_minutes, [float(x) for x in args.targets.split(",")])
+    out, res = run(args.symbols.split(","), args.days, args.entry_minutes, [float(x) for x in args.targets.split(",")],
+                   not args.fixed_stop)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
-    path = STUDIES / f"crt_owner_{args.entry_minutes}m_{stamp}.json"
+    path = STUDIES / f"crt_owner_{args.entry_minutes}m{'_fixedstop' if args.fixed_stop else ''}_{stamp}.json"
     path.write_text(json.dumps(out, indent=1))
     with gzip.open(path.with_suffix(".trades.jsonl.gz"), "wt") as f:
         for r, ts in res.items():
