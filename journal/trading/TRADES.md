@@ -64,3 +64,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-26 18:00 | SPCX | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -1.80 | (review) | -4.16 | [page](trades/2026-10-26_1800_SPCX_crt_1h5m.md) |
 | 2026-10-26 19:00 | SNDK | short | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -2.54 | (review) | -7.63 | [page](trades/2026-10-26_1900_SNDK_crt_1h5m.md) |
 | 2026-10-26 19:15 | SPCX | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -0.91 | (review) | -6.60 | [page](trades/2026-10-26_1915_SPCX_crt_1h5m.md) |
+| 2026-10-26 19:10 | SPCX | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -0.98 | (review) | -16.50 | [page](trades/2026-10-26_1910_SPCX_crt_1h5m.md) |
