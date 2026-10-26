@@ -282,7 +282,7 @@
    ],
    "entry_fill": null,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/trades/2026-10-26_1820_SPCX_crt_1h5m.md",
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
