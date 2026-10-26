@@ -66,3 +66,4 @@
 | 2026-10-23 19:55 | Flatten round 2 logged 404 "position not found" for 17 stocks: round 1's close orders had already filled | none (verified flat) | 404 on close now treated as closed |
 | 2026-10-26 13:16 | session start (paper): equity 98510.04, buying power 394040.16, shorting on |  |  |
 | 2026-10-26 19:02 | session hand-off (runner time limit) | positions stay protected at Alpaca | next run resumes from the saved state |
+| 2026-10-26 19:03 | session start (paper): equity 98489.12, buying power 361122.57, shorting on |  |  |
