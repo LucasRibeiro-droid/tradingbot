@@ -408,9 +408,9 @@
      "target": 1262.5
     }
    ],
-   "entry_fill": null,
+   "entry_fill": 1265.91,
    "be_moved": false,
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/trades/2026-10-26_1900_SNDK_crt_1h5m.md",
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
