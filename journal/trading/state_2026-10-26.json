@@ -191,6 +191,38 @@
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
    "expires_at": "2026-10-26T17:30:00+00:00"
+  },
+  {
+   "symbol": "SNDK",
+   "setup_t": "2026-10-26T16:45:00Z",
+   "direction": -1,
+   "planned_entry": 1255.23,
+   "stop": 1258.64,
+   "targets": [
+    1251.82,
+    1245.0
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-SNDK-1645-0",
+     "order_id": "f56b6c3d-9e15-4063-90a3-fcc7f45fa6cc",
+     "qty": 4,
+     "target": 1251.82
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-SNDK-1645-1",
+     "order_id": "fb5fa4ff-db6b-4004-afcf-abb4e9c84000",
+     "qty": 3,
+     "target": 1245.0
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1645_SNDK_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T17:30:00+00:00"
   }
  ],
  "traded_symbols": [
@@ -227,6 +259,11 @@
   [
    "SNDK",
    "2026-10-26T16:40:00Z",
+   "crt_1h5m"
+  ],
+  [
+   "SNDK",
+   "2026-10-26T16:45:00Z",
    "crt_1h5m"
   ]
  ]
