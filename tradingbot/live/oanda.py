@@ -7,7 +7,10 @@ Practice only, by construction: every request goes to the practice host, which r
 accounts' tokens. Every order carries a client id so a retry can't duplicate it, and nothing
 assumes a fill: callers reconcile with ``orders`` / ``open_trades``.
 
-Keys: ``OANDA_API_TOKEN`` and ``OANDA_ACCOUNT_ID`` (environment variables / repository secrets).
+Keys: ``OANDA_API_KEY`` and ``OANDA_ACCOUNT`` (environment variables / repository secrets).
+
+The practice account is in GBP while both instruments are priced in USD: size from
+``account_usd`` (NAV and margin converted at the live rate), never from ``account``'s raw figures.
 """
 from __future__ import annotations
 
@@ -33,9 +36,9 @@ def _rfc3339(t: datetime) -> str:
 
 class Practice:
     def __init__(self, token: str | None = None, account_id: str | None = None, transport=None):
-        self._headers = {"Authorization": f"Bearer {token or os.environ['OANDA_API_TOKEN']}",
+        self._headers = {"Authorization": f"Bearer {token or os.environ['OANDA_API_KEY']}",
                          "Content-Type": "application/json", "Accept-Datetime-Format": "RFC3339"}
-        self.account_id = account_id or os.environ["OANDA_ACCOUNT_ID"]
+        self.account_id = account_id or os.environ["OANDA_ACCOUNT"]
         self._transport = transport  # tests: (method, url, body) -> dict
         self._specs: dict[str, dict] = {}
 
@@ -65,6 +68,26 @@ class Practice:
     # ---- account ----
     def account(self) -> dict:
         return self._call("GET", f"/v3/accounts/{self.account_id}/summary")["account"]
+
+    def usd_per_unit(self, currency: str) -> float:
+        """US dollars per one unit of ``currency`` (mid price), e.g. ~1.33 for GBP."""
+        if currency == "USD":
+            return 1.0
+        for pair, invert in ((f"{currency}_USD", False), (f"USD_{currency}", True)):
+            try:
+                p = self._call("GET", f"/v3/accounts/{self.account_id}/pricing?instruments={pair}")["prices"][0]
+            except (BrokerError, IndexError, KeyError):
+                continue
+            mid = (float(p["closeoutBid"]) + float(p["closeoutAsk"])) / 2
+            return 1 / mid if invert else mid
+        raise BrokerError(f"no {currency}/USD price to convert the account's figures")
+
+    def account_usd(self) -> dict:
+        """Equity (NAV) and available margin in USD, the instruments' currency."""
+        a = self.account()
+        rate = self.usd_per_unit(a["currency"])
+        return {"equity": float(a["NAV"]) * rate, "margin_available": float(a["marginAvailable"]) * rate,
+                "currency": a["currency"], "usd_per_unit": rate}
 
     def specs(self, instrument: str) -> dict:
         """Price and size precision, minimum size (from the account's instrument list)."""
