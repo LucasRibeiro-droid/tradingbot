@@ -68,7 +68,7 @@ def valid_setup(H: list[Candle], states, rng, i: int) -> int:
     return d
 
 
-def orders_for(symbol: str, bars: list[Candle]) -> tuple[list[Order], dict]:
+def orders_for(symbol: str, bars: list[Candle], min_stop_pct: float = 0.0) -> tuple[list[Order], dict]:
     H, first = hourly(bars, False, 1)
     states = trend_series(H)
     rng = ranges(H, states)
@@ -102,6 +102,9 @@ def orders_for(symbol: str, bars: list[Candle]) -> tuple[list[Order], dict]:
             stop = mid.l if d == 1 else mid.h
             risk = (entry - stop) * d
             if risk <= 0:
+                continue
+            if risk / entry * 100 < min_stop_pct:  # H58
+                counts["stop under the minimum"] = counts.get("stop under the minimum", 0) + 1
                 continue
             tp1 = entry + d * risk
             if any(lv is not None and min(entry, tp1) < lv < max(entry, tp1) for lv in (ph, pl)):
@@ -175,14 +178,15 @@ def summary(ts: list[dict]) -> dict:
     return out
 
 
-def run(symbols: list[str], days: int, entry_minutes: int, targets: list[float], break_even: bool = True) -> dict:
+def run(symbols: list[str], days: int, entry_minutes: int, targets: list[float], break_even: bool = True,
+        min_stop_pct: float = 0.0) -> dict:
     now = datetime.now(timezone.utc)
     split, start = now - timedelta(days=days), now - timedelta(days=2 * days)
     res = {r: [] for r in targets}
     counts = {}
     for sym in symbols:
         bars = aggregate(five_minute(sym, 2 * days + 30), entry_minutes, False)
-        orders, c = orders_for(sym, bars)
+        orders, c = orders_for(sym, bars, min_stop_pct)
         for k, v in c.items():
             counts[k] = counts.get(k, 0) + v
         orders = [o for o in orders if _ts(o.setup_t) >= start]
@@ -193,7 +197,7 @@ def run(symbols: list[str], days: int, entry_minutes: int, targets: list[float],
                     t["period"] = "recent" if _ts(o.setup_t) >= split else "earlier"
                     res[r].append(t)
         print(f"{sym}: {len(orders)} orders, {len(res[targets[0]])} trades so far", flush=True)
-    out = {"params": {"symbols": symbols, "days_per_period": days, "entry_minutes": entry_minutes, "break_even": break_even, "run_at": now.isoformat()},
+    out = {"params": {"symbols": symbols, "days_per_period": days, "entry_minutes": entry_minutes, "break_even": break_even, "min_stop_pct": min_stop_pct, "run_at": now.isoformat()},
            "setup_counts": counts, "by_target": {}}
     for r, ts in res.items():
         out["by_target"][f"{r:g}R"] = {p: summary([t for t in ts if p == "all" or t["period"] == p or t["direction"] == p])
@@ -208,9 +212,10 @@ def main() -> None:
     ap.add_argument("--targets", default="2,3,4,5")
     ap.add_argument("--symbols", required=True)
     ap.add_argument("--fixed-stop", action="store_true", help="keep the stop where it is after 1:1 (no move to entry)")
+    ap.add_argument("--min-stop-pct", type=float, default=0.0, help="skip gaps whose stop is closer than this %% of price (H58)")
     args = ap.parse_args()
     out, res = run(args.symbols.split(","), args.days, args.entry_minutes, [float(x) for x in args.targets.split(",")],
-                   not args.fixed_stop)
+                   not args.fixed_stop, args.min_stop_pct)
     stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     path = STUDIES / f"crt_owner_{args.entry_minutes}m{'_fixedstop' if args.fixed_stop else ''}_{stamp}.json"
     path.write_text(json.dumps(out, indent=1))

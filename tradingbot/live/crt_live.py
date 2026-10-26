@@ -36,7 +36,8 @@ def _bucket_end(t: str) -> datetime:
     return min(start + timedelta(hours=1), n.replace(hour=16, minute=0, second=0, microsecond=0)).astimezone(timezone.utc)
 
 
-def crt_assess(symbol: str, bars5: Sequence[Candle], shorting_enabled: bool, target_r: float = 3.0) -> list[dict]:
+def crt_assess(symbol: str, bars5: Sequence[Candle], shorting_enabled: bool, target_r: float = 3.0,
+               min_stop_pct: float = 0.0) -> list[dict]:
     """Assessments for the gaps confirmed by the last closed 5-minute bar inside a third candle."""
     bars = regular_hours(bars5)
     if len(bars) < 200:
@@ -77,6 +78,8 @@ def crt_assess(symbol: str, bars5: Sequence[Candle], shorting_enabled: bool, tar
         reasons = []
         if risk <= 0:
             reasons.append("stop is not beyond the entry")
+        elif risk / entry * 100 < min_stop_pct:
+            reasons.append(f"stop {risk / entry * 100:.3f}% from entry, under the {min_stop_pct}% minimum (H58: costs eat stops this tight)")
         tp1, tp2 = round(entry + d * risk, 2), round(entry + d * risk * target_r, 2)
         if any(lv is not None and min(entry, tp1) < lv < max(entry, tp1) for lv in (ph, pl)):
             reasons.append("the previous day's high or low lies between entry and 1:1 (video)")

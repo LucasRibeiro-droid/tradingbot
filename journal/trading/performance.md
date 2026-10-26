@@ -4,6 +4,15 @@ R = profit or loss ÷ the risk planned at entry. "As planned" = had the plan run
 flatten (differs from actual only when execution failed). Costs: Alpaca paper has no
 commissions; slippage is inside the fill prices. Updated by the daily review.
 
+## CRT 1h → 5m live (H57, from 2026-10-26; the only strategy this week)
+
+| As of | Trades | Win rate | Expectancy | Total | P/L | Backtest prior |
+|---|---|---|---|---|---|---|
+| 2026-10-26 | 10 | 20% (2 full wins) | −0.55R | −5.53R | −$15.39 | −0.56R, 26% winners |
+
+By stop distance (2026-10-26): under 0.15% of price 4 trades −6.57R; 0.15% or more 6 trades +1.05R
+Longs 6 trades −3.66R; shorts 4 trades −1.87R (details: reviews/2026-10-26.md). From 2026-10-27 stops under 0.15% are skipped (H58).
+
 ## A. Trading scorecard (live, as of 2026-10-23: 51 trades over 3 days)
 "As planned" = to the 15:55 ET flatten (differs from actual only on 2026-10-21's overnight hold).
 

@@ -132,6 +132,10 @@ class TradingParams:
     # costs at 3R with the stop fixed, the least negative target). "tjr" and "orb30" are off.
     strategies: tuple[str, ...] = ("crt",)
     crt_target_r: float = 3.0  # half at 1:1, half here; stop fixed at the gap's middle candle
+    # H58 (2026-10-26, from the first live day and the H56 backtest): skip a gap whose stop is
+    # closer than this % of the price. Below it, the spread and stop slippage cost most of 1R
+    # (backtest: -0.56R -> -0.30R per trade, better in both periods). The stop rule is unchanged.
+    crt_min_stop_pct: float = 0.15
     # CRT trades are held until their stop or target, overnight too (no flatten); the session
     # ends just after the last third candle's orders expire at 16:00.
     hold_overnight: bool = True

@@ -346,7 +346,7 @@ class Session:
                     continue
                 found = []
                 if "crt" in tp.strategies and tf == "5Min":
-                    found += crt_assess(sym, bars.get(sym, []), self.shorting, tp.crt_target_r)
+                    found += crt_assess(sym, bars.get(sym, []), self.shorting, tp.crt_target_r, tp.crt_min_stop_pct)
                 if "tjr" in tp.strategies and tf in tp.tjr_timeframes:
                     for a in assess_all(sym, ltf, upper.get(sym, []), self._daily.get(sym, []), self.config, self.shorting,
                                         length, timeframe_length(up), models=tp.tjr_models, wait=tp.model_wait_candles):

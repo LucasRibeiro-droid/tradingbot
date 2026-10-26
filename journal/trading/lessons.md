@@ -15,3 +15,5 @@ One trade never changes a rule; lessons from fewer than ~10 independent trades a
 | L8 | Many stocks breaking out on the same candle is one market bet (12 longs at 10:30 ET, all reversed) | 10-23: 12 breakouts | evaluation / risk | H48 | one day: a lead |
 | L9 | A small gross edge doesn't survive costs: lower timeframes are +0.03 to +0.07R gross, negative at any realistic cost | lab 10-23 | methodology | H47 rejected | strong (lab n≈20,000) |
 | L10 | On 1-minute, R and dollars diverge: 10% position cap × 0.1–0.2% stops = $2–5 per R | 10-23: 1m trades | evaluation | report $ beside R | certain |
+| L11 | CRT gaps with stops under ~0.15% of price lose to the spread and stop slippage (1 cent can be 0.25R) | 10-26: SPCX 18:00, SNDK 16:40/19:00, SPCX 19:15 | methodology / cost | H58 (backtest: worse the tighter; filter adopted) | strong (backtest n=451 + live) |
+| L12 | Stacked CRT gaps share levels: a newer gap's stop is an older order's entry, so one move stops one and fills the other | 10-26: SNDK, AMD | methodology | to test next | lead (3 cases) |
