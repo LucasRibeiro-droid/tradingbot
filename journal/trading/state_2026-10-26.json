@@ -223,12 +223,45 @@
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
    "expires_at": "2026-10-26T17:30:00+00:00"
+  },
+  {
+   "symbol": "SPCX",
+   "setup_t": "2026-10-26T18:00:00Z",
+   "direction": 1,
+   "planned_entry": 148.41,
+   "stop": 148.37,
+   "targets": [
+    148.45,
+    148.53
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-SPCX-1800-0",
+     "order_id": "7fa3dc48-0107-4f0f-9c04-ea895485f7c8",
+     "qty": 33,
+     "target": 148.45
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-SPCX-1800-1",
+     "order_id": "4b097545-2080-4270-905b-98d5ce6fff95",
+     "qty": 33,
+     "target": 148.53
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1800_SPCX_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T18:30:00+00:00"
   }
  ],
  "traded_symbols": [
   "AMD",
   "MRVL",
-  "SNDK"
+  "SNDK",
+  "SPCX"
  ],
  "seen": [
   [
@@ -264,6 +297,11 @@
   [
    "SNDK",
    "2026-10-26T16:45:00Z",
+   "crt_1h5m"
+  ],
+  [
+   "SPCX",
+   "2026-10-26T18:00:00Z",
    "crt_1h5m"
   ]
  ]
