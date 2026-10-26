@@ -159,11 +159,44 @@
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
    "expires_at": "2026-10-26T14:30:00+00:00"
+  },
+  {
+   "symbol": "SNDK",
+   "setup_t": "2026-10-26T16:40:00Z",
+   "direction": -1,
+   "planned_entry": 1258.64,
+   "stop": 1260.43,
+   "targets": [
+    1256.85,
+    1253.27
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-SNDK-1640-0",
+     "order_id": "66299b8a-0a25-4612-8249-2e0c6cf088e6",
+     "qty": 4,
+     "target": 1256.85
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-SNDK-1640-1",
+     "order_id": "868d9a40-3b49-49f4-9bf9-8d90906f3f7e",
+     "qty": 3,
+     "target": 1253.27
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1640_SNDK_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T17:30:00+00:00"
   }
  ],
  "traded_symbols": [
   "AMD",
-  "MRVL"
+  "MRVL",
+  "SNDK"
  ],
  "seen": [
   [
@@ -189,6 +222,11 @@
   [
    "MRVL",
    "2026-10-26T14:20:00Z",
+   "crt_1h5m"
+  ],
+  [
+   "SNDK",
+   "2026-10-26T16:40:00Z",
    "crt_1h5m"
   ]
  ]
