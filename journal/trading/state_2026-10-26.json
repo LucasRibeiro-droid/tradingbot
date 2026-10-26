@@ -1,5 +1,46 @@
 {
- "trades": [],
- "traded_symbols": [],
- "seen": []
+ "trades": [
+  {
+   "symbol": "MRVL",
+   "setup_t": "2026-10-26T13:40:00Z",
+   "direction": 1,
+   "planned_entry": 228.59,
+   "stop": 227.29,
+   "targets": [
+    229.89,
+    232.49
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-MRVL-1340-0",
+     "order_id": "edef3e5f-408e-41a9-90cc-4a5e2dec74c9",
+     "qty": 22,
+     "target": 229.89
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-MRVL-1340-1",
+     "order_id": "64764e7e-6fe4-49ab-9d73-7a2113b2f8c1",
+     "qty": 21,
+     "target": 232.49
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1340_MRVL_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T14:30:00+00:00"
+  }
+ ],
+ "traded_symbols": [
+  "MRVL"
+ ],
+ "seen": [
+  [
+   "MRVL",
+   "2026-10-26T13:40:00Z",
+   "crt_1h5m"
+  ]
+ ]
 }
