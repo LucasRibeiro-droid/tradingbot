@@ -1,0 +1,289 @@
+{
+ "strategy": "Backtest of the owner's opening-range breakout + 1-minute FVG strategy (2026-10-26), on\nOANDA's Nasdaq-100 and S&P 500 CFDs (NAS100_USD for NQ, SPX500_USD for ES; Alpaca has no futures).",
+ "start": "2021-01-04",
+ "end": "2026-10-23",
+ "results": [
+  {
+   "instrument": "NAS100_USD",
+   "flip": "switch",
+   "trades": 1455,
+   "open": 0,
+   "wins": 472,
+   "win_rate": 32.4,
+   "total_r": -39.26,
+   "avg_r": -0.027,
+   "dollars_at_10": -392.62,
+   "max_drawdown_r": 96.26,
+   "median_stop_points": 21.2,
+   "by_year": {
+    "2021": {
+     "trades": 252,
+     "total_r": 15.0,
+     "win_rate": 35.3
+    },
+    "2022": {
+     "trades": 250,
+     "total_r": -1.19,
+     "win_rate": 33.2
+    },
+    "2023": {
+     "trades": 249,
+     "total_r": -51.0,
+     "win_rate": 26.5
+    },
+    "2024": {
+     "trades": 251,
+     "total_r": -8.0,
+     "win_rate": 32.3
+    },
+    "2025": {
+     "trades": 249,
+     "total_r": -18.07,
+     "win_rate": 30.9
+    },
+    "2026": {
+     "trades": 204,
+     "total_r": 24.0,
+     "win_rate": 37.3
+    }
+   },
+   "resolved_on_5s": 2,
+   "both_in_one_5s": 0
+  },
+  {
+   "instrument": "NAS100_USD",
+   "flip": "cancel",
+   "trades": 1389,
+   "open": 0,
+   "wins": 449,
+   "win_rate": 32.3,
+   "total_r": -42.26,
+   "avg_r": -0.03,
+   "dollars_at_10": -422.62,
+   "max_drawdown_r": 97.26,
+   "median_stop_points": 21.1,
+   "by_year": {
+    "2021": {
+     "trades": 240,
+     "total_r": 15.0,
+     "win_rate": 35.4
+    },
+    "2022": {
+     "trades": 241,
+     "total_r": 4.81,
+     "win_rate": 34.0
+    },
+    "2023": {
+     "trades": 239,
+     "total_r": -50.0,
+     "win_rate": 26.4
+    },
+    "2024": {
+     "trades": 240,
+     "total_r": -15.0,
+     "win_rate": 31.2
+    },
+    "2025": {
+     "trades": 236,
+     "total_r": -17.07,
+     "win_rate": 30.9
+    },
+    "2026": {
+     "trades": 193,
+     "total_r": 20.0,
+     "win_rate": 36.8
+    }
+   },
+   "resolved_on_5s": 2,
+   "both_in_one_5s": 0
+  },
+  {
+   "instrument": "NAS100_USD",
+   "flip": "keep",
+   "trades": 1455,
+   "open": 0,
+   "wins": 467,
+   "win_rate": 32.1,
+   "total_r": -54.26,
+   "avg_r": -0.037,
+   "dollars_at_10": -542.62,
+   "max_drawdown_r": 106.26,
+   "median_stop_points": 20.9,
+   "by_year": {
+    "2021": {
+     "trades": 252,
+     "total_r": 15.0,
+     "win_rate": 35.3
+    },
+    "2022": {
+     "trades": 250,
+     "total_r": 1.81,
+     "win_rate": 33.6
+    },
+    "2023": {
+     "trades": 249,
+     "total_r": -48.0,
+     "win_rate": 26.9
+    },
+    "2024": {
+     "trades": 251,
+     "total_r": -20.0,
+     "win_rate": 30.7
+    },
+    "2025": {
+     "trades": 249,
+     "total_r": -24.07,
+     "win_rate": 30.1
+    },
+    "2026": {
+     "trades": 204,
+     "total_r": 21.0,
+     "win_rate": 36.8
+    }
+   },
+   "resolved_on_5s": 2,
+   "both_in_one_5s": 0
+  },
+  {
+   "instrument": "SPX500_USD",
+   "flip": "switch",
+   "trades": 1456,
+   "open": 0,
+   "wins": 462,
+   "win_rate": 31.7,
+   "total_r": -72.58,
+   "avg_r": -0.05,
+   "dollars_at_10": -725.79,
+   "max_drawdown_r": 108.81,
+   "median_stop_points": 4.2,
+   "by_year": {
+    "2021": {
+     "trades": 251,
+     "total_r": -1.85,
+     "win_rate": 33.1
+    },
+    "2022": {
+     "trades": 250,
+     "total_r": -3.83,
+     "win_rate": 32.8
+    },
+    "2023": {
+     "trades": 250,
+     "total_r": -19.63,
+     "win_rate": 30.8
+    },
+    "2024": {
+     "trades": 252,
+     "total_r": -34.94,
+     "win_rate": 29.0
+    },
+    "2025": {
+     "trades": 250,
+     "total_r": -19.34,
+     "win_rate": 30.8
+    },
+    "2026": {
+     "trades": 203,
+     "total_r": 7.0,
+     "win_rate": 34.5
+    }
+   },
+   "resolved_on_5s": 4,
+   "both_in_one_5s": 0
+  },
+  {
+   "instrument": "SPX500_USD",
+   "flip": "cancel",
+   "trades": 1379,
+   "open": 0,
+   "wins": 443,
+   "win_rate": 32.1,
+   "total_r": -52.63,
+   "avg_r": -0.038,
+   "dollars_at_10": -526.32,
+   "max_drawdown_r": 91.87,
+   "median_stop_points": 4.2,
+   "by_year": {
+    "2021": {
+     "trades": 243,
+     "total_r": 3.16,
+     "win_rate": 33.7
+    },
+    "2022": {
+     "trades": 236,
+     "total_r": 4.17,
+     "win_rate": 33.9
+    },
+    "2023": {
+     "trades": 238,
+     "total_r": -16.63,
+     "win_rate": 31.1
+    },
+    "2024": {
+     "trades": 235,
+     "total_r": -33.03,
+     "win_rate": 28.9
+    },
+    "2025": {
+     "trades": 237,
+     "total_r": -12.3,
+     "win_rate": 31.6
+    },
+    "2026": {
+     "trades": 190,
+     "total_r": 2.0,
+     "win_rate": 33.7
+    }
+   },
+   "resolved_on_5s": 4,
+   "both_in_one_5s": 0
+  },
+  {
+   "instrument": "SPX500_USD",
+   "flip": "keep",
+   "trades": 1456,
+   "open": 0,
+   "wins": 462,
+   "win_rate": 31.7,
+   "total_r": -73.51,
+   "avg_r": -0.05,
+   "dollars_at_10": -735.07,
+   "max_drawdown_r": 112.74,
+   "median_stop_points": 4.2,
+   "by_year": {
+    "2021": {
+     "trades": 251,
+     "total_r": 4.16,
+     "win_rate": 33.9
+    },
+    "2022": {
+     "trades": 250,
+     "total_r": 2.16,
+     "win_rate": 33.6
+    },
+    "2023": {
+     "trades": 250,
+     "total_r": -22.63,
+     "win_rate": 30.4
+    },
+    "2024": {
+     "trades": 252,
+     "total_r": -41.88,
+     "win_rate": 28.2
+    },
+    "2025": {
+     "trades": 250,
+     "total_r": -16.3,
+     "win_rate": 31.2
+    },
+    "2026": {
+     "trades": 203,
+     "total_r": 1.0,
+     "win_rate": 33.5
+    }
+   },
+   "resolved_on_5s": 5,
+   "both_in_one_5s": 0
+  }
+ ]
+}
