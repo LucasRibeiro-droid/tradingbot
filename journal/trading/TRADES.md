@@ -60,3 +60,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-26 14:20 | AMD | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -1.11 | (review) | -33.69 | [page](trades/2026-10-26_1420_AMD_crt_1h5m.md) |
 | 2026-10-26 14:20 | MRVL | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | +2.19 | (review) | +114.69 | [page](trades/2026-10-26_1420_MRVL_crt_1h5m.md) |
 | 2026-10-26 16:45 | SNDK | short | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -1.04 | (review) | -24.25 | [page](trades/2026-10-26_1645_SNDK_crt_1h5m.md) |
+| 2026-10-26 16:40 | SNDK | short | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -1.32 | (review) | -16.45 | [page](trades/2026-10-26_1640_SNDK_crt_1h5m.md) |

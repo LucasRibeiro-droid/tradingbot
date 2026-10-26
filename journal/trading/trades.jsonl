@@ -184,3 +184,4 @@
 {"type": "entry_filled", "t": "2026-10-26T16:53:16+00:00", "symbol": "SNDK", "avg_price": 1255.3057, "slippage": -0.0757}
 {"type": "entry_filled", "t": "2026-10-26T16:56:15+00:00", "symbol": "SNDK", "avg_price": 1258.65, "slippage": -0.01}
 {"type": "exit", "t": "2026-10-26T16:56:15+00:00", "symbol": "SNDK", "setup_t": "2026-10-26T16:45:00Z", "entry": 1255.3057142857142, "stop": 1258.64, "targets": [1251.82, 1245.0], "exits": [[1258.77, 4.0, "stop"], [1258.77, 3.0, "stop"]], "qty": 7.0, "pnl": -24.25, "r": -1.039, "be_moved": false, "strategy": "crt_1h5m", "exit_name": "1:1 + 3R, fixed stop"}
+{"type": "exit", "t": "2026-10-26T16:58:15+00:00", "symbol": "SNDK", "setup_t": "2026-10-26T16:40:00Z", "entry": 1258.65, "stop": 1260.43, "targets": [1256.85, 1253.27], "exits": [[1261.0, 4.0, "stop"], [1261.0, 3.0, "stop"]], "qty": 7.0, "pnl": -16.45, "r": -1.32, "be_moved": false, "strategy": "crt_1h5m", "exit_name": "1:1 + 3R, fixed stop"}
