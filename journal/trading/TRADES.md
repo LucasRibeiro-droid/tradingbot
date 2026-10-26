@@ -57,3 +57,4 @@ Every trade the bot takes: why, the plan, the result, and what it learned (click
 | 2026-10-23 19:18 | GOOG | short | tjr_m2_1m / tjr_ladder | with | +2.33 | +2.52 | +35.44 | [page](trades/2026-10-23_1918_GOOG.md) |
 | 2026-10-23 19:27 | SPCX | short | tjr_m3_1m / ladder_0.5_1_2R | none | -1.16 | -1.00 | -23.37 | [page](trades/2026-10-23_1927_SPCX.md) |
 | 2026-10-26 13:40 | MRVL | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -1.05 | (review) | -57.19 | [page](trades/2026-10-26_1340_MRVL_crt_1h5m.md) |
+| 2026-10-26 14:20 | AMD | long | crt_1h5m / 1:1 + 3R, fixed stop | n/a | -1.11 | (review) | -33.69 | [page](trades/2026-10-26_1420_AMD_crt_1h5m.md) |
