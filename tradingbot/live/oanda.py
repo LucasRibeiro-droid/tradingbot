@@ -7,7 +7,7 @@ Practice only, by construction: every request goes to the practice host, which r
 accounts' tokens. Every order carries a client id so a retry can't duplicate it, and nothing
 assumes a fill: callers reconcile with ``orders`` / ``open_trades``.
 
-Keys: ``OANDA_API_KEY`` and ``OANDA_ACCOUNT`` (environment variables / repository secrets).
+Keys: ``OANDA_API_TOKEN`` and ``OANDA_ACCOUNT`` (environment variables / repository secrets).
 
 The practice account is in GBP while both instruments are priced in USD: size from
 ``account_usd`` (NAV and margin converted at the live rate), never from ``account``'s raw figures.
@@ -36,7 +36,7 @@ def _rfc3339(t: datetime) -> str:
 
 class Practice:
     def __init__(self, token: str | None = None, account_id: str | None = None, transport=None):
-        self._headers = {"Authorization": f"Bearer {token or os.environ['OANDA_API_KEY']}",
+        self._headers = {"Authorization": f"Bearer {token or os.environ['OANDA_API_TOKEN']}",
                          "Content-Type": "application/json", "Accept-Datetime-Format": "RFC3339"}
         self.account_id = account_id or os.environ["OANDA_ACCOUNT"]
         self._transport = transport  # tests: (method, url, body) -> dict
