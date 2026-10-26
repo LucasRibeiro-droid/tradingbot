@@ -28,6 +28,7 @@ import argparse
 import gzip
 import json
 import pickle
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import asdict, dataclass
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
@@ -68,23 +69,27 @@ def fetch(p: Practice, instrument: str, granularity: str, start: datetime, end: 
 
 
 def minutes(p: Practice, instrument: str, start: date, end: date) -> dict[str, np.ndarray]:
-    """1-minute candles, cached by month."""
+    """1-minute candles, cached by month (missing months downloaded 8 at a time)."""
     CACHE.mkdir(parents=True, exist_ok=True)
-    parts, m = [], date(start.year, start.month, 1)
+    months, m = [], date(start.year, start.month, 1)
     while m <= end:
+        months.append(m)
+        m = date(m.year + (m.month == 12), m.month % 12 + 1, 1)
+
+    def month(m: date) -> dict[str, np.ndarray]:
         nxt = date(m.year + (m.month == 12), m.month % 12 + 1, 1)
         path = CACHE / f"{instrument}_M1_{m:%Y-%m}.pkl.gz"
-        complete = nxt <= datetime.now(timezone.utc).date()
         if path.exists():
-            parts.append(pickle.load(gzip.open(path)))
-        else:
-            d = fetch(p, instrument, "M1", datetime(m.year, m.month, 1, tzinfo=timezone.utc),
-                      min(datetime(nxt.year, nxt.month, 1, tzinfo=timezone.utc), datetime.now(timezone.utc)))
-            if complete:
-                pickle.dump(d, gzip.open(path, "wb"))
-            parts.append(d)
-            print(f"  {instrument} {m:%Y-%m}: {len(d['t'])} candles", flush=True)
-        m = nxt
+            return pickle.load(gzip.open(path))
+        d = fetch(p, instrument, "M1", datetime(m.year, m.month, 1, tzinfo=timezone.utc),
+                  min(datetime(nxt.year, nxt.month, 1, tzinfo=timezone.utc), datetime.now(timezone.utc)))
+        if nxt <= datetime.now(timezone.utc).date():
+            pickle.dump(d, gzip.open(path, "wb"))
+        print(f"  {instrument} {m:%Y-%m}: {len(d['t'])} candles", flush=True)
+        return d
+
+    with ThreadPoolExecutor(8) as pool:
+        parts = list(pool.map(month, months))
     return {k: np.concatenate([x[k] for x in parts]) for k in parts[0]}
 
 
