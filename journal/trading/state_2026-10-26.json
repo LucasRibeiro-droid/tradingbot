@@ -95,6 +95,70 @@
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
    "expires_at": "2026-10-26T14:30:00+00:00"
+  },
+  {
+   "symbol": "AMD",
+   "setup_t": "2026-10-26T14:20:00Z",
+   "direction": 1,
+   "planned_entry": 519.22,
+   "stop": 517.26,
+   "targets": [
+    521.18,
+    525.1
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-AMD-1420-0",
+     "order_id": "c0d3e796-af1f-4ab4-9e69-f24c1bde738e",
+     "qty": 9,
+     "target": 521.18
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-AMD-1420-1",
+     "order_id": "d32f1900-04ff-4e93-8dd5-3553d138dbcc",
+     "qty": 9,
+     "target": 525.1
+    }
+   ],
+   "entry_fill": 518.9517647058824,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1420_AMD_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T14:30:00+00:00"
+  },
+  {
+   "symbol": "MRVL",
+   "setup_t": "2026-10-26T14:20:00Z",
+   "direction": 1,
+   "planned_entry": 227.47,
+   "stop": 226.18,
+   "targets": [
+    228.76,
+    231.34
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-MRVL-1420-0",
+     "order_id": "748ae94f-dd5f-4934-b3b1-c1defedab962",
+     "qty": 22,
+     "target": 228.76
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-MRVL-1420-1",
+     "order_id": "95fb95d2-d18e-4452-b209-74a14460e54c",
+     "qty": 21,
+     "target": 231.34
+    }
+   ],
+   "entry_fill": 227.4,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1420_MRVL_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T14:30:00+00:00"
   }
  ],
  "traded_symbols": [
@@ -108,6 +172,11 @@
    "crt_1h5m"
   ],
   [
+   "AMD",
+   "2026-10-26T14:20:00Z",
+   "crt_1h5m"
+  ],
+  [
    "MRVL",
    "2026-10-26T13:40:00Z",
    "crt_1h5m"
@@ -115,6 +184,11 @@
   [
    "MRVL",
    "2026-10-26T14:15:00Z",
+   "crt_1h5m"
+  ],
+  [
+   "MRVL",
+   "2026-10-26T14:20:00Z",
    "crt_1h5m"
   ]
  ]
