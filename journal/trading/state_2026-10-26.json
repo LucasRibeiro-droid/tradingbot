@@ -255,6 +255,38 @@
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
    "expires_at": "2026-10-26T18:30:00+00:00"
+  },
+  {
+   "symbol": "SPCX",
+   "setup_t": "2026-10-26T18:20:00Z",
+   "direction": 1,
+   "planned_entry": 148.66,
+   "stop": 148.51,
+   "targets": [
+    148.81,
+    149.11
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-SPCX-1820-0",
+     "order_id": "1bd23e11-2408-42dc-b7eb-bf17df06aa73",
+     "qty": 33,
+     "target": 148.81
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-SPCX-1820-1",
+     "order_id": "beb83428-497b-4731-a1dc-6569105a029b",
+     "qty": 33,
+     "target": 149.11
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1820_SPCX_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T18:30:00+00:00"
   }
  ],
  "traded_symbols": [
@@ -302,6 +334,11 @@
   [
    "SPCX",
    "2026-10-26T18:00:00Z",
+   "crt_1h5m"
+  ],
+  [
+   "SPCX",
+   "2026-10-26T18:20:00Z",
    "crt_1h5m"
   ]
  ]
