@@ -31,15 +31,90 @@
    "strategy": "crt_1h5m",
    "exit_name": "1:1 + 3R, fixed stop",
    "expires_at": "2026-10-26T14:30:00+00:00"
+  },
+  {
+   "symbol": "AMD",
+   "setup_t": "2026-10-26T14:15:00Z",
+   "direction": 1,
+   "planned_entry": 517.26,
+   "stop": 516.21,
+   "targets": [
+    518.31,
+    520.41
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-AMD-1415-0",
+     "order_id": "11c5ab86-73a7-41be-b80f-dc57b2a6b350",
+     "qty": 10,
+     "target": 518.31
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-AMD-1415-1",
+     "order_id": "250a028f-7500-4f01-92ac-7ad00a74c9e6",
+     "qty": 9,
+     "target": 520.41
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1415_AMD_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T14:30:00+00:00"
+  },
+  {
+   "symbol": "MRVL",
+   "setup_t": "2026-10-26T14:15:00Z",
+   "direction": 1,
+   "planned_entry": 226.18,
+   "stop": 224.85,
+   "targets": [
+    227.51,
+    230.17
+   ],
+   "parts": [
+    {
+     "client_id": "crt_1h5m-2026-10-26-MRVL-1415-0",
+     "order_id": "1d695376-4830-4647-8c6c-f9f79b3520ab",
+     "qty": 22,
+     "target": 227.51
+    },
+    {
+     "client_id": "crt_1h5m-2026-10-26-MRVL-1415-1",
+     "order_id": "ca14dfe5-a8d2-4cde-991b-3305fd3c81c7",
+     "qty": 21,
+     "target": 230.17
+    }
+   ],
+   "entry_fill": null,
+   "be_moved": false,
+   "closed": false,
+   "page": "journal/trading/trades/2026-10-26_1415_MRVL_crt_1h5m.md",
+   "strategy": "crt_1h5m",
+   "exit_name": "1:1 + 3R, fixed stop",
+   "expires_at": "2026-10-26T14:30:00+00:00"
   }
  ],
  "traded_symbols": [
+  "AMD",
   "MRVL"
  ],
  "seen": [
   [
+   "AMD",
+   "2026-10-26T14:15:00Z",
+   "crt_1h5m"
+  ],
+  [
    "MRVL",
    "2026-10-26T13:40:00Z",
+   "crt_1h5m"
+  ],
+  [
+   "MRVL",
+   "2026-10-26T14:15:00Z",
    "crt_1h5m"
   ]
  ]
