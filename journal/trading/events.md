@@ -65,3 +65,4 @@
 | 2026-10-23 14:31 | Restart to deploy the multi-timeframe playbooks lost the record of 4 trades opened minutes before (IWM, INTC, AMD, SPCX: the cancelled run hadn't pushed its state) | 4 trades unmanaged ~5 minutes (brackets live at Alpaca) | rebuild-from-Alpaca + broker position check added; second restart at 14:36 adopted all 4 |
 | 2026-10-23 19:55 | Flatten round 2 logged 404 "position not found" for 17 stocks: round 1's close orders had already filled | none (verified flat) | 404 on close now treated as closed |
 | 2026-10-26 13:16 | session start (paper): equity 98510.04, buying power 394040.16, shorting on |  |  |
+| 2026-10-26 19:02 | session hand-off (runner time limit) | positions stay protected at Alpaca | next run resumes from the saved state |
