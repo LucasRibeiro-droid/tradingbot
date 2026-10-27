@@ -52,6 +52,13 @@ class Order:
     setup_t: str
 
 
+def trading_day(t: str, round_the_clock: bool = False):
+    """The session a candle belongs to: the New York date; for 24-hour markets the session that
+    opens at 18:00 New York time counts as the next day (the futures convention)."""
+    n = _ts(t).astimezone(NY)
+    return (n + timedelta(hours=6)).date() if round_the_clock else n.date()
+
+
 def valid_setup(H: list[Candle], states, rng, i: int) -> int:
     """The trade direction if candles i-1 (range) and i (sweep) form a CRT setup, else 0."""
     r, s = H[i - 1], H[i]
@@ -68,14 +75,16 @@ def valid_setup(H: list[Candle], states, rng, i: int) -> int:
     return d
 
 
-def orders_for(symbol: str, bars: list[Candle], min_stop_pct: float = 0.0) -> tuple[list[Order], dict]:
-    H, first = hourly(bars, False, 1)
+def orders_for(symbol: str, bars: list[Candle], min_stop_pct: float = 0.0, round_the_clock: bool = False) -> tuple[list[Order], dict]:
+    """``round_the_clock``: a 24-hour market (gold, index CFDs): clock-hour candles, and the day
+    (for the previous day's high and low) runs from 18:00 to 18:00 New York time."""
+    H, first = hourly(bars, round_the_clock, 1)
     states = trend_series(H)
     rng = ranges(H, states)
     gaps = find_gaps(bars)
     days = {}
     for c in bars:
-        d = _ts(c.t).astimezone(NY).date()
+        d = trading_day(c.t, round_the_clock)
         h, l = days.get(d, (c.h, c.l))
         days[d] = (max(h, c.h), min(l, c.l))
     order_days = sorted(days)
@@ -91,7 +100,7 @@ def orders_for(symbol: str, bars: list[Candle], min_stop_pct: float = 0.0) -> tu
         t0 = first[i + 1]  # the third candle's bars
         t1 = (first[i + 2] - 1) if i + 2 < len(first) else len(bars) - 1
         side = BULLISH if d == 1 else BEARISH
-        day = _ts(H[i + 1].t).astimezone(NY).date()
+        day = trading_day(H[i + 1].t, round_the_clock)
         ph, pl = prev_day.get(day, (None, None))
         for g in gaps:
             if g.side != side or g.index - 1 < t0 or g.confirmed_at > t1:
@@ -115,18 +124,21 @@ def orders_for(symbol: str, bars: list[Candle], min_stop_pct: float = 0.0) -> tu
     return out, counts
 
 
-def simulate(bars: list[Candle], o: Order, target_r: float, break_even: bool = True) -> dict | None:
-    """``break_even``: after 1:1 the stop moves to the entry price; False keeps it fixed."""
+def simulate(bars: list[Candle], o: Order, target_r: float, break_even: bool = True, cost_bps: float = COST_BPS,
+             fractional: bool = False) -> dict | None:
+    """``break_even``: after 1:1 the stop moves to the entry price; False keeps it fixed.
+    ``fractional``: sizes in hundredths (CFDs, gold) instead of whole shares."""
     d = o.direction
     fill = next((k for k in range(o.placed, min(o.expires, len(bars) - 1) + 1)
                  if ((bars[k].l <= o.entry) if d == 1 else (bars[k].h >= o.entry))), None)
     if fill is None:
         return None
     risk = abs(o.entry - o.stop)
-    qty = int(min(EQUITY * RISK_PCT / 100 / risk, EQUITY * POSITION_PCT / 100 / o.entry))
-    if qty < 2:
+    qty = min(EQUITY * RISK_PCT / 100 / risk, EQUITY * POSITION_PCT / 100 / o.entry)
+    qty = int(qty * 100) / 100 if fractional else int(qty)
+    if qty < (0.02 if fractional else 2):
         return {"skipped": True}
-    half = qty // 2
+    half = round(qty / 2, 2) if fractional else qty // 2
     tp1, tp2 = o.entry + d * risk, o.entry + d * risk * target_r
     stop, legs, open_qty, hit1 = o.stop, [], qty, False
     for k in range(fill, len(bars)):
@@ -151,8 +163,8 @@ def simulate(bars: list[Candle], o: Order, target_r: float, break_even: bool = T
     if open_qty:
         legs.append((bars[-1].c, open_qty, "end of data"))
     gross = sum((px - o.entry) * q * d for px, q, _ in legs)
-    cost_all = COST_BPS / 1e4 * (o.entry * qty + sum(px * q for px, q, _ in legs))
-    cost_stops = COST_BPS / 1e4 * sum(px * q for px, q, w in legs if w in ("stop", "break even"))
+    cost_all = cost_bps / 1e4 * (o.entry * qty + sum(px * q for px, q, _ in legs))
+    cost_stops = cost_bps / 1e4 * sum(px * q for px, q, w in legs if w in ("stop", "break even"))
     rq = risk * qty
     return {"symbol": o.symbol, "direction": "long" if d == 1 else "short", "setup_t": o.setup_t, "fill_t": bars[fill].t,
             "entry": round(o.entry, 4), "stop": round(o.stop, 4), "qty": qty, "risk_pct": round(risk / o.entry * 100, 3),

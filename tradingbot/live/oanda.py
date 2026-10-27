@@ -35,7 +35,7 @@ class Practice:
     def __init__(self, token: str | None = None, account_id: str | None = None, transport=None):
         self._headers = {"Authorization": f"Bearer {token or os.environ['OANDA_API_TOKEN']}",
                          "Content-Type": "application/json", "Accept-Datetime-Format": "RFC3339"}
-        self.account_id = account_id or os.environ["OANDA_ACCOUNT_ID"]
+        self.account_id = account_id or os.environ.get("OANDA_ACCOUNT_ID") or os.environ["OANDA_ACCOUNT"]
         self._transport = transport  # tests: (method, url, body) -> dict
         self._specs: dict[str, dict] = {}
 
@@ -115,6 +115,13 @@ class Practice:
             why = (r.get("orderCancelTransaction") or r.get("orderRejectTransaction"))
             raise BrokerError(f"order {client_id} refused: {why.get('reason') or why.get('rejectReason')}")
         return r["orderCreateTransaction"]
+
+    def pricing(self, instruments) -> dict[str, dict]:
+        q = urllib.parse.urlencode({"instruments": ",".join(instruments)})
+        return {x["instrument"]: x for x in self._call("GET", f"/v3/accounts/{self.account_id}/pricing?{q}")["prices"]}
+
+    def order(self, order_id: str) -> dict:
+        return self._call("GET", f"/v3/accounts/{self.account_id}/orders/{order_id}")["order"]
 
     def orders(self) -> list[dict]:
         return self._call("GET", f"/v3/accounts/{self.account_id}/pendingOrders")["orders"]
