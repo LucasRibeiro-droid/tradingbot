@@ -1,0 +1,79 @@
+# Paper trades the owner's CRT 1h -> 5m on gold (XAU_USD) and the Nasdaq-100 CFD (NAS100_USD, tracks
+# NQ) on the OANDA practice account, around the clock (Sunday 18:00 to Friday 17:00 New York time).
+#
+# - Fires every 15 minutes; `--only-when-open` exits at once while the market is closed.
+# - One session at a time (its own concurrency group, separate from the stock session). A runner job
+#   is capped at 6 hours, so the bot hands off after 345 minutes and queues its own successor about
+#   10 minutes before (GitHub's schedule is too unreliable to count on).
+# - Every 2 minutes the journal (journal/trading/fx) is pushed to TRADING_BRANCH. Stops, targets and
+#   the expiry of unfilled orders are held by OANDA, so trades stay protected between runs.
+#
+# Needs repository secrets OANDA_API_TOKEN and OANDA_ACCOUNT (or OANDA_ACCOUNT_ID): a practice
+# account (the bot refuses any account whose id doesn't start with 101-).
+name: fx-session
+
+on:
+  schedule:
+    - cron: "*/15 * * * 0-5"
+  workflow_dispatch:
+
+concurrency:
+  group: fx-session
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: write
+
+env:
+  TRADING_BRANCH: claude/dreamy-euler-tv1yn1
+
+jobs:
+  session:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TRADING_BRANCH }}
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run the session
+        env:
+          OANDA_API_TOKEN: ${{ secrets.OANDA_API_TOKEN }}
+          OANDA_ACCOUNT: ${{ secrets.OANDA_ACCOUNT }}
+          OANDA_ACCOUNT_ID: ${{ secrets.OANDA_ACCOUNT_ID }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "fx-session"
+          git config user.email "fx-session@users.noreply.github.com"
+          sync() {
+            git add journal/trading/fx
+            git diff --cached --quiet && return 0
+            git commit -qm "FX journal $(date -u +%H:%M) UTC (GitHub Actions session)"
+            for i in 1 2 3 4; do
+              if git pull -q --rebase --autostash origin "$TRADING_BRANCH"; then
+                git push -q origin "HEAD:$TRADING_BRANCH" && return 0
+              else
+                git rebase --abort 2>/dev/null
+              fi
+              sleep $((2 ** i))
+            done
+            echo "journal push failed; will retry at the next sync"
+          }
+          python -u -m tradingbot.live.fx_run --only-when-open --max-minutes 345 &
+          bot=$!
+          relayed=0
+          while kill -0 "$bot" 2>/dev/null; do
+            sleep 120; sync
+            if [ "$relayed" = 0 ] && [ "$SECONDS" -gt $((335 * 60)) ]; then
+              gh workflow run fx-session.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME" && relayed=1
+            fi
+          done
+          wait "$bot"; status=$?
+          sync
+          exit $status
