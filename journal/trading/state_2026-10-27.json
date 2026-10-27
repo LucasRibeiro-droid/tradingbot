@@ -1,5 +1,11 @@
 {
  "trades": [],
  "traded_symbols": [],
- "seen": []
+ "seen": [
+  [
+   "MSFT",
+   "2026-10-27T16:40:00Z",
+   "crt_1h5m"
+  ]
+ ]
 }
