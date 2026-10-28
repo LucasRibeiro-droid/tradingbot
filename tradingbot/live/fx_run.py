@@ -26,13 +26,14 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from .broker import BrokerError
+from . import hl_predict
 from .crt_live import crt_assess
 from .oanda import INSTRUMENTS, Practice
 
 ROOT = Path(__file__).resolve().parent.parent.parent / "journal" / "trading" / "fx"
 NY = ZoneInfo("America/New_York")
 TARGET_R, RISK_PCT, POSITION_PCT, MIN_STOP_SPREADS = 3.0, 1.0, 10.0, 3.0
-LOOKBACK = timedelta(days=35)
+LOOKBACK = timedelta(days=45)  # 22+ full sessions for the NAS100 high/low predictor
 STRATEGY = "crt_fx"
 
 
@@ -199,6 +200,63 @@ class Session:
         else:
             a["decision"], a["reasons"] = "REJECTED", ["every part was refused by OANDA"]
 
+    # ---- NAS100 high/low predictor (owner, 2026-10-27; hl_predict) ----
+    def predict(self) -> None:
+        """At 09:35 ET the session's range and high/low bands; every 30 minutes from 10:00 the chance
+        that the high and the low of the day are already in; at 16:00 the grade. Written to
+        journal/trading/fx/NAS100_LEVELS.md (today) and nas100_levels.jsonl (every call)."""
+        now = _now().astimezone(NY)
+        minute = now.hour * 60 + now.minute
+        if now.weekday() > 4 or not (575 <= minute <= 965):
+            return
+        slot = 575 if minute < 600 else (minute // 30) * 30
+        key = ("levels", f"{now.date()}-{slot}")
+        if key in self.seen or (slot != 575 and slot not in hl_predict.CHECKPOINTS and slot != 960):
+            return
+        bars = self.bars.get("NAS100_USD") or []
+        S = hl_predict.sessions([c for c in bars if c.closed])
+        days = [d for d in sorted(S) if S[d].get("n", 0) >= 75 and d < now.date()]
+        today = S.get(now.date())
+        if not today or not today.get("open") or len(days) < 22:
+            return
+        model = self.hl_model = getattr(self, "hl_model", None) or hl_predict.load()
+        f = hl_predict.open_features([S[d] for d in days[-22:]], today)
+        if not f:
+            return
+        self.seen.add(key)
+        lv = hl_predict.at_open(model, f, today["open"])
+        rec = {"t": _now().isoformat(timespec="seconds"), "date": str(now.date()), "slot": f"{slot // 60}:{slot % 60:02d}",
+               "open": today["open"], "range_pct": lv["range_pct"],
+               "high_band": [round(lv[f"high_{q}"], 1) for q in ("p10", "p50", "p90")],
+               "low_band": [round(lv[f"low_{q}"], 1) for q in ("p10", "p50", "p90")],
+               "high_so_far": today["high"], "low_so_far": today["low"]}
+        if slot >= 600:
+            last = today["bars"][-1][1].c
+            p = hl_predict.p_extreme_in(model, min(slot, 930), today["high"], today["low"], last, lv["range_pct"] / 100, f["gap"])
+            rec.update(last=last, p_high_in=round(p["high"], 3), p_low_in=round(p["low"], 3))
+        _append("nas100_levels.jsonl", rec)
+        self._levels_page(rec, final=slot >= 960)
+
+    def _levels_page(self, rec: dict, final: bool) -> None:
+        path = ROOT / "NAS100_LEVELS.md"
+        hb, lb = rec["high_band"], rec["low_band"]
+        head = (f"# NAS100 high and low of the New York session: {rec['date']}\n\n"
+                f"Predicted at the open ({rec['open']:.1f}): range {rec['range_pct']:.2f}%; **high** most likely ~{hb[1]:.0f} "
+                f"(80% band {hb[0]:.0f}–{hb[2]:.0f}); **low** most likely ~{lb[1]:.0f} (80% band {lb[2]:.0f}–{lb[0]:.0f}).\n"
+                f"Model: tradingbot/live/hl_predict.py (fit on QQQ 2016-2026; when it says 80%+ it was right ~90% out of sample).\n\n"
+                "| Time (ET) | Price | High so far | Low so far | Chance the high is in | Chance the low is in |\n|---|---|---|---|---|---|\n")
+        rows = []
+        for l in (ROOT / "nas100_levels.jsonl").read_text().splitlines():
+            r = json.loads(l)
+            if r["date"] == rec["date"] and "p_high_in" in r and r["slot"] != "16:00":
+                rows.append(f"| {r['slot']} | {r['last']:.1f} | {r['high_so_far']:.1f} | {r['low_so_far']:.1f} | {r['p_high_in']:.0%} | {r['p_low_in']:.0%} |")
+        tail = ""
+        if final:
+            inb = lambda v, a, b: "inside" if min(a, b) <= v <= max(a, b) else "outside"
+            tail = (f"\n**Result:** high {rec['high_so_far']:.1f} ({inb(rec['high_so_far'], hb[0], hb[2])} the band), "
+                    f"low {rec['low_so_far']:.1f} ({inb(rec['low_so_far'], lb[0], lb[2])} the band).\n")
+        path.write_text(head + "\n".join(rows) + "\n" + tail)
+
     # ---- manage: OANDA holds stops, targets and expiry; this only reconciles and records ----
     def manage(self) -> None:
         for t in self.trades:
@@ -276,6 +334,7 @@ class Session:
             try:
                 if market_open() and (once or int(_now().timestamp() // 60) % 5 == 0):
                     self.cycle()
+                    self.predict()
                 if not self.dry_run:
                     self.manage()
             except (BrokerError, OSError, KeyError, ValueError) as e:
