@@ -136,7 +136,10 @@ class TradingParams:
     # 2026-10-28 (owner: "you decide"): the bot's own stock strategy, swing_down3 (live/swing.py, H61),
     # switched off the same day before its first trade: the owner wants a DAY-trading stock strategy
     # (2-5 trades a day, flat at the close). Nothing trades on stocks until that one is chosen.
-    strategies: tuple[str, ...] = ()
+    # Owner, same day: "a day trading strategy that takes at least 2 trades a day and at most 5": the 3
+    # strongest stocks at 10:00 held to the close (live/daytrade.py, H63, an experiment: no tested
+    # day-trading rule had a reliable edge after costs).
+    strategies: tuple[str, ...] = ("day",)
     crt_target_r: float = 3.0  # half at 1:1, half here; stop fixed at the gap's middle candle
     # H58 (2026-10-26, from the first live day and the H56 backtest): skip a gap whose stop is
     # closer than this % of the price. Below it, the spread and stop slippage cost most of 1R
@@ -144,7 +147,7 @@ class TradingParams:
     crt_min_stop_pct: float = 0.15
     # CRT trades are held until their stop or target, overnight too (no flatten); the session
     # ends just after the last third candle's orders expire at 16:00.
-    hold_overnight: bool = True
+    hold_overnight: bool = False  # day trading again from 2026-10-29: flat at 15:55
     session_end: str = "16:02"
     tjr_models: tuple[int, ...] = (1, 2, 3)
     tjr_timeframes: tuple[str, ...] = ("1Min", "5Min", "15Min", "1Hour")

@@ -110,6 +110,15 @@ class Paper:
             body["stop_price"] = f"{stop_price:.2f}"
         return self._call("POST", "/v2/orders", body, retries=0)
 
+    def oto(self, symbol: str, qty: int, side: str, stop: float, client_order_id: str) -> dict:
+        """Market entry with a stop attached (one-triggers-other), both for the day only."""
+        existing = self.order_by_client_id(client_order_id)
+        if existing:
+            return existing
+        body = {"symbol": symbol, "qty": str(qty), "side": side, "type": "market", "time_in_force": "day",
+                "order_class": "oto", "client_order_id": client_order_id, "stop_loss": {"stop_price": f"{stop:.2f}"}}
+        return self._call("POST", "/v2/orders", body, retries=0)
+
     def cancel(self, order_id: str) -> None:
         self._call("DELETE", f"/v2/orders/{order_id}", retries=0)
 

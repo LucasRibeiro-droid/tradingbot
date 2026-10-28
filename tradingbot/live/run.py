@@ -33,6 +33,7 @@ from ..data import fetch_bars, fetch_bars_multi, timeframe_length
 from .broker import BrokerError, Paper
 from .screener import screen
 from .crt_live import _bucket_end, crt_assess
+from .daytrade import DayTrade
 from .swing import Swing
 from .experiments import exit_for, model_for, orb_assess, pre_trade, targets_for
 from .signals import assess_all, size, split
@@ -191,6 +192,7 @@ class Session:
         self._daily, self._daily_day = None, None
         self.cache = BarCache()
         self.swing = Swing(self.broker, dry_run) if "swing" in config.trading.strategies else None
+        self.day = DayTrade(self.broker, dry_run) if "day" in config.trading.strategies else None
         self.state_path = ROOT / f"state_{self.today}.json"
 
     # ---- start ----
@@ -636,6 +638,8 @@ class Session:
                         self.manage()
                     if self.swing:
                         self.swing.tick()
+                    if self.day:
+                        self.day.tick()
                 elif self.swing:
                     self.swing.reconcile()  # the closing auction's fills arrive just after 16:00
             except BrokerError as e:
@@ -654,6 +658,8 @@ class Session:
                   f"{open_} trade(s) still open, protected by their gtc stops at Alpaca", "review to write")
             return
         self.flatten()
+        if self.day:
+            self.day.record()
         event("session end", f"{len(self.trades)} trades, {len(self.traded_symbols)} instruments", "review to write")
 
 
