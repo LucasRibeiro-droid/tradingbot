@@ -74,3 +74,4 @@
 | 2026-10-27 20:02 | session end (no flatten: CRT trades are held until stop or target) | 0 trade(s) still open, protected by their gtc stops at Alpaca | review to write |
 | 2026-10-28 13:31 | session start (paper): equity 98492.86, buying power 393971.44, shorting on |  |  |
 | 2026-10-28 15:40 | session start (paper): equity 98492.86, buying power 393971.44, shorting on |  |  |
+| 2026-10-28 17:53 | session start (paper): equity 98492.86, buying power 393971.44, shorting on |  |  |
