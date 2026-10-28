@@ -133,8 +133,10 @@ class TradingParams:
     # Owner, 2026-10-27: "I only want you to do this CRT strategy on NQ and XAUUSD ... for stocks
     # just try finding your own strategy". CRT now runs on OANDA (live/fx_run.py); the stock
     # session trades nothing until a stock strategy passes the backtest and the owner's OK.
-    # 2026-10-28 (owner: "you decide"): the bot's own stock strategy, swing_down3 (live/swing.py, H61).
-    strategies: tuple[str, ...] = ("swing",)
+    # 2026-10-28 (owner: "you decide"): the bot's own stock strategy, swing_down3 (live/swing.py, H61),
+    # switched off the same day before its first trade: the owner wants a DAY-trading stock strategy
+    # (2-5 trades a day, flat at the close). Nothing trades on stocks until that one is chosen.
+    strategies: tuple[str, ...] = ()
     crt_target_r: float = 3.0  # half at 1:1, half here; stop fixed at the gap's middle candle
     # H58 (2026-10-26, from the first live day and the H56 backtest): skip a gap whose stop is
     # closer than this % of the price. Below it, the spread and stop slippage cost most of 1R
