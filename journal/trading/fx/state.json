@@ -1,6 +1,41 @@
 {
- "trades": [],
+ "trades": [
+  {
+   "instrument": "XAU_USD",
+   "setup_t": "2026-10-28T17:20:00Z",
+   "direction": -1,
+   "entry": 4040.455,
+   "stop": 4042.075,
+   "targets": [
+    4038.835,
+    4035.595
+   ],
+   "expires_at": "2026-10-28T18:00:00+00:00",
+   "parts": [
+    {
+     "client_id": "crt_fx-XAU_USD-202610281720-0",
+     "order_id": "8",
+     "units": 1.6,
+     "target": 4038.835,
+     "trade_id": null
+    },
+    {
+     "client_id": "crt_fx-XAU_USD-202610281720-1",
+     "order_id": "9",
+     "units": 1.6,
+     "target": 4035.595,
+     "trade_id": null
+    }
+   ],
+   "closed": false,
+   "page": "journal/trading/fx/trades/2026-10-28_1720_XAU_USD.md"
+  }
+ ],
  "seen": [
+  [
+   "XAU_USD",
+   "2026-10-28T17:20:00Z"
+  ],
   [
    "levels",
    "2026-10-28-690"
