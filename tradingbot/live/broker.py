@@ -98,6 +98,18 @@ class Paper:
             body.update(type="limit", limit_price=f"{limit_price:.2f}")
         return self._call("POST", "/v2/orders", body, retries=0)
 
+    def simple(self, symbol: str, qty: int, side: str, client_order_id: str, time_in_force: str = "day",
+               order_type: str = "market", stop_price: float | None = None) -> dict:
+        """One plain order: market (``time_in_force`` "cls" = at the closing auction) or a stop."""
+        existing = self.order_by_client_id(client_order_id)
+        if existing:
+            return existing
+        body = {"symbol": symbol, "qty": str(qty), "side": side, "type": order_type,
+                "time_in_force": time_in_force, "client_order_id": client_order_id}
+        if stop_price is not None:
+            body["stop_price"] = f"{stop_price:.2f}"
+        return self._call("POST", "/v2/orders", body, retries=0)
+
     def cancel(self, order_id: str) -> None:
         self._call("DELETE", f"/v2/orders/{order_id}", retries=0)
 

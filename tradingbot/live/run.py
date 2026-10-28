@@ -33,6 +33,7 @@ from ..data import fetch_bars, fetch_bars_multi, timeframe_length
 from .broker import BrokerError, Paper
 from .screener import screen
 from .crt_live import _bucket_end, crt_assess
+from .swing import Swing
 from .experiments import exit_for, model_for, orb_assess, pre_trade, targets_for
 from .signals import assess_all, size, split
 
@@ -189,6 +190,7 @@ class Session:
         self.today = datetime.now(NY).strftime("%Y-%m-%d")
         self._daily, self._daily_day = None, None
         self.cache = BarCache()
+        self.swing = Swing(self.broker, dry_run) if "swing" in config.trading.strategies else None
         self.state_path = ROOT / f"state_{self.today}.json"
 
     # ---- start ----
@@ -241,7 +243,7 @@ class Session:
                   and str(o.get("client_order_id", "")).startswith(BOT_IDS) and self.today in str(o.get("client_order_id"))}
         self.traded_symbols |= filled
         self._adopt(orders, {p["symbol"] for p in positions})
-        known = {t.symbol for t in self.trades if not t.closed}
+        known = {t.symbol for t in self.trades if not t.closed} | (set(self.swing.positions) if getattr(self, "swing", None) else set())
         for pos in positions:
             if pos["symbol"] not in known:
                 event(f"position {pos['symbol']} {pos['qty']} at Alpaca is not in the saved state",
@@ -632,6 +634,10 @@ class Session:
                     self.cycle()
                     if not self.dry_run:
                         self.manage()
+                    if self.swing:
+                        self.swing.tick()
+                elif self.swing:
+                    self.swing.reconcile()  # the closing auction's fills arrive just after 16:00
             except BrokerError as e:
                 event(f"broker error in the cycle: {e}", "this minute skipped", "retry next minute")
             # Every minute, just after the candle closes (bars are clock-aligned).
