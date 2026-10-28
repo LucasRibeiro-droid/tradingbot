@@ -52,7 +52,7 @@ class Practice:
                     return json.loads(raw) if raw else None
             except urllib.error.HTTPError as e:
                 detail = e.read().decode(errors="replace")[:300]
-                if e.code in (429, 500, 502, 503, 504) and attempt < retries:
+                if (e.code in (429, 500, 502, 503, 504) or (e.code == 401 and method == "GET")) and attempt < retries:
                     time.sleep(2 ** attempt)
                     continue
                 raise BrokerError(f"{method} {path}: HTTP {e.code}: {detail}") from None
