@@ -1,0 +1,35 @@
+{
+ "version": 50,
+ "written_after": "2024-04-09",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "beyond_pd and busy_day and stop>=12sp",
+   "score": 0.1548,
+   "trades_seen": 363,
+   "mean_r": 0.1921
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "between and inside_pd and stop>=6sp",
+   "score": 0.0662,
+   "trades_seen": 183,
+   "mean_r": 0.1257
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD XAU_USD continuation|1h>5m (2R) when between and inside_pd and stop>=6sp: 183 past trades, +0.126R average, 42% winners, positive in every past year (worst year shrunk +0.066R)",
+  "DROP NAS100_USD continuation|1h>5m (2R) when busy_day+ny_midday+with_4h: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD continuation|1h>5m (2R) when between+stop>=6sp: no longer among the best patterns that held in every past year"
+ ]
+}

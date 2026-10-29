@@ -1,0 +1,26 @@
+{
+ "version": 72,
+ "written_after": "2025-09-19",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "between and inside_pd and stop>=12sp",
+   "score": 0.0854,
+   "trades_seen": 166,
+   "mean_r": 0.189
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": -1.0,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD (non-CRT): its strategy trades lost -0.151R over the last 26",
+  "DROP NAS100_USD continuation|1h>1m (3R) when busy_day+stop>=12sp+with_4h: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after NoneR / -1.0R on the day (replay of the last 250 days: 42% of trading days green, +7.0R)"
+ ]
+}

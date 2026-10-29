@@ -1,0 +1,33 @@
+{
+ "version": 69,
+ "written_after": "2025-08-01",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "busy_day and stop>=12sp and with_D",
+   "score": 0.0866,
+   "trades_seen": 592,
+   "mean_r": 0.1207
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "between and quiet_day",
+   "score": 0.0665,
+   "trades_seen": 122,
+   "mean_r": 0.181
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD XAU_USD continuation|1h>5m (2R) when between and quiet_day: 122 past trades, +0.181R average, 43% winners, positive in every past year (worst year shrunk +0.066R)"
+ ]
+}

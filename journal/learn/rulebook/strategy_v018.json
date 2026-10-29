@@ -1,0 +1,19 @@
+{
+ "version": 18,
+ "written_after": "2022-01-10",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (3R) when beyond_pd+stop>=12sp: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_break (3R) when beyond_pd+long: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (3R) when long+premium+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD continuation|1h>5m (3R) when mon+premium+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|pivots+sessions|at_break (3R) when beyond_pd+long+newyork: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when beyond_pd+stop>=12sp: no longer among the best patterns that held in every past year"
+ ]
+}

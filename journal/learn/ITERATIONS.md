@@ -1,4 +1,6 @@
-# Development log of the learning engine (2021-2024 only; the 2025+ holdout is untouched)
+# Development log of the learning engine
+
+v1-v4: 2021-2024 with 2025+ locked. From v5 the owner released 2025-2026 (2026-10-29) and made CRT optional.
 
 Every row is a full day-by-day run: strategy trades are what each day's rulebook (written the evening
 before) took. Results are strategy trades only, after spread, slippage and commission, in R.
@@ -18,3 +20,16 @@ Findings so far (from the experiments, all 2021-2024):
 - No session drift beyond costs on either instrument.
 - The bot's daily high/low predictor works as a predictor (median miss at the 18:00 open 62 vs 106 points
   naive on NAS100; bands held 74-82%) but is not a trading edge by itself.
+| v5 | monthly walk-forward pattern mining (setup × exit × up to 3 concept conditions, kept only if positive in every past year); CRT optional; 2021-01 → 2026-10 | 37.8% (of traded days) | 12.3% | 752 | −0.050 | −37.6 | −58.1 | not chosen | −0.138 |
+
+**Mining test (2026-10-29, owner: "find patterns using everything 2021-2024"):** the best patterns mined on
+all of 2021-2024, frozen with day stops chosen on 2021-2024, then traded day by day on 2025-2026, which they
+never saw (`studies/research_2026-10-28/learn_mine_split.py`):
+
+| Frozen rulebook | 2021-2024 (where found) | 2025-2026 (unseen) |
+|---|---|---|
+| top 6 patterns: avg R / total / green traded days / max DD | +0.291 / +226.2R / 54.8% / −17.0R | −0.081 / −31.8R / 38.1% / −43.7R |
+| top 12 patterns | +0.253 / +209.4R / 53.9% / −14.0R | −0.050 / −20.7R / 40.7% / −37.6R |
+
+The mined patterns (e.g. NAS100 15m sweep + break against the 1h trend between sessions in the lower third
+of the predicted range, +0.55R over 121 trades in 2021-2024) did not hold on new data: in-sample fit, not edge.

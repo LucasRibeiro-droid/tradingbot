@@ -1,0 +1,108 @@
+{
+ "version": 21,
+ "written_after": "2022-03-07",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "against_1h and stop>=12sp and with_D",
+   "score": 0.4955,
+   "trades_seen": 59,
+   "mean_r": 0.7727
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "long and premium and with_D",
+   "score": 0.3904,
+   "trades_seen": 154,
+   "mean_r": 0.6914
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "beyond_pd and ny_midday and pred_high_third",
+   "score": 0.358,
+   "trades_seen": 49,
+   "mean_r": 0.6751
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "midweek and premium and with_D",
+   "score": 0.3454,
+   "trades_seen": 130,
+   "mean_r": 0.5088
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|1m|sessions|at_break",
+   "target": "3R",
+   "filter": "against_1h and pred_low_third and stop>=12sp",
+   "score": 0.3247,
+   "trades_seen": 58,
+   "mean_r": 0.4992
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_be3R",
+   "filter": "against_1h and stop>=12sp and with_D",
+   "score": 0.2958,
+   "trades_seen": 59,
+   "mean_r": 0.5231
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "ny_open and pred_low_third and room_pd>=2R",
+   "score": 0.2801,
+   "trades_seen": 128,
+   "mean_r": 0.3519
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "1R",
+   "filter": "against_1h and quiet_day and stop>=12sp",
+   "score": 0.278,
+   "trades_seen": 60,
+   "mean_r": 0.423
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "3R",
+   "filter": "pred_low_third",
+   "score": 0.2748,
+   "trades_seen": 50,
+   "mean_r": 0.4959
+  }
+ ],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (2R) when against_1h and stop>=12sp and with_D: 59 past trades, +0.773R average, 63% winners, positive in every past year (worst year shrunk +0.496R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (3R) when long and premium and with_D: 154 past trades, +0.691R average, 51% winners, positive in every past year (worst year shrunk +0.390R)",
+  "ADD NAS100_USD continuation|1h>1m (3R) when beyond_pd and ny_midday and pred_high_third: 49 past trades, +0.675R average, 47% winners, positive in every past year (worst year shrunk +0.358R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when midweek and premium and with_D: 130 past trades, +0.509R average, 56% winners, positive in every past year (worst year shrunk +0.345R)",
+  "ADD NAS100_USD sweep_bos|1m|sessions|at_break (3R) when against_1h and pred_low_third and stop>=12sp: 58 past trades, +0.499R average, 41% winners, positive in every past year (worst year shrunk +0.325R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (half1R_be3R) when against_1h and stop>=12sp and with_D: 59 past trades, +0.523R average, 66% winners, positive in every past year (worst year shrunk +0.296R)",
+  "DROP NAS100_USD continuation|1h>5m (3R) when mon+stop>=12sp+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD continuation|1h>1m (3R) when busy_day+short+with_15m: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|pivots+sessions|at_break (3R) when ny_open+pred_low_third+room_pd>=2R: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when premium+stop>=6sp+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD continuation|1h>5m (2R) when mon+stop>=12sp+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_equilibrium (2R) when discount+inside_pd+stop>=12sp: no longer among the best patterns that held in every past year"
+ ]
+}

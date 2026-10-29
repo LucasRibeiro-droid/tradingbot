@@ -1,0 +1,108 @@
+{
+ "version": 7,
+ "written_after": "2021-03-26",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "against_1h and against_D and long",
+   "score": 0.4751,
+   "trades_seen": 53,
+   "mean_r": 0.7706
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "short and stop>=6sp",
+   "score": 0.3264,
+   "trades_seen": 54,
+   "mean_r": 0.6132
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "against_D and long and votes<=1",
+   "score": 0.3152,
+   "trades_seen": 42,
+   "mean_r": 0.6363
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "prominent_pool and short and with_15m",
+   "score": 0.2917,
+   "trades_seen": 64,
+   "mean_r": 0.4368
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "between and stop>=6sp",
+   "score": 0.2811,
+   "trades_seen": 41,
+   "mean_r": 0.5327
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "against_D and long and stop>=6sp",
+   "score": 0.2725,
+   "trades_seen": 67,
+   "mean_r": 0.4269
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "half1R_3R",
+   "filter": "against_D and long and votes<=1",
+   "score": 0.2716,
+   "trades_seen": 42,
+   "mean_r": 0.4689
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "half1R_3R",
+   "filter": "against_D and long and votes<=1",
+   "score": 0.2648,
+   "trades_seen": 54,
+   "mean_r": 0.4187
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "half1R_3R",
+   "filter": "inside_pd and short",
+   "score": 0.2627,
+   "trades_seen": 84,
+   "mean_r": 0.4046
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "premium and prominent_pool",
+   "score": 0.2576,
+   "trades_seen": 55,
+   "mean_r": 0.4347
+  }
+ ],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH XAU_USD|sweep_bos|15m|pivots+sessions|at_break|2R|prominent_pool+short: its own strategy trades lost -0.446R over the last 18 (until ~3 months)",
+  "ADD XAU_USD sweep_bos|15m|pivots+sessions|at_break (2R) when prominent_pool and short and with_15m: 64 past trades, +0.437R average, 50% winners, positive in every past year (worst year shrunk +0.292R)",
+  "DROP XAU_USD sweep_bos|15m|pivots+sessions|at_break (2R) when prominent_pool+short: no longer among the best patterns that held in every past year"
+ ]
+}

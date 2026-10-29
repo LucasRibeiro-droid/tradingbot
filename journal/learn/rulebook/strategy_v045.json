@@ -1,0 +1,31 @@
+{
+ "version": 45,
+ "written_after": "2023-11-30",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "3R",
+   "filter": "against_1h and pred_low_third and stop>=6sp",
+   "score": 0.2816,
+   "trades_seen": 88,
+   "mean_r": 0.4867
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD (non-CRT): its strategy trades lost -0.166R over the last 35",
+  "ADD XAU_USD sweep_bos|5m|sessions|at_gap (3R) when against_1h and pred_low_third and stop>=6sp: 88 past trades, +0.487R average, 48% winners, positive in every past year (worst year shrunk +0.282R)",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_equilibrium (3R) when newyork+room_pd>=2R+with_1h: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_break (2R) when between+pred_low_third: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_break (3R) when long+newyork+with_1h: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD continuation|1h>1m (3R) when beyond_pd+busy_day+mon: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_block (3R) when newyork+session_pool+with_1h: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_equilibrium (2R) when stop>=3sp+votes>=3+with_D: no longer among the best patterns that held in every past year"
+ ]
+}

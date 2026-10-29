@@ -1,0 +1,26 @@
+{
+ "version": 73,
+ "written_after": "2025-09-26",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "between and quiet_day",
+   "score": 0.0665,
+   "trades_seen": 124,
+   "mean_r": 0.2102
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD XAU_USD continuation|1h>5m (2R) when between and quiet_day: 124 past trades, +0.210R average, 44% winners, positive in every past year (worst year shrunk +0.066R)",
+  "DROP XAU_USD continuation|1h>5m (2R) when between+inside_pd+stop>=12sp: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after NoneR / NoneR on the day (replay of the last 250 days: 55% of trading days green, +13.6R)"
+ ]
+}

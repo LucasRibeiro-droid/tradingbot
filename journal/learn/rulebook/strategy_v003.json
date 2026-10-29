@@ -1,0 +1,26 @@
+{
+ "version": 3,
+ "written_after": "2021-01-15",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "premium and stop>=3sp and with_1h",
+   "score": 0.0717,
+   "trades_seen": 63,
+   "mean_r": 0.1079
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD|continuation|1h>1m|3R|premium+stop>=3sp: its own strategy trades lost -0.653R over the last 20 (until ~3 months)",
+  "ADD NAS100_USD continuation|1h>1m (3R) when premium and stop>=3sp and with_1h: 63 past trades, +0.108R average, 29% winners, positive in every past year (worst year shrunk +0.072R)",
+  "DROP NAS100_USD continuation|1h>1m (3R) when premium+stop>=3sp: no longer among the best patterns that held in every past year"
+ ]
+}

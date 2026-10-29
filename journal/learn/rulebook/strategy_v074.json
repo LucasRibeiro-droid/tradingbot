@@ -1,0 +1,14 @@
+{
+ "version": 74,
+ "written_after": "2025-12-19",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "DROP XAU_USD continuation|1h>5m (2R) when between+quiet_day: no longer among the best patterns that held in every past year"
+ ]
+}

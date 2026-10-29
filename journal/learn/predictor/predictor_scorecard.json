@@ -1,0 +1,82 @@
+{
+ "NAS100_USD open 18:05": {
+  "days": 1437,
+  "high_error_median": 71.536,
+  "low_error_median": 75.563,
+  "high_in_80pct_band": 0.781,
+  "low_in_80pct_band": 0.805,
+  "naive_high_error_median": 117.35
+ },
+ "NAS100_USD London 03:00": {
+  "days": 1440,
+  "high_error_median": 56.611,
+  "low_error_median": 56.453,
+  "high_in_80pct_band": 0.792,
+  "low_in_80pct_band": 0.799,
+  "naive_high_error_median": 74.05
+ },
+ "NAS100_USD New York 09:30": {
+  "days": 1437,
+  "high_error_median": 31.159,
+  "low_error_median": 25.211,
+  "high_in_80pct_band": 0.761,
+  "low_in_80pct_band": 0.771,
+  "naive_high_error_median": 32.1
+ },
+ "NAS100_USD 12:00": {
+  "days": 1437,
+  "high_error_median": 5.7,
+  "low_error_median": 2.675,
+  "high_in_80pct_band": 0.747,
+  "low_in_80pct_band": 0.745,
+  "naive_high_error_median": 0.0
+ },
+ "NAS100_USD 14:00": {
+  "days": 1389,
+  "high_error_median": 3.272,
+  "low_error_median": 1.078,
+  "high_in_80pct_band": 0.727,
+  "low_in_80pct_band": 0.765,
+  "naive_high_error_median": 0.0
+ },
+ "XAU_USD open 18:05": {
+  "days": 1434,
+  "high_error_median": 7.569,
+  "low_error_median": 7.573,
+  "high_in_80pct_band": 0.808,
+  "low_in_80pct_band": 0.784,
+  "naive_high_error_median": 13.748
+ },
+ "XAU_USD London 03:00": {
+  "days": 1437,
+  "high_error_median": 4.157,
+  "low_error_median": 3.894,
+  "high_in_80pct_band": 0.772,
+  "low_in_80pct_band": 0.763,
+  "naive_high_error_median": 4.805
+ },
+ "XAU_USD New York 09:30": {
+  "days": 1437,
+  "high_error_median": 0.824,
+  "low_error_median": 0.515,
+  "high_in_80pct_band": 0.738,
+  "low_in_80pct_band": 0.731,
+  "naive_high_error_median": 0.0
+ },
+ "XAU_USD 12:00": {
+  "days": 1437,
+  "high_error_median": 0.079,
+  "low_error_median": 0.041,
+  "high_in_80pct_band": 0.706,
+  "low_in_80pct_band": 0.686,
+  "naive_high_error_median": 0.0
+ },
+ "XAU_USD 14:00": {
+  "days": 1399,
+  "high_error_median": 0.03,
+  "low_error_median": 0.001,
+  "high_in_80pct_band": 0.669,
+  "low_in_80pct_band": 0.642,
+  "naive_high_error_median": 0.0
+ }
+}

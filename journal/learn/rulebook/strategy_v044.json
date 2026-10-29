@@ -1,0 +1,103 @@
+{
+ "version": 44,
+ "written_after": "2023-11-16",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "newyork and room_pd>=2R and with_1h",
+   "score": 0.4187,
+   "trades_seen": 50,
+   "mean_r": 1.0967
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "between and pred_low_third",
+   "score": 0.388,
+   "trades_seen": 79,
+   "mean_r": 0.6829
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "long and newyork and with_1h",
+   "score": 0.3553,
+   "trades_seen": 58,
+   "mean_r": 0.6887
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "beyond_pd and busy_day and mon",
+   "score": 0.3547,
+   "trades_seen": 55,
+   "mean_r": 0.7703
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_block",
+   "target": "3R",
+   "filter": "newyork and session_pool and with_1h",
+   "score": 0.3094,
+   "trades_seen": 53,
+   "mean_r": 0.7592
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "stop>=3sp and votes>=3 and with_D",
+   "score": 0.282,
+   "trades_seen": 74,
+   "mean_r": 0.4752
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "3R",
+   "filter": "against_1h and pred_low_third and stop>=6sp",
+   "score": 0.2816,
+   "trades_seen": 88,
+   "mean_r": 0.4867
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "2R",
+   "filter": "long and newyork and with_1h",
+   "score": 0.2694,
+   "trades_seen": 58,
+   "mean_r": 0.6038
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "half1R_3R",
+   "filter": "newyork and with_1h",
+   "score": 0.2547,
+   "trades_seen": 75,
+   "mean_r": 0.5376
+  }
+ ],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD sweep_bos|5m|sessions|at_equilibrium (3R) when newyork and room_pd>=2R and with_1h: 50 past trades, +1.097R average, 56% winners, positive in every past year (worst year shrunk +0.419R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_break (2R) when between and pred_low_third: 79 past trades, +0.683R average, 59% winners, positive in every past year (worst year shrunk +0.388R)",
+  "ADD NAS100_USD sweep_bos|5m|sessions|at_block (3R) when newyork and session_pool and with_1h: 53 past trades, +0.759R average, 45% winners, positive in every past year (worst year shrunk +0.309R)",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_equilibrium (3R) when newyork+session_pool+with_1h: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_break (2R) when between+discount+pred_low_third: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD sweep_bos|5m|sessions|at_gap (3R) when pred_low_third+session_pool+short: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after NoneR / NoneR on the day (replay of the last 250 days: 63% of trading days green, +47.4R)"
+ ]
+}

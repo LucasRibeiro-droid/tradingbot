@@ -1,0 +1,45 @@
+{
+ "version": 47,
+ "written_after": "2024-02-26",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "long and ny_midday and stop>=12sp",
+   "score": 0.1208,
+   "trades_seen": 260,
+   "mean_r": 0.2686
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "between and with_D",
+   "score": 0.0583,
+   "trades_seen": 147,
+   "mean_r": 0.2445
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "busy_day and premium and stop>=12sp",
+   "score": 0.0374,
+   "trades_seen": 250,
+   "mean_r": 0.0711
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD continuation|1h>5m (3R) when long and ny_midday and stop>=12sp: 260 past trades, +0.269R average, 48% winners, positive in every past year (worst year shrunk +0.121R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_break (2R) when between and with_D: 147 past trades, +0.244R average, 44% winners, positive in every past year (worst year shrunk +0.058R)",
+  "ADD NAS100_USD continuation|1h>5m (2R) when busy_day and premium and stop>=12sp: 250 past trades, +0.071R average, 45% winners, positive in every past year (worst year shrunk +0.037R)",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 250 days: 48% of trading days green, +26.7R)"
+ ]
+}

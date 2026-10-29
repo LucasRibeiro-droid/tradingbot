@@ -1,0 +1,72 @@
+{
+ "version": 56,
+ "written_after": "2024-08-27",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "between and pred_low_third and with_D",
+   "score": 0.2672,
+   "trades_seen": 68,
+   "mean_r": 0.6526
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "beyond_pd and busy_day and stop>=12sp",
+   "score": 0.1548,
+   "trades_seen": 412,
+   "mean_r": 0.1891
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "room_pd>=2R and stop>=3sp and votes>=3",
+   "score": 0.0801,
+   "trades_seen": 63,
+   "mean_r": 0.2565
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "opening_range|newyork|5m|stop_box",
+   "target": "half1R_3R",
+   "filter": "short",
+   "score": 0.0332,
+   "trades_seen": 66,
+   "mean_r": 0.1823
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_3R",
+   "filter": "between",
+   "score": 0.031,
+   "trades_seen": 71,
+   "mean_r": 0.1708
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "2R",
+   "filter": "inside_pd and votes>=3",
+   "score": 0.0291,
+   "trades_seen": 93,
+   "mean_r": 0.0977
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD XAU_USD opening_range|newyork|5m|stop_box (half1R_3R) when short: 66 past trades, +0.182R average, 45% winners, positive in every past year (worst year shrunk +0.033R)",
+  "ADD XAU_USD sweep_bos|15m|pivots+sessions|at_gap (half1R_3R) when between: 71 past trades, +0.171R average, 51% winners, positive in every past year (worst year shrunk +0.031R)",
+  "ADD XAU_USD sweep_bos|5m|sessions|at_break (2R) when inside_pd and votes>=3: 93 past trades, +0.098R average, 46% winners, positive in every past year (worst year shrunk +0.029R)",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 250 days: 51% of trading days green, +29.4R)"
+ ]
+}

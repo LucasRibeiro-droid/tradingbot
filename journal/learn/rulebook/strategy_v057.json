@@ -1,0 +1,75 @@
+{
+ "version": 57,
+ "written_after": "2024-09-24",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "between and pred_low_third and with_D",
+   "score": 0.2672,
+   "trades_seen": 68,
+   "mean_r": 0.6526
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "beyond_pd and busy_day and stop>=12sp",
+   "score": 0.1548,
+   "trades_seen": 413,
+   "mean_r": 0.1959
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "premium and session_pool and with_1h",
+   "score": 0.1434,
+   "trades_seen": 126,
+   "mean_r": 0.257
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "1R",
+   "filter": "newyork and session_pool",
+   "score": 0.0806,
+   "trades_seen": 89,
+   "mean_r": 0.1511
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "room_pd>=2R and stop>=3sp and votes>=3",
+   "score": 0.0801,
+   "trades_seen": 63,
+   "mean_r": 0.2565
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_3R",
+   "filter": "between and with_D",
+   "score": 0.0559,
+   "trades_seen": 52,
+   "mean_r": 0.2733
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 1.0,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when premium and session_pool and with_1h: 126 past trades, +0.257R average, 46% winners, positive in every past year (worst year shrunk +0.143R)",
+  "ADD NAS100_USD sweep_bos|5m|sessions|at_gap (1R) when newyork and session_pool: 89 past trades, +0.151R average, 57% winners, positive in every past year (worst year shrunk +0.081R)",
+  "ADD XAU_USD sweep_bos|15m|pivots+sessions|at_gap (half1R_3R) when between and with_D: 52 past trades, +0.273R average, 56% winners, positive in every past year (worst year shrunk +0.056R)",
+  "DROP XAU_USD opening_range|newyork|5m|stop_box (half1R_3R) when short: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD sweep_bos|15m|pivots+sessions|at_gap (half1R_3R) when between: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD sweep_bos|5m|sessions|at_break (2R) when inside_pd+votes>=3: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after 1.0R / NoneR on the day (replay of the last 250 days: 48% of trading days green, +34.6R)"
+ ]
+}

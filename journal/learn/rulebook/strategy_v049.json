@@ -1,0 +1,48 @@
+{
+ "version": 49,
+ "written_after": "2024-03-11",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "beyond_pd and busy_day and stop>=12sp",
+   "score": 0.1548,
+   "trades_seen": 351,
+   "mean_r": 0.2
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "busy_day and ny_midday and with_4h",
+   "score": 0.0735,
+   "trades_seen": 89,
+   "mean_r": 0.151
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "between and stop>=6sp",
+   "score": 0.0279,
+   "trades_seen": 246,
+   "mean_r": 0.0822
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD continuation|1h>1m (3R) when beyond_pd and busy_day and stop>=12sp: 351 past trades, +0.200R average, 37% winners, positive in every past year (worst year shrunk +0.155R)",
+  "ADD NAS100_USD continuation|1h>5m (2R) when busy_day and ny_midday and with_4h: 89 past trades, +0.151R average, 49% winners, positive in every past year (worst year shrunk +0.073R)",
+  "ADD XAU_USD continuation|1h>5m (2R) when between and stop>=6sp: 246 past trades, +0.082R average, 40% winners, positive in every past year (worst year shrunk +0.028R)",
+  "DROP NAS100_USD continuation|1h>5m (3R) when long+ny_midday+stop>=12sp: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_break (2R) when between+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD continuation|1h>5m (2R) when busy_day+premium+stop>=12sp: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 250 days: 50% of trading days green, +45.1R)"
+ ]
+}

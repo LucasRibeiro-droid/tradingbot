@@ -1,0 +1,42 @@
+{
+ "version": 48,
+ "written_after": "2024-03-04",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "long and ny_midday and stop>=12sp",
+   "score": 0.1208,
+   "trades_seen": 260,
+   "mean_r": 0.2686
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "between and with_D",
+   "score": 0.0583,
+   "trades_seen": 147,
+   "mean_r": 0.2445
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "busy_day and premium and stop>=12sp",
+   "score": 0.0374,
+   "trades_seen": 250,
+   "mean_r": 0.0711
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 2.0,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "DAY STOPS: stop after 2.0R / NoneR on the day (replay of the last 250 days: 48% of trading days green, +26.4R)"
+ ]
+}

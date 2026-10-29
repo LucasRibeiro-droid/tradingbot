@@ -1,0 +1,112 @@
+{
+ "version": 13,
+ "written_after": "2021-08-27",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "long and newyork and premium",
+   "score": 0.6399,
+   "trades_seen": 59,
+   "mean_r": 0.98
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "beyond_pd and long and newyork",
+   "score": 0.5571,
+   "trades_seen": 42,
+   "mean_r": 0.9949
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "beyond_pd and long and newyork",
+   "score": 0.4599,
+   "trades_seen": 42,
+   "mean_r": 0.8234
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "3R",
+   "filter": "against_1h and long and with_D",
+   "score": 0.4501,
+   "trades_seen": 41,
+   "mean_r": 0.8913
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "long and ny_open and premium",
+   "score": 0.4442,
+   "trades_seen": 51,
+   "mean_r": 0.7347
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_block",
+   "target": "2R",
+   "filter": "between and votes<=1",
+   "score": 0.4166,
+   "trades_seen": 49,
+   "mean_r": 0.7652
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "newyork and with_1h and with_4h",
+   "score": 0.3968,
+   "trades_seen": 41,
+   "mean_r": 0.8378
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "half1R_3R",
+   "filter": "beyond_pd and long and newyork",
+   "score": 0.3898,
+   "trades_seen": 42,
+   "mean_r": 0.6862
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "half1R_3R",
+   "filter": "long and newyork and premium",
+   "score": 0.3882,
+   "trades_seen": 59,
+   "mean_r": 0.5931
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "midweek and ny_open and room_pd>=2R",
+   "score": 0.3623,
+   "trades_seen": 54,
+   "mean_r": 0.6264
+  }
+ ],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": -2.0,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (3R) when long and newyork and premium: 59 past trades, +0.980R average, 61% winners, positive in every past year (worst year shrunk +0.640R)",
+  "ADD NAS100_USD sweep_bos|5m|pivots+sessions|at_break (3R) when beyond_pd and long and newyork: 42 past trades, +0.995R average, 71% winners, positive in every past year (worst year shrunk +0.557R)",
+  "ADD NAS100_USD sweep_bos|5m|pivots+sessions|at_break (2R) when beyond_pd and long and newyork: 42 past trades, +0.823R average, 74% winners, positive in every past year (worst year shrunk +0.460R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (3R) when against_1h and long and with_D: 41 past trades, +0.891R average, 56% winners, positive in every past year (worst year shrunk +0.450R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_break (3R) when long and ny_open and premium: 51 past trades, +0.735R average, 75% winners, positive in every past year (worst year shrunk +0.444R)",
+  "ADD NAS100_USD sweep_bos|5m|pivots+sessions|at_block (2R) when between and votes<=1: 49 past trades, +0.765R average, 61% winners, positive in every past year (worst year shrunk +0.417R)",
+  "DAY STOPS: stop after NoneR / -2.0R on the day (replay of the last 170 days: 58% of trading days green, +76.4R)"
+ ]
+}

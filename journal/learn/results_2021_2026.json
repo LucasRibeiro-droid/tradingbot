@@ -1,0 +1,79 @@
+{
+ "period": "2021_2026",
+ "trading_days": 1507,
+ "days_with_strategy_trades": 389,
+ "profitable_days_pct": 0.3779,
+ "losing_days": 242,
+ "flat_days": 0,
+ "days_with_2_to_5_trades_pct": 0.123,
+ "longest_losing_day_streak": 8,
+ "max_drawdown_r": -58.11,
+ "trades": 752,
+ "win_rate": 0.32,
+ "avg_r": -0.05,
+ "total_r": -37.62,
+ "profit_factor": 0.927,
+ "crt": {
+  "trades": 0,
+  "avg_r": null,
+  "total_r": 0.0,
+  "win_rate": null
+ },
+ "self_developed": {
+  "trades": 752,
+  "avg_r": -0.05,
+  "total_r": -37.62,
+  "win_rate": 0.32
+ },
+ "NAS100_USD": {
+  "trades": 616,
+  "avg_r": -0.0306,
+  "total_r": -18.86,
+  "win_rate": 0.325
+ },
+ "XAU_USD": {
+  "trades": 136,
+  "avg_r": -0.1379,
+  "total_r": -18.76,
+  "win_rate": 0.301
+ },
+ "by_year": {
+  "2021": {
+   "trades": 315,
+   "avg_r": 0.0193,
+   "total_r": 6.07,
+   "win_rate": 0.337
+  },
+  "2022": {
+   "trades": 205,
+   "avg_r": -0.079,
+   "total_r": -16.19,
+   "win_rate": 0.307
+  },
+  "2023": {
+   "trades": 77,
+   "avg_r": -0.2092,
+   "total_r": -16.11,
+   "win_rate": 0.299
+  },
+  "2024": {
+   "trades": 104,
+   "avg_r": -0.0015,
+   "total_r": -0.15,
+   "win_rate": 0.356
+  },
+  "2025": {
+   "trades": 50,
+   "avg_r": -0.2646,
+   "total_r": -13.23,
+   "win_rate": 0.22
+  },
+  "2026": {
+   "trades": 1,
+   "avg_r": 1.9887,
+   "total_r": 1.99,
+   "win_rate": 1.0
+  }
+ },
+ "rulebook_versions": 76
+}

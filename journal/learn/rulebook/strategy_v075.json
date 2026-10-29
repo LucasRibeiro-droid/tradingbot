@@ -1,0 +1,24 @@
+{
+ "version": 75,
+ "written_after": "2025-12-29",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "day_pool",
+   "score": 0.0203,
+   "trades_seen": 67,
+   "mean_r": 0.0975
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (2R) when day_pool: 67 past trades, +0.098R average, 42% winners, positive in every past year (worst year shrunk +0.020R)"
+ ]
+}

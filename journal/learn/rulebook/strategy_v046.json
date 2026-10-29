@@ -1,0 +1,14 @@
+{
+ "version": 46,
+ "written_after": "2024-01-15",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "DROP XAU_USD sweep_bos|5m|sessions|at_gap (3R) when against_1h+pred_low_third+stop>=6sp: no longer among the best patterns that held in every past year"
+ ]
+}

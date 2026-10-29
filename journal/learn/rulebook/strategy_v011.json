@@ -1,0 +1,34 @@
+{
+ "version": 11,
+ "written_after": "2021-05-28",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "1R",
+   "filter": "premium and quiet_day and stop>=6sp",
+   "score": 0.3734,
+   "trades_seen": 43,
+   "mean_r": 0.6568
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": -1.0,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD|continuation|1h>1m|3R|premium+stop>=3sp+with_1h: its own strategy trades lost -0.391R over the last 26 (until ~3 months)",
+  "BENCH NAS100_USD|sweep_bos|5m|pivots+sessions|at_break|2R|against_D+stop>=12sp: its own strategy trades lost -0.210R over the last 16 (until ~3 months)",
+  "BENCH NAS100_USD (non-CRT): its strategy trades lost -0.185R over the last 115",
+  "ADD XAU_USD sweep_bos|15m|pivots+sessions|at_gap (1R) when premium and quiet_day and stop>=6sp: 43 past trades, +0.657R average, 84% winners, positive in every past year (worst year shrunk +0.373R)",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (3R) when ny_open: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_break (3R) when midweek+premium+with_D: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when ny_open: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD sweep_bos|15m|pivots+sessions|at_equilibrium (3R) when inside_pd+stop>=3sp+with_1h: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD sweep_bos|15m|pivots+sessions|at_break (2R) when inside_pd+midweek+with_1h: no longer among the best patterns that held in every past year",
+  "DROP XAU_USD sweep_bos|15m|pivots+sessions|at_break (3R) when quiet_day+with_1h: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after NoneR / -1.0R on the day (replay of the last 105 days: 75% of trading days green, +10.6R)"
+ ]
+}

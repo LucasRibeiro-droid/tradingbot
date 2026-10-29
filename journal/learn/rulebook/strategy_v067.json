@@ -1,0 +1,14 @@
+{
+ "version": 67,
+ "written_after": "2025-04-25",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD|continuation|1h>1m|3R|beyond_pd+busy_day+stop>=12sp: its own strategy trades lost -0.324R over the last 15 (until ~3 months)"
+ ]
+}

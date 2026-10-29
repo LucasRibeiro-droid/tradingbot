@@ -1,0 +1,25 @@
+{
+ "version": 53,
+ "written_after": "2024-06-04",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "room_pd>=2R and stop>=3sp and votes>=3",
+   "score": 0.0801,
+   "trades_seen": 59,
+   "mean_r": 0.2437
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "DROP XAU_USD continuation|1h>5m (2R) when between+inside_pd+stop>=6sp: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after NoneR / NoneR on the day (replay of the last 250 days: 44% of trading days green, +8.4R)"
+ ]
+}

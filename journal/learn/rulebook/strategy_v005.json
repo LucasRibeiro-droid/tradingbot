@@ -1,0 +1,82 @@
+{
+ "version": 5,
+ "written_after": "2021-02-26",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "against_D and stop>=12sp and stop>=3sp",
+   "score": 0.3619,
+   "trades_seen": 40,
+   "mean_r": 0.6344
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "premium and quiet_day and with_1h",
+   "score": 0.3348,
+   "trades_seen": 44,
+   "mean_r": 0.5771
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "half1R_be3R",
+   "filter": "quiet_day and stop>=12sp",
+   "score": 0.2393,
+   "trades_seen": 49,
+   "mean_r": 0.399
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "half1R_3R",
+   "filter": "quiet_day and stop>=12sp",
+   "score": 0.2262,
+   "trades_seen": 49,
+   "mean_r": 0.4092
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "short",
+   "score": 0.1988,
+   "trades_seen": 48,
+   "mean_r": 0.3951
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "discount and midweek and votes<=1",
+   "score": 0.1866,
+   "trades_seen": 43,
+   "mean_r": 0.4535
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "1R",
+   "filter": "prominent_pool and quiet_day and stop>=12sp",
+   "score": 0.1832,
+   "trades_seen": 40,
+   "mean_r": 0.3361
+  }
+ ],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD|sweep_bos|5m|pivots+sessions|at_break|2R|against_D+stop>=12sp: its own strategy trades lost -0.210R over the last 16 (until ~3 months)",
+  "ADD NAS100_USD sweep_bos|5m|pivots+sessions|at_break (2R) when against_D and stop>=12sp and stop>=3sp: 40 past trades, +0.634R average, 60% winners, positive in every past year (worst year shrunk +0.362R)",
+  "DROP NAS100_USD sweep_bos|5m|pivots+sessions|at_break (2R) when against_D+stop>=12sp: no longer among the best patterns that held in every past year",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 40 days: 59% of trading days green, +26.0R)"
+ ]
+}

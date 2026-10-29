@@ -1,0 +1,21 @@
+{
+ "version": 32,
+ "written_after": "2022-12-06",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH NAS100_USD (non-CRT): its strategy trades lost -0.303R over the last 48",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (3R) when long+ny_open+votes>=3: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (3R) when long+premium+votes>=3: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_break (2R) when between+pred_low_third: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|5m|sessions|at_equilibrium (3R) when newyork+with_1h: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD continuation|1h>1m (3R) when beyond_pd+busy_day+with_15m: no longer among the best patterns that held in every past year",
+  "DROP NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when long+ny_open+with_4h: no longer among the best patterns that held in every past year",
+  "DAY STOPS: none"
+ ]
+}

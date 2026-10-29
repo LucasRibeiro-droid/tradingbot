@@ -1,0 +1,25 @@
+{
+ "version": 68,
+ "written_after": "2025-06-27",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "busy_day and stop>=12sp and with_D",
+   "score": 0.0866,
+   "trades_seen": 586,
+   "mean_r": 0.1241
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD continuation|1h>1m (3R) when busy_day and stop>=12sp and with_D: 586 past trades, +0.124R average, 33% winners, positive in every past year (worst year shrunk +0.087R)",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 250 days: 57% of trading days green, +43.6R)"
+ ]
+}

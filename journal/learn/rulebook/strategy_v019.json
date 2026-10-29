@@ -1,0 +1,75 @@
+{
+ "version": 19,
+ "written_after": "2022-01-17",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "newyork and stop>=12sp and votes>=3",
+   "score": 0.1322,
+   "trades_seen": 212,
+   "mean_r": 0.1555
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "ny_open and pred_low_third",
+   "score": 0.1214,
+   "trades_seen": 139,
+   "mean_r": 0.2525
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "premium and stop>=12sp",
+   "score": 0.1101,
+   "trades_seen": 271,
+   "mean_r": 0.1294
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "2R",
+   "filter": "newyork and stop>=12sp and votes>=3",
+   "score": 0.0718,
+   "trades_seen": 212,
+   "mean_r": 0.0848
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "busy_day and newyork and premium",
+   "score": 0.0694,
+   "trades_seen": 212,
+   "mean_r": 0.086
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "half1R_3R",
+   "filter": "newyork and stop>=12sp and votes>=3",
+   "score": 0.0583,
+   "trades_seen": 212,
+   "mean_r": 0.0757
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD continuation|1h>5m (3R) when newyork and stop>=12sp and votes>=3: 212 past trades, +0.156R average, 45% winners, positive in every past year (worst year shrunk +0.132R)",
+  "ADD NAS100_USD sweep_bos|5m|pivots+sessions|at_break (3R) when ny_open and pred_low_third: 139 past trades, +0.252R average, 45% winners, positive in every past year (worst year shrunk +0.121R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_equilibrium (2R) when premium and stop>=12sp: 271 past trades, +0.129R average, 44% winners, positive in every past year (worst year shrunk +0.110R)",
+  "ADD NAS100_USD continuation|1h>5m (2R) when newyork and stop>=12sp and votes>=3: 212 past trades, +0.085R average, 46% winners, positive in every past year (worst year shrunk +0.072R)",
+  "ADD NAS100_USD continuation|1h>1m (3R) when busy_day and newyork and premium: 212 past trades, +0.086R average, 36% winners, positive in every past year (worst year shrunk +0.069R)",
+  "ADD NAS100_USD continuation|1h>5m (half1R_3R) when newyork and stop>=12sp and votes>=3: 212 past trades, +0.076R average, 47% winners, positive in every past year (worst year shrunk +0.058R)",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 250 days: 52% of trading days green, +33.2R)"
+ ]
+}

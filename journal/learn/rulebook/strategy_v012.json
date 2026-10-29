@@ -1,0 +1,17 @@
+{
+ "version": 12,
+ "written_after": "2021-06-25",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "BENCH XAU_USD|sweep_bos|15m|pivots+sessions|at_break|2R|prominent_pool+short: its own strategy trades lost -0.446R over the last 18 (until ~3 months)",
+  "BENCH XAU_USD (non-CRT): its strategy trades lost -0.229R over the last 66",
+  "DROP XAU_USD sweep_bos|15m|pivots+sessions|at_gap (1R) when premium+quiet_day+stop>=6sp: no longer among the best patterns that held in every past year",
+  "DAY STOPS: none"
+ ]
+}

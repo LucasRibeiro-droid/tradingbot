@@ -1,0 +1,65 @@
+{
+ "version": 35,
+ "written_after": "2023-03-02",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "3R",
+   "filter": "long and premium and quiet_day",
+   "score": 0.3597,
+   "trades_seen": 105,
+   "mean_r": 0.7846
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "long and quiet_day and stop>=6sp",
+   "score": 0.2356,
+   "trades_seen": 137,
+   "mean_r": 0.4217
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "3R",
+   "filter": "ny_midday and pred_high_third and premium",
+   "score": 0.1462,
+   "trades_seen": 321,
+   "mean_r": 0.2153
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "ny_midday and with_D",
+   "score": 0.1335,
+   "trades_seen": 175,
+   "mean_r": 0.1926
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_3R",
+   "filter": "premium and with_4h",
+   "score": 0.1172,
+   "trades_seen": 156,
+   "mean_r": 0.2737
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (3R) when long and premium and quiet_day: 105 past trades, +0.785R average, 53% winners, positive in every past year (worst year shrunk +0.360R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (2R) when long and quiet_day and stop>=6sp: 137 past trades, +0.422R average, 53% winners, positive in every past year (worst year shrunk +0.236R)",
+  "ADD NAS100_USD continuation|1h>1m (3R) when ny_midday and pred_high_third and premium: 321 past trades, +0.215R average, 33% winners, positive in every past year (worst year shrunk +0.146R)",
+  "ADD NAS100_USD continuation|1h>5m (3R) when ny_midday and with_D: 175 past trades, +0.193R average, 46% winners, positive in every past year (worst year shrunk +0.133R)",
+  "ADD NAS100_USD sweep_bos|15m|pivots+sessions|at_gap (half1R_3R) when premium and with_4h: 156 past trades, +0.274R average, 49% winners, positive in every past year (worst year shrunk +0.117R)",
+  "DAY STOPS: stop after 0.5R / NoneR on the day (replay of the last 250 days: 46% of trading days green, +62.0R)"
+ ]
+}

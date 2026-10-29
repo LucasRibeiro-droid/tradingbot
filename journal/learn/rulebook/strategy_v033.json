@@ -1,0 +1,24 @@
+{
+ "version": 33,
+ "written_after": "2023-01-12",
+ "always": "nothing (CRT only when a rule picks it)",
+ "rules": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "continuation|4h>5m",
+   "target": "half1R_3R",
+   "filter": "beyond_pd and with_D",
+   "score": 0.0421,
+   "trades_seen": 146,
+   "mean_r": 0.1376
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [],
+ "day_stop_win_R": null,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD XAU_USD continuation|4h>5m (half1R_3R) when beyond_pd and with_D: 146 past trades, +0.138R average, 43% winners, positive in every past year (worst year shrunk +0.042R)"
+ ]
+}
