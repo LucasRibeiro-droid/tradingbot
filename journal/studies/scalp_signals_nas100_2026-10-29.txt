@@ -1,0 +1,18 @@
+momentum: last 5 min up -> long, down -> short             hold   5m   225.7/day  direction right 48.9%  gross -0.04 pts  net -2.11 pts  (halves -1.87/-2.34)  spread 1.83
+momentum: last 15 min                                      hold   5m   225.9/day  direction right 49.1%  gross -0.06 pts  net -2.13 pts  (halves -1.84/-2.42)  spread 1.83
+reversal: last 5 min up -> short                           hold   5m   225.7/day  direction right 50.4%  gross +0.04 pts  net -2.03 pts  (halves -1.82/-2.25)  spread 1.83
+fade a 1-minute candle > 3x the hour's average range       hold   5m     6.5/day  direction right 52.3%  gross +0.10 pts  net -2.08 pts  (halves -1.73/-2.42)  spread 1.94
+follow a 1-minute candle > 3x the hour's average range     hold   5m     6.5/day  direction right 46.6%  gross -0.10 pts  net -2.28 pts  (halves -2.02/-2.54)  spread 1.94
+momentum 15 min, New York session only                     hold   5m    72.9/day  direction right 49.5%  gross -0.13 pts  net -1.34 pts  (halves -1.14/-1.55)  spread 0.97
+momentum: last 5 min up -> long, down -> short             hold  15m    84.6/day  direction right 49.3%  gross -0.05 pts  net -2.12 pts  (halves -1.89/-2.35)  spread 1.83
+momentum: last 15 min                                      hold  15m    84.6/day  direction right 49.5%  gross +0.01 pts  net -2.07 pts  (halves -1.88/-2.25)  spread 1.83
+reversal: last 5 min up -> short                           hold  15m    84.6/day  direction right 50.3%  gross +0.05 pts  net -2.03 pts  (halves -1.80/-2.26)  spread 1.83
+fade a 1-minute candle > 3x the hour's average range       hold  15m     5.6/day  direction right 51.5%  gross +0.41 pts  net -1.78 pts  (halves -1.74/-1.82)  spread 1.96
+follow a 1-minute candle > 3x the hour's average range     hold  15m     5.6/day  direction right 48.0%  gross -0.41 pts  net -2.59 pts  (halves -2.02/-3.16)  spread 1.96
+momentum 15 min, New York session only                     hold  15m    27.2/day  direction right 50.0%  gross +0.04 pts  net -1.16 pts  (halves -1.07/-1.25)  spread 0.94
+momentum: last 5 min up -> long, down -> short             hold  30m    43.3/day  direction right 49.0%  gross -0.01 pts  net -2.08 pts  (halves -2.04/-2.12)  spread 1.85
+momentum: last 15 min                                      hold  30m    43.3/day  direction right 49.6%  gross +0.28 pts  net -1.79 pts  (halves -1.94/-1.64)  spread 1.85
+reversal: last 5 min up -> short                           hold  30m    43.3/day  direction right 50.7%  gross +0.01 pts  net -2.06 pts  (halves -1.63/-2.48)  spread 1.85
+fade a 1-minute candle > 3x the hour's average range       hold  30m     5.0/day  direction right 51.2%  gross -0.18 pts  net -2.38 pts  (halves -1.51/-3.24)  spread 1.98
+follow a 1-minute candle > 3x the hour's average range     hold  30m     5.0/day  direction right 48.5%  gross +0.18 pts  net -2.01 pts  (halves -2.26/-1.76)  spread 1.98
+momentum 15 min, New York session only                     hold  30m    13.7/day  direction right 49.9%  gross +0.76 pts  net -0.42 pts  (halves -1.37/+0.53)  spread 0.90

@@ -41,3 +41,9 @@ tested frozen on the last 400 (`studies/research_2026-10-28/learn_nas_last1000.p
   −0.28R test; exits at the predicted extreme: −0.09 to −0.33R).
 - Mined rulebooks (top 4 / 8 / 15 patterns, with day stops): find +0.80 / +0.87 / +0.65R a trade
   (+128 / +267 / +327R); test +0.01 / −0.04 / −0.04R (+1.2 / −7.4 / −11.9R), profitable traded days 30-35%.
+
+**Scalping / day-trading direction signals, NAS100, last 1,000 days, nothing fitted (owner 2026-10-29: "no
+overfitting, accurate signals for when to buy and sell")** (`studies/scalp_signals_nas100_2026-10-29.txt`):
+momentum (5/15 min), reversal, following or fading a 1-minute candle 3x the hour's range, New York-only momentum,
+held 5/15/30 minutes. Direction right 46.6%-52.3% of the time in every case; average move before costs
+−0.41 to +0.76 points against a spread of 0.9-2.0 points; net −0.4 to −2.6 points a trade.
