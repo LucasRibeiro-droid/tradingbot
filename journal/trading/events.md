@@ -78,3 +78,7 @@
 | 2026-10-28 19:55 | session end | 0 trades, 0 instruments | review to write |
 | 2026-10-29 13:36 | session start (paper): equity 98492.86, buying power 393971.44, shorting on |  |  |
 | 2026-10-29 19:22 | session hand-off (runner time limit) | positions stay protected at Alpaca | next run resumes from the saved state |
+| 2026-10-29 19:22 | session start (paper): equity 97993.31, buying power 357459.82, shorting on |  |  |
+| 2026-10-29 19:22 | position CVNA 143 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-29 19:22 | position LLY 7 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-29 19:22 | position PANW 25 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
