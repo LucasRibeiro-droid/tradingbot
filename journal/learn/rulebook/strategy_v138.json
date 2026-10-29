@@ -1,181 +1,107 @@
 {
  "version": 138,
- "written_after": "2023-10-26",
+ "written_after": "2024-06-11",
  "always": "the day's first valid CRT setup (either instrument)",
  "rules": [
   {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_gap",
    "target": "3R",
-   "filter": "newyork+with_1h",
-   "score": 0.4284,
-   "trades_seen": 73,
-   "mean_r": 0.8334
+   "filter": "london+with_4h",
+   "score": 0.0761,
+   "trades_seen": 269,
+   "mean_r": 0.1525
   },
   {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_break",
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
    "target": "3R",
-   "filter": "newyork+with_1h",
-   "score": 0.222,
-   "trades_seen": 99,
-   "mean_r": 0.4203
+   "filter": "london",
+   "score": 0.0188,
+   "trades_seen": 85,
+   "mean_r": 0.1762
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "3R",
+   "filter": "with_4h+with_D",
+   "score": 0.2548,
+   "trades_seen": 95,
+   "mean_r": 0.362
   },
   {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
    "target": "3R",
-   "filter": "ny_open+with_1h",
-   "score": 0.1917,
-   "trades_seen": 407,
-   "mean_r": 0.2535
+   "filter": "with_4h",
+   "score": 0.2165,
+   "trades_seen": 156,
+   "mean_r": 0.272
   },
   {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|15m|pivots+sessions|at_block",
-   "target": "3R",
-   "filter": "ny_open+with_1h",
-   "score": 0.1873,
-   "trades_seen": 97,
-   "mean_r": 0.3923
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "2R",
+   "filter": "with_4h+with_D",
+   "score": 0.1838,
+   "trades_seen": 95,
+   "mean_r": 0.2612
   },
   {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
-   "target": "3R",
-   "filter": "newyork+with_1h",
-   "score": 0.1798,
-   "trades_seen": 200,
-   "mean_r": 0.2798
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "half1R_be3R",
+   "filter": "with_4h+with_D",
+   "score": 0.1553,
+   "trades_seen": 95,
+   "mean_r": 0.2207
   },
   {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
-   "target": "3R",
-   "filter": "newyork+with_1h+with_4h",
-   "score": 0.1409,
-   "trades_seen": 424,
-   "mean_r": 0.2002
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "half1R_3R",
+   "filter": "with_4h+with_D",
+   "score": 0.1503,
+   "trades_seen": 95,
+   "mean_r": 0.2136
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "2R",
+   "filter": "with_4h",
+   "score": 0.1209,
+   "trades_seen": 156,
+   "mean_r": 0.1519
   },
   {
    "instrument": "XAU_USD",
    "setup": "sweep_bos|5m|sessions|at_gap",
    "target": "3R",
    "filter": "stop>=6sp+discount",
-   "score": 0.1184,
-   "trades_seen": 119,
-   "mean_r": 0.265
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|15m|pivots+sessions|at_break",
-   "target": "3R",
-   "filter": "newyork+with_1h",
-   "score": 0.1176,
-   "trades_seen": 341,
-   "mean_r": 0.1632
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "continuation|4h>5m",
-   "target": "3R",
-   "filter": "newyork+with_1h+with_4h",
-   "score": 0.1047,
-   "trades_seen": 415,
-   "mean_r": 0.152
+   "score": 0.1066,
+   "trades_seen": 143,
+   "mean_r": 0.1364
   },
   {
    "instrument": "XAU_USD",
-   "setup": "sweep_bos|5m|sessions|at_break",
+   "setup": "sweep_bos|5m|pivots+sessions|at_gap",
    "target": "3R",
-   "filter": "london+with_4h",
-   "score": 0.0719,
-   "trades_seen": 127,
-   "mean_r": 0.1966
+   "filter": "stop>=6sp+london",
+   "score": 0.0946,
+   "trades_seen": 253,
+   "mean_r": 0.1095
   }
  ],
- "fallback_if_fewer_than_2_by_11am_new_york": [
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_equilibrium",
-   "target": "half1R_3R",
-   "filter": "newyork+with_1h",
-   "score": 0.3481,
-   "trades_seen": 73,
-   "mean_r": 0.5389
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_equilibrium",
-   "target": "2R",
-   "filter": "newyork+with_1h",
-   "score": 0.3347,
-   "trades_seen": 73,
-   "mean_r": 0.5181
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_break",
-   "target": "3R",
-   "filter": "ny_open+with_1h",
-   "score": 0.3032,
-   "trades_seen": 70,
-   "mean_r": 0.4765
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
-   "target": "3R",
-   "filter": "ny_open+with_1h",
-   "score": 0.2984,
-   "trades_seen": 127,
-   "mean_r": 0.3924
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_break",
-   "target": "2R",
-   "filter": "newyork+with_1h",
-   "score": 0.2621,
-   "trades_seen": 99,
-   "mean_r": 0.3681
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_equilibrium",
-   "target": "3R",
-   "filter": "stop>=6sp+with_1h",
-   "score": 0.2621,
-   "trades_seen": 133,
-   "mean_r": 0.3409
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_equilibrium",
-   "target": "half1R_be3R",
-   "filter": "newyork+with_1h",
-   "score": 0.2557,
-   "trades_seen": 73,
-   "mean_r": 0.3958
-  },
-  {
-   "instrument": "NAS100_USD",
-   "setup": "sweep_bos|5m|sessions|at_break",
-   "target": "3R",
-   "filter": "newyork+with_1h+with_4h",
-   "score": 0.2424,
-   "trades_seen": 69,
-   "mean_r": 0.383
-  }
- ],
- "day_stop_win_R": 0.5,
+ "day_stop_win_R": null,
  "day_stop_loss_R": null,
  "max_trades": 5,
  "min_trades": 2,
  "notes": [
-  "ADD NAS100_USD|sweep_bos|15m|pivots+sessions|at_equilibrium|3R|newyork+with_1h: 200 experiment trades so far, mean +0.280R, score +0.180",
-  "ADD XAU_USD|sweep_bos|5m|sessions|at_break|3R|london+with_4h: 127 experiment trades so far, mean +0.197R, score +0.072",
-  "DROP NAS100_USD|sweep_bos|15m|pivots+sessions|at_equilibrium|3R|ny_open+with_1h: now 127 trades, mean +0.392R, last 180 days -0.276R over 14",
-  "DROP NAS100_USD|sweep_bos|5m|pivots+sessions|at_block|3R|newyork+with_1h: now 501 trades, mean +0.134R, last 180 days -0.023R over 106"
+  "ADD XAU_USD|sweep_bos|5m|pivots+sessions|at_gap|3R|london+with_4h: 269 experiment trades so far, mean +0.152R, score +0.076",
+  "ADD XAU_USD|sweep_bos|5m|sessions|at_gap|3R|london: 85 experiment trades so far, mean +0.176R, score +0.019"
  ]
 }

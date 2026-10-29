@@ -11,15 +11,6 @@
    "score": 0.0367,
    "trades_seen": 103,
    "mean_r": 0.1472
-  },
-  {
-   "instrument": "XAU_USD",
-   "setup": "continuation|1h>1m",
-   "target": "1R",
-   "filter": "ny_open+with_1h",
-   "score": 0.0091,
-   "trades_seen": 60,
-   "mean_r": 0.1216
   }
  ],
  "fallback_if_fewer_than_2_by_11am_new_york": [
@@ -51,15 +42,6 @@
    "mean_r": 0.2179
   },
   {
-   "instrument": "XAU_USD",
-   "setup": "sweep_bos|15m|pivots+sessions|at_break",
-   "target": "3R",
-   "filter": "stop>=6sp",
-   "score": 0.0818,
-   "trades_seen": 71,
-   "mean_r": 0.1279
-  },
-  {
    "instrument": "NAS100_USD",
    "setup": "sweep_bos|5m|pivots+sessions|at_break",
    "target": "2R",
@@ -78,15 +60,6 @@
    "mean_r": 0.1259
   },
   {
-   "instrument": "XAU_USD",
-   "setup": "continuation|1h>1m",
-   "target": "1R",
-   "filter": "ny_open",
-   "score": 0.073,
-   "trades_seen": 60,
-   "mean_r": 0.1216
-  },
-  {
    "instrument": "NAS100_USD",
    "setup": "continuation|1h>1m",
    "target": "half1R_3R",
@@ -94,6 +67,24 @@
    "score": 0.0721,
    "trades_seen": 73,
    "mean_r": 0.1117
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "half1R_3R",
+   "filter": "newyork+with_1h+with_4h",
+   "score": 0.0721,
+   "trades_seen": 73,
+   "mean_r": 0.1117
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>1m",
+   "target": "2R",
+   "filter": "newyork+with_4h",
+   "score": 0.0719,
+   "trades_seen": 73,
+   "mean_r": 0.1114
   }
  ],
  "day_stop_win_R": null,
@@ -101,10 +92,10 @@
  "max_trades": 5,
  "min_trades": 2,
  "notes": [
+  "BENCH XAU_USD (non-CRT): its strategy trades lost -0.278R over the last 31",
   "ADD NAS100_USD|sweep_bos|5m|pivots+sessions|at_break|2R|against_D: 103 experiment trades so far, mean +0.147R, score +0.037",
-  "ADD XAU_USD|continuation|1h>1m|1R|ny_open+with_1h: 60 experiment trades so far, mean +0.122R, score +0.009",
   "DROP NAS100_USD|continuation|1h>1m|3R|newyork+with_4h: now 73 trades, mean +0.257R, last 180 days +0.257R over 73",
   "DROP XAU_USD|sweep_bos|15m|pivots+sessions|at_break|3R|stop>=6sp: now 71 trades, mean +0.128R, last 180 days +0.128R over 71",
-  "DROP XAU_USD|sweep_bos|5m|pivots+sessions|at_break|1R|against_D: now 91 trades, mean -0.013R, last 180 days -0.013R over 91"
+  "DROP XAU_USD|sweep_bos|5m|pivots+sessions|at_break|1R|against_D: now 89 trades, mean +0.032R, last 180 days +0.032R over 89"
  ]
 }

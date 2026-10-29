@@ -55,7 +55,7 @@ def simulate(m: Market, s: Signal, target: str) -> Trade:
         j0 = s.known + 1 + int(np.argmax(hit))
         fill = min(s.entry, m.ao[j0]) if d == 1 else max(s.entry, m.bo[j0])
     risk = (fill - s.stop) * d
-    if risk <= 0:
+    if risk <= float(m.spread[j0]):   # a stop inside the spread isn't a trade (R would be meaningless)
         return Trade(s, target, False)
     r1, r2 = s.targets if s.targets else TARGETS[target]
     tps = (fill + d * r1 * risk, fill + d * r2 * risk)

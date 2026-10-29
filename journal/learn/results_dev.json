@@ -1,67 +1,67 @@
 {
  "period": "dev",
  "trading_days": 1034,
- "days_with_strategy_trades": 843,
- "profitable_days_pct": 0.446,
- "losing_days": 467,
+ "days_with_strategy_trades": 632,
+ "profitable_days_pct": 0.4161,
+ "losing_days": 369,
  "flat_days": 0,
- "days_with_2_to_5_trades_pct": 0.515,
- "longest_losing_day_streak": 16,
- "max_drawdown_r": -115.75,
- "trades": 1902,
- "win_rate": 0.345,
- "avg_r": -0.0565,
- "total_r": -107.47,
- "profit_factor": 0.909,
+ "days_with_2_to_5_trades_pct": 0.338,
+ "longest_losing_day_streak": 15,
+ "max_drawdown_r": -71.48,
+ "trades": 1277,
+ "win_rate": 0.343,
+ "avg_r": -0.0341,
+ "total_r": -43.57,
+ "profit_factor": 0.945,
  "crt": {
-  "trades": 160,
-  "avg_r": -0.1525,
-  "total_r": -24.4,
-  "win_rate": 0.219
+  "trades": 184,
+  "avg_r": -0.1363,
+  "total_r": -25.08,
+  "win_rate": 0.234
  },
  "self_developed": {
-  "trades": 1742,
-  "avg_r": -0.0477,
-  "total_r": -83.07,
-  "win_rate": 0.356
+  "trades": 1093,
+  "avg_r": -0.0169,
+  "total_r": -18.49,
+  "win_rate": 0.361
  },
  "NAS100_USD": {
-  "trades": 1656,
-  "avg_r": -0.0234,
-  "total_r": -38.68,
-  "win_rate": 0.356
+  "trades": 1033,
+  "avg_r": -0.0145,
+  "total_r": -14.99,
+  "win_rate": 0.348
  },
  "XAU_USD": {
-  "trades": 246,
-  "avg_r": -0.2797,
-  "total_r": -68.79,
-  "win_rate": 0.272
+  "trades": 244,
+  "avg_r": -0.1171,
+  "total_r": -28.58,
+  "win_rate": 0.32
  },
  "by_year": {
   "2021": {
-   "trades": 705,
-   "avg_r": -0.0945,
-   "total_r": -66.61,
-   "win_rate": 0.355
+   "trades": 366,
+   "avg_r": -0.1137,
+   "total_r": -41.62,
+   "win_rate": 0.336
   },
   "2022": {
    "trades": 449,
-   "avg_r": 0.0128,
-   "total_r": 5.75,
-   "win_rate": 0.37
+   "avg_r": -0.0077,
+   "total_r": -3.44,
+   "win_rate": 0.365
   },
   "2023": {
-   "trades": 409,
-   "avg_r": 0.1235,
-   "total_r": 50.51,
-   "win_rate": 0.364
+   "trades": 357,
+   "avg_r": 0.0794,
+   "total_r": 28.36,
+   "win_rate": 0.35
   },
   "2024": {
-   "trades": 339,
-   "avg_r": -0.2865,
-   "total_r": -97.12,
-   "win_rate": 0.268
+   "trades": 105,
+   "avg_r": -0.256,
+   "total_r": -26.88,
+   "win_rate": 0.248
   }
  },
- "rulebook_versions": 193
+ "rulebook_versions": 145
 }

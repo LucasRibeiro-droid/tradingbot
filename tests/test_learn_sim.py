@@ -48,6 +48,10 @@ class Fills(unittest.TestCase):
         kinds = [e[2] for e in tr.exits]
         self.assertEqual(kinds, ["target 1R", "break even"])
 
+    def test_stop_inside_the_spread_is_no_trade(self):
+        m = market([(100, 100, 100, 100), (100, 101, 99, 100), (100, 101, 99, 100)])
+        self.assertFalse(simulate(m, self.sig(stop=100.5), "1R").filled)
+
     def test_day_end_exit(self):
         m = market([(100, 100, 100, 100)] + [(100, 101, 99, 100)] * 4)
         tr = simulate(m, self.sig(), "3R")

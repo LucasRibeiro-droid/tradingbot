@@ -136,6 +136,33 @@ def report(L: Learner, tag: str) -> dict:
     return res
 
 
+def add_room_tags(xs: list[XTrade], markets: dict[str, Market], pred_dir: Path) -> None:
+    """Tag each signal with the room the bot's own predictor leaves, as known at the decision: the latest
+    checkpoint prediction of that day (made with the predictor version in force that day) of the day's high
+    (longs) or low (shorts), minus the entry, in units of the trade's risk."""
+    from .predict import CHECKPOINTS, develop
+    if not (pred_dir / "predictions.jsonl").exists():
+        develop(markets, pred_dir)
+    preds = defaultdict(list)
+    for line in (pred_dir / "predictions.jsonl").read_text().splitlines():
+        p = json.loads(line)
+        preds[(p["instrument"], p["date"])].append((CHECKPOINTS[p["checkpoint"]], p["pred_high"], p["pred_low"]))
+    done = set()
+    for x in xs:
+        s = x.signal
+        if id(s) in done:
+            continue
+        done.add(id(s))
+        m = markets[x.inst]
+        cps = [c for c in preds.get((x.inst, date_of(x.day)), []) if c[0] <= m.mins[s.known]]
+        risk = abs(s.entry - s.stop)
+        if not cps or risk <= 0:
+            s.tags["room_R"] = None
+            continue
+        cp = max(cps)
+        s.tags["room_R"] = round(((cp[1] - s.entry) if s.side == 1 else (s.entry - cp[2])) / risk, 2)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--rewrite-every", type=int, default=5)  # weekly
@@ -146,6 +173,7 @@ def main() -> None:
     tag = "dev" if args.end == "2025-01-01" else f"dev_to_{args.end}"
     markets = {inst: Market(inst, data.load(inst, end=end)) for inst in data.INSTRUMENTS}
     xs = experiments(markets, tag)
+    add_room_tags(xs, markets, OUT / "predictor")
     L = Learner(markets, xs, OUT)
     t0 = time.time()
     L.run(args.rewrite_every)

@@ -57,6 +57,11 @@ FILTERS = {
     "london+with_4h": lambda t: t["session"] == "london" and t["with_4h"],
     "asia+with_1h": lambda t: t["session"] == "asia" and t["with_1h"],
     "with_1h+with_4h": lambda t: t["with_1h"] and t["with_4h"],
+    # the bot's own daily high/low predictor: room left to the predicted high (longs) / low (shorts)
+    "room>=1R": lambda t: (t.get("room_R") or -9) >= 1, "room>=2R": lambda t: (t.get("room_R") or -9) >= 2,
+    "room>=3R": lambda t: (t.get("room_R") or -9) >= 3, "room<0": lambda t: t.get("room_R") is not None and t["room_R"] < 0,
+    "newyork+room>=2R": lambda t: t["session"] == "newyork" and (t.get("room_R") or -9) >= 2,
+    "with_1h+room>=2R": lambda t: t["with_1h"] and (t.get("room_R") or -9) >= 2,
 }
 MAX_TRADES, MIN_TRADES = 5, 2
 
@@ -237,13 +242,36 @@ class Learner:
         self.stats = Stats()
         self.rulebook = Rulebook(1, "start (no evidence yet)", notes=["Day 1: no custom strategy yet; only CRT is traded as strategy."])
         self.history: list[dict] = []
+        self.live = defaultdict(list)        # rule key -> [(day, r)] of its strategy trades
+        self.benched: dict[str, int] = {}    # rule key or "instrument:X" -> benched until this day
         self.changelog: list[str] = []
         self.strategy_log: list[dict] = []
 
     # ---- the evening review: evidence -> next rulebook ----
+    def review_own_trades(self, today: int) -> list[str]:
+        """Learning from its own strategy trades: a rule whose live record turns bad is benched for 60 trading
+        days; an instrument whose recent strategy trades (excluding CRT) lose is benched too."""
+        notes = []
+        for key, recs in self.live.items():
+            recent = [r for d, r in recs if d > today - 120]
+            if len(recent) >= 15 and np.mean(recent) < -0.15 and self.benched.get(key, 0) <= today:
+                self.benched[key] = today + 85
+                notes.append(f"BENCH {key}: its own strategy trades lost {np.mean(recent):+.3f}R over the last {len(recent)} (until ~3 months)")
+        for inst in self.markets:
+            recent = [r for k, recs in self.live.items() if k.startswith(inst + "|") for d, r in recs if d > today - 120]
+            tag = "instrument:" + inst
+            if len(recent) >= 25 and np.mean(recent) < -0.15 and self.benched.get(tag, 0) <= today:
+                self.benched[tag] = today + 85
+                notes.append(f"BENCH {inst} (non-CRT): its strategy trades lost {np.mean(recent):+.3f}R over the last {len(recent)}")
+        return notes
+
     def rewrite(self, today: int, last_index: dict[str, int]) -> None:
+        bench_notes = self.review_own_trades(today)
         cand = []
         for k in self.stats.n:
+            key = "|".join(k)
+            if self.benched.get(key, 0) > today or self.benched.get("instrument:" + k[0], 0) > today:
+                continue
             sc, mean, n = self.stats.score(k, today)
             if sc > 0:
                 cand.append((sc, k, mean, n))
@@ -261,7 +289,8 @@ class Learner:
                 break
         fallback = []
         best_all = sorted(((self.stats.s[k] / (self.stats.n[k] + 40), k) for k in self.stats.n
-                           if self.stats.n[k] >= 60 and self.stats.s[k] > 0), reverse=True)
+                           if self.stats.n[k] >= 60 and self.stats.s[k] > 0 and self.benched.get("|".join(k), 0) <= today
+                           and self.benched.get("instrument:" + k[0], 0) <= today), reverse=True)
         for sc, k in best_all:
             if all(r.key != "|".join(k) for r in rules):
                 fallback.append(Rule(*k, score=sc, n=self.stats.n[k], mean=self.stats.s[k] / self.stats.n[k]))
@@ -284,12 +313,12 @@ class Learner:
                         best = (win, loss, green, total)
         new_keys = [r.key for r in rules]
         old_keys = [r.key for r in self.rulebook.rules]
-        changed = new_keys != old_keys or (best[0], best[1]) != (self.rulebook.day_stop_win, self.rulebook.day_stop_loss)
+        changed = bool(bench_notes) or new_keys != old_keys or (best[0], best[1]) != (self.rulebook.day_stop_win, self.rulebook.day_stop_loss)
         if changed:
             v = self.rulebook.version + 1
             added = [r for r in rules if r.key not in old_keys]
             dropped = [r for r in self.rulebook.rules if r.key not in new_keys]
-            notes = []
+            notes = list(bench_notes)
             for r in added:
                 notes.append(f"ADD {r.key}: {r.n} experiment trades so far, mean {r.mean:+.3f}R, score {r.score:+.3f}")
             for r in dropped:
@@ -315,6 +344,9 @@ class Learner:
             taken = apply_rulebook(rb, self.by_day[d], self.markets)
             for x, why in taken:
                 self.strategy_log.append({"day": d, "x": x, "why": why, "version": rb.version})
+                key = next((r.key for r in rb.rules + rb.fallback if r.matches(x)), None) if x.signal.family != "crt" else None
+                if key:
+                    self.live[key].append((d, x.r))
             day_r = sum(x.r for x, _ in taken)
             self.history.append({"day": date_of(d), "version": rb.version, "trades": len(taken), "r": round(day_r, 4),
                                  "crt": sum(1 for x, _ in taken if x.signal.family == "crt")})

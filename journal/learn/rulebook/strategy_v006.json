@@ -4,15 +4,6 @@
  "always": "the day's first valid CRT setup (either instrument)",
  "rules": [
   {
-   "instrument": "XAU_USD",
-   "setup": "sweep_bos|5m|pivots+sessions|at_break",
-   "target": "3R",
-   "filter": "stop>=6sp+discount",
-   "score": 0.0338,
-   "trades_seen": 66,
-   "mean_r": 0.2094
-  },
-  {
    "instrument": "NAS100_USD",
    "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
    "target": "1R",
@@ -29,15 +20,6 @@
    "score": 0.0206,
    "trades_seen": 90,
    "mean_r": 0.1262
-  },
-  {
-   "instrument": "XAU_USD",
-   "setup": "sweep_bos|15m|pivots+sessions|at_break",
-   "target": "2R",
-   "filter": "stop>=6sp",
-   "score": 0.0075,
-   "trades_seen": 93,
-   "mean_r": 0.1047
   }
  ],
  "fallback_if_fewer_than_2_by_11am_new_york": [
@@ -119,11 +101,8 @@
  "max_trades": 5,
  "min_trades": 2,
  "notes": [
-  "ADD XAU_USD|sweep_bos|5m|pivots+sessions|at_break|3R|stop>=6sp+discount: 66 experiment trades so far, mean +0.209R, score +0.034",
   "ADD NAS100_USD|sweep_bos|5m|pivots+sessions|at_equilibrium|1R|stop>=10sp: 77 experiment trades so far, mean +0.130R, score +0.028",
   "ADD NAS100_USD|sweep_bos|5m|pivots+sessions|at_break|2R|stop>=6sp+newyork: 90 experiment trades so far, mean +0.126R, score +0.021",
-  "ADD XAU_USD|sweep_bos|15m|pivots+sessions|at_break|2R|stop>=6sp: 93 experiment trades so far, mean +0.105R, score +0.008",
-  "DROP NAS100_USD|sweep_bos|5m|pivots+sessions|at_break|2R|against_D: now 128 trades, mean +0.079R, last 180 days +0.079R over 128",
-  "DROP XAU_USD|continuation|1h>1m|1R|ny_open+with_1h: now 69 trades, mean +0.013R, last 180 days +0.013R over 69"
+  "DROP NAS100_USD|sweep_bos|5m|pivots+sessions|at_break|2R|against_D: now 128 trades, mean +0.079R, last 180 days +0.079R over 128"
  ]
 }
