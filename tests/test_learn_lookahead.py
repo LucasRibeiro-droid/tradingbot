@@ -68,9 +68,9 @@ class NoLookahead(unittest.TestCase):
 
     def test_holdout_is_locked(self):
         with self.assertRaises(data.HoldoutLocked):
-            data.load("NAS100_USD", datetime(2024, 12, 1, tzinfo=timezone.utc), datetime(2025, 2, 1, tzinfo=timezone.utc))
+            data.load("NAS100_USD", datetime(2099, 12, 1, tzinfo=timezone.utc), datetime(2100, 2, 1, tzinfo=timezone.utc))
         with self.assertRaises(data.HoldoutLocked):
-            data.fetch_month(None, "XAU_USD", 2025, 3)
+            data.fetch_month(None, "XAU_USD", 2100, 3)
 
 
 if __name__ == "__main__":

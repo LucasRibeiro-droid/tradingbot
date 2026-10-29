@@ -90,13 +90,20 @@ class Rule:
     score: float = 0.0
     n: int = 0
     mean: float = 0.0
+    conds: tuple = ()      # mined conditions (miner.PREDICATES); used instead of `filt` when set
 
     @property
     def key(self) -> str:
         return f"{self.inst}|{self.base}|{self.target}|{self.filt}"
 
     def matches(self, x: XTrade) -> bool:
-        return x.inst == self.inst and x.signal.base == self.base and x.target == self.target and FILTERS[self.filt](x.signal.tags)
+        if x.inst != self.inst or x.signal.base != self.base or x.target != self.target:
+            return False
+        if self.conds:
+            from .miner import NAMES
+            row = x.signal.tags["_pred"]
+            return all(row[NAMES.index(c)] for c in self.conds)
+        return FILTERS[self.filt](x.signal.tags)
 
 
 @dataclass
@@ -108,11 +115,12 @@ class Rulebook:
     day_stop_win: float | None = None    # stop trading for the day once the day's R reaches this
     day_stop_loss: float | None = None   # ... or falls to this
     notes: list[str] = field(default_factory=list)
+    force_crt: bool = True               # owner, 2026-10-29: CRT no longer has to be traded every time
 
     def to_json(self) -> dict:
-        r = lambda x: {"instrument": x.inst, "setup": x.base, "target": x.target, "filter": x.filt,
+        r = lambda x: {"instrument": x.inst, "setup": x.base, "target": x.target, "filter": " and ".join(x.conds) if x.conds else x.filt,
                        "score": round(x.score, 4), "trades_seen": x.n, "mean_r": round(x.mean, 4)}
-        return {"version": self.version, "written_after": self.written_after, "always": "the day's first valid CRT setup (either instrument)",
+        return {"version": self.version, "written_after": self.written_after, "always": "the day's first valid CRT setup (either instrument)" if self.force_crt else "nothing (CRT only when a rule picks it)",
                 "rules": [r(x) for x in self.rules], "fallback_if_fewer_than_2_by_11am_new_york": [r(x) for x in self.fallback],
                 "day_stop_win_R": self.day_stop_win, "day_stop_loss_R": self.day_stop_loss,
                 "max_trades": MAX_TRADES, "min_trades": MIN_TRADES, "notes": self.notes}
@@ -124,7 +132,7 @@ def apply_rulebook(rb: Rulebook, day_trades: list[XTrade], markets: dict[str, Ma
     until its exit) or, if it never fills, until it expires: whether a limit will fill is not known when
     it is placed. Day results count once trades have exited. Returns the accepted orders that filled."""
     pool = rb.rules + rb.fallback
-    orders = sorted((x for x in day_trades if x.signal.family == "crt" or any(r.matches(x) for r in pool)),
+    orders = sorted((x for x in day_trades if (x.signal.family == "crt" and rb.force_crt) or any(r.matches(x) for r in pool)),
                     key=lambda x: (x.signal.known, x.id))
     accepted: list[tuple[XTrade, str]] = []
     crt_active_until = -1
@@ -150,7 +158,7 @@ def apply_rulebook(rb: Rulebook, day_trades: list[XTrade], markets: dict[str, Ma
         if sid in seen:
             continue
         why = None
-        if x.signal.family == "crt":
+        if x.signal.family == "crt" and rb.force_crt:
             if not crt_filled and crt_active_until < i:
                 why = "CRT (always taken: the day's valid CRT setup)"
         else:
@@ -360,3 +368,71 @@ class Learner:
                 e["lesson"] = lesson(e["x"], self.stats)   # written the evening of the trade, with evidence to date
             if (n + 1) % rewrite_every == 0:
                 self.rewrite(d, last)
+
+
+class PatternLearner(Learner):
+    """Engine v5: each month the bot mines patterns (setup x exit x up to 3 concept conditions) from its
+    past experiment trades only (miner.Miner), keeps those that held in every past year, and trades the best
+    of them; CRT is just another setup. Weekly it re-checks its own strategy trades (benching) and the day
+    stop rules."""
+
+    def __init__(self, markets, xtrades, out, miner, mine_every: int = 4, n_rules: int = 6):
+        super().__init__(markets, xtrades, out)
+        self.miner, self.mine_every, self.n_rules = miner, mine_every, n_rules
+        self.patterns = []
+        self.calls = 0
+        self.rulebook = Rulebook(1, "start (no evidence yet)", force_crt=False,
+                                 notes=["Day 1: no strategy yet; every setup trades as an experiment."])
+
+    def rewrite(self, today: int, last_index: dict[str, int]) -> None:
+        self.calls += 1
+        if self.calls % self.mine_every == 1 or not self.patterns:
+            self.patterns = self.miner.mine(before_day=today + 1)
+        bench_notes = self.review_own_trades(today)
+        usable = [p for p in self.patterns
+                  if self.benched.get("|".join(p.group) + "|" + "+".join(p.conds), 0) <= today
+                  and self.benched.get("instrument:" + p.group[0], 0) <= today]
+        rules, fallback, seen = [], [], set()
+        for p in usable:
+            if p.group in seen:
+                continue
+            seen.add(p.group)
+            r = Rule(p.group[0], p.group[1], p.group[2], "+".join(p.conds), p.score, p.n, p.mean, p.conds)
+            (rules if len(rules) < self.n_rules else fallback).append(r)
+            if len(fallback) >= self.n_rules:
+                break
+        # day stop rules: replay the candidate rulebook on the last 250 past days
+        best = (None, None, -1.0, -1e9)
+        past = [d for d in self.days if d <= today][-250:]
+        if rules and len(past) >= 40:
+            for win in (None, 0.5, 1.0, 2.0):
+                for loss in (None, -1.0, -2.0):
+                    rb = Rulebook(0, "", rules, fallback, win, loss, force_crt=False)
+                    day_r = [sum(x.r for x, _ in apply_rulebook(rb, self.by_day[d], self.markets)) for d in past]
+                    traded = [r for r in day_r if r != 0]
+                    if traded:
+                        green, total = float(np.mean([r > 0 for r in traded])), float(np.sum(traded))
+                        if total > 0 and (green, total) > best[2:]:
+                            best = (win, loss, green, total)
+        new_keys = [r.key for r in rules]
+        old_keys = [r.key for r in self.rulebook.rules]
+        stops = (best[0], best[1])
+        if bench_notes or new_keys != old_keys or stops != (self.rulebook.day_stop_win, self.rulebook.day_stop_loss):
+            v = self.rulebook.version + 1
+            notes = list(bench_notes)
+            for r in rules:
+                if r.key not in old_keys:
+                    p = next(p for p in usable if p.group == (r.inst, r.base, r.target) and "+".join(p.conds) == r.filt)
+                    notes.append(f"ADD {p.describe()}: {p.n} past trades, {p.mean:+.3f}R average, {p.win:.0%} winners, "
+                                 f"positive in every past year (worst year shrunk {p.worst_year:+.3f}R)")
+            for r in self.rulebook.rules:
+                if r.key not in new_keys:
+                    notes.append(f"DROP {r.inst} {r.base} ({r.target}) when {r.filt or 'always'}: no longer among the best "
+                                 f"patterns that held in every past year")
+            if stops != (self.rulebook.day_stop_win, self.rulebook.day_stop_loss):
+                notes.append(f"DAY STOPS: stop after {best[0]}R / {best[1]}R on the day (replay of the last {len(past)} days: "
+                             f"{best[2]:.0%} of trading days green, {best[3]:+.1f}R)" if best[2] >= 0 else "DAY STOPS: none")
+            self.rulebook = Rulebook(v, date_of(today), rules, fallback, best[0], best[1], notes, force_crt=False)
+            self.changelog.append(f"## v{v} (written after {date_of(today)}, used from the next trading day)\n" + "\n".join(f"- {n}" for n in notes))
+            (self.out / "rulebook").mkdir(parents=True, exist_ok=True)
+            (self.out / "rulebook" / f"strategy_v{v:03d}.json").write_text(json.dumps(self.rulebook.to_json(), indent=1))

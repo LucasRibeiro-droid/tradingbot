@@ -1,7 +1,8 @@
 """OANDA 1-minute bid/ask history for NAS100_USD and XAU_USD, cached per month.
 
-The 2025-01-01 onwards HOLDOUT is locked: nothing in development can load it. Only
-``load(..., holdout=True)`` (used once, for the final report) reads it.
+Owner, 2026-10-29: "also use 2025 and 2026 for the backtest": the holdout that started 2025-01-01 is
+released; the simulation runs from January 2021 to the latest complete day. The guard stays for any
+future holdout (HOLDOUT_START), now set beyond the data.
 """
 from __future__ import annotations
 
@@ -15,7 +16,8 @@ import numpy as np
 CACHE = Path.home() / ".cache" / "tradingbot" / "learn"
 INSTRUMENTS = ("NAS100_USD", "XAU_USD")
 DEV_START = datetime(2021, 1, 3, 22, 0, tzinfo=timezone.utc)   # Sunday 17:00 NY: the week before Jan 4
-HOLDOUT_START = datetime(2025, 1, 1, tzinfo=timezone.utc)
+HOLDOUT_START = datetime(2100, 1, 1, tzinfo=timezone.utc)   # released by the owner on 2026-10-29
+DATA_END = datetime(2026, 10, 29, tzinfo=timezone.utc)    # the latest complete trading day when this was set
 
 
 class HoldoutLocked(RuntimeError):
@@ -61,7 +63,7 @@ def fetch_month(practice, inst: str, y: int, m: int, holdout: bool = False) -> n
     return arr
 
 
-def load(inst: str, start: datetime = DEV_START, end: datetime = HOLDOUT_START, holdout: bool = False) -> np.ndarray:
+def load(inst: str, start: datetime = DEV_START, end: datetime = DATA_END, holdout: bool = False) -> np.ndarray:
     if end > HOLDOUT_START and not holdout:
         raise HoldoutLocked("development code may not read 2025-01-01 onwards")
     if start >= HOLDOUT_START and not holdout:
@@ -70,9 +72,11 @@ def load(inst: str, start: datetime = DEV_START, end: datetime = HOLDOUT_START, 
     y, m = start.year, start.month
     while datetime(y, m, 1, tzinfo=timezone.utc) < end:
         f = _month_file(inst, y, m)
-        if not f.exists():
-            raise FileNotFoundError(f"{f} missing: run python -m tradingbot.learn.data")
-        parts.append(np.load(f))
+        if f.exists():
+            parts.append(np.load(f))
+        else:
+            from ..live.oanda import Practice
+            parts.append(fetch_month(Practice(), inst, y, m, holdout))   # the current month: fetched, not cached
         y, m = y + (m == 12), m % 12 + 1
     a = np.concatenate(parts)
     return a[(a[:, 0] >= start.timestamp()) & (a[:, 0] < end.timestamp())]
@@ -82,8 +86,10 @@ def main() -> None:
     from ..live.oanda import Practice
     p = Practice()
     for inst in INSTRUMENTS:
-        for y in range(2021, 2025):
+        for y in range(2021, 2027):
             for m in range(1, 13):
+                if datetime(y, m, 1, tzinfo=timezone.utc) >= DATA_END:
+                    break
                 a = fetch_month(p, inst, y, m)
                 print(inst, y, m, len(a), flush=True)
 

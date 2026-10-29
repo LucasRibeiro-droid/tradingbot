@@ -16,7 +16,9 @@ from pathlib import Path
 import numpy as np
 
 from . import data
-from .learner import XTrade, Learner
+from .learner import XTrade, Learner, PatternLearner
+from .features import add_features
+from .miner import Miner, predicate_row
 from .market import Market, date_of
 from .setups import all_signals
 from .sim import TARGETS, simulate
@@ -166,15 +168,21 @@ def add_room_tags(xs: list[XTrade], markets: dict[str, Market], pred_dir: Path) 
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--rewrite-every", type=int, default=5)  # weekly
-    ap.add_argument("--end", default="2025-01-01")
+    ap.add_argument("--end", default="2026-10-29")
+    ap.add_argument("--engine", default="v5", choices=["v4", "v5"])
     args = ap.parse_args()
     from datetime import datetime, timezone
     end = datetime.fromisoformat(args.end).replace(tzinfo=timezone.utc)
-    tag = "dev" if args.end == "2025-01-01" else f"dev_to_{args.end}"
+    tag = "2021_2026" if args.end == "2026-10-29" else f"to_{args.end}"
     markets = {inst: Market(inst, data.load(inst, end=end)) for inst in data.INSTRUMENTS}
     xs = experiments(markets, tag)
     add_room_tags(xs, markets, OUT / "predictor")
-    L = Learner(markets, xs, OUT)
+    add_features(xs, markets, OUT / "predictor" / "predictions.jsonl")
+    for x in xs:
+        if "_pred" not in x.signal.tags:
+            x.signal.tags["side_long"] = x.signal.side == 1
+            x.signal.tags["_pred"] = predicate_row(x.signal.tags)
+    L = PatternLearner(markets, xs, OUT, Miner(xs)) if args.engine == "v5" else Learner(markets, xs, OUT)
     t0 = time.time()
     L.run(args.rewrite_every)
     print(f"learning {time.time() - t0:.0f}s, {len(L.strategy_log)} strategy trades, rulebook v{L.rulebook.version}")
