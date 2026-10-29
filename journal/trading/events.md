@@ -82,3 +82,5 @@
 | 2026-10-29 19:22 | position CVNA 143 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
 | 2026-10-29 19:22 | position LLY 7 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
 | 2026-10-29 19:22 | position PANW 25 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-29 19:55 | flattened before the close | verified flat after 2 round(s) |  |
+| 2026-10-29 19:55 | session end | 0 trades, 0 instruments | review to write |

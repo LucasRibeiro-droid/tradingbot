@@ -10,7 +10,15 @@
    "qty": 143,
    "risk_pct_of_equity": 0.693,
    "cid": "day_rs3-2026-10-29-CVNA",
-   "order_id": "2ef0cc91-ec84-40d0-b1f9-101a795bff8c"
+   "order_id": "2ef0cc91-ec84-40d0-b1f9-101a795bff8c",
+   "result": {
+    "entry": 68.68,
+    "exit": 68.52,
+    "how": "close",
+    "pnl": -22.88,
+    "r": -0.033,
+    "return_bps": -23.3
+   }
   },
   {
    "symbol": "PANW",
@@ -20,7 +28,15 @@
    "qty": 25,
    "risk_pct_of_equity": 0.498,
    "cid": "day_rs3-2026-10-29-PANW",
-   "order_id": "f43e3e43-bdd8-44e2-9194-1776fea7e3a2"
+   "order_id": "f43e3e43-bdd8-44e2-9194-1776fea7e3a2",
+   "result": {
+    "entry": 386.94,
+    "exit": 379.46,
+    "how": "close",
+    "pnl": -187.0,
+    "r": -0.388,
+    "return_bps": -193.3
+   }
   },
   {
    "symbol": "LLY",
@@ -30,7 +46,15 @@
    "qty": 7,
    "risk_pct_of_equity": 0.44,
    "cid": "day_rs3-2026-10-29-LLY",
-   "order_id": "85bdff53-ec39-4087-8c9e-06310ebfcdbb"
+   "order_id": "85bdff53-ec39-4087-8c9e-06310ebfcdbb",
+   "result": {
+    "entry": 1395.141429,
+    "exit": 1372.7,
+    "how": "close",
+    "pnl": -157.09,
+    "r": -0.366,
+    "return_bps": -160.9
+   }
   }
  ]
 }
