@@ -1,0 +1,162 @@
+{
+ "version": 23,
+ "written_after": "2021-06-11",
+ "always": "the day's first valid CRT setup (either instrument)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "ny_open",
+   "score": 0.3527,
+   "trades_seen": 66,
+   "mean_r": 0.7358
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "stop>=10sp",
+   "score": 0.2425,
+   "trades_seen": 62,
+   "mean_r": 0.5636
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "stop>=10sp",
+   "score": 0.1525,
+   "trades_seen": 80,
+   "mean_r": 0.354
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "newyork+with_D",
+   "score": 0.1465,
+   "trades_seen": 79,
+   "mean_r": 0.3449
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "ny_open",
+   "score": 0.1506,
+   "trades_seen": 84,
+   "mean_r": 0.3158
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "1R",
+   "filter": "stop>=10sp",
+   "score": 0.1108,
+   "trades_seen": 61,
+   "mean_r": 0.2858
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "with_1h",
+   "score": 0.061,
+   "trades_seen": 128,
+   "mean_r": 0.1637
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "1R",
+   "filter": "ny_midday",
+   "score": 0.0558,
+   "trades_seen": 92,
+   "mean_r": 0.1556
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "ny_open",
+   "score": 0.3062,
+   "trades_seen": 66,
+   "mean_r": 0.4917
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "half1R_3R",
+   "filter": "ny_open",
+   "score": 0.2882,
+   "trades_seen": 66,
+   "mean_r": 0.4629
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "newyork+with_4h",
+   "score": 0.2546,
+   "trades_seen": 68,
+   "mean_r": 0.4044
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "stop>=10sp",
+   "score": 0.2341,
+   "trades_seen": 62,
+   "mean_r": 0.3852
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "half1R_3R",
+   "filter": "stop>=10sp",
+   "score": 0.2293,
+   "trades_seen": 62,
+   "mean_r": 0.3772
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "ny_open",
+   "score": 0.2198,
+   "trades_seen": 84,
+   "mean_r": 0.3245
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "half1R_be3R",
+   "filter": "ny_open",
+   "score": 0.2133,
+   "trades_seen": 66,
+   "mean_r": 0.3425
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "2R",
+   "filter": "stop>=10sp",
+   "score": 0.2026,
+   "trades_seen": 105,
+   "mean_r": 0.2798
+  }
+ ],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": [
+  "ADD NAS100_USD|sweep_bos|15m|pivots+sessions|at_break|2R|ny_open: 84 experiment trades so far, mean +0.316R, score +0.151",
+  "DROP XAU_USD|sweep_bos|5m|pivots+sessions|at_break|2R|stop>=10sp: now 105 trades, mean +0.280R, last 180 days +0.280R over 105",
+  "DROP NAS100_USD|sweep_bos|15m|pivots+sessions|at_break|3R|ny_open: now 84 trades, mean +0.325R, last 180 days +0.325R over 84"
+ ]
+}

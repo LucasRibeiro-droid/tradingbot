@@ -1,0 +1,176 @@
+{
+ "version": 142,
+ "written_after": "2023-11-23",
+ "always": "the day's first valid CRT setup (either instrument)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "newyork+with_1h",
+   "score": 0.4374,
+   "trades_seen": 75,
+   "mean_r": 0.8375
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "newyork+with_1h",
+   "score": 0.2311,
+   "trades_seen": 103,
+   "mean_r": 0.4266
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "ny_open+with_1h",
+   "score": 0.1873,
+   "trades_seen": 419,
+   "mean_r": 0.2474
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "newyork+with_1h+with_4h",
+   "score": 0.1335,
+   "trades_seen": 437,
+   "mean_r": 0.1909
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|4h>5m",
+   "target": "3R",
+   "filter": "newyork+with_1h+with_4h",
+   "score": 0.1178,
+   "trades_seen": 430,
+   "mean_r": 0.1654
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_gap",
+   "target": "3R",
+   "filter": "stop>=6sp+discount",
+   "score": 0.1111,
+   "trades_seen": 120,
+   "mean_r": 0.2541
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "ny_open",
+   "score": 0.1102,
+   "trades_seen": 452,
+   "mean_r": 0.1609
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "newyork+with_1h+with_4h",
+   "score": 0.0937,
+   "trades_seen": 231,
+   "mean_r": 0.1508
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "ny_midday",
+   "score": 0.0891,
+   "trades_seen": 460,
+   "mean_r": 0.134
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "london+with_4h",
+   "score": 0.0653,
+   "trades_seen": 128,
+   "mean_r": 0.187
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "half1R_3R",
+   "filter": "newyork+with_1h",
+   "score": 0.3506,
+   "trades_seen": 75,
+   "mean_r": 0.5376
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "newyork+with_1h",
+   "score": 0.3374,
+   "trades_seen": 75,
+   "mean_r": 0.5173
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "3R",
+   "filter": "ny_open+with_1h",
+   "score": 0.3247,
+   "trades_seen": 73,
+   "mean_r": 0.5027
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "ny_open+with_1h",
+   "score": 0.2984,
+   "trades_seen": 127,
+   "mean_r": 0.3924
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "2R",
+   "filter": "newyork+with_1h",
+   "score": 0.2896,
+   "trades_seen": 103,
+   "mean_r": 0.402
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_block",
+   "target": "3R",
+   "filter": "ny_open+with_1h",
+   "score": 0.2777,
+   "trades_seen": 97,
+   "mean_r": 0.3923
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "stop>=6sp+with_1h",
+   "score": 0.2704,
+   "trades_seen": 135,
+   "mean_r": 0.3505
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "2R",
+   "filter": "ny_open+with_1h",
+   "score": 0.2608,
+   "trades_seen": 73,
+   "mean_r": 0.4038
+  }
+ ],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": []
+}

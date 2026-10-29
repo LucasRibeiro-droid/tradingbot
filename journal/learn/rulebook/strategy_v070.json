@@ -1,0 +1,176 @@
+{
+ "version": 70,
+ "written_after": "2022-05-17",
+ "always": "the day's first valid CRT setup (either instrument)",
+ "rules": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "asia",
+   "score": 0.3206,
+   "trades_seen": 73,
+   "mean_r": 0.6358
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_break",
+   "target": "2R",
+   "filter": "with_1h",
+   "score": 0.1986,
+   "trades_seen": 82,
+   "mean_r": 0.4087
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_break",
+   "target": "3R",
+   "filter": "ny_open+with_1h",
+   "score": 0.195,
+   "trades_seen": 190,
+   "mean_r": 0.3052
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "2R",
+   "filter": "stop>=6sp+newyork",
+   "score": 0.1723,
+   "trades_seen": 144,
+   "mean_r": 0.2989
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "continuation|1h>5m",
+   "target": "3R",
+   "filter": "newyork+with_D",
+   "score": 0.1647,
+   "trades_seen": 260,
+   "mean_r": 0.2404
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_block",
+   "target": "3R",
+   "filter": "newyork+with_1h+with_4h",
+   "score": 0.1543,
+   "trades_seen": 141,
+   "mean_r": 0.3018
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "stop>=6sp+london",
+   "score": 0.1441,
+   "trades_seen": 97,
+   "mean_r": 0.3125
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "1R",
+   "filter": "stop>=6sp+asia",
+   "score": 0.1193,
+   "trades_seen": 72,
+   "mean_r": 0.2745
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_gap",
+   "target": "1R",
+   "filter": "ny_midday",
+   "score": 0.1178,
+   "trades_seen": 96,
+   "mean_r": 0.2376
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|pivots+sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "newyork+with_1h+with_4h",
+   "score": 0.0913,
+   "trades_seen": 177,
+   "mean_r": 0.1887
+  }
+ ],
+ "fallback_if_fewer_than_2_by_11am_new_york": [
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "2R",
+   "filter": "stop>=6sp+asia",
+   "score": 0.3943,
+   "trades_seen": 66,
+   "mean_r": 0.6332
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_be3R",
+   "filter": "asia",
+   "score": 0.35,
+   "trades_seen": 73,
+   "mean_r": 0.5419
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_be3R",
+   "filter": "stop>=6sp+asia",
+   "score": 0.3441,
+   "trades_seen": 66,
+   "mean_r": 0.5527
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|5m|sessions|at_equilibrium",
+   "target": "3R",
+   "filter": "with_1h",
+   "score": 0.3004,
+   "trades_seen": 60,
+   "mean_r": 0.5007
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "1R",
+   "filter": "asia",
+   "score": 0.2997,
+   "trades_seen": 73,
+   "mean_r": 0.4639
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "half1R_3R",
+   "filter": "asia",
+   "score": 0.2981,
+   "trades_seen": 73,
+   "mean_r": 0.4614
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "3R",
+   "filter": "asia",
+   "score": 0.2964,
+   "trades_seen": 73,
+   "mean_r": 0.4589
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup": "sweep_bos|15m|pivots+sessions|at_gap",
+   "target": "1R",
+   "filter": "stop>=6sp+asia",
+   "score": 0.2943,
+   "trades_seen": 66,
+   "mean_r": 0.4727
+  }
+ ],
+ "day_stop_win_R": 0.5,
+ "day_stop_loss_R": null,
+ "max_trades": 5,
+ "min_trades": 2,
+ "notes": []
+}

@@ -56,3 +56,11 @@ Key points:
 - Tests: `python -m unittest discover -s tests -t .`
 - Settings are versioned in `tradingbot/config.py`; `LOCKED` holds TJR's absolutes as the baseline reference; `TradingParams` holds the live settings, which may override them on evidence.
 - Alpaca keys: `ALPACA_API_KEY`, `ALPACA_SECRET_KEY` (paper account).
+
+## Self-learning engine (owner's task, 2026-10-29)
+
+`tradingbot/learn/`: the bot lives through 2021-2024 day by day on OANDA 1-minute bid/ask data
+(NAS100_USD, XAU_USD), trades experiments, reviews each day, and rewrites a versioned rulebook used
+from the next day (`learner.py`, `setups.py`, `sim.py`, `predict.py`). Run: `python -m tradingbot.learn.data`
+(download), `python -m tradingbot.learn.run` (simulation → `journal/learn/`). **Holdout 2025-01-01 onwards
+is locked** (`data.HoldoutLocked`): it is run once, at the end. No-lookahead proof: `tests/test_learn_lookahead.py`.

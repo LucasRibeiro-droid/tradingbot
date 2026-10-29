@@ -1,0 +1,82 @@
+{
+ "NAS100_USD open 18:05": {
+  "days": 966,
+  "high_error_median": 64.733,
+  "low_error_median": 65.248,
+  "high_in_80pct_band": 0.768,
+  "low_in_80pct_band": 0.821,
+  "naive_high_error_median": 101.425
+ },
+ "NAS100_USD London 03:00": {
+  "days": 968,
+  "high_error_median": 54.185,
+  "low_error_median": 50.775,
+  "high_in_80pct_band": 0.786,
+  "low_in_80pct_band": 0.792,
+  "naive_high_error_median": 69.55
+ },
+ "NAS100_USD New York 09:30": {
+  "days": 967,
+  "high_error_median": 29.187,
+  "low_error_median": 23.506,
+  "high_in_80pct_band": 0.751,
+  "low_in_80pct_band": 0.762,
+  "naive_high_error_median": 32.1
+ },
+ "NAS100_USD 12:00": {
+  "days": 967,
+  "high_error_median": 4.628,
+  "low_error_median": 2.148,
+  "high_in_80pct_band": 0.743,
+  "low_in_80pct_band": 0.755,
+  "naive_high_error_median": 0.0
+ },
+ "NAS100_USD 14:00": {
+  "days": 935,
+  "high_error_median": 2.545,
+  "low_error_median": 0.894,
+  "high_in_80pct_band": 0.735,
+  "low_in_80pct_band": 0.77,
+  "naive_high_error_median": 0.0
+ },
+ "XAU_USD open 18:05": {
+  "days": 963,
+  "high_error_median": 5.983,
+  "low_error_median": 5.882,
+  "high_in_80pct_band": 0.818,
+  "low_in_80pct_band": 0.791,
+  "naive_high_error_median": 10.25
+ },
+ "XAU_USD London 03:00": {
+  "days": 966,
+  "high_error_median": 3.808,
+  "low_error_median": 3.807,
+  "high_in_80pct_band": 0.787,
+  "low_in_80pct_band": 0.785,
+  "naive_high_error_median": 4.656
+ },
+ "XAU_USD New York 09:30": {
+  "days": 966,
+  "high_error_median": 0.535,
+  "low_error_median": 0.359,
+  "high_in_80pct_band": 0.742,
+  "low_in_80pct_band": 0.742,
+  "naive_high_error_median": 0.0
+ },
+ "XAU_USD 12:00": {
+  "days": 966,
+  "high_error_median": 0.003,
+  "low_error_median": 0.012,
+  "high_in_80pct_band": 0.716,
+  "low_in_80pct_band": 0.683,
+  "naive_high_error_median": 0.0
+ },
+ "XAU_USD 14:00": {
+  "days": 941,
+  "high_error_median": 0.0,
+  "low_error_median": 0.0,
+  "high_in_80pct_band": 0.69,
+  "low_in_80pct_band": 0.616,
+  "naive_high_error_median": 0.0
+ }
+}
