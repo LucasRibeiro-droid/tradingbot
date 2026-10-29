@@ -77,3 +77,4 @@
 | 2026-10-28 17:53 | session start (paper): equity 98492.86, buying power 393971.44, shorting on |  |  |
 | 2026-10-28 19:55 | session end | 0 trades, 0 instruments | review to write |
 | 2026-10-29 13:36 | session start (paper): equity 98492.86, buying power 393971.44, shorting on |  |  |
+| 2026-10-29 19:22 | session hand-off (runner time limit) | positions stay protected at Alpaca | next run resumes from the saved state |
