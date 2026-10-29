@@ -1,7 +1,8 @@
 /* Helix — a perpetuals-style trading front end with a simulated market engine
  * and a paper-trading account persisted in localStorage.
- * Crypto prices follow Hyperliquid's public API when it is reachable; every
- * other market (and crypto when offline) runs on a random-walk simulator. */
+ * Markets Alpaca covers (US stocks, ETFs and its crypto pairs) use real Alpaca
+ * prices and bars, fetched through server.py so the API keys stay server-side;
+ * every other market runs on a random-walk simulator. */
 (() => {
   "use strict";
 
@@ -28,7 +29,7 @@
     ["SKHX", "SK Hynix", "stocks", 10, 1142.9, 667.0e6, 290.07e6, 0.0049, "#ea0029", "SK", "SK Hynix is a South Korean memory chipmaker and one of the largest suppliers of DRAM and high-bandwidth memory used in AI accelerators."],
     ["GOOGL", "GOOGL", "stocks", 20, 286.35, 529.12e6, 297.78e6, -0.1173, "#4285f4", "G", "Alphabet is the parent company of Google, spanning search, advertising, YouTube, Android, cloud computing and AI research."],
     ["NVDA", "NVIDIA", "stocks", 20, 201.52, 488.4e6, 402.1e6, 0.0234, "#76b900", "N", "NVIDIA designs GPUs and the data-center systems that train and run most of today's AI models."],
-    ["AAPL", "Apple", "stocks", 20, 268.81, 233.9e6, 190.2e6, -0.0042, "#555555", "", "Apple designs the iPhone, Mac, iPad and wearables, and runs a growing services business across the App Store, iCloud and Apple Music."],
+    ["AAPL", "Apple", "stocks", 20, 268.81, 233.9e6, 190.2e6, -0.0042, "#555555", "A", "Apple designs the iPhone, Mac, iPad and wearables, and runs a growing services business across the App Store, iCloud and Apple Music."],
     ["TSLA", "Tesla", "stocks", 20, 452.33, 402.7e6, 351.6e6, 0.0318, "#cc0000", "T", "Tesla builds electric vehicles, batteries and energy storage, and develops self-driving software and humanoid robots."],
     ["MSFT", "Microsoft", "stocks", 20, 541.2, 180.3e6, 160.4e6, 0.0071, "#00a4ef", "⊞", "Microsoft makes Windows, Office and Azure cloud services, and is a major investor in frontier AI."],
     ["AMZN", "Amazon", "stocks", 20, 228.41, 160.1e6, 140.2e6, -0.0063, "#ff9900", "a", "Amazon runs the world's largest online store and Amazon Web Services, the biggest cloud platform."],
@@ -39,6 +40,12 @@
     ["SPX", "S&P 500", "indices", 50, 7714.2, 303.47e6, 520.3e6, -0.0029, "#d62828", "S&P", "The S&P 500 tracks 500 of the largest U.S. listed companies and is the most widely followed benchmark of the U.S. stock market."],
     ["XYZ100", "XYZ 100", "indices", 30, 29444, 367.29e6, 410.6e6, -0.0086, "#1c1c1a", "100", "XYZ 100 is a synthetic index of the 100 largest non-financial companies listed on the Nasdaq exchange."],
     ["DJI", "Dow 30", "indices", 50, 47850, 120.2e6, 200.5e6, 0.0021, "#1d3557", "DJ", "The Dow Jones Industrial Average is a price-weighted index of 30 large U.S. blue-chip companies."],
+    ["SPY", "SPDR S&P 500 ETF", "indices", 20, 768.9, 40e6, 90e6, 0, "#c8102e", "SPY", "SPY is the largest exchange-traded fund tracking the S&P 500 index."],
+    ["QQQ", "Invesco QQQ", "indices", 20, 715.0, 30e6, 70e6, 0, "#0b5cab", "QQQ", "QQQ is an exchange-traded fund tracking the Nasdaq-100 index of large non-financial companies."],
+    ["DIA", "SPDR Dow Jones ETF", "indices", 20, 522.0, 8e6, 20e6, 0, "#1d3557", "DIA", "DIA is an exchange-traded fund tracking the Dow Jones Industrial Average."],
+    ["GLD", "SPDR Gold Shares", "commodities", 20, 367.7, 25e6, 60e6, 0, "#c9a227", "GLD", "GLD is the largest exchange-traded fund backed by physical gold bullion."],
+    ["SLV", "iShares Silver Trust", "commodities", 20, 47.25, 12e6, 30e6, 0, "#9ea3a8", "SLV", "SLV is an exchange-traded fund backed by physical silver."],
+    ["USO", "United States Oil Fund", "commodities", 10, 165.5, 6e6, 15e6, 0, "#333333", "USO", "USO is an exchange-traded fund that tracks the price of WTI crude oil futures."],
     ["WTI", "WTI Crude Oil", "commodities", 20, 100.58, 341.65e6, 380.2e6, -0.0259, "#111111", "●", "West Texas Intermediate is the benchmark grade of U.S. crude oil, priced at Cushing, Oklahoma."],
     ["XAU", "Gold", "commodities", 25, 4012.3, 290.4e6, 610.8e6, 0.0062, "#d4af37", "Au", "Gold has been a store of value for millennia and remains a key reserve asset and hedge against inflation and currency debasement."],
     ["XAG", "Silver", "commodities", 20, 48.215, 88.3e6, 140.1e6, 0.0141, "#a8a9ad", "Ag", "Silver is both a precious metal and an industrial input used in solar panels, electronics and batteries."],
@@ -51,10 +58,16 @@
     ["US2Y", "US 2Y Yield", "rates", 20, 3.5124, 30.2e6, 90.1e6, -0.0041, "#4a4e69", "2Y", "The yield on the 2-year U.S. Treasury note, closely tied to expectations for Federal Reserve policy."],
   ];
   const FEATURED = ["BTC", "SPX", "WTI", "XYZ100"];
+  // Our symbol → Alpaca symbol. Crypto pairs use the v1beta3 crypto API, the rest the v2 stocks API.
+  const ALPACA = {
+    BTC: "BTC/USD", ETH: "ETH/USD", HYPE: "HYPE/USD", SOL: "SOL/USD", XRP: "XRP/USD", DOGE: "DOGE/USD", AVAX: "AVAX/USD", LINK: "LINK/USD",
+    GOOGL: "GOOGL", NVDA: "NVDA", AAPL: "AAPL", TSLA: "TSLA", MSFT: "MSFT", AMZN: "AMZN", META: "META",
+    SPY: "SPY", QQQ: "QQQ", DIA: "DIA", GLD: "GLD", SLV: "SLV", USO: "USO",
+  };
 
   const markets = RAW.map(([sym, name, cat, maxLev, price, vol24, oi, chg24, color, glyph, desc]) => ({
     sym, name, cat, maxLev, price, vol24, oi, chg24, color, glyph, desc,
-    anchor: price, real: false, realMid: null, series: {}, live: [],
+    anchor: price, real: false, realMid: null, series: {}, live: [], alpaca: ALPACA[sym] || null,
   }));
   const bySym = Object.fromEntries(markets.map((m) => [m.sym, m]));
 
@@ -149,8 +162,8 @@
   const tickSigma = (m) => (DAILY_VOL[m.cat] / Math.sqrt(86400)) * 4;
 
   // ───────────────────────── Persistent state ─────────────────────────
-  const KEY = "helix-state-v1";
-  const START_CASH = 1000;
+  const KEY = "helix-state-v2";
+  const START_CASH = 10;
   const FEE = 0.00045;   // per side, on notional
   const SPREAD = 0.0002; // half-spread paid on market orders
   const MAINT = 0.9;     // auto-close when losses reach 90% of the amount
@@ -257,8 +270,8 @@
     const now = Date.now();
     for (const m of markets) {
       const s = tickSigma(m);
-      if (m.real && m.realMid) {
-        m.price = m.price + (m.realMid - m.price) * 0.5 + m.price * randn() * s * 0.15;
+      if (m.real) {
+        m.price = m.realMid;
       } else {
         const rev = Math.log(m.anchor / m.price) * 0.002;
         m.price *= Math.exp(randn() * s + rev);
@@ -291,44 +304,62 @@
     updateUI();
   }
 
-  // Hyperliquid public API: real mids, 24h stats and candles for crypto.
-  const HL = "https://api.hyperliquid.xyz/info";
-  const HL_COINS = markets.filter((m) => m.cat === "crypto").map((m) => m.sym);
-  let hlOk = false;
-  async function hlPost(body) {
-    const r = await fetch(HL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-    if (!r.ok) throw new Error(r.status);
+  // Alpaca market data. server.py proxies /api/alpaca/* and adds the API keys;
+  // without it (e.g. index.html opened from disk) only crypto works, since
+  // Alpaca serves crypto data without keys.
+  const ALPACA_DIRECT = "https://data.alpaca.markets";
+  const alpaca = { base: null, stocks: false };
+  const isCrypto = (m) => m.alpaca && m.alpaca.includes("/");
+  async function alpacaGet(path, params) {
+    const qs = new URLSearchParams(params).toString();
+    const r = await fetch(`${alpaca.base}/${path}?${qs}`);
+    if (!r.ok) throw new Error(`Alpaca ${r.status}`);
     return r.json();
   }
-  async function pollHyperliquid() {
+  async function initAlpaca() {
     try {
-      const [meta, ctxs] = await hlPost({ type: "metaAndAssetCtxs" });
-      meta.universe.forEach((u, i) => {
-        const m = bySym[u.name];
-        if (!m || m.cat !== "crypto" || !ctxs[i]) return;
-        const c = ctxs[i];
-        const mid = +(c.midPx || c.markPx);
-        if (!(mid > 0)) return;
-        if (!m.real) {
-          const ratio = mid / m.price;
-          m.live.forEach((pt) => (pt.p *= ratio));
-          m.price = mid;
-          m.series = {};
-          m.real = true;
-        }
-        m.realMid = mid;
-        m.anchor = mid;
-        if (+c.prevDayPx > 0) m.chg24 = mid / +c.prevDayPx - 1;
-        if (+c.dayNtlVlm > 0) m.vol24 = +c.dayNtlVlm;
-        if (+c.openInterest > 0) m.oi = +c.openInterest * mid;
-        m.maxLev = u.maxLeverage ? Math.min(u.maxLeverage, m.maxLev) : m.maxLev;
-      });
-      if (!hlOk) { hlOk = true; onMarketChange(false); }
-    } catch {
-      /* offline or blocked — keep simulating */
-    }
+      const r = await fetch("api/config");
+      const cfg = r.ok ? await r.json() : {};
+      if (cfg.alpaca) { alpaca.base = "api/alpaca"; alpaca.stocks = true; }
+    } catch { /* no proxy */ }
+    if (!alpaca.base) alpaca.base = ALPACA_DIRECT;
+    await pollAlpaca();
+    setInterval(pollAlpaca, 3000);
   }
-  const HL_INTERVAL = { "1d": "5m", "1w": "30m", "1m": "4h", "1y": "1d" };
+  function applySnapshot(m, snap) {
+    const px = snap?.latestTrade?.p;
+    if (!(px > 0)) return;
+    if (!m.real) {
+      // First real print: rescale the seeded history and drop simulated ranges.
+      m.live = [{ t: Date.now(), p: px }];
+      m.series = {};
+      m.real = true;
+      m.price = px;
+      loadRealCandles(m, "1d");
+      if (sel() === m) onMarketChange(false);
+    }
+    m.realMid = px;
+    m.anchor = px;
+    const prev = snap.prevDailyBar?.c;
+    if (prev > 0) m.chg24 = px / prev - 1;
+    const day = snap.dailyBar;
+    if (day && day.v > 0) m.vol24 = day.v * (day.vw || px);
+  }
+  async function pollAlpaca() {
+    const crypto = markets.filter(isCrypto);
+    const stocks = markets.filter((m) => m.alpaca && !isCrypto(m));
+    const jobs = [
+      alpacaGet("v1beta3/crypto/us/snapshots", { symbols: crypto.map((m) => m.alpaca).join(",") })
+        .then((d) => crypto.forEach((m) => applySnapshot(m, d.snapshots?.[m.alpaca]))),
+    ];
+    if (alpaca.stocks) {
+      jobs.push(alpacaGet("v2/stocks/snapshots", { symbols: stocks.map((m) => m.alpaca).join(",") })
+        .then((d) => stocks.forEach((m) => applySnapshot(m, d[m.alpaca]))));
+    }
+    await Promise.allSettled(jobs);
+  }
+
+  const ALPACA_TF = { "1d": "5Min", "1w": "30Min", "1m": "4Hour", "1y": "1Day" };
   const candleReq = {};
   async function loadRealCandles(m, range) {
     const key = m.sym + range;
@@ -336,13 +367,26 @@
     candleReq[key] = true;
     try {
       const r = RANGES[range];
-      const end = Date.now();
-      const rows = await hlPost({ type: "candleSnapshot", req: { coin: m.sym, interval: HL_INTERVAL[range], startTime: end - r.n * r.step, endTime: end } });
-      if (Array.isArray(rows) && rows.length > 10) {
-        m.series[range] = rows.map((c) => ({ t: c.t, o: +c.o, h: +c.h, l: +c.l, p: +c.c }));
-        m.series[range].at(-1).p = m.price;
-        if (sel() === m) { U.yMin = null; renderAbout(); }
+      const span = r.n * r.step;
+      const now = Date.now();
+      // Stocks only trade ~6.5h a day, so look back far enough to cover weekends.
+      const lookback = isCrypto(m) ? span : Math.max(span * 1.6, 5 * 86400e3);
+      const path = isCrypto(m) ? "v1beta3/crypto/us/bars" : "v2/stocks/bars";
+      const params = { symbols: m.alpaca, timeframe: ALPACA_TF[range], start: new Date(now - lookback).toISOString(), limit: 10000 };
+      let bars = [];
+      for (let page = 0; page < 5; page++) {
+        const d = await alpacaGet(path, params);
+        bars = bars.concat(d.bars?.[m.alpaca] || []);
+        if (!d.next_page_token) break;
+        params.page_token = d.next_page_token;
       }
+      let pts = bars.map((b) => ({ t: Date.parse(b.t), o: b.o, h: b.h, l: b.l, p: b.c }));
+      const recent = pts.filter((p) => p.t >= now - span);
+      pts = recent.length >= 20 ? recent : pts.slice(-r.n);
+      if (pts.length >= 2) {
+        m.series[range] = pts;
+        if (sel() === m) { U.yMin = null; renderAbout(); }
+      } else candleReq[key] = false;
     } catch { candleReq[key] = false; }
   }
 
@@ -409,8 +453,9 @@
       pts.push({ t: now, p: m.price });
       return { pts, t0, t1: now };
     }
-    const pts = getSeries(m, U.range);
-    return { pts, t0: pts[0].t, t1: pts.at(-1).t };
+    // Ranged charts are spaced by bar index, so market closures don't show as long flat gaps.
+    const pts = getSeries(m, U.range).map((p, i) => ({ ...p, t: i, time: p.t }));
+    return { pts, t0: 0, t1: pts.length - 1 };
   }
   function candlesFrom(pts, range, t0) {
     const out = [];
@@ -478,18 +523,19 @@
     const step = niceStep(yMax - yMin, 6);
     for (let v = Math.ceil(yMin / step) * step; v <= yMax; v += step) {
       const y = Y(v);
-      if (y < T - 4 || y > B + 4) continue;
+      if (y < T - 4 || y > B + 4 || Math.abs(y - Y(m.price)) < 18) continue;
       ctx.fillText(fmtPrice(v, Math.max(d, step < 1 ? Math.ceil(-Math.log10(step)) : 0)), R + 18, y);
     }
 
     // X-axis labels
     ctx.textBaseline = "alphabetic";
     const nLab = narrow ? 2 : 4;
-    const endLabel = U.range === "live" ? "now" : timeLabel(t1, U.range);
+    const realTime = (t) => (U.range === "live" ? t : pts[clamp(Math.round(t), 0, pts.length - 1)].time);
+    const endLabel = U.range === "live" ? "now" : timeLabel(realTime(t1), U.range);
     const endW = ctx.measureText(endLabel).width;
     for (let i = 0; i < nLab; i++) {
       const t = t0 + ((t1 - t0) * i) / nLab;
-      const s = timeLabel(t, U.range), w = ctx.measureText(s).width;
+      const s = timeLabel(realTime(t), U.range), w = ctx.measureText(s).width;
       ctx.fillText(s, i === 0 ? 0 : clamp(X(t) - w / 2, 0, R - endW - w - 16), H - 8);
     }
     ctx.fillText(endLabel, R - endW, H - 8);
@@ -565,7 +611,7 @@
       ctx.beginPath(); ctx.moveTo(hx, T - 10); ctx.lineTo(hx, B); ctx.stroke(); ctx.setLineDash([]);
       ctx.fillStyle = col; ctx.beginPath(); ctx.arc(hx, hy, 4, 0, Math.PI * 2); ctx.fill();
       const chg = best.p / first - 1;
-      tip.innerHTML = `<div>${fmtPrice(best.p)} <span style="color:${chg >= 0 ? "#6fd3a6" : "#ff8b85"}">${fmtPct(chg)}</span></div><div>${U.range === "live" ? fmtTime(best.t) : fmtDateTime(best.t)}</div>`;
+      tip.innerHTML = `<div>${fmtPrice(best.p)} <span style="color:${chg >= 0 ? "#6fd3a6" : "#ff8b85"}">${fmtPct(chg)}</span></div><div>${U.range === "live" ? fmtTime(best.t) : fmtDateTime(best.time)}</div>`;
       tip.hidden = false;
       const tw = tip.offsetWidth;
       tip.style.left = clamp(hx + 12, 0, W - tw - 4) + "px";
@@ -610,7 +656,7 @@
     const m = sel();
     const d1 = getSeries(m, "1d"), m1 = getSeries(m, "1m");
     const hi = (a) => Math.max(...a.map((p) => p.h ?? p.p)), lo = (a) => Math.min(...a.map((p) => p.l ?? p.p));
-    $("#aboutDesc").innerHTML = esc(m.desc) + ` <span class="muted">${m.real ? "Live prices from Hyperliquid." : "Simulated prices."}</span>`;
+    $("#aboutDesc").innerHTML = esc(m.desc) + ` <span class="muted">${m.real ? "Live prices and charts from Alpaca." : m.alpaca ? "Loading Alpaca data…" : "Simulated prices (not available on Alpaca)."}</span>`;
     const stats = [
       ["24h volume", fmtCompact(m.vol24)], ["Open positions", fmtCompact(m.oi)],
       ["24h change", `<span class="${m.chg24 >= 0 ? "pos" : "neg"}">${fmtPct(m.chg24)}</span>`], ["Max leverage", m.maxLev + "×"],
@@ -995,6 +1041,8 @@
     tape.length = 0; renderTape();
     if (orderType() === "limit") limitInput.value = m.price.toFixed(decimalsFor(m.price));
     loadRealCandles(m, U.range);
+    loadRealCandles(m, "1d");
+    loadRealCandles(m, "1m");
     renderSlider(); renderOrderPanel(); renderAbout(); renderPriceHeader(); renderOrderbook();
   }
 
@@ -1198,8 +1246,7 @@
   setTab("about");
   route();
   setInterval(tick, 1000);
-  pollHyperliquid();
-  setInterval(pollHyperliquid, 3000);
+  initAlpaca();
   window.addEventListener("resize", () => { if (U.page === "portfolio") drawEquity(); });
   requestAnimationFrame(frame);
 })();
