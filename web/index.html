@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Helix</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- ───────────── Top navigation ───────────── -->
+  <header class="topbar">
+    <a class="logo" href="#trade" data-nav="trade" aria-label="Home">
+      <svg viewBox="0 0 32 32" width="30" height="30"><rect x="3" y="7" width="4" height="18" rx="1"/><rect x="10" y="7" width="19" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="4"/></svg>
+    </a>
+    <label class="search">
+      <svg viewBox="0 0 24 24" width="16" height="16"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="searchInput" type="text" placeholder="Search" autocomplete="off" />
+      <kbd>/</kbd>
+    </label>
+    <nav class="mainnav">
+      <a href="#trade" data-nav="trade" class="active">Trade</a>
+      <a href="#markets" data-nav="markets">Markets</a>
+      <a href="#social" data-nav="social">Social</a>
+      <a href="#portfolio" data-nav="portfolio">Portfolio</a>
+      <a href="#referrals" data-nav="referrals">Referrals</a>
+    </nav>
+    <div class="spacer"></div>
+    <div class="balances">
+      <div><span>Portfolio</span><strong id="hdrPortfolio">$0.00</strong></div>
+      <div><span>Cash</span><strong id="hdrCash">$0.00</strong></div>
+    </div>
+    <button class="btn-deposit" id="depositBtn">Deposit</button>
+    <button class="btn-pro" id="proBtn" title="Toggle order book">Pro <span>↗</span></button>
+    <div class="avatar-wrap">
+      <button class="avatar" id="avatarBtn" aria-label="Account"></button>
+      <div class="menu" id="avatarMenu" hidden>
+        <button data-act="reset">Reset demo account</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ───────────── Trade page ───────────── -->
+    <section class="page" id="page-trade">
+      <div class="trade-grid">
+        <div class="left-col">
+          <div class="panel chart-panel">
+            <div class="chart-head">
+              <button class="market-picker" id="marketPicker">
+                <span class="mk-icon lg" id="selIcon"></span>
+                <span class="mk-sym" id="selSym">ZEC</span>
+                <span class="lev-badge" id="selLev">10×</span>
+                <svg class="chev" viewBox="0 0 24 24" width="18" height="18"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </button>
+              <div class="big-price" id="bigPrice">$0</div>
+              <div class="price-change" id="priceChange"></div>
+            </div>
+
+            <div class="chart-wrap" id="chartWrap">
+              <canvas id="chart"></canvas>
+              <div class="watermark">helix.io</div>
+              <ul class="tape" id="tape"></ul>
+              <div class="tooltip" id="chartTip" hidden></div>
+            </div>
+
+            <div class="chart-foot">
+              <div class="ranges" id="ranges">
+                <button class="range-select" disabled>Live <svg viewBox="0 0 24 24" width="12" height="12"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg></button>
+                <button data-range="live" class="active">Live</button>
+                <button data-range="1d">1D</button>
+                <button data-range="1w">1W</button>
+                <button data-range="1m">1M</button>
+                <button data-range="1y">1Y</button>
+              </div>
+              <div class="chart-types">
+                <button data-ctype="line" class="active" title="Line">
+                  <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 20h18M5 16l4-5 4 3 6-8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button data-ctype="candle" title="Candles">
+                  <svg viewBox="0 0 24 24" width="18" height="18"><path d="M3 21h18M7 4v14M17 6v10M12 8v8" stroke="currentColor" stroke-width="1.4"/><rect x="5" y="7" width="4" height="7" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="15" y="8" width="4" height="5" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="10" y="10" width="4" height="4" fill="none" stroke="currentColor" stroke-width="1.4"/></svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Market dropdown -->
+            <div class="market-dd" id="marketDD" hidden>
+              <div class="dd-top">
+                <div class="cats" id="ddCats"></div>
+                <div class="seg" id="ddNameMode">
+                  <button data-mode="names" class="active">Names</button>
+                  <button data-mode="tickers">Tickers</button>
+                </div>
+              </div>
+              <div class="dd-cards" id="ddCards"></div>
+              <div class="dd-table">
+                <div class="dd-row dd-head" id="ddHead">
+                  <span></span>
+                  <button data-sort="name">Market</button>
+                  <button data-sort="price">Last price</button>
+                  <button data-sort="chg">24h change</button>
+                  <button data-sort="oi">Open positions</button>
+                  <button data-sort="vol" class="sorted">Volume <i>⌄</i></button>
+                </div>
+                <div class="dd-body" id="ddBody"></div>
+              </div>
+              <div class="dd-foot" id="ddFoot"></div>
+            </div>
+          </div>
+
+          <div class="panel bottom-panel">
+            <div class="tabs" id="bottomTabs">
+              <button data-tab="about" class="active">
+                <svg viewBox="0 0 24 24" width="17" height="17"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v6M12 7.5v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                About
+              </button>
+              <button data-tab="positions">Positions <span class="count" id="cntPositions" hidden></span></button>
+              <button data-tab="orders">Orders <span class="count" id="cntOrders" hidden></span></button>
+              <button data-tab="history">History <span class="count" id="cntHistory" hidden></span></button>
+            </div>
+            <div class="tab-body" id="tab-about">
+              <p class="desc" id="aboutDesc"></p>
+              <div class="stats" id="aboutStats"></div>
+            </div>
+            <div class="tab-body" id="tab-positions" hidden></div>
+            <div class="tab-body" id="tab-orders" hidden></div>
+            <div class="tab-body" id="tab-history" hidden></div>
+          </div>
+        </div>
+
+        <!-- Order panel -->
+        <aside class="panel order-panel">
+          <div class="op-head">
+            <div class="op-mkt"><span class="mk-icon" id="opIcon"></span><span id="opSym">ZEC</span></div>
+            <label class="otype">
+              <select id="orderType">
+                <option value="market">Market</option>
+                <option value="limit">Limit</option>
+              </select>
+              <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+            </label>
+          </div>
+
+          <div class="side-toggle" id="sideToggle">
+            <button data-side="long" class="active">Long</button>
+            <button data-side="short">Short</button>
+          </div>
+
+          <div class="field-label"><span>Amount</span><span class="avail">Available <b id="availCash">$0</b></span></div>
+          <label class="amount-input">
+            <span>$</span><input id="amountInput" inputmode="decimal" placeholder="0" autocomplete="off" />
+          </label>
+          <div class="quick" id="quickAmounts">
+            <button data-amt="10">$10</button>
+            <button data-amt="25">$25</button>
+            <button data-amt="50">$50</button>
+            <button data-amt="max">Max</button>
+          </div>
+
+          <div class="limit-row" id="limitRow" hidden>
+            <div class="field-label"><span>Limit price</span><button class="link" id="limitMid">Mid</button></div>
+            <label class="amount-input"><span>$</span><input id="limitInput" inputmode="decimal" placeholder="0" autocomplete="off" /></label>
+          </div>
+
+          <div class="field-label mult-label">
+            <span>Multiplier
+              <span class="info" tabindex="0" data-tip="Multiplies your exposure. Gains and losses are scaled by the multiplier, and the position auto-closes if losses approach your amount.">i</span>
+            </span>
+          </div>
+          <div class="slider" id="levSlider">
+            <div class="track"><div class="fill" id="levFill"></div><div class="ticks" id="levTicks"></div></div>
+            <div class="thumb" id="levThumb">10×</div>
+            <input type="range" id="levInput" min="1" max="10" step="1" value="10" aria-label="Multiplier" />
+          </div>
+          <div class="lev-marks" id="levMarks"></div>
+
+          <label class="check"><input type="checkbox" id="tpslToggle" /> <span>TP / SL</span></label>
+          <div class="tpsl" id="tpslBox" hidden>
+            <label><span>Take profit</span><div class="amount-input sm"><span>$</span><input id="tpInput" inputmode="decimal" placeholder="Price" /></div><em id="tpHint"></em></label>
+            <label><span>Stop loss</span><div class="amount-input sm"><span>$</span><input id="slInput" inputmode="decimal" placeholder="Price" /></div><em id="slHint"></em></label>
+          </div>
+
+          <div class="scenario">
+            <div class="sc-title" id="scTitle">If price rises 10%</div>
+            <div class="sc-value" id="scValue">$0.00</div>
+            <div class="sc-pcts" id="scPcts">
+              <button data-pct="10" class="active">10%</button>
+              <button data-pct="25">25%</button>
+              <button data-pct="50">50%</button>
+              <button data-pct="custom" class="ghost" id="scCustomBtn">Custom</button>
+              <input id="scCustom" inputmode="decimal" placeholder="%" hidden />
+            </div>
+            <div class="sc-row"><span>Est. auto-close</span><span id="scLiq">–</span></div>
+            <div class="sc-row"><span>Position size</span><span id="scSize">–</span></div>
+            <div class="sc-row"><span>Fee</span><span id="scFee">–</span></div>
+          </div>
+
+          <button class="submit" id="submitBtn" disabled>Enter an amount</button>
+
+          <div class="orderbook" id="orderbook" hidden>
+            <div class="ob-head"><span>Price</span><span>Size</span><span>Total</span></div>
+            <div id="obAsks"></div>
+            <div class="ob-mid" id="obMid"></div>
+            <div id="obBids"></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ───────────── Markets page ───────────── -->
+    <section class="page" id="page-markets" hidden>
+      <div class="panel page-panel">
+        <div class="page-head">
+          <h1>Markets</h1>
+          <div class="cats" id="mkCats"></div>
+        </div>
+        <div class="mk-table" id="mkTable"></div>
+      </div>
+    </section>
+
+    <!-- ───────────── Social page ───────────── -->
+    <section class="page" id="page-social" hidden>
+      <div class="social-grid">
+        <div class="panel page-panel">
+          <div class="page-head"><h1>Live trades</h1><span class="live-dot">Live</span></div>
+          <ul class="feed" id="socialFeed"></ul>
+        </div>
+        <div class="panel page-panel">
+          <div class="page-head"><h1>Leaderboard</h1><span class="muted">24h PnL</span></div>
+          <ol class="leaderboard" id="leaderboard"></ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ───────────── Portfolio page ───────────── -->
+    <section class="page" id="page-portfolio" hidden>
+      <div class="panel page-panel">
+        <div class="page-head"><h1>Portfolio</h1></div>
+        <div class="summary" id="pfSummary"></div>
+        <canvas id="equityChart" class="equity-chart"></canvas>
+        <h2>Open positions</h2>
+        <div id="pfPositions"></div>
+        <h2>Open orders</h2>
+        <div id="pfOrders"></div>
+        <h2>History</h2>
+        <div id="pfHistory"></div>
+      </div>
+    </section>
+
+    <!-- ───────────── Referrals page ───────────── -->
+    <section class="page" id="page-referrals" hidden>
+      <div class="panel page-panel narrow">
+        <div class="page-head"><h1>Referrals</h1></div>
+        <p class="muted">Invite friends and earn 10% of their trading fees, paid out to your cash balance.</p>
+        <div class="ref-link">
+          <input id="refLink" readonly />
+          <button id="refCopy">Copy</button>
+        </div>
+        <div class="summary" id="refStats"></div>
+        <h2>Simulate a referral</h2>
+        <p class="muted">Demo mode: add a referred trader and collect their fee rebates.</p>
+        <button class="btn-secondary" id="refAdd">Add referred trader</button>
+        <ul class="ref-list" id="refList"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Deposit modal -->
+  <div class="modal-bg" id="depositModal" hidden>
+    <div class="modal">
+      <div class="modal-head"><h3>Deposit</h3><button class="x" data-close>×</button></div>
+      <p class="muted">Demo funds are added to your cash balance instantly.</p>
+      <label class="amount-input"><span>$</span><input id="depositInput" inputmode="decimal" placeholder="0" /></label>
+      <div class="quick">
+        <button data-dep="100">$100</button><button data-dep="500">$500</button><button data-dep="1000">$1,000</button><button data-dep="10000">$10,000</button>
+      </div>
+      <button class="submit long" id="depositConfirm">Deposit</button>
+    </div>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
