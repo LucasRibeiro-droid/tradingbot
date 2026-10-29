@@ -47,3 +47,10 @@ overfitting, accurate signals for when to buy and sell")** (`studies/scalp_signa
 momentum (5/15 min), reversal, following or fading a 1-minute candle 3x the hour's range, New York-only momentum,
 held 5/15/30 minutes. Direction right 46.6%-52.3% of the time in every case; average move before costs
 −0.41 to +0.76 points against a spread of 0.9-2.0 points; net −0.4 to −2.6 points a trade.
+
+**Owner's scalping spec, NAS100, 2025-01 → 2026-10 (473 days), standard settings, nothing tuned**
+(`studies/scalp_ema_vwap_nas100_2025_2026.txt`): EMA200 or SuperTrend(10,3) on 15m/1h for direction; 1m EMA 9/21
+cross or RSI14 crossing 50; price on the right side of the session VWAP (tick volume); ATR noise filter; stop 1×ATR(14)
+(median 7.9 pts), target 1:1 or 1:2. All 16 versions lose: 18-50 trades a day, −0.34 to −0.37R a trade, 3-18% of days
+profitable. Same entries before any cost: 49% winners at 1:1 (−0.02 to −0.03R), 34-35% at 1:2 (+0.02 to +0.03R):
+no edge; the spread (median 2.3 pts) plus slippage and commission is ~0.35R on an 8-point stop.
