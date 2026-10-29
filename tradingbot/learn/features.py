@@ -8,6 +8,10 @@
 - beyond_pd: the entry is already beyond the previous day's high (longs) / low (shorts)
 - trend_votes: how many of 15m, 1h, 4h, daily trends agree with the trade (0-4)
 - dow: weekday of the trading day (0 = Monday)
+- compression: average 1-minute candle range over the last 30 minutes / over the last 10 hours (low = a quiet,
+  compressed market just before the setup)
+- exp_expansion: the day's predicted range (first prediction of the day) / the average daily range of the last
+  20 days (high = the predictor expects a bigger day than usual)
 """
 from __future__ import annotations
 
@@ -62,4 +66,8 @@ def add_features(xs, markets: dict[str, Market], pred_file: Path) -> None:
             t["to_pdl_r"] = round((s.entry - pdl) / risk, 2)
             t["beyond_pd"] = bool(s.entry > pdh) if s.side == 1 else bool(s.entry < pdl)
         t["trend_votes"] = sum(bool(t.get("with_" + tf)) for tf in ("15m", "1h", "4h", "D"))
+        rng1 = m.h[max(0, i - 599):i + 1] - m.l[max(0, i - 599):i + 1]
+        t["compression"] = round(float(rng1[-30:].mean() / max(rng1.mean(), 1e-9)), 3)
+        first = min(preds.get((x.inst, date_of(d)), [(0, None, None)]), key=lambda c: c[0])
+        t["exp_expansion"] = round((first[1] - first[2]) / ar, 3) if first[1] is not None and first[0] <= m.mins[i] else None
         t["dow"] = date.fromordinal(d).weekday()

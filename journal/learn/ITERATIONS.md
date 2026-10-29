@@ -33,3 +33,11 @@ never saw (`studies/research_2026-10-28/learn_mine_split.py`):
 
 The mined patterns (e.g. NAS100 15m sweep + break against the 1h trend between sessions in the lower third
 of the predicted range, +0.55R over 121 trades in 2021-2024) did not hold on new data: in-sample fit, not edge.
+
+**NAS100 only, last 1,000 trading days (2022-12-16 → 2026-10-29), owner 2026-10-29.** New ideas: compression
+before the setup, the predictor's expected day size, exits at the predicted high/low. Found on the first 600 days,
+tested frozen on the last 400 (`studies/research_2026-10-28/learn_nas_last1000.py`):
+- Each new idea alone is negative in both windows for every family (e.g. sweep+break when compressed: −0.37R find,
+  −0.28R test; exits at the predicted extreme: −0.09 to −0.33R).
+- Mined rulebooks (top 4 / 8 / 15 patterns, with day stops): find +0.80 / +0.87 / +0.65R a trade
+  (+128 / +267 / +327R); test +0.01 / −0.04 / −0.04R (+1.2 / −7.4 / −11.9R), profitable traded days 30-35%.

@@ -38,6 +38,8 @@ PREDICATES = {
     "day_pool": lambda t: "day" in t.get("pool", ""), "session_pool": lambda t: t.get("pool", "").split(" ")[0] in ("asia", "london", "newyork"),
     "prominent_pool": lambda t: t.get("pool", "").startswith("prominent"),
     "long": lambda t: t.get("side_long", False), "short": lambda t: not t.get("side_long", False),
+    "compressed": lambda t: t.get("compression", 1) < 0.6, "expanding_now": lambda t: t.get("compression", 1) > 1.5,
+    "big_day_expected": lambda t: (t.get("exp_expansion") or 0) >= 1.1, "small_day_expected": lambda t: t.get("exp_expansion") is not None and t["exp_expansion"] < 0.8,
     "mon": lambda t: t.get("dow") == 0, "fri": lambda t: t.get("dow") == 4, "midweek": lambda t: t.get("dow") in (1, 2, 3),
 }
 NAMES = list(PREDICATES)
