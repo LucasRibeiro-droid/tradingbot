@@ -87,3 +87,6 @@ stop at the pullback's extreme since the touch: 422 won / 1,024 lost (29.2%), �
 Last 100 days: 17-19 won / 75-77 lost, −38R to −41R. Longs with the pullback stop +0.03R over 773 trades (flat);
 shorts −0.21R. Better than the 10m-EMA version (−0.31R) but no edge. Not adopted.
 (`journal/studies/orb_ema20_2m_2026-10-30.py`, `orb_ema20_2m_nas100_2026-10-30.txt`)
+Half at 1:1 then break even (owner): win rate rises to 45-47% but the average stays negative. Futures costs,
+2021-01 → 2026-10: pullback stop 677 won / 769 lost, −0.10R a trade, −142R, every year negative; reclaim-candle
+stop −0.14R to −0.21R a year. ~23% of trades reach 1:1 then go back to entry; ~53% are stopped before 1:1.

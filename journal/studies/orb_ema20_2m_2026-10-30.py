@@ -46,7 +46,7 @@ def bars(n):
 B10, B2 = bars(10), bars(2)
 
 
-def trade_day(d, cost, stop_mode="prev"):
+def trade_day(d, cost, stop_mode="prev", partial=False):
     a = m.day_first[d]
     mins = m.mins[a:m.day_last[d] + 1]
     orr = np.nonzero((mins >= 930) & (mins < 960))[0]
@@ -92,19 +92,25 @@ def trade_day(d, cost, stop_mode="prev"):
             return dict(skip=True)
         risk = (fill - stop) * side
         close_i = a + np.nonzero(mins < 1320)[0][-1]
+        # partial: half closed at 1:1, then the rest's stop moves to the entry (break even)
+        legs, size, cur_stop, one_r = [], 1.0, stop, fill + side * risk
         for i in range(i0, close_i + 1):
             worst = px(i, -side, "low" if side == 1 else "high", cost)
             best = px(i, -side, "high" if side == 1 else "low", cost)
-            if (worst - stop) * side <= 0:
+            if (worst - cur_stop) * side <= 0:
                 o_ = px(i, -side, "open", cost)
-                ex = (min(stop, o_) if side == 1 else max(stop, o_)) - c["slip"] * side; how = "stop"; break
+                ex = (min(cur_stop, o_) if side == 1 else max(cur_stop, o_)) - c["slip"] * side
+                legs.append((ex, size, "break even" if legs else "stop")); break
+            if i > i0 and partial and not legs and (best - one_r) * side >= 0 and (target - one_r) * side > 0:
+                legs.append((one_r, 0.5, "half at 1:1")); size, cur_stop = 0.5, fill
             if i > i0 and (best - target) * side >= 0:
-                ex, how = target, "target"; break
+                legs.append((target, size, "target")); break
         else:
-            ex, how = px(close_i, -side, "open", cost), "16:00 close"
+            legs.append((px(close_i, -side, "open", cost), size, "16:00 close"))
+        pts = sum((ex - fill) * side * w for ex, w, _ in legs) - 2 * c["comm"]
+        how = " + ".join(h for _, _, h in legs)
         return dict(skip=False, day=d, side=side, entry=m.when(i0), fill=fill, stop=stop, target=target,
-                    rr=(target - fill) * side / risk, r=((ex - fill) * side - 2 * c["comm"]) / risk, how=how, risk=risk,
-                    pts=(ex - fill) * side - 2 * c["comm"])
+                    rr=(target - fill) * side / risk, r=pts / risk, how=how, risk=risk, pts=pts)
     return None
 
 
@@ -122,6 +128,15 @@ if __name__ == "__main__":
                     report([x for x in rows if date_of(x["day"]).startswith(y)], f"  {y}")
                 for s, sn in ((1, "longs"), (-1, "shorts")):
                     report([x for x in rows if x["side"] == s], f"  {sn}")
+    print("\n=== half closed at 1:1, stop to break even, rest to the day's high/low (owner) | costs: futures ===")
+    for stop_mode, nm in (("prev", "reclaim-candle stop"), ("swing", "pullback stop")):
+        rows = [x for d in days if (x := trade_day(d, "futures", stop_mode, partial=True)) and not x["skip"]]
+        report([x for x in rows if x["day"] in last100], f"{nm}, last 100 trading days")
+        report(rows, f"{nm}, 2021-01 .. 2026-10 (all)")
+        for y in sorted({date_of(x["day"])[:4] for x in rows}):
+            report([x for x in rows if date_of(x["day"]).startswith(y)], f"  {y}")
+        for s_, sn in ((1, "longs"), (-1, "shorts")):
+            report([x for x in rows if x["side"] == s_], f"  {sn}")
     print("\nlast 10 trades (reclaim-candle stop, futures costs):")
     rows = [x for d in days[-30:] if (x := trade_day(d, "futures")) and not x["skip"]]
     for x in rows[-10:]:
