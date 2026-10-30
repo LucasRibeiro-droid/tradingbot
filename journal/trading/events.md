@@ -88,3 +88,5 @@
 | 2026-10-30 19:23 | session hand-off (runner time limit) | positions stay protected at Alpaca | next run resumes from the saved state |
 | 2026-10-30 19:26 | session start (paper): equity 96981.61, buying power 376879.36, shorting on |  |  |
 | 2026-10-30 19:26 | position REGN 10 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
+| 2026-10-30 19:55 | flattened before the close | verified flat after 2 round(s) |  |
+| 2026-10-30 19:55 | session end | 0 trades, 0 instruments | review to write |

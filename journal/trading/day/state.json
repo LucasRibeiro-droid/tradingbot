@@ -10,7 +10,15 @@
    "qty": 7,
    "risk_pct_of_equity": 0.616,
    "cid": "day_rs3-2026-10-30-MPWR",
-   "order_id": "64c8f131-8417-4afb-9a14-9b0e46de2af2"
+   "order_id": "64c8f131-8417-4afb-9a14-9b0e46de2af2",
+   "result": {
+    "entry": 1255.98,
+    "exit": 1173.01,
+    "how": "stop",
+    "pnl": -580.79,
+    "r": -1.008,
+    "return_bps": -660.6
+   }
   },
   {
    "symbol": "REGN",
@@ -20,7 +28,15 @@
    "qty": 10,
    "risk_pct_of_equity": 0.79,
    "cid": "day_rs3-2026-10-30-REGN",
-   "order_id": "651b89ba-6a8c-48fc-adb2-2e173ab85eba"
+   "order_id": "651b89ba-6a8c-48fc-adb2-2e173ab85eba",
+   "result": {
+    "entry": 920.41,
+    "exit": 925.28,
+    "how": "close",
+    "pnl": 48.7,
+    "r": 0.067,
+    "return_bps": 52.9
+   }
   },
   {
    "symbol": "DELL",
@@ -30,7 +46,15 @@
    "qty": 22,
    "risk_pct_of_equity": 0.534,
    "cid": "day_rs3-2026-10-30-DELL",
-   "order_id": "64f0002a-9338-47ba-8786-cdcdec2c63e3"
+   "order_id": "64f0002a-9338-47ba-8786-cdcdec2c63e3",
+   "result": {
+    "entry": 439.167273,
+    "exit": 413.5,
+    "how": "stop",
+    "pnl": -564.68,
+    "r": -1.009,
+    "return_bps": -584.5
+   }
   }
  ]
 }
