@@ -30,6 +30,28 @@ C last3      wick<=0%:   54 trades (0.5/day) win 50.0%  avg -0.031R  total    -1
 C last3      wick<=5%:  400 trades (4.0/day) win 41.2%  avg -0.205R  total   -81.8R  profitable days 29.6% of 98  maxDD -81.6R  median stop 23.1pt  | won 165 lost 235
 C last3      wick<=10%:  644 trades (6.4/day) win 39.3%  avg -0.247R  total  -158.9R  profitable days 25.0% of 100  maxDD -160.8R  median stop 22.1pt  | won 253 lost 391
 
+Target 1:2 (owner, 2026-10-30), stop at last swing high/low
+A structure  wick<=0%:   54 trades (0.5/day) win 38.9%  avg +0.168R  total    +9.1R  profitable days 41.5% of 41  maxDD -8.5R  median stop 32.5pt  | won 21 lost 33
+A structure  wick<=5%:  322 trades (3.2/day) win 32.9%  avg -0.111R  total   -35.9R  profitable days 40.4% of 99  maxDD -44.7R  median stop 38.0pt  | won 106 lost 216
+A structure  wick<=10%:  468 trades (4.7/day) win 32.3%  avg -0.128R  total   -60.1R  profitable days 42.0% of 100  maxDD -62.9R  median stop 37.9pt  | won 151 lost 317
+B ema20      wick<=0%:   63 trades (0.6/day) win 42.9%  avg +0.217R  total   +13.7R  profitable days 43.5% of 46  maxDD -9.7R  median stop 30.7pt  | won 27 lost 36
+B ema20      wick<=5%:  331 trades (3.3/day) win 35.3%  avg -0.045R  total   -14.9R  profitable days 46.0% of 100  maxDD -32.0R  median stop 37.8pt  | won 117 lost 214
+B ema20      wick<=10%:  456 trades (4.6/day) win 34.2%  avg -0.072R  total   -32.9R  profitable days 46.0% of 100  maxDD -43.3R  median stop 36.0pt  | won 156 lost 300
+C last3      wick<=0%:   53 trades (0.5/day) win 37.7%  avg +0.063R  total    +3.4R  profitable days 45.5% of 44  maxDD -7.5R  median stop 33.1pt  | won 20 lost 33
+C last3      wick<=5%:  321 trades (3.2/day) win 32.1%  avg -0.126R  total   -40.4R  profitable days 43.9% of 98  maxDD -48.9R  median stop 37.3pt  | won 103 lost 218
+C last3      wick<=10%:  474 trades (4.7/day) win 30.4%  avg -0.164R  total   -77.7R  profitable days 40.0% of 100  maxDD -79.8R  median stop 35.9pt  | won 144 lost 330
+
+Target 1:2 (owner, 2026-10-30), stop at beyond the previous candle
+A structure  wick<=0%:   56 trades (0.6/day) win 37.5%  avg +0.079R  total    +4.4R  profitable days 41.5% of 41  maxDD -8.6R  median stop 19.8pt  | won 21 lost 35
+A structure  wick<=5%:  403 trades (4.0/day) win 26.8%  avg -0.244R  total   -98.2R  profitable days 29.3% of 99  maxDD -101.9R  median stop 21.9pt  | won 108 lost 295
+A structure  wick<=10%:  620 trades (6.2/day) win 27.3%  avg -0.239R  total  -148.5R  profitable days 30.0% of 100  maxDD -155.2R  median stop 21.7pt  | won 169 lost 451
+B ema20      wick<=0%:   65 trades (0.7/day) win 36.9%  avg +0.014R  total    +0.9R  profitable days 39.1% of 46  maxDD -9.7R  median stop 20.5pt  | won 24 lost 41
+B ema20      wick<=5%:  414 trades (4.1/day) win 28.7%  avg -0.195R  total   -80.6R  profitable days 33.0% of 100  maxDD -86.3R  median stop 21.8pt  | won 119 lost 295
+B ema20      wick<=10%:  619 trades (6.2/day) win 28.3%  avg -0.213R  total  -131.8R  profitable days 32.0% of 100  maxDD -140.5R  median stop 21.4pt  | won 175 lost 444
+C last3      wick<=0%:   54 trades (0.5/day) win 33.3%  avg -0.089R  total    -4.8R  profitable days 40.9% of 44  maxDD -7.5R  median stop 22.1pt  | won 18 lost 36
+C last3      wick<=5%:  388 trades (3.9/day) win 28.1%  avg -0.213R  total   -82.7R  profitable days 35.7% of 98  maxDD -81.7R  median stop 23.1pt  | won 109 lost 279
+C last3      wick<=10%:  612 trades (6.1/day) win 26.0%  avg -0.272R  total  -166.8R  profitable days 25.0% of 100  maxDD -167.7R  median stop 22.3pt  | won 159 lost 453
+
 New York hours only (zone and fill 09:30-16:00 NY), and by side:
 A structure  wick<=0% NY:   19 trades (0.2/day) win 52.6%  avg +0.081R  total    +1.5R  profitable days 46.7% of 15  maxDD -2.0R  median stop 37.3pt
                longs :   34 trades (0.3/day) win 47.1%  avg -0.072R  total    -2.4R  profitable days 44.4% of 27  maxDD -5.7R  median stop 24.0pt

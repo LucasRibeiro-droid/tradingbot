@@ -66,3 +66,10 @@ Stop variant (owner): stop just beyond the candle before the no-wick candle (med
 Strict no wick: 54-65 trades, 27-34 won, −4.5R to +0.1R. 5% wick: 400-429 trades, 40-42% won, −82R to −98R.
 10% wick: 644-659 trades, 39-40% won, −158R to −168R. Tighter stop = more stop-outs and the spread is a bigger
 share of each trade. Not adopted.
+Target 1:2 (owner): with the swing stop, strict no wick turned positive on the last 100 days: 53-63 trades,
+20-27 won, +3.4R to +13.7R (t ≈ 1, not significant); wicks allowed −15R to −78R; with the previous-candle stop
+−4.8R to +4.4R strict, −81R to −167R with wicks. Out-of-sample check of the strict versions on the untested
+history 2021-01 → 2026-06-11 (1402 days, ~1,700-2,000 trades each): 1:1 −0.30 to −0.32R a trade, 1:2 −0.27 to
+−0.29R a trade, negative in every year including 2025 and 2026 H1. Stops were small then (median 9-24 pt, the
+spread 8-16% of the risk). The last 100 days look like a lucky stretch. Not adopted.
+(`journal/studies/nowick_15m_oos_2026-10-30.py`, `nowick_15m_nas100_oos_2026-10-30.txt`)

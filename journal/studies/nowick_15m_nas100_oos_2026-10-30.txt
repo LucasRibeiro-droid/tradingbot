@@ -1,0 +1,13 @@
+OOS window 2021-01-11 2026-06-11 1402 days
+A structure  1:1 strict: 1951 trades won 749 lost 1202 avg -0.322R total -627.8R  t=-14.07 | 2021:-159.2(402) 2022:-77.2(319) 2023:-233.8(595) 2024:-87.4(292) 2025:-50.1(244) 2026:-20.2(99)
+A structure  1:2 strict: 1898 trades won 545 lost 1353 avg -0.288R total -545.8R  t=-9.48 | 2021:-128.6(395) 2022:-61.7(309) 2023:-208.2(571) 2024:-87.7(288) 2025:-43.6(237) 2026:-16.0(98)
+B ema20      1:1 strict: 1987 trades won 763 lost 1224 avg -0.320R total -635.5R  t=-14.15 | 2021:-155.3(416) 2022:-86.6(313) 2023:-235.9(602) 2024:-83.8(300) 2025:-48.7(254) 2026:-25.2(102)
+B ema20      1:2 strict: 1925 trades won 560 lost 1365 avg -0.281R total -541.1R  t=-9.37 | 2021:-114.3(407) 2022:-73.6(306) 2023:-212.0(572) 2024:-77.1(295) 2025:-38.6(246) 2026:-25.6(99)
+C last3      1:1 strict: 1767 trades won 683 lost 1084 avg -0.303R total -535.1R  t=-12.67 | 2021:-116.8(345) 2022:-66.8(299) 2023:-195.1(553) 2024:-86.2(272) 2025:-51.6(215) 2026:-18.6(83)
+C last3      1:2 strict: 1709 trades won 492 lost 1217 avg -0.269R total -459.5R  t=-8.43 | 2021:-101.1(332) 2022:-49.8(290) 2023:-159.3(527) 2024:-82.1(266) 2025:-42.1(211) 2026:-25.1(83)
+2021 median stop 9.2 median spread 1.7 spread/stop 0.156 win 0.281
+2022 median stop 18.7 median spread 1.7 spread/stop 0.08 win 0.32
+2023 median stop 8.7 median spread 1.7 spread/stop 0.162 win 0.264
+2024 median stop 13.9 median spread 2.0 spread/stop 0.143 win 0.281
+2025 median stop 15.3 median spread 2.3 spread/stop 0.13 win 0.304
+2026 median stop 23.6 median spread 2.3 spread/stop 0.084 win 0.316

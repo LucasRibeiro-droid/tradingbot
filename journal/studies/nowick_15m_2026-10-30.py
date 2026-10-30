@@ -27,11 +27,14 @@ from tradingbot.learn.market import Market, date_of
 from tradingbot.learn.setups import Signal
 
 INST = "NAS100_USD"
-raw = data.load(INST, datetime(2026, 4, 1, tzinfo=timezone.utc), datetime(2026, 10, 30, tzinfo=timezone.utc))
+import os
+OOS = os.environ.get("NOWICK_OOS") == "1"   # 1 = the earlier, untested history: 2021-01 up to the 100-day window
+raw = data.load(INST, datetime(2021 if OOS else 2026, 1 if OOS else 4, 1, tzinfo=timezone.utc), datetime(2026, 10, 30, tzinfo=timezone.utc))
 m = Market(INST, raw)
 F = m.frames["15m"]
 days = [d for d in m.days if len(m.days)][:-1] if date_of(int(m.days[-1])) >= "2026-10-30" else list(m.days)
-days = [int(d) for d in days if date_of(int(d)) <= "2026-10-29"][-100:]
+days = [int(d) for d in days if date_of(int(d)) <= "2026-10-29"]
+days = days[5:-100] if OOS else days[-100:]
 first_day = days[0]
 
 sw = swings(F)
@@ -57,7 +60,7 @@ for k in range(len(F)):
 SKIPPED = defaultdict(int)
 
 
-def run(mom, tol, costs=True, stop_mode="bos"):
+def run(mom, tol, costs=True, stop_mode="bos", rr=1.0):
     tr = MOM[mom]
     rng = F.h - F.l
     sigs = []
@@ -82,7 +85,7 @@ def run(mom, tol, costs=True, stop_mode="bos"):
             exp_k = k + 1 + flip[0]
         expiry = min(int(F.known[exp_k]), m.day_last[d])
         sigs.append(Signal(INST, "nowick", f"nowick {mom}", side, int(F.known[k]), "limit", float(entry), float(stop), expiry,
-                           targets=(1.0, 1.0)))
+                           targets=(rr, rr)))
     # a newer zone replaces the pending one
     for a_, b_ in zip(sigs, sigs[1:]):
         a_.expiry = min(a_.expiry, b_.known)
@@ -132,6 +135,13 @@ if __name__ == "__main__":
             _, out = run(mom, tol, stop_mode="prev")
             r = np.array([t.r for _, t in out])
             print(f"{mom:12s} wick<={tol:.0%}: {summary(out)}  | won {int((r>0).sum())} lost {int((r<=0).sum())}")
+    for sm, nm in (("bos", "last swing high/low"), ("prev", "beyond the previous candle")):
+        print(f"\nTarget 1:2 (owner, 2026-10-30), stop at {nm}")
+        for mom in MOM:
+            for tol in (0.0, 0.05, 0.10):
+                _, out = run(mom, tol, stop_mode=sm, rr=2.0)
+                r = np.array([t.r for _, t in out])
+                print(f"{mom:12s} wick<={tol:.0%}: {summary(out)}  | won {int((r>0).sum())} lost {int((r<=0).sum())}")
     print("\nNew York hours only (zone and fill 09:30-16:00 NY), and by side:")
     for mom in MOM:
         for tol in (0.0, 0.05):
