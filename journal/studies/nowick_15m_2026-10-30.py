@@ -54,7 +54,10 @@ for k in range(len(F)):
     last_hi[k], last_lo[k] = hi, lo
 
 
-def run(mom, tol, costs=True):
+SKIPPED = defaultdict(int)
+
+
+def run(mom, tol, costs=True, stop_mode="bos"):
     tr = MOM[mom]
     rng = F.h - F.l
     sigs = []
@@ -64,12 +67,13 @@ def run(mom, tol, costs=True):
             continue
         side = -int(tr[k]) * -1  # bias of the moment at this candle's close
         if side == -1 and F.c[k] < F.o[k] and F.h[k] - F.o[k] <= tol * rng[k]:
-            entry, stop = F.h[k], last_hi[k]
+            entry, stop = F.h[k], (last_hi[k] if stop_mode == "bos" else F.h[k - 1])
         elif side == 1 and F.c[k] > F.o[k] and F.o[k] - F.l[k] <= tol * rng[k]:
-            entry, stop = F.l[k], last_lo[k]
+            entry, stop = F.l[k], (last_lo[k] if stop_mode == "bos" else F.l[k - 1])
         else:
             continue
-        if np.isnan(stop) or (stop - entry) * side >= 0:   # the BOS level must be beyond the entry
+        if np.isnan(stop) or (stop - entry) * side >= 0:   # the stop level must be beyond the entry
+            SKIPPED[stop_mode] += 1
             continue
         # expiry: momentum flips, 16 candles, day end
         exp_k = min(k + 16, len(F) - 1)
@@ -122,6 +126,12 @@ if __name__ == "__main__":
             print(f"{mom:12s} wick<={tol:.0%}: {summary(out)}")
             print(f"{'':12s}   no slippage/commission (spread kept): avg {r0.mean() if len(r0) else 0:+.3f}R, total {r0.sum():+.1f}R")
 
+    print("\nStop variant (owner, 2026-10-30): just beyond the candle BEFORE the no-wick candle (its high for shorts, low for longs)")
+    for mom in MOM:
+        for tol in (0.0, 0.05, 0.10):
+            _, out = run(mom, tol, stop_mode="prev")
+            r = np.array([t.r for _, t in out])
+            print(f"{mom:12s} wick<={tol:.0%}: {summary(out)}  | won {int((r>0).sum())} lost {int((r<=0).sum())}")
     print("\nNew York hours only (zone and fill 09:30-16:00 NY), and by side:")
     for mom in MOM:
         for tol in (0.0, 0.05):

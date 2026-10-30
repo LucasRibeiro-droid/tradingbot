@@ -62,3 +62,7 @@ target 1:1, one trade at a time, real OANDA spread. Strict no wick: ~55-65 trade
 total −2.9R to +2.7R (noise; statistically zero). Allowing a 5-10% wick: 350-550 trades, 44-47% wins,
 −0.09 to −0.15R a trade, −34R to −82R. Script and output: `journal/studies/nowick_15m_2026-10-30.py`,
 `nowick_15m_nas100_2026-10-30.txt`. Not adopted.
+Stop variant (owner): stop just beyond the candle before the no-wick candle (median stop ~20 pt instead of ~35).
+Strict no wick: 54-65 trades, 27-34 won, −4.5R to +0.1R. 5% wick: 400-429 trades, 40-42% won, −82R to −98R.
+10% wick: 644-659 trades, 39-40% won, −158R to −168R. Tighter stop = more stop-outs and the spread is a bigger
+share of each trade. Not adopted.
