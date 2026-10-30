@@ -1,0 +1,40 @@
+NAS100 15m, 2026-06-12 .. 2026-10-29 (100 trading days)
+
+A structure  wick<=0%:   56 trades (0.6/day) win 48.2%  avg -0.051R  total    -2.9R  profitable days 41.5% of 41  maxDD -6.5R  median stop 32.5pt
+               no slippage/commission (spread kept): avg -0.019R, total -1.1R
+A structure  wick<=5%:  368 trades (3.7/day) win 45.1%  avg -0.129R  total   -47.4R  profitable days 33.3% of 99  maxDD -51.2R  median stop 38.0pt
+               no slippage/commission (spread kept): avg -0.096R, total -35.2R
+A structure  wick<=10%:  553 trades (5.5/day) win 44.1%  avg -0.149R  total   -82.2R  profitable days 38.0% of 100  maxDD -85.1R  median stop 37.5pt
+               no slippage/commission (spread kept): avg -0.116R, total -63.9R
+B ema20      wick<=0%:   64 trades (0.6/day) win 53.1%  avg +0.042R  total    +2.7R  profitable days 45.7% of 46  maxDD -6.5R  median stop 30.4pt
+               no slippage/commission (spread kept): avg +0.075R, total +4.8R
+B ema20      wick<=5%:  376 trades (3.8/day) win 47.1%  avg -0.091R  total   -34.3R  profitable days 37.0% of 100  maxDD -39.0R  median stop 37.2pt
+               no slippage/commission (spread kept): avg -0.059R, total -22.0R
+B ema20      wick<=10%:  534 trades (5.3/day) win 45.5%  avg -0.124R  total   -66.1R  profitable days 33.0% of 100  maxDD -68.8R  median stop 36.0pt
+               no slippage/commission (spread kept): avg -0.090R, total -48.1R
+C last3      wick<=0%:   53 trades (0.5/day) win 52.8%  avg +0.046R  total    +2.5R  profitable days 50.0% of 44  maxDD -5.5R  median stop 33.1pt
+               no slippage/commission (spread kept): avg +0.073R, total +3.9R
+C last3      wick<=5%:  354 trades (3.5/day) win 45.5%  avg -0.112R  total   -39.6R  profitable days 37.8% of 98  maxDD -48.9R  median stop 38.2pt
+               no slippage/commission (spread kept): avg -0.083R, total -29.4R
+C last3      wick<=10%:  537 trades (5.4/day) win 44.1%  avg -0.136R  total   -73.2R  profitable days 38.0% of 100  maxDD -84.6R  median stop 37.3pt
+               no slippage/commission (spread kept): avg -0.106R, total -57.0R
+
+New York hours only (zone and fill 09:30-16:00 NY), and by side:
+A structure  wick<=0% NY:   19 trades (0.2/day) win 52.6%  avg +0.081R  total    +1.5R  profitable days 46.7% of 15  maxDD -2.0R  median stop 37.3pt
+               longs :   34 trades (0.3/day) win 47.1%  avg -0.072R  total    -2.4R  profitable days 44.4% of 27  maxDD -5.7R  median stop 24.0pt
+               shorts:   22 trades (0.2/day) win 50.0%  avg -0.020R  total    -0.4R  profitable days 42.1% of 19  maxDD -4.1R  median stop 44.9pt
+A structure  wick<=5% NY:   91 trades (0.9/day) win 48.4%  avg -0.034R  total    -3.1R  profitable days 44.6% of 65  maxDD -9.2R  median stop 45.5pt
+               longs :  189 trades (1.9/day) win 44.4%  avg -0.148R  total   -27.9R  profitable days 37.8% of 90  maxDD -30.9R  median stop 36.7pt
+               shorts:  179 trades (1.8/day) win 45.8%  avg -0.109R  total   -19.5R  profitable days 36.8% of 87  maxDD -22.4R  median stop 38.5pt
+B ema20      wick<=0% NY:   19 trades (0.2/day) win 57.9%  avg +0.177R  total    +3.4R  profitable days 52.9% of 17  maxDD -3.4R  median stop 30.7pt
+               longs :   37 trades (0.4/day) win 51.4%  avg +0.005R  total    +0.2R  profitable days 50.0% of 30  maxDD -5.9R  median stop 28.5pt
+               shorts:   27 trades (0.3/day) win 55.6%  avg +0.094R  total    +2.5R  profitable days 50.0% of 22  maxDD -2.0R  median stop 37.6pt
+B ema20      wick<=5% NY:   91 trades (0.9/day) win 46.2%  avg -0.075R  total    -6.8R  profitable days 44.1% of 68  maxDD -8.8R  median stop 46.2pt
+               longs :  197 trades (2.0/day) win 47.2%  avg -0.094R  total   -18.5R  profitable days 38.2% of 89  maxDD -22.1R  median stop 34.5pt
+               shorts:  179 trades (1.8/day) win 46.9%  avg -0.088R  total   -15.7R  profitable days 36.5% of 85  maxDD -23.5R  median stop 38.5pt
+C last3      wick<=0% NY:   16 trades (0.2/day) win 56.2%  avg +0.160R  total    +2.6R  profitable days 60.0% of 15  maxDD -3.1R  median stop 36.9pt
+               longs :   28 trades (0.3/day) win 53.6%  avg +0.039R  total    +1.1R  profitable days 52.0% of 25  maxDD -4.3R  median stop 31.1pt
+               shorts:   25 trades (0.2/day) win 52.0%  avg +0.055R  total    +1.4R  profitable days 47.6% of 21  maxDD -4.2R  median stop 37.3pt
+C last3      wick<=5% NY:   89 trades (0.9/day) win 46.1%  avg -0.059R  total    -5.2R  profitable days 47.7% of 65  maxDD -8.6R  median stop 56.2pt
+               longs :  180 trades (1.8/day) win 43.3%  avg -0.163R  total   -29.3R  profitable days 32.6% of 89  maxDD -32.1R  median stop 37.5pt
+               shorts:  174 trades (1.7/day) win 47.7%  avg -0.059R  total   -10.3R  profitable days 42.5% of 87  maxDD -23.4R  median stop 38.5pt

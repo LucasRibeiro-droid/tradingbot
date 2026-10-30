@@ -54,3 +54,11 @@ cross or RSI14 crossing 50; price on the right side of the session VWAP (tick vo
 (median 7.9 pts), target 1:1 or 1:2. All 16 versions lose: 18-50 trades a day, −0.34 to −0.37R a trade, 3-18% of days
 profitable. Same entries before any cost: 49% winners at 1:1 (−0.02 to −0.03R), 34-35% at 1:2 (+0.02 to +0.03R):
 no edge; the spread (median 2.3 pts) plus slippage and commission is ~0.35R on an 8-point stop.
+
+## 2026-10-30 — owner's 15m "no-wick candle" strategy, NAS100, last 100 trading days (2026-06-12 .. 10-29)
+Momentum of the moment (3 readings: 15m structure, 20-EMA, last 3 candles) → bearish candle with no top wick
+(bullish with no bottom wick) → limit at its high (low) → stop at the latest 15m swing high (low) = the BOS level,
+target 1:1, one trade at a time, real OANDA spread. Strict no wick: ~55-65 trades, 48-53% wins, −0.05 to +0.05R,
+total −2.9R to +2.7R (noise; statistically zero). Allowing a 5-10% wick: 350-550 trades, 44-47% wins,
+−0.09 to −0.15R a trade, −34R to −82R. Script and output: `journal/studies/nowick_15m_2026-10-30.py`,
+`nowick_15m_nas100_2026-10-30.txt`. Not adopted.
