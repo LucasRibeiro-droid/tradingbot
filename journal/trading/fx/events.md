@@ -23,3 +23,4 @@
 | 2026-10-30 03:46 | session start (practice): NAV 100000.0441 GBP, 0 trade(s) open in the state |  |  |
 | 2026-10-30 09:32 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
 | 2026-10-30 09:32 | session start (practice): NAV 100000.0441 GBP, 0 trade(s) open in the state |  |  |
+| 2026-10-30 15:18 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
