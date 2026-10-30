@@ -85,3 +85,4 @@
 | 2026-10-29 19:55 | flattened before the close | verified flat after 2 round(s) |  |
 | 2026-10-29 19:55 | session end | 0 trades, 0 instruments | review to write |
 | 2026-10-30 13:37 | session start (paper): equity 98125.28, buying power 392501.12, shorting on |  |  |
+| 2026-10-30 19:23 | session hand-off (runner time limit) | positions stay protected at Alpaca | next run resumes from the saved state |
