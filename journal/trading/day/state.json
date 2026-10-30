@@ -1,60 +1,36 @@
 {
- "day": "2026-10-29",
+ "day": "2026-10-30",
  "entered": true,
  "trades": [
   {
-   "symbol": "CVNA",
-   "gain_at_10": 0.0593,
-   "signal_price": 68.67,
-   "stop": 63.9,
-   "qty": 143,
-   "risk_pct_of_equity": 0.693,
-   "cid": "day_rs3-2026-10-29-CVNA",
-   "order_id": "2ef0cc91-ec84-40d0-b1f9-101a795bff8c",
-   "result": {
-    "entry": 68.68,
-    "exit": 68.52,
-    "how": "close",
-    "pnl": -22.88,
-    "r": -0.033,
-    "return_bps": -23.3
-   }
-  },
-  {
-   "symbol": "PANW",
-   "gain_at_10": 0.0483,
-   "signal_price": 387.3,
-   "stop": 367.67,
-   "qty": 25,
-   "risk_pct_of_equity": 0.498,
-   "cid": "day_rs3-2026-10-29-PANW",
-   "order_id": "f43e3e43-bdd8-44e2-9194-1776fea7e3a2",
-   "result": {
-    "entry": 386.94,
-    "exit": 379.46,
-    "how": "close",
-    "pnl": -187.0,
-    "r": -0.388,
-    "return_bps": -193.3
-   }
-  },
-  {
-   "symbol": "LLY",
-   "gain_at_10": 0.0464,
-   "signal_price": 1395.81,
-   "stop": 1333.8700000000001,
+   "symbol": "MPWR",
+   "gain_at_10": 0.072,
+   "signal_price": 1259.99,
+   "stop": 1173.69,
    "qty": 7,
-   "risk_pct_of_equity": 0.44,
-   "cid": "day_rs3-2026-10-29-LLY",
-   "order_id": "85bdff53-ec39-4087-8c9e-06310ebfcdbb",
-   "result": {
-    "entry": 1395.141429,
-    "exit": 1372.7,
-    "how": "close",
-    "pnl": -157.09,
-    "r": -0.366,
-    "return_bps": -160.9
-   }
+   "risk_pct_of_equity": 0.616,
+   "cid": "day_rs3-2026-10-30-MPWR",
+   "order_id": "64c8f131-8417-4afb-9a14-9b0e46de2af2"
+  },
+  {
+   "symbol": "REGN",
+   "gain_at_10": 0.0656,
+   "signal_price": 925.54,
+   "stop": 848.03,
+   "qty": 10,
+   "risk_pct_of_equity": 0.79,
+   "cid": "day_rs3-2026-10-30-REGN",
+   "order_id": "651b89ba-6a8c-48fc-adb2-2e173ab85eba"
+  },
+  {
+   "symbol": "DELL",
+   "gain_at_10": 0.0469,
+   "signal_price": 437.55,
+   "stop": 413.74,
+   "qty": 22,
+   "risk_pct_of_equity": 0.534,
+   "cid": "day_rs3-2026-10-30-DELL",
+   "order_id": "64f0002a-9338-47ba-8786-cdcdec2c63e3"
   }
  ]
 }
