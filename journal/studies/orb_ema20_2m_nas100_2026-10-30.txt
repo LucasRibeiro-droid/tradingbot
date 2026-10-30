@@ -1,0 +1,44 @@
+
+=== stop = the reclaim candle's low/high | costs: futures ===
+last 100 trading days: 94 trades, won 17 lost 77 (18.1%), avg -0.439R, total -41.2R, -898 pts (NQ $20/pt: $-17,960 for 1 contract), maxDD -46.9R, median stop 19.6 pt, median planned R:R 3.28, exits {'stop': 77, 'target': 17}
+2021-01 .. 2026-10 (all): 1446 trades, won 355 lost 1091 (24.6%), avg -0.132R, total -190.5R, -2,590 pts (NQ $20/pt: $-51,800 for 1 contract), maxDD -195.8R, median stop 11.7 pt, median planned R:R 3.18, exits {'stop': 1090, 'target': 352, '16:00 close': 4}
+  2021: 241 trades, won 55 lost 186 (22.8%), avg -0.176R, total -42.4R, -393 pts (NQ $20/pt: $-7,866 for 1 contract), maxDD -50.2R, median stop 8.1 pt, median planned R:R 3.59, exits {'stop': 186, 'target': 55}
+  2022: 251 trades, won 55 lost 196 (21.9%), avg -0.088R, total -22.0R, -448 pts (NQ $20/pt: $-8,962 for 1 contract), maxDD -45.4R, median stop 12.2 pt, median planned R:R 3.30, exits {'stop': 196, 'target': 55}
+  2023: 250 trades, won 67 lost 183 (26.8%), avg -0.023R, total -5.9R, -182 pts (NQ $20/pt: $-3,646 for 1 contract), maxDD -41.2R, median stop 8.9 pt, median planned R:R 3.12, exits {'stop': 183, 'target': 66, '16:00 close': 1}
+  2024: 252 trades, won 68 lost 184 (27.0%), avg -0.191R, total -48.1R, -127 pts (NQ $20/pt: $-2,536 for 1 contract), maxDD -52.9R, median stop 12.1 pt, median planned R:R 2.92, exits {'stop': 183, 'target': 66, '16:00 close': 3}
+  2025: 248 trades, won 60 lost 188 (24.2%), avg -0.154R, total -38.1R, -976 pts (NQ $20/pt: $-19,510 for 1 contract), maxDD -61.5R, median stop 14.0 pt, median planned R:R 2.85, exits {'stop': 188, 'target': 60}
+  2026: 204 trades, won 50 lost 154 (24.5%), avg -0.167R, total -34.0R, -464 pts (NQ $20/pt: $-9,280 for 1 contract), maxDD -46.9R, median stop 18.0 pt, median planned R:R 3.37, exits {'target': 50, 'stop': 154}
+  longs: 773 trades, won 214 lost 559 (27.7%), avg -0.008R, total -5.9R, -986 pts (NQ $20/pt: $-19,724 for 1 contract), maxDD -62.6R, median stop 10.8 pt, median planned R:R 2.82, exits {'stop': 559, 'target': 213, '16:00 close': 1}
+  shorts: 673 trades, won 141 lost 532 (21.0%), avg -0.274R, total -184.6R, -1,604 pts (NQ $20/pt: $-32,076 for 1 contract), maxDD -186.8R, median stop 12.3 pt, median planned R:R 3.60, exits {'stop': 531, 'target': 139, '16:00 close': 3}
+
+=== stop = the reclaim candle's low/high | costs: oanda ===
+last 100 trading days: 94 trades, won 17 lost 77 (18.1%), avg -0.478R, total -45.0R, -1,004 pts (NQ $20/pt: $-20,085 for 1 contract), maxDD -50.0R, median stop 20.5 pt, median planned R:R 3.01, exits {'stop': 77, 'target': 17}
+2021-01 .. 2026-10 (all): 1445 trades, won 349 lost 1096 (24.2%), avg -0.245R, total -354.7R, -4,103 pts (NQ $20/pt: $-82,056 for 1 contract), maxDD -359.0R, median stop 12.4 pt, median planned R:R 2.92, exits {'stop': 1095, 'target': 346, '16:00 close': 4}
+
+=== stop = the pullback's low/high since the touch | costs: futures ===
+last 100 trading days: 94 trades, won 19 lost 75 (20.2%), avg -0.402R, total -37.8R, -1,200 pts (NQ $20/pt: $-23,998 for 1 contract), maxDD -43.5R, median stop 22.4 pt, median planned R:R 2.45, exits {'stop': 75, 'target': 18, '16:00 close': 1}
+2021-01 .. 2026-10 (all): 1446 trades, won 422 lost 1024 (29.2%), avg -0.084R, total -121.8R, -2,632 pts (NQ $20/pt: $-52,641 for 1 contract), maxDD -143.6R, median stop 13.6 pt, median planned R:R 2.54, exits {'stop': 1023, 'target': 412, '16:00 close': 11}
+  2021: 241 trades, won 72 lost 169 (29.9%), avg -0.041R, total -9.8R, +138 pts (NQ $20/pt: $+2,769 for 1 contract), maxDD -32.0R, median stop 9.9 pt, median planned R:R 2.81, exits {'stop': 169, 'target': 70, '16:00 close': 2}
+  2022: 251 trades, won 66 lost 185 (26.3%), avg -0.049R, total -12.4R, -331 pts (NQ $20/pt: $-6,617 for 1 contract), maxDD -43.4R, median stop 14.1 pt, median planned R:R 2.81, exits {'stop': 185, 'target': 65, '16:00 close': 1}
+  2023: 250 trades, won 74 lost 176 (29.6%), avg -0.052R, total -13.0R, -379 pts (NQ $20/pt: $-7,575 for 1 contract), maxDD -40.3R, median stop 10.0 pt, median planned R:R 2.68, exits {'stop': 176, 'target': 72, '16:00 close': 2}
+  2024: 252 trades, won 80 lost 172 (31.7%), avg -0.152R, total -38.3R, -363 pts (NQ $20/pt: $-7,255 for 1 contract), maxDD -50.6R, median stop 15.0 pt, median planned R:R 2.19, exits {'stop': 171, 'target': 77, '16:00 close': 4}
+  2025: 248 trades, won 72 lost 176 (29.0%), avg -0.121R, total -30.0R, -848 pts (NQ $20/pt: $-16,962 for 1 contract), maxDD -55.0R, median stop 16.0 pt, median planned R:R 2.26, exits {'stop': 176, 'target': 71, '16:00 close': 1}
+  2026: 204 trades, won 58 lost 146 (28.4%), avg -0.089R, total -18.2R, -850 pts (NQ $20/pt: $-17,001 for 1 contract), maxDD -43.5R, median stop 22.3 pt, median planned R:R 2.69, exits {'target': 57, 'stop': 146, '16:00 close': 1}
+  longs: 773 trades, won 255 lost 518 (33.0%), avg +0.025R, total +19.5R, -840 pts (NQ $20/pt: $-16,809 for 1 contract), maxDD -46.8R, median stop 12.6 pt, median planned R:R 2.22, exits {'stop': 518, 'target': 247, '16:00 close': 8}
+  shorts: 673 trades, won 167 lost 506 (24.8%), avg -0.210R, total -141.3R, -1,792 pts (NQ $20/pt: $-35,831 for 1 contract), maxDD -143.4R, median stop 15.3 pt, median planned R:R 2.95, exits {'stop': 505, 'target': 165, '16:00 close': 3}
+
+=== stop = the pullback's low/high since the touch | costs: oanda ===
+last 100 trading days: 94 trades, won 19 lost 75 (20.2%), avg -0.441R, total -41.4R, -1,306 pts (NQ $20/pt: $-26,116 for 1 contract), maxDD -46.5R, median stop 23.1 pt, median planned R:R 2.29, exits {'stop': 75, 'target': 18, '16:00 close': 1}
+2021-01 .. 2026-10 (all): 1445 trades, won 414 lost 1031 (28.7%), avg -0.193R, total -279.5R, -4,262 pts (NQ $20/pt: $-85,246 for 1 contract), maxDD -284.8R, median stop 14.4 pt, median planned R:R 2.34, exits {'stop': 1030, 'target': 404, '16:00 close': 11}
+
+last 10 trades (reclaim-candle stop, futures costs):
+  2026-10-15 11:36 long  fill 29818.0 stop 29767.2 target 29878.4 -> stop, -1.01R (-51.2 pt)
+  2026-10-16 11:44 short fill 29557.6 stop 29570.0 target 29472.0 -> stop, -1.04R (-12.9 pt)
+  2026-10-19 10:32 long  fill 29634.1 stop 29622.8 target 29699.0 -> stop, -1.04R (-11.7 pt)
+  2026-10-20 11:54 long  fill 29597.1 stop 29579.8 target 29742.7 -> stop, -1.03R (-17.9 pt)
+  2026-10-21 11:22 long  fill 29784.1 stop 29764.0 target 29824.1 -> target, +1.98R (+39.8 pt)
+  2026-10-22 11:02 short fill 29138.2 stop 29169.0 target 29095.7 -> target, +1.37R (+42.3 pt)
+  2026-10-23 11:06 long  fill 29113.2 stop 29088.8 target 29178.3 -> stop, -1.02R (-24.9 pt)
+  2026-10-26 10:34 long  fill 29178.1 stop 29152.5 target 29237.9 -> target, +2.33R (+59.6 pt)
+  2026-10-27 10:24 short fill 29406.1 stop 29410.7 target 29359.8 -> stop, -1.11R (-5.1 pt)
+  2026-10-29 11:48 long  fill 29496.0 stop 29464.6 target 29544.0 -> stop, -1.02R (-31.9 pt)

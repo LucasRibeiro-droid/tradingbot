@@ -80,3 +80,10 @@ one trade a day, flat at 16:00. NQ-futures-like costs: 1,307 trades, 21.7% won (
 −405R; every year negative (−37R to −91R). Last 100 days: 81 trades, 16 won, 65 lost, −33.8R. OANDA costs: −0.39R,
 −510R. Longs −0.14R, shorts −0.50R. Planned R:R ~5.7 but the stop (median 11 pt, one 10m candle) is hit 78% of the
 time. Not adopted. (`journal/studies/orb_ema20_2026-10-30.py`, `orb_ema20_nas100_2026-10-30.txt`)
+Revised (owner): after the 10m close outside the range, 2m candles: touch of the 2m 20 EMA, then a 2m close back on
+the trade's side (reclaim), enter the next 2m open; target the day's high/low. Futures-like costs, 2021-01 → 2026-10:
+stop at the reclaim candle: 1,446 trades, 355 won / 1,091 lost (24.6%), −0.13R a trade, −190R, every year negative;
+stop at the pullback's extreme since the touch: 422 won / 1,024 lost (29.2%), −0.08R, −122R, every year negative.
+Last 100 days: 17-19 won / 75-77 lost, −38R to −41R. Longs with the pullback stop +0.03R over 773 trades (flat);
+shorts −0.21R. Better than the 10m-EMA version (−0.31R) but no edge. Not adopted.
+(`journal/studies/orb_ema20_2m_2026-10-30.py`, `orb_ema20_2m_nas100_2026-10-30.txt`)
