@@ -1,0 +1,36 @@
+
+=== costs: futures ===
+last 100 trading days: 81 trades, won 16 lost 65 (19.8%), avg -0.417R, total -33.8R, -238 pts (NQ $20/pt: $-4,752 for 1 contract), maxDD -34.3R, median stop 15.0 pt, median planned R:R 6.29, exits {'stop': 65, 'target': 14, '16:00 close': 2}
+2021-01 .. 2026-10 (all): 1307 trades, won 283 lost 1024 (21.7%), avg -0.310R, total -405.5R, -1,830 pts (NQ $20/pt: $-36,605 for 1 contract), maxDD -419.4R, median stop 11.4 pt, median planned R:R 5.66, exits {'stop': 1015, 'target': 257, '16:00 close': 35}
+  2021: 223 trades, won 39 lost 184 (17.5%), avg -0.398R, total -88.8R, -655 pts (NQ $20/pt: $-13,094 for 1 contract), maxDD -109.0R, median stop 8.7 pt, median planned R:R 5.67, exits {'stop': 182, 'target': 38, '16:00 close': 3}
+  2022: 222 trades, won 46 lost 176 (20.7%), avg -0.409R, total -90.8R, -536 pts (NQ $20/pt: $-10,726 for 1 contract), maxDD -92.3R, median stop 12.8 pt, median planned R:R 5.60, exits {'16:00 close': 5, 'stop': 174, 'target': 43}
+  2023: 218 trades, won 53 lost 165 (24.3%), avg -0.169R, total -36.8R, +528 pts (NQ $20/pt: $+10,558 for 1 contract), maxDD -50.8R, median stop 8.9 pt, median planned R:R 6.15, exits {'stop': 163, 'target': 52, '16:00 close': 3}
+  2024: 234 trades, won 58 lost 176 (24.8%), avg -0.328R, total -76.7R, +78 pts (NQ $20/pt: $+1,564 for 1 contract), maxDD -95.5R, median stop 12.1 pt, median planned R:R 4.54, exits {'stop': 175, 'target': 50, '16:00 close': 9}
+  2025: 226 trades, won 50 lost 176 (22.1%), avg -0.242R, total -54.6R, -532 pts (NQ $20/pt: $-10,649 for 1 contract), maxDD -80.1R, median stop 13.4 pt, median planned R:R 5.49, exits {'stop': 174, 'target': 43, '16:00 close': 9}
+  2026: 184 trades, won 37 lost 147 (20.1%), avg -0.314R, total -57.8R, -713 pts (NQ $20/pt: $-14,257 for 1 contract), maxDD -57.6R, median stop 15.4 pt, median planned R:R 6.28, exits {'stop': 147, '16:00 close': 6, 'target': 31}
+  longs: 681 trades, won 182 lost 499 (26.7%), avg -0.141R, total -95.9R, +746 pts (NQ $20/pt: $+14,914 for 1 contract), maxDD -143.7R, median stop 13.0 pt, median planned R:R 4.30, exits {'stop': 494, 'target': 165, '16:00 close': 22}
+  shorts: 626 trades, won 101 lost 525 (16.1%), avg -0.495R, total -309.6R, -2,576 pts (NQ $20/pt: $-51,518 for 1 contract), maxDD -308.5R, median stop 9.6 pt, median planned R:R 7.37, exits {'stop': 521, 'target': 92, '16:00 close': 13}
+
+=== costs: oanda ===
+last 100 trading days: 83 trades, won 16 lost 67 (19.3%), avg -0.477R, total -39.6R, -332 pts (NQ $20/pt: $-6,634 for 1 contract), maxDD -39.8R, median stop 15.5 pt, median planned R:R 5.97, exits {'stop': 67, 'target': 14, '16:00 close': 2}
+2021-01 .. 2026-10 (all): 1313 trades, won 273 lost 1040 (20.8%), avg -0.389R, total -510.3R, -3,266 pts (NQ $20/pt: $-65,318 for 1 contract), maxDD -522.0R, median stop 12.0 pt, median planned R:R 5.24, exits {'stop': 1029, 'target': 249, '16:00 close': 35}
+  2021: 224 trades, won 39 lost 185 (17.4%), avg -0.446R, total -99.8R, -844 pts (NQ $20/pt: $-16,875 for 1 contract), maxDD -117.2R, median stop 9.3 pt, median planned R:R 5.20, exits {'stop': 183, 'target': 38, '16:00 close': 3}
+  2022: 225 trades, won 43 lost 182 (19.1%), avg -0.471R, total -106.0R, -799 pts (NQ $20/pt: $-15,975 for 1 contract), maxDD -105.9R, median stop 12.8 pt, median planned R:R 5.65, exits {'16:00 close': 5, 'stop': 181, 'target': 39}
+  2023: 220 trades, won 52 lost 168 (23.6%), avg -0.291R, total -64.1R, +345 pts (NQ $20/pt: $+6,905 for 1 contract), maxDD -68.2R, median stop 9.2 pt, median planned R:R 5.65, exits {'stop': 165, 'target': 52, '16:00 close': 3}
+  2024: 232 trades, won 56 lost 176 (24.1%), avg -0.356R, total -82.6R, -163 pts (NQ $20/pt: $-3,256 for 1 contract), maxDD -98.7R, median stop 12.8 pt, median planned R:R 4.35, exits {'stop': 175, 'target': 48, '16:00 close': 9}
+  2025: 226 trades, won 47 lost 179 (20.8%), avg -0.300R, total -67.9R, -806 pts (NQ $20/pt: $-16,116 for 1 contract), maxDD -90.9R, median stop 14.3 pt, median planned R:R 5.01, exits {'stop': 175, 'target': 42, '16:00 close': 9}
+  2026: 186 trades, won 36 lost 150 (19.4%), avg -0.484R, total -90.0R, -1,000 pts (NQ $20/pt: $-20,002 for 1 contract), maxDD -89.6R, median stop 16.0 pt, median planned R:R 5.83, exits {'stop': 150, '16:00 close': 6, 'target': 30}
+  longs: 684 trades, won 174 lost 510 (25.4%), avg -0.260R, total -178.0R, -89 pts (NQ $20/pt: $-1,771 for 1 contract), maxDD -191.9R, median stop 13.6 pt, median planned R:R 4.06, exits {'stop': 503, 'target': 159, '16:00 close': 22}
+  shorts: 629 trades, won 99 lost 530 (15.7%), avg -0.528R, total -332.3R, -3,177 pts (NQ $20/pt: $-63,547 for 1 contract), maxDD -331.2R, median stop 10.2 pt, median planned R:R 6.83, exits {'stop': 526, 'target': 90, '16:00 close': 13}
+
+last 10 trades (futures costs):
+  2026-10-08 11:00 long  fill 31060.1 stop 31033.9 target 31159.7 -> stop, -1.02R (-26.7 pt)
+  2026-10-12 11:50 short fill 30748.4 stop 30762.2 target 30656.2 -> stop, -1.04R (-14.3 pt)
+  2026-10-14 15:40 short fill 29985.7 stop 30053.5 target 29896.0 -> 16:00 close, +0.13R (+8.8 pt)
+  2026-10-15 12:30 long  fill 29743.3 stop 29733.0 target 29878.4 -> stop, -1.05R (-10.8 pt)
+  2026-10-19 10:40 long  fill 29621.4 stop 29591.5 target 29699.0 -> target, +2.59R (+77.4 pt)
+  2026-10-20 11:20 long  fill 29623.4 stop 29528.8 target 29742.7 -> stop, -1.01R (-95.1 pt)
+  2026-10-22 12:10 short fill 29204.2 stop 29224.3 target 29073.5 -> stop, -1.02R (-20.6 pt)
+  2026-10-23 12:30 long  fill 29070.2 stop 29060.7 target 29178.3 -> stop, -1.05R (-10.0 pt)
+  2026-10-26 12:50 long  fill 29275.6 stop 29260.5 target 29427.2 -> 16:00 close, +1.92R (+29.0 pt)
+  2026-10-29 11:50 long  fill 29461.1 stop 29456.2 target 29544.0 -> stop, -1.10R (-5.5 pt)

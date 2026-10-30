@@ -73,3 +73,10 @@ history 2021-01 → 2026-06-11 (1402 days, ~1,700-2,000 trades each): 1:1 −0.3
 −0.29R a trade, negative in every year including 2025 and 2026 H1. Stops were small then (median 9-24 pt, the
 spread 8-16% of the risk). The last 100 days look like a lucky stretch. Not adopted.
 (`journal/studies/nowick_15m_oos_2026-10-30.py`, `nowick_15m_nas100_oos_2026-10-30.txt`)
+
+## 2026-10-30 — owner's 9:30-10:00 opening range → 10m close outside → 20-EMA touch → next-candle entry
+Stop at the touching candle's low/high, target the day's high/low (RTH). NAS100 1m, 2021-01 → 2026-10-29,
+one trade a day, flat at 16:00. NQ-futures-like costs: 1,307 trades, 21.7% won (283 / 1,024), −0.31R a trade,
+−405R; every year negative (−37R to −91R). Last 100 days: 81 trades, 16 won, 65 lost, −33.8R. OANDA costs: −0.39R,
+−510R. Longs −0.14R, shorts −0.50R. Planned R:R ~5.7 but the stop (median 11 pt, one 10m candle) is hit 78% of the
+time. Not adopted. (`journal/studies/orb_ema20_2026-10-30.py`, `orb_ema20_nas100_2026-10-30.txt`)
