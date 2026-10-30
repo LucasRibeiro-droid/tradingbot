@@ -6,4 +6,6 @@
 
 | 2026-10-29 | yes (29,544.0) | yes (29,275.3) | 7 / 7 | low in from 11:30, high in from 13:30, all right |
 
-**Running:** bands 4 / 4 days both inside (8 / 8 levels); calls at 80%+ 13 / 15 (87%).
+| 2026-10-30 | yes (28,731.0) | **no** (28,111.4; band outer edge 28,204.3) | 8 / 8 | −2.2% day; high in from 12:00, all right |
+
+**Running:** bands 4 / 5 days both inside (9 / 10 levels); calls at 80%+ 21 / 23 (91%).

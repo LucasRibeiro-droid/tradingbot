@@ -85,6 +85,21 @@ class Restart(unittest.TestCase):
         s._reconcile_start()
         self.assertEqual(s.traded_symbols, {"NVDA"})
 
+    def test_reconcile_knows_open_day_trades(self):
+        """After a hand-off, a day_rs3 position from its own state is not reported as unknown (2026-10-30 REGN)."""
+        from unittest import mock
+        from tradingbot.live import run
+        from tradingbot.config import BASELINE
+        s = run.Session.__new__(run.Session)
+        s.dry_run, s.trades, s.traded_symbols, s.config, s.today = False, [], set(), BASELINE, "2026-10-30"
+        s.day = type("D", (), {"trades": [{"symbol": "REGN"}, {"symbol": "DELL", "result": {"how": "stop"}}]})()
+        s.broker = type("B", (), {"orders": lambda self, status, after: [],
+                                  "positions": lambda self: [{"symbol": "REGN", "qty": "10"}, {"symbol": "XYZ", "qty": "1"}]})()
+        with mock.patch.object(run, "event") as ev:
+            s._reconcile_start()
+        flagged = [c.args[0] for c in ev.call_args_list if "not in the saved state" in c.args[0]]
+        self.assertEqual(flagged, ["position XYZ 1 at Alpaca is not in the saved state"])
+
 
 class FakeAlpaca:
     """Like Alpaca: bracket legs hold the shares, so a close fails while orders are open, and a

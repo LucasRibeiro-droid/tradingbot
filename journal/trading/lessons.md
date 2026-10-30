@@ -17,3 +17,5 @@ One trade never changes a rule; lessons from fewer than ~10 independent trades a
 | L10 | On 1-minute, R and dollars diverge: 10% position cap × 0.1–0.2% stops = $2–5 per R | 10-23: 1m trades | evaluation | report $ beside R | certain |
 | L11 | CRT gaps with stops under ~0.15% of price lose to the spread and stop slippage (1 cent can be 0.25R) | 10-26: SPCX 18:00, SNDK 16:40/19:00, SPCX 19:15 | methodology / cost | H58 (backtest: worse the tighter; filter adopted) | strong (backtest n=451 + live) |
 | L12 | Stacked CRT gaps share levels: a newer gap's stop is an older order's entry, so one move stops one and fills the other | 10-26: SNDK, AMD | methodology | to test next | lead (3 cases) |
+| L13 | A false alarm costs attention: the hand-off reconcile must know every strategy's own state (day_rs3 REGN flagged as unknown) | 10-30 REGN | execution | fixed in code + test | certain |
+| L14 | Buying the day's strongest stocks at 10:00 is one bet on the market: on a −2.2% Nasdaq day 2 of 3 gave back the whole move to the stop | 10-30 MPWR, DELL | evaluation / risk | watch with H63; no change on 2 days | one day: a lead |

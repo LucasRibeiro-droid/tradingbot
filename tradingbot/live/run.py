@@ -246,6 +246,8 @@ class Session:
         self.traded_symbols |= filled
         self._adopt(orders, {p["symbol"] for p in positions})
         known = {t.symbol for t in self.trades if not t.closed} | (set(self.swing.positions) if getattr(self, "swing", None) else set())
+        if getattr(self, "day", None):   # day_rs3 keeps its own state (journal/trading/day/state.json)
+            known |= {t["symbol"] for t in self.day.trades if "result" not in t}
         for pos in positions:
             if pos["symbol"] not in known:
                 event(f"position {pos['symbol']} {pos['qty']} at Alpaca is not in the saved state",
