@@ -1,0 +1,719 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  DAY TRADING BACKTESTER — ORB (opening range breakout + EMA20 retest) & NOWICK (no-wick levels)
+//  Cost-aware: commission, slippage on every fill (including limit take-profits) and an optional
+//  "trade-through" requirement before a take-profit counts as filled.
+//
+//  Built for a 3-minute chart of MNQ / ES / MGC / GC (one instrument per chart).
+//  All session times are America/New_York, so DST is handled automatically.
+//
+//  HOW THE RESULTS ARE PRODUCED — READ THIS FIRST
+//  ---------------------------------------------
+//  TradingView's Strategy Tester has two blind spots this script works around:
+//   1. Its built-in slippage only hits market and stop orders. Limit orders (our take-profits)
+//      always fill at exactly the limit price.
+//   2. A Pine limit order has ONE price, which is both its trigger and its fill. There is no way to
+//      say "only fill once price trades X ticks through the target, and then fill at the target".
+//
+//  So the script does this:
+//   • The real take-profit limit order is placed X ticks BEYOND the target ("trade-through"). The
+//     Strategy Tester therefore only books a TP when price really traded through — which keeps the
+//     decision "did this trade win or lose?" honest.
+//   • The on-chart table then re-prices every fill from the Tester's raw prices:
+//       – removes the slippage the Tester already applied (input "Slippage set in Properties"),
+//       – moves TP fills back from target+X to the target,
+//       – charges YOUR commission and YOUR slippage (Costs group) on every fill, including TPs if
+//         "Apply slippage to take-profit fills" is on.
+//     The TABLE is the realistic ledger. The Tester's own Net Profit is shown as a reference row;
+//     it is optimistic by up to (trade-through + slippage) ticks on every TP exit.
+//
+//  ⚠ OPTIMISTIC-FILL WARNINGS are marked with  "⚠ FILL ASSUMPTION"  throughout the code.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+strategy(title = "Day Trading Backtester — ORB + NOWICK (cost-aware)",
+     shorttitle = "DTB ORB/NOWICK",
+     overlay = true,
+     // pyramiding = 2 lets ORB and NOWICK hold a position at the same time when "Allow both" is on.
+     // With "Allow both" off, the script itself blocks a second entry, so 2 is safe either way.
+     pyramiding = 2,
+     initial_capital = 50000,
+     default_qty_type = strategy.fixed,
+     default_qty_value = 1,
+     // Commission/slippage here only drive the Strategy Tester's OWN numbers (reference only).
+     // These are compile-time constants in Pine — they cannot be linked to inputs. Match them in
+     // Settings ▸ Properties to your broker; the table uses the "Costs" inputs instead.
+     commission_type = strategy.commission.cash_per_contract,
+     commission_value = 0.62,
+     slippage = 1,
+     // Futures: disable TradingView's margin-call simulation (default 100% margin would liquidate
+     // a single ES contract on a $50k account, which is not how futures margin works).
+     margin_long = 0,
+     margin_short = 0,
+     // Signals are computed on the bar CLOSE; market entries fill at the NEXT bar's OPEN. That is
+     // what you'd actually get live. Turn "Fill orders on bar close" on in Properties only to compare.
+     // ⚠ FILL ASSUMPTION: filling at the signal bar's close (process_orders_on_close = true) is
+     // optimistic — you cannot trade at a close you only know once the bar has finished.
+     process_orders_on_close = false,
+     calc_on_every_tick = false,
+     calc_on_order_fills = false,
+     // ⚠ FILL ASSUMPTION: without the bar magnifier, when a stop AND a target both lie inside one
+     // chart bar, TradingView guesses the intrabar path (it assumes price went to the extreme
+     // closest to the open first). That guess can turn real losers into winners. The magnifier
+     // replays the bar on lower-timeframe data, which removes most (not all) of that ambiguity —
+     // if both levels fall inside the same LOWER-timeframe bar, the same guess is made there.
+     // The magnifier needs a plan that supports it and only reaches back as far as the
+     // lower-timeframe history does; older bars silently fall back to the OHLC guess.
+     use_bar_magnifier = true,
+     fill_orders_on_standard_ohlc = true,
+     // Keep at 0: the script implements its own (input-driven) trade-through for take-profits.
+     // Setting "Verify price for limit orders" in Properties as well would double-count it.
+     backtest_fill_limits_assumption = 0,
+     close_entries_rule = "ANY",
+     max_lines_count = 500,
+     max_labels_count = 100,
+     max_bars_back = 500)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// CONSTANTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+const string TZ       = "America/New_York"
+const string ID_ORB   = "ORB"
+const string ID_NW    = "NOWICK"
+const string M_EMA    = "Fast EMA vs slow EMA (3m)"
+const string M_VWAP   = "Price vs session VWAP"
+const string M_ORB    = "ORB breakout direction"
+const string VW_NY    = "NY open"
+const string VW_SESS  = "Exchange session (18:00 ET)"
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// INPUTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+const string G_GEN = "General"
+bool  orbOn       = input.bool(true,  "Enable ORB strategy",    group = G_GEN)
+bool  nwOn        = input.bool(true,  "Enable NOWICK strategy", group = G_GEN)
+bool  allowBoth   = input.bool(false, "Allow ORB and NOWICK positions at the same time", group = G_GEN,
+     tooltip = "Off: one position at a time (ORB is checked first on a bar where both fire).\nOn: each strategy may hold one position, but only in the SAME direction — a TradingView strategy has a single net position, so an opposite-direction signal is skipped instead of closing/reversing the other strategy's trade.")
+int   qty         = input.int(1, "Contracts per trade", minval = 1, group = G_GEN)
+int   openH       = input.int(9,  "NY open (ET)  hour", minval = 0, maxval = 23, inline = "open", group = G_GEN)
+int   openM       = input.int(30, "minute",              minval = 0, maxval = 59, inline = "open", group = G_GEN,
+     tooltip = "Start of the trading day, the opening range, the 15-minute buckets and the NY-anchored VWAP. 09:30 for ES/MNQ; change it for gold (e.g. 08:20 for the COMEX pit open).")
+int   emaFastLen  = input.int(20, "Fast EMA length", minval = 1, group = G_GEN)
+int   emaSlowLen  = input.int(50, "Slow EMA length (NOWICK momentum)", minval = 1, group = G_GEN)
+int   pivLeft     = input.int(3, "Swing pivot: left bars",  minval = 1, inline = "piv", group = G_GEN)
+int   pivRight    = input.int(3, "right bars",              minval = 1, inline = "piv", group = G_GEN,
+     tooltip = "Swing highs/lows are ta.pivothigh/ta.pivotlow. A pivot is only known 'right bars' AFTER it prints — the script uses it only from then on, so there is no look-ahead.")
+int   swingMaxAge = input.int(100, "Max swing age (bars)", minval = 5, group = G_GEN,
+     tooltip = "Swing points older than this are ignored when looking for a stop.")
+int   stopBufTicks = input.int(0, "Stop buffer beyond swing / candle (ticks)", minval = 0, group = G_GEN)
+
+const string G_ORB = "Strategy 1 — ORB"
+int   orMinutes   = input.int(30, "Opening range length (minutes)", minval = 3, group = G_ORB)
+int   bkMinutes   = input.int(15, "Breakout candle timeframe (minutes)", minval = 3, group = G_ORB,
+     tooltip = "Built from chart bars, anchored to the NY open. With a 09:30 open and 15 minutes the candles close at 10:15, 10:30, …")
+float orbMinRR    = input.float(1.0, "Minimum reward:risk", minval = 0.0, step = 0.1, group = G_ORB)
+int   orbMaxTrades = input.int(1, "Max ORB trades per day", minval = 1, group = G_ORB)
+int   cutH        = input.int(12, "No new ORB entries after  hour", minval = 0, maxval = 23, inline = "cut", group = G_ORB)
+int   cutM        = input.int(0,  "minute", minval = 0, maxval = 59, inline = "cut", group = G_ORB)
+bool  orbInclON   = input.bool(false, "Target uses overnight (Globex) high/low too", group = G_ORB,
+     tooltip = "Off: 'day's high/low so far' is measured from the NY open. On: from the 18:00 ET Globex open.")
+
+const string G_NW = "Strategy 2 — NOWICK"
+string momMode    = input.string(M_EMA, "Momentum filter", options = [M_EMA, M_VWAP, M_ORB], group = G_NW)
+string vwapAnchor = input.string(VW_NY, "VWAP anchor", options = [VW_NY, VW_SESS], group = G_NW)
+bool  momAtCreate = input.bool(true, "Momentum must also agree when the level is created", group = G_NW)
+int   wickTolTicks = input.int(0, "Wick tolerance (ticks)", minval = 0, group = G_NW,
+     tooltip = "Bearish candle: high − open ≤ this. Bullish candle: open − low ≤ this.")
+int   levelLife   = input.int(20, "Level expires after (bars)", minval = 1, group = G_NW)
+float nwRR        = input.float(2.0, "Take profit (R multiple)", minval = 0.1, step = 0.1, group = G_NW)
+int   minStopTicks = input.int(8, "Minimum stop distance (ticks)", minval = 0, group = G_NW,
+     tooltip = "If the previous candle's high/low gives a stop closer than this, the most recent swing high/low beyond entry is used instead. If that is also closer than this (or none exists), the trade is skipped.")
+string nwSession  = input.session("0930-1545", "NOWICK trading window (ET)", group = G_NW)
+
+const string G_DAY = "Day trading rules"
+int   flatH       = input.int(15, "Flatten all at  hour (ET)", minval = 0, maxval = 23, inline = "flat", group = G_DAY)
+int   flatM       = input.int(55, "minute", minval = 0, maxval = 59, inline = "flat", group = G_DAY,
+     tooltip = "The flatten order goes out on the close of the first bar that ends at/after this time and fills at the next bar's open. No new entries from then on.")
+bool  useDLL      = input.bool(false, "Use daily loss limit", group = G_DAY)
+float dllAmount   = input.float(500.0, "Daily loss limit (account currency)", minval = 0, group = G_DAY,
+     tooltip = "Realised net P&L today + estimated open P&L after costs. Checked on each bar close; when hit, everything is flattened and no more trades are taken until the next NY open.")
+
+const string G_COST = "Costs"
+float commPerSide = input.float(0.62, "Commission per contract per side", minval = 0, step = 0.01, group = G_COST,
+     tooltip = "Your broker's all-in rate (commission + exchange + NFA + clearing). Charged on entry AND exit.")
+int   slipTicks   = input.int(1, "Slippage per fill (ticks)", minval = 0, group = G_COST,
+     tooltip = "Applied against you on every market/stop fill: entries, stop-losses, end-of-day and loss-limit exits.")
+bool  slipOnTP    = input.bool(true, "Apply slippage to take-profit (limit) fills too", group = G_COST,
+     tooltip = "TradingView never slips limit orders. Turn this on to charge the slippage on TP exits as well (pessimistic, but robust).")
+bool  needThrough = input.bool(true, "Require price to trade THROUGH the target", group = G_COST)
+int   throughTicks = input.int(1, "Trade-through distance (ticks)", minval = 0, group = G_COST,
+     tooltip = "A take-profit only counts as filled once price trades this many ticks beyond the target. Models your place in the queue at the limit price.")
+int   testerSlip  = input.int(1, "Slippage set in Properties (ticks)", minval = 0, group = G_COST,
+     tooltip = "Must equal Settings ▸ Properties ▸ Slippage. Used to strip the Tester's own slippage from its fill prices before your Costs are applied, so you can stress-test costs from these inputs alone.")
+
+const string G_UI = "Display"
+bool  showTable   = input.bool(true, "Show results table", group = G_UI)
+string tablePosIn = input.string("Top right", "Table position", options = ["Top right", "Top left", "Bottom right", "Bottom left"], group = G_UI)
+bool  showOR      = input.bool(true, "Show opening range", group = G_UI)
+bool  showEMAs    = input.bool(true, "Show EMAs", group = G_UI)
+bool  showLevels  = input.bool(true, "Show NOWICK levels", group = G_UI)
+bool  showTrade   = input.bool(true, "Show stop/target of open trades", group = G_UI)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// INSTRUMENT & TIMEFRAME
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+float tick     = syminfo.mintick      // MNQ/ES 0.25, MGC/GC 0.10
+float pv       = syminfo.pointvalue   // currency per 1.0 point per contract: MNQ 2, ES 50, MGC 10, GC 100
+float stopBuf  = stopBufTicks * tick
+int   thruEff  = needThrough ? throughTicks : 0
+
+int tfSec = timeframe.in_seconds()
+if barstate.isfirst
+    if not timeframe.isintraday or (orMinutes * 60) % tfSec != 0 or (bkMinutes * 60) % tfSec != 0
+        runtime.error("Use an intraday chart whose timeframe divides the opening-range and breakout-candle lengths (the script is designed for 3 minutes).")
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SESSION CLOCK (America/New_York)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// Timestamp of hh:mm ET on the CURRENT bar's ET calendar date.
+f_ts(int h, int m) =>
+    timestamp(TZ, year(time, TZ), month(time, TZ), dayofmonth(time, TZ), h, m, 0)
+
+int openTs   = f_ts(openH, openM)
+int orEndTs  = openTs + orMinutes * 60000
+int cutoffTs = f_ts(cutH, cutM)
+int flatTs   = f_ts(flatH, flatM)
+int ethTs    = f_ts(18, 0)
+int bkMs     = bkMinutes * 60000
+
+// First bar at/after the NY open. The "< flatTs" guard stops a Sunday-evening (18:00) bar from
+// being taken as a new day, because its ET date's 09:30 is earlier in the same calendar day.
+bool newDay = time >= openTs and time < flatTs and (na(time[1]) or time[1] < openTs)
+// First bar of the Globex session (18:00 ET), for the optional overnight high/low.
+bool newEth = time >= ethTs and (na(time[1]) or time[1] < ethTs)
+
+var bool dayActive = false
+var int  daysCount = 0
+if newDay
+    dayActive := true
+    daysCount += 1
+
+bool conf       = barstate.isconfirmed                         // confirmed bars only
+bool afterOpen  = dayActive and time >= openTs
+bool beforeFlat = afterOpen and time_close < flatTs            // an order sent now fills before flatten
+bool flatTime   = afterOpen and time_close >= flatTs
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// RUNNING HIGHS / LOWS, OPENING RANGE, 15-MINUTE CLOSES — all from chart bars, nothing repaints
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var float ethHigh = na
+var float ethLow  = na
+if newEth or na(ethHigh)
+    ethHigh := high
+    ethLow  := low
+else
+    ethHigh := math.max(ethHigh, high)
+    ethLow  := math.min(ethLow, low)
+
+var float rthHigh = na
+var float rthLow  = na
+var float orHigh  = na
+var float orLow   = na
+var bool  orReady = false
+if newDay
+    rthHigh := high
+    rthLow  := low
+    orHigh  := high
+    orLow   := low
+    orReady := false
+else if dayActive
+    rthHigh := math.max(rthHigh, high)
+    rthLow  := math.min(rthLow, low)
+    if time >= openTs and time < orEndTs
+        orHigh := math.max(orHigh, high)
+        orLow  := math.min(orLow, low)
+if dayActive and not orReady and time_close >= orEndTs
+    orReady := true                                            // the last opening-range bar has closed
+
+float dayHi = orbInclON ? math.max(rthHigh, ethHigh) : rthHigh
+float dayLo = orbInclON ? math.min(rthLow, ethLow) : rthLow
+
+// A breakout candle (15m by default, anchored to the NY open) closes on the chart bar whose
+// close time is a whole number of buckets after the open. Its close = that chart bar's close.
+// Note: if the exchange printed no bar at a bucket's last 3-minute slot (very rare on these
+// contracts), that bucket's close is skipped rather than guessed.
+bool isBkClose = afterOpen and time_close > orEndTs and (time_close - openTs) % bkMs == 0
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// INDICATORS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+float emaFast = ta.ema(close, emaFastLen)
+float emaSlow = ta.ema(close, emaSlowLen)
+
+var float cumPV = 0.0
+var float cumV  = 0.0
+if newDay
+    cumPV := hlc3 * volume
+    cumV  := volume
+else
+    cumPV += hlc3 * volume
+    cumV  += volume
+float vwapNY   = afterOpen and cumV > 0 ? cumPV / cumV : na
+float vwapSess = ta.vwap(hlc3)
+float vwapVal  = vwapAnchor == VW_NY ? vwapNY : vwapSess
+
+// Swing points. ta.pivot* returns the pivot price on the bar where it becomes CONFIRMED
+// (pivRight bars after the pivot), so storing it then cannot leak future data.
+float pl = ta.pivotlow(low, pivLeft, pivRight)
+float ph = ta.pivothigh(high, pivLeft, pivRight)
+var array<float> plPx  = array.new<float>()
+var array<int>   plBar = array.new<int>()
+var array<float> phPx  = array.new<float>()
+var array<int>   phBar = array.new<int>()
+if not na(pl)
+    plPx.unshift(pl)
+    plBar.unshift(bar_index - pivRight)
+    if plPx.size() > 60
+        plPx.pop()
+        plBar.pop()
+if not na(ph)
+    phPx.unshift(ph)
+    phBar.unshift(bar_index - pivRight)
+    if phPx.size() > 60
+        phPx.pop()
+        phBar.pop()
+
+// Most recent confirmed swing low strictly below `px` (na if none within swingMaxAge).
+f_swingBelow(float px) =>
+    float res = na
+    int n = plPx.size()
+    if n > 0
+        for i = 0 to n - 1
+            if bar_index - plBar.get(i) > swingMaxAge
+                break
+            if plPx.get(i) < px
+                res := plPx.get(i)
+                break
+    res
+
+// Most recent confirmed swing high strictly above `px`.
+f_swingAbove(float px) =>
+    float res = na
+    int n = phPx.size()
+    if n > 0
+        for i = 0 to n - 1
+            if bar_index - phBar.get(i) > swingMaxAge
+                break
+            if phPx.get(i) > px
+                res := phPx.get(i)
+                break
+    res
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// ORB BIAS (first breakout candle close outside the opening range sets the day's bias)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var int orbBias = 0          // +1 long bias, -1 short bias, 0 none yet
+var int biasBar = 0
+var int orbSeq  = 0          // 0 = waiting for a close on the wrong side of the EMA, 1 = waiting for the reclaim
+var int orbTradesToday = 0
+if newDay
+    orbBias := 0
+    orbSeq  := 0
+    orbTradesToday := 0
+bool biasSetNow = false
+if conf and orReady and orbBias == 0 and isBkClose and time_close <= flatTs
+    if close > orHigh
+        orbBias := 1
+        biasSetNow := true
+    else if close < orLow
+        orbBias := -1
+        biasSetNow := true
+    if biasSetNow
+        biasBar := bar_index
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// MOMENTUM (for NOWICK)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+int momEma  = emaFast > emaSlow ? 1 : emaFast < emaSlow ? -1 : 0
+int momVwap = na(vwapVal) ? 0 : close > vwapVal ? 1 : close < vwapVal ? -1 : 0
+int momentum = momMode == M_EMA ? momEma : momMode == M_VWAP ? momVwap : orbBias
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// RESULTS LEDGER — re-prices every closed trade with YOUR costs. Index 0 = ORB, 1 = NOWICK, 2 = all.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var array<float> stTrades  = array.new<float>(3, 0.0)
+var array<float> stWins    = array.new<float>(3, 0.0)
+var array<float> stGross   = array.new<float>(3, 0.0)
+var array<float> stNet     = array.new<float>(3, 0.0)
+var array<float> stCost    = array.new<float>(3, 0.0)
+var array<float> stWinSum  = array.new<float>(3, 0.0)
+var array<float> stLossSum = array.new<float>(3, 0.0)
+var array<float> stRSum    = array.new<float>(3, 0.0)
+var array<float> stRCnt    = array.new<float>(3, 0.0)
+var array<float> stPeak    = array.new<float>(3, strategy.initial_capital)
+var array<float> stDD      = array.new<float>(3, 0.0)
+var array<float> stDDPct   = array.new<float>(3, 0.0)
+var array<float> stTester  = array.new<float>(3, 0.0)
+
+f_update(int k, float g, float n, float c, float r, float tNet) =>
+    stTrades.set(k, stTrades.get(k) + 1)
+    stGross.set(k, stGross.get(k) + g)
+    stNet.set(k, stNet.get(k) + n)
+    stCost.set(k, stCost.get(k) + c)
+    stTester.set(k, stTester.get(k) + tNet)
+    if n > 0
+        stWins.set(k, stWins.get(k) + 1)
+        stWinSum.set(k, stWinSum.get(k) + n)
+    else
+        stLossSum.set(k, stLossSum.get(k) + n)
+    if not na(r)
+        stRSum.set(k, stRSum.get(k) + r)
+        stRCnt.set(k, stRCnt.get(k) + 1)
+    // Closed-trade equity drawdown for this bucket, from the account's initial capital.
+    float eq = strategy.initial_capital + stNet.get(k)
+    stPeak.set(k, math.max(stPeak.get(k), eq))
+    float dd = stPeak.get(k) - eq
+    stDD.set(k, math.max(stDD.get(k), dd))
+    stDDPct.set(k, math.max(stDDPct.get(k), stPeak.get(k) > 0 ? dd / stPeak.get(k) * 100 : 0.0))
+
+var int   processed = 0
+var float dayNet    = 0.0      // realised net P&L today (all strategies), for the daily loss limit
+var bool  halted    = false
+var float orbStopPx = na       // stop of the current/last ORB trade (for R)
+var float nwStopPx  = na
+var float orbTgtPx  = na
+var float nwTgtPx   = na
+if newDay
+    dayNet := 0.0
+    halted := false
+
+if strategy.closedtrades > processed
+    for i = processed to strategy.closedtrades - 1
+        string eid = strategy.closedtrades.entry_id(i)
+        int    b   = eid == ID_ORB ? 0 : 1
+        float  sz  = strategy.closedtrades.size(i)
+        int    dir = sz > 0 ? 1 : -1
+        float  q   = math.abs(sz)
+        float  ep  = strategy.closedtrades.entry_price(i)
+        float  xp  = strategy.closedtrades.exit_price(i)
+        bool   isTP = str.endswith(strategy.closedtrades.exit_comment(i), "TP")
+        // Strip the Tester's own slippage: it was applied to the market entry and to every
+        // market/stop exit, but never to the limit TP.
+        float idealEntry = ep - dir * testerSlip * tick
+        // TP: the order sat `thruEff` ticks beyond the target, so move the fill back to the target.
+        // (If the bar gapped through, the Tester filled at the better open; that improvement is kept.)
+        float idealExit  = isTP ? xp - dir * thruEff * tick : xp + dir * testerSlip * tick
+        float grossPnl   = (idealExit - idealEntry) * dir * q * pv
+        float commCost   = commPerSide * q * 2
+        int   slipFills  = 1 + (isTP ? (slipOnTP ? 1 : 0) : 1)
+        float slipCost   = slipFills * slipTicks * tick * pv * q
+        float costT      = commCost + slipCost
+        float netPnl     = grossPnl - costT
+        // R = net result / initial risk, where risk = (entry incl. your slippage) to stop.
+        float stopPx     = b == 0 ? orbStopPx : nwStopPx
+        float fillEntry  = idealEntry + dir * slipTicks * tick
+        float riskCur    = na(stopPx) ? na : math.abs(fillEntry - stopPx) * q * pv
+        float rMult      = na(riskCur) or riskCur <= 0 ? na : netPnl / riskCur
+        float tNet       = strategy.closedtrades.profit(i)
+        f_update(b, grossPnl, netPnl, costT, rMult, tNet)
+        f_update(2, grossPnl, netPnl, costT, rMult, tNet)
+        dayNet += netPnl
+    processed := strategy.closedtrades
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// POSITION HELPERS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_hasOpen(string id) =>
+    bool found = false
+    if strategy.opentrades > 0
+        for i = 0 to strategy.opentrades - 1
+            if strategy.opentrades.entry_id(i) == id
+                found := true
+                break
+    found
+
+// May strategy `id` open a position in direction `dir` (+1/-1)? `pendingDir` is the direction of
+// an entry already sent on this bar (0 if none) — it has not filled yet, so position_size can't see it.
+f_canEnter(string id, int dir, int pendingDir) =>
+    int  posDir = strategy.position_size > 0 ? 1 : strategy.position_size < 0 ? -1 : 0
+    int  curDir = posDir != 0 ? posDir : pendingDir
+    bool ok = not f_hasOpen(id)
+    if curDir != 0
+        ok := ok and allowBoth and curDir == dir
+    ok
+
+bool orbOpen = f_hasOpen(ID_ORB)
+bool nwOpen  = f_hasOpen(ID_NW)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// DAILY LOSS LIMIT & END-OF-DAY FLATTEN
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// Open P&L estimate after costs: the Tester's open profit, swap its entry slippage for yours,
+// subtract your exit slippage and both commissions.
+float openQty = math.abs(strategy.position_size)
+float openEst = strategy.openprofit - openQty * (2 * commPerSide + (2 * slipTicks - testerSlip) * tick * pv)
+// ⚠ FILL ASSUMPTION: the limit is only checked on bar closes, and the flatten fills at the next
+// open — a fast move can take the real loss past the limit before you're out.
+if useDLL and conf and afterOpen and not halted and dayNet + openEst <= -dllAmount
+    halted := true
+
+if strategy.position_size != 0
+    if halted
+        strategy.close_all(comment = "DLL")
+    else if flatTime
+        // Fills at the next bar's open (the first bar opening at/after the flatten time) + slippage.
+        strategy.close_all(comment = "EOD")
+    else if session.islastbar
+        // Safety net for early-close days (holidays) where the exchange stops before the flatten
+        // time: exit at this bar's close rather than holding overnight.
+        // ⚠ FILL ASSUMPTION: relies on TradingView's session calendar; if it doesn't know about an
+        // early close, a position could be held into the next session. Check holiday trades.
+        strategy.close_all(comment = "EOD-early", immediately = true)
+
+bool canTrade = conf and beforeFlat and not halted
+int  barEntryDir = 0      // direction of an entry already sent this bar
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// STRATEGY 1 — ORB: bias from the breakout, then a close beyond EMA20 against the bias and a later
+// close back on the bias side. Stop = nearest swing, target = day's high/low so far.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+bool orbSent = false
+if conf and orbBias != 0 and bar_index > biasBar and afterOpen
+    if orbSeq == 0
+        if (orbBias == 1 and close < emaFast) or (orbBias == -1 and close > emaFast)
+            orbSeq := 1
+    else
+        bool reclaim = orbBias == 1 ? close > emaFast : close < emaFast
+        if reclaim
+            orbSeq := 0      // a reclaim always restarts the sequence, whether or not it is traded
+            if orbOn and canTrade and orbTradesToday < orbMaxTrades and time_close <= cutoffTs and f_canEnter(ID_ORB, orbBias, barEntryDir)
+                // R:R is judged from the signal close. The market order fills at the next open,
+                // so the realised R:R differs slightly (the table reports what was achieved).
+                float entry = close
+                float stop  = orbBias == 1 ? f_swingBelow(entry) - stopBuf : f_swingAbove(entry) + stopBuf
+                float tgt   = orbBias == 1 ? dayHi : dayLo
+                bool  valid = not na(stop) and not na(tgt) and (orbBias == 1 ? tgt > entry : tgt < entry)
+                if valid
+                    float risk = math.abs(entry - stop)
+                    valid := risk > 0 and math.abs(tgt - entry) / risk >= orbMinRR
+                if valid
+                    strategy.entry(ID_ORB, orbBias == 1 ? strategy.long : strategy.short, qty = qty,
+                         comment = ID_ORB + (orbBias == 1 ? " L" : " S"))
+                    // ⚠ FILL ASSUMPTION: the limit is placed `thruEff` ticks beyond the target so it
+                    // only fills when price trades through. Even then, a touch-fill is assumed at
+                    // that price with no partial fills or queue position; the table reprices it.
+                    strategy.exit(ID_ORB + "-X", from_entry = ID_ORB, stop = stop,
+                         limit = tgt + orbBias * thruEff * tick,
+                         comment_loss = ID_ORB + " SL", comment_profit = ID_ORB + " TP")
+                    orbStopPx := stop
+                    orbTgtPx  := tgt
+                    orbTradesToday += 1
+                    barEntryDir := orbBias
+                    orbSent := true
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// STRATEGY 2 — NOWICK: a no-wick candle makes a level; close through it, close back, enter.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var array<float> lvPx  = array.new<float>()
+var array<int>   lvDir = array.new<int>()    // -1 = bearish level (short setup), +1 = bullish level (long setup)
+var array<int>   lvBar = array.new<int>()
+var array<int>   lvSt  = array.new<int>()    // 0 = waiting for a close beyond, 1 = closed beyond, waiting for the close back
+var array<line>  lvLn  = array.new<line>()
+
+color C_BEAR = color.new(color.red, 0)
+color C_BULL = color.new(color.teal, 0)
+color C_DONE = color.new(color.gray, 60)
+
+f_retireLine(line ln) =>
+    if not na(ln)
+        ln.set_x2(bar_index)
+        ln.set_color(C_DONE)
+        ln.set_style(line.style_dotted)
+
+bool inNwWin = not na(time(timeframe.period, nwSession, TZ))
+int  nwSig   = 0
+bool nwSent  = false
+
+if conf
+    if newDay
+        // Start each day clean: yesterday's levels are retired.
+        int nOld = lvPx.size()
+        if nOld > 0
+            for j = 0 to nOld - 1
+                f_retireLine(lvLn.get(j))
+        lvPx.clear()
+        lvDir.clear()
+        lvBar.clear()
+        lvSt.clear()
+        lvLn.clear()
+
+    // 1) Walk existing levels, newest first, so the newest level wins if several trigger together.
+    int n = lvPx.size()
+    if n > 0
+        for j = n - 1 to 0
+            float px  = lvPx.get(j)
+            int   d   = lvDir.get(j)
+            bool  drop = false
+            if bar_index - lvBar.get(j) > levelLife
+                drop := true                                               // expired
+            else if lvSt.get(j) == 0
+                if (d == -1 and close > px) or (d == 1 and close < px)
+                    lvSt.set(j, 1)                                           // closed through the level
+            else if (d == -1 and close < px) or (d == 1 and close > px)
+                drop := true                     // closed back: the level is used up, traded or not
+                if nwSig == 0
+                    nwSig := d
+            line ln = lvLn.get(j)
+            if drop
+                f_retireLine(ln)
+                lvPx.remove(j)
+                lvDir.remove(j)
+                lvBar.remove(j)
+                lvSt.remove(j)
+                lvLn.remove(j)
+            else if not na(ln)
+                ln.set_x2(bar_index)
+
+    // 2) A new level from THIS bar (evaluated from the next bar on).
+    if inNwWin and afterOpen
+        bool bearNoWick = close < open and math.round((high - open) / tick) <= wickTolTicks
+        bool bullNoWick = close > open and math.round((open - low) / tick) <= wickTolTicks
+        if bearNoWick and (not momAtCreate or momentum == -1)
+            lvPx.push(high)
+            lvDir.push(-1)
+            lvBar.push(bar_index)
+            lvSt.push(0)
+            lvLn.push(nwOn and showLevels ? line.new(bar_index, high, bar_index, high, color = C_BEAR, width = 1) : line(na))
+        if bullNoWick and (not momAtCreate or momentum == 1)
+            lvPx.push(low)
+            lvDir.push(1)
+            lvBar.push(bar_index)
+            lvSt.push(0)
+            lvLn.push(nwOn and showLevels ? line.new(bar_index, low, bar_index, low, color = C_BULL, width = 1) : line(na))
+
+    // 3) Entry. Momentum must STILL agree on the close back through the level.
+    if nwSig != 0 and nwOn and canTrade and inNwWin and momentum == nwSig and f_canEnter(ID_NW, nwSig, barEntryDir)
+        float entry   = close
+        float minDist = minStopTicks * tick
+        // Stop: previous candle's high (short) / low (long). That candle closed beyond the level,
+        // so it is always on the correct side of entry.
+        float stop = nwSig == -1 ? high[1] + stopBuf : low[1] - stopBuf
+        if math.abs(entry - stop) < minDist
+            float sw = nwSig == -1 ? f_swingAbove(entry) : f_swingBelow(entry)
+            stop := na(sw) ? na : nwSig == -1 ? sw + stopBuf : sw - stopBuf
+            if not na(stop) and math.abs(entry - stop) < minDist
+                stop := na                                                   // still too tight: skip
+        if not na(stop)
+            float risk = math.abs(entry - stop)
+            float tgt  = entry + nwSig * nwRR * risk
+            strategy.entry(ID_NW, nwSig == 1 ? strategy.long : strategy.short, qty = qty,
+                 comment = ID_NW + (nwSig == 1 ? " L" : " S"))
+            // ⚠ FILL ASSUMPTION: see the ORB exit — same trade-through handling and caveats.
+            strategy.exit(ID_NW + "-X", from_entry = ID_NW, stop = stop,
+                 limit = tgt + nwSig * thruEff * tick,
+                 comment_loss = ID_NW + " SL", comment_profit = ID_NW + " TP")
+            nwStopPx := stop
+            nwTgtPx  := tgt
+            barEntryDir := nwSig
+            nwSent := true
+
+// Drop a strategy's leftover exit order once its position is gone (e.g. after an EOD flatten), so
+// it can never attach to anything else. Skipped on a bar where that strategy just sent an entry,
+// because that entry's fresh exit order must survive.
+if not orbOpen and not orbSent
+    strategy.cancel(ID_ORB + "-X")
+if not nwOpen and not nwSent
+    strategy.cancel(ID_NW + "-X")
+
+// ⚠ FILL ASSUMPTION (both strategies): stops fill at the stop price + your slippage, and at the
+// open if the bar gaps through. Real stops in a fast market (news, the 09:30 open) can slip far
+// more than a fixed tick count — stress-test by doubling/tripling "Slippage per fill".
+// ⚠ FILL ASSUMPTION: every order is assumed fully filled for any size. Fine for 1–5 MNQ/ES/MGC,
+// questionable for large GC size.
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// PLOTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+bool showDay = afterOpen and time < flatTs
+plot(showEMAs ? emaFast : na, "Fast EMA", color.new(color.orange, 0), 1)
+plot(showEMAs and momMode == M_EMA ? emaSlow : na, "Slow EMA", color.new(color.purple, 0), 1)
+plot(momMode == M_VWAP ? vwapVal : na, "VWAP", color.new(color.blue, 0), 1, plot.style_linebr)
+plot(showOR and showDay and orReady ? orHigh : na, "OR high", color.new(color.green, 30), 2, plot.style_linebr)
+plot(showOR and showDay and orReady ? orLow  : na, "OR low",  color.new(color.red, 30),   2, plot.style_linebr)
+plotshape(biasSetNow and orbBias == 1,  "ORB long bias",  shape.triangleup,   location.belowbar, color.green, size = size.tiny, text = "bias")
+plotshape(biasSetNow and orbBias == -1, "ORB short bias", shape.triangledown, location.abovebar, color.red,   size = size.tiny, text = "bias")
+plot(showTrade and orbOpen ? orbStopPx : na, "ORB stop",   color.new(color.red, 0),   1, plot.style_linebr)
+plot(showTrade and orbOpen ? orbTgtPx  : na, "ORB target", color.new(color.green, 0), 1, plot.style_linebr)
+plot(showTrade and nwOpen  ? nwStopPx  : na, "NOWICK stop",   color.new(color.red, 40),   1, plot.style_circles)
+plot(showTrade and nwOpen  ? nwTgtPx   : na, "NOWICK target", color.new(color.green, 40), 1, plot.style_circles)
+bgcolor(halted and afterOpen and time < flatTs ? color.new(color.red, 90) : na, title = "Daily loss limit hit")
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// RESULTS TABLE (closed trades, re-priced with the Costs inputs)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_pos(string s) =>
+    s == "Top left" ? position.top_left : s == "Bottom right" ? position.bottom_right : s == "Bottom left" ? position.bottom_left : position.top_right
+
+var table tb = table.new(f_pos(tablePosIn), 4, 22, bgcolor = color.new(color.black, 15), border_color = color.new(color.gray, 60), border_width = 1)
+
+f_cell(int c, int r, string t, color tc) =>
+    table.cell(tb, c, r, t, text_color = tc, text_size = size.small,
+         text_halign = c == 0 ? text.align_left : text.align_right)
+
+f_money(float v) =>
+    na(v) ? "—" : str.tostring(v, "#,##0.00")
+
+f_pct(float v) =>
+    na(v) ? "—" : str.tostring(v, "0.0") + "%"
+
+f_pnlColor(float v) =>
+    na(v) or v == 0 ? color.white : v > 0 ? color.new(color.lime, 0) : color.new(color.red, 0)
+
+if barstate.islast and showTable
+    color W = color.white
+    color H = color.new(color.yellow, 0)
+    f_cell(0, 0, "Results (" + strategy.account_currency + ", closed trades)", H)
+    f_cell(1, 0, ID_ORB, H)
+    f_cell(2, 0, ID_NW, H)
+    f_cell(3, 0, "Combined", H)
+    array<string> labels = array.from(
+         "Trades", "Win rate (net)", "Gross P&L", "Net P&L", "Total costs", "Costs % of gross P&L",
+         "Profit factor (net)", "Expectancy / trade (net)", "Avg R achieved (net)",
+         "Avg win (net)", "Avg loss (net)", "Avg cost / trade",
+         "Max drawdown (closed, net)", "Max drawdown %", "Avg trades / day",
+         "Tester net profit (ref.)")
+    for r = 0 to labels.size() - 1
+        f_cell(0, r + 1, labels.get(r), W)
+    for k = 0 to 2
+        int   c      = k + 1
+        float nT     = stTrades.get(k)
+        float wins   = stWins.get(k)
+        float gross  = stGross.get(k)
+        float net    = stNet.get(k)
+        float cost   = stCost.get(k)
+        float winSum = stWinSum.get(k)
+        float lossSum = stLossSum.get(k)
+        float pf     = lossSum < 0 ? winSum / math.abs(lossSum) : na
+        f_cell(c, 1,  str.tostring(nT, "#"), W)
+        f_cell(c, 2,  nT > 0 ? f_pct(wins / nT * 100) : "—", W)
+        f_cell(c, 3,  f_money(gross), f_pnlColor(gross))
+        f_cell(c, 4,  f_money(net), f_pnlColor(net))
+        f_cell(c, 5,  f_money(cost), W)
+        f_cell(c, 6,  gross > 0 ? f_pct(cost / gross * 100) : "n/a (gross ≤ 0)", W)
+        f_cell(c, 7,  na(pf) ? (winSum > 0 ? "∞" : "—") : str.tostring(pf, "0.00"), W)
+        f_cell(c, 8,  nT > 0 ? f_money(net / nT) : "—", f_pnlColor(nT > 0 ? net / nT : na))
+        f_cell(c, 9,  stRCnt.get(k) > 0 ? str.tostring(stRSum.get(k) / stRCnt.get(k), "0.00") + "R" : "—", W)
+        f_cell(c, 10, wins > 0 ? f_money(winSum / wins) : "—", W)
+        f_cell(c, 11, nT - wins > 0 ? f_money(lossSum / (nT - wins)) : "—", W)
+        f_cell(c, 12, nT > 0 ? f_money(cost / nT) : "—", W)
+        f_cell(c, 13, f_money(stDD.get(k)), W)
+        f_cell(c, 14, f_pct(stDDPct.get(k)), W)
+        f_cell(c, 15, daysCount > 0 ? str.tostring(nT / daysCount, "0.00") : "—", W)
+        f_cell(c, 16, f_money(stTester.get(k)), color.new(color.gray, 0))
+    string costNote = "Costs: " + str.tostring(commPerSide, "0.00") + "/contract/side · slip " + str.tostring(slipTicks) + "t" +
+         (slipOnTP ? " (incl. TPs)" : " (not on TPs)") + " · TP trade-through " + str.tostring(thruEff) + "t · " +
+         str.tostring(daysCount) + " sessions · tick " + str.tostring(tick) + " = " + str.tostring(tick * pv, "0.00")
+    f_cell(0, 17, costNote, color.new(color.gray, 0))
+    table.merge_cells(tb, 0, 17, 3, 17)
