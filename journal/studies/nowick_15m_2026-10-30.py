@@ -70,9 +70,9 @@ def run(mom, tol, costs=True, stop_mode="bos", rr=1.0):
             continue
         side = -int(tr[k]) * -1  # bias of the moment at this candle's close
         if side == -1 and F.c[k] < F.o[k] and F.h[k] - F.o[k] <= tol * rng[k]:
-            entry, stop = F.h[k], (last_hi[k] if stop_mode == "bos" else F.h[k - 1])
+            entry, stop = F.h[k], (last_hi[k] if stop_mode == "bos" else F.h[k - 1] if stop_mode == "prev" else F.h[k] + stop_mode)
         elif side == 1 and F.c[k] > F.o[k] and F.o[k] - F.l[k] <= tol * rng[k]:
-            entry, stop = F.l[k], (last_lo[k] if stop_mode == "bos" else F.l[k - 1])
+            entry, stop = F.l[k], (last_lo[k] if stop_mode == "bos" else F.l[k - 1] if stop_mode == "prev" else F.l[k] - stop_mode)
         else:
             continue
         if np.isnan(stop) or (stop - entry) * side >= 0:   # the stop level must be beyond the entry

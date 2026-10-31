@@ -90,3 +90,10 @@ shorts −0.21R. Better than the 10m-EMA version (−0.31R) but no edge. Not ado
 Half at 1:1 then break even (owner): win rate rises to 45-47% but the average stays negative. Futures costs,
 2021-01 → 2026-10: pullback stop 677 won / 769 lost, −0.10R a trade, −142R, every year negative; reclaim-candle
 stop −0.14R to −0.21R a year. ~23% of trades reach 1:1 then go back to entry; ~53% are stopped before 1:1.
+
+## 2026-10-31 — no-wick 15m with a fixed 10-point stop and a 1:2 target (owner)
+NAS100, momentum = 15m structure / 20-EMA / last 3 candles. NQ-futures-like costs, strict no wick: last 100 days
+57-69 trades, 35-39% won, −0.6R to +6.8R; earlier history 2021-01 → 2026-06 (2,100-2,360 trades) 32-33% won,
+−0.07 to −0.09R a trade, −157R to −179R. Wicks allowed: −0.10R a trade everywhere. OANDA's spread (~2 pt = 20% of a
+10-pt stop): −0.22 to −0.26R a trade. Break-even at 1:2 needs 33% + costs; it wins 32-33%. Not adopted.
+(`journal/studies/nowick_fixed10_2026-10-31.py`, `nowick_fixed10_nas100_2026-10-31.txt`)

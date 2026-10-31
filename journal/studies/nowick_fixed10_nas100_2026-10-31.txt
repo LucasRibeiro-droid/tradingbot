@@ -1,0 +1,40 @@
+
+=== costs: futures ===
+A structure  wick<=0% last 100 days: 59 trades, won 22 lost 37 (37.3%), avg +0.079R, total +4.7R (+47 pts; NQ $20/pt $+932)
+             wick<=0% 2021-01..2026-06 : 2283 trades, won 746 lost 1537 (32.7%), avg -0.069R, total -156.7R (-1,581 pts; NQ $20/pt $-31,615)  | 2021 -37R 2022 -47R 2023 +6R 2024 -72R 2025 -14R 2026 +8R
+A structure  wick<=5% last 100 days: 476 trades, won 149 lost 327 (31.3%), avg -0.104R, total -49.3R (-495 pts; NQ $20/pt $-9,892)
+             wick<=5% 2021-01..2026-06 : 6873 trades, won 2168 lost 4705 (31.5%), avg -0.106R, total -730.2R (-7,316 pts; NQ $20/pt $-146,310)  | 2021 -114R 2022 -169R 2023 -90R 2024 -211R 2025 -110R 2026 -36R
+A structure  wick<=10% last 100 days: 790 trades, won 252 lost 538 (31.9%), avg -0.089R, total -70.5R (-706 pts; NQ $20/pt $-14,126)
+             wick<=10% 2021-01..2026-06 : 10150 trades, won 3204 lost 6946 (31.6%), avg -0.106R, total -1077.3R (-10,771 pts; NQ $20/pt $-215,412)  | 2021 -197R 2022 -239R 2023 -116R 2024 -292R 2025 -162R 2026 -72R
+B ema20      wick<=0% last 100 days: 69 trades, won 27 lost 42 (39.1%), avg +0.098R, total +6.8R (+68 pts; NQ $20/pt $+1,352)
+             wick<=0% 2021-01..2026-06 : 2358 trades, won 766 lost 1592 (32.5%), avg -0.074R, total -174.1R (-1,739 pts; NQ $20/pt $-34,779)  | 2021 -38R 2022 -66R 2023 -29R 2024 -46R 2025 -0R 2026 +6R
+B ema20      wick<=5% last 100 days: 496 trades, won 157 lost 339 (31.7%), avg -0.098R, total -48.7R (-488 pts; NQ $20/pt $-9,765)
+             wick<=5% 2021-01..2026-06 : 6984 trades, won 2215 lost 4769 (31.7%), avg -0.101R, total -703.7R (-7,038 pts; NQ $20/pt $-140,769)  | 2021 -127R 2022 -209R 2023 -140R 2024 -135R 2025 -90R 2026 -3R
+B ema20      wick<=10% last 100 days: 798 trades, won 253 lost 545 (31.7%), avg -0.099R, total -79.3R (-795 pts; NQ $20/pt $-15,896)
+             wick<=10% 2021-01..2026-06 : 10271 trades, won 3236 lost 7035 (31.5%), avg -0.108R, total -1111.9R (-11,109 pts; NQ $20/pt $-222,181)  | 2021 -237R 2022 -290R 2023 -148R 2024 -219R 2025 -164R 2026 -54R
+C last3      wick<=0% last 100 days: 57 trades, won 20 lost 37 (35.1%), avg -0.010R, total -0.6R (-6 pts; NQ $20/pt $-111)
+             wick<=0% 2021-01..2026-06 : 2100 trades, won 674 lost 1426 (32.1%), avg -0.085R, total -179.4R (-1,793 pts; NQ $20/pt $-35,861)  | 2021 -57R 2022 -23R 2023 -41R 2024 -38R 2025 -21R 2026 -1R
+C last3      wick<=5% last 100 days: 466 trades, won 159 lost 307 (34.1%), avg -0.020R, total -9.4R (-95 pts; NQ $20/pt $-1,910)
+             wick<=5% 2021-01..2026-06 : 6407 trades, won 2035 lost 4372 (31.8%), avg -0.099R, total -634.3R (-6,333 pts; NQ $20/pt $-126,655)  | 2021 -95R 2022 -140R 2023 -111R 2024 -133R 2025 -134R 2026 -22R
+C last3      wick<=10% last 100 days: 784 trades, won 265 lost 519 (33.8%), avg -0.032R, total -24.8R (-249 pts; NQ $20/pt $-4,988)
+             wick<=10% 2021-01..2026-06 : 9715 trades, won 3070 lost 6645 (31.6%), avg -0.105R, total -1017.6R (-10,167 pts; NQ $20/pt $-203,334)  | 2021 -151R 2022 -266R 2023 -171R 2024 -232R 2025 -130R 2026 -67R
+
+=== costs: oanda ===
+A structure  wick<=0% last 100 days: 58 trades, won 18 lost 40 (31.0%), avg -0.118R, total -6.8R (-68 pts; NQ $20/pt $-1,367)
+             wick<=0% 2021-01..2026-06 : 2221 trades, won 621 lost 1600 (28.0%), avg -0.224R, total -497.5R (-4,973 pts; NQ $20/pt $-99,461)  | 2021 -92R 2022 -105R 2023 -80R 2024 -127R 2025 -75R 2026 -18R
+A structure  wick<=5% last 100 days: 468 trades, won 115 lost 353 (24.6%), avg -0.325R, total -152.3R (-1,523 pts; NQ $20/pt $-30,460)
+             wick<=5% 2021-01..2026-06 : 6733 trades, won 1833 lost 4900 (27.2%), avg -0.250R, total -1683.0R (-16,821 pts; NQ $20/pt $-336,420)  | 2021 -257R 2022 -329R 2023 -233R 2024 -414R 2025 -328R 2026 -123R
+A structure  wick<=10% last 100 days: 780 trades, won 198 lost 582 (25.4%), avg -0.305R, total -238.1R (-2,381 pts; NQ $20/pt $-47,615)
+             wick<=10% 2021-01..2026-06 : 9952 trades, won 2704 lost 7248 (27.2%), avg -0.253R, total -2513.2R (-25,113 pts; NQ $20/pt $-502,269)  | 2021 -402R 2022 -477R 2023 -337R 2024 -567R 2025 -514R 2026 -216R
+B ema20      wick<=0% last 100 days: 68 trades, won 24 lost 44 (35.3%), avg -0.030R, total -2.1R (-21 pts; NQ $20/pt $-413)
+             wick<=0% 2021-01..2026-06 : 2282 trades, won 629 lost 1653 (27.6%), avg -0.238R, total -542.9R (-5,422 pts; NQ $20/pt $-108,447)  | 2021 -88R 2022 -128R 2023 -126R 2024 -112R 2025 -69R 2026 -20R
+B ema20      wick<=5% last 100 days: 484 trades, won 122 lost 362 (25.2%), avg -0.311R, total -150.7R (-1,507 pts; NQ $20/pt $-30,149)
+             wick<=5% 2021-01..2026-06 : 6813 trades, won 1855 lost 4958 (27.2%), avg -0.250R, total -1705.7R (-17,040 pts; NQ $20/pt $-340,798)  | 2021 -268R 2022 -374R 2023 -299R 2024 -339R 2025 -310R 2026 -116R
+B ema20      wick<=10% last 100 days: 778 trades, won 195 lost 583 (25.1%), avg -0.319R, total -248.6R (-2,486 pts; NQ $20/pt $-49,713)
+             wick<=10% 2021-01..2026-06 : 10039 trades, won 2710 lost 7329 (27.0%), avg -0.258R, total -2591.8R (-25,897 pts; NQ $20/pt $-517,945)  | 2021 -429R 2022 -533R 2023 -378R 2024 -509R 2025 -527R 2026 -215R
+C last3      wick<=0% last 100 days: 56 trades, won 18 lost 38 (32.1%), avg -0.120R, total -6.7R (-67 pts; NQ $20/pt $-1,347)
+             wick<=0% 2021-01..2026-06 : 1963 trades, won 531 lost 1432 (27.1%), avg -0.253R, total -495.8R (-4,951 pts; NQ $20/pt $-99,022)  | 2021 -103R 2022 -75R 2023 -125R 2024 -92R 2025 -80R 2026 -21R
+C last3      wick<=5% last 100 days: 446 trades, won 124 lost 322 (27.8%), avg -0.228R, total -101.5R (-1,015 pts; NQ $20/pt $-20,301)
+             wick<=5% 2021-01..2026-06 : 6118 trades, won 1672 lost 4446 (27.3%), avg -0.246R, total -1507.8R (-15,066 pts; NQ $20/pt $-301,329)  | 2021 -232R 2022 -274R 2023 -240R 2024 -340R 2025 -306R 2026 -116R
+C last3      wick<=10% last 100 days: 752 trades, won 205 lost 547 (27.3%), avg -0.248R, total -186.2R (-1,861 pts; NQ $20/pt $-37,225)
+             wick<=10% 2021-01..2026-06 : 9371 trades, won 2553 lost 6818 (27.2%), avg -0.249R, total -2336.7R (-23,355 pts; NQ $20/pt $-467,104)  | 2021 -356R 2022 -466R 2023 -358R 2024 -489R 2025 -462R 2026 -205R
