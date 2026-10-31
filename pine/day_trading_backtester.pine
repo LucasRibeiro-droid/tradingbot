@@ -66,7 +66,10 @@ strategy(title = "Day Trading Backtester — ORB + NOWICK (cost-aware)",
      // if both levels fall inside the same LOWER-timeframe bar, the same guess is made there.
      // The magnifier needs a plan that supports it and only reaches back as far as the
      // lower-timeframe history does; older bars silently fall back to the OHLC guess.
-     use_bar_magnifier = true,
+     // OFF by default because the free TradingView plan raises a runtime error when it is on.
+     // On a paid plan, switch it on in the Strategy Tester ("High detalization" / Bar magnifier),
+     // or change this to true — results are noticeably more trustworthy with it.
+     use_bar_magnifier = false,
      fill_orders_on_standard_ohlc = true,
      // Keep at 0: the script implements its own (input-driven) trade-through for take-profits.
      // Setting "Verify price for limit orders" in Properties as well would double-count it.

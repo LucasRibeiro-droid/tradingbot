@@ -145,11 +145,11 @@ NOWICK level lines, and the stop/target lines of open trades.
 | Slippage | **Same as "Slippage set in Properties"** (default 1) | Lets the table remove it and apply your slippage instead. |
 | Margin for long / short | **0 %** | Turns off TradingView's margin-call simulation, which would wrongly liquidate futures positions. |
 | Recalculate: after order is filled / on every tick | **Off / Off** | Signals are calculated on confirmed bar closes only. |
-| Fill orders: using bar magnifier | **On** | See the limitations below. Needs a TradingView plan that includes Bar Magnifier. |
+| Fill orders: using bar magnifier ("High detalization" in the newer tester) | **On if your plan allows it** | Off by default in the script, because the free plan throws a runtime error ("upgrade for higher bar detalization") when it is on. On a paid plan, turn it on: it makes stop/target-in-the-same-bar fills far more trustworthy. See the limitations below. |
 | Fill orders: on bar close | **Off** | Off is realistic: entries fill at the next bar's open. Turning it on fills at the signal close, which is optimistic, so use it only for comparison. |
 | Fill orders: using standard OHLC | On | Only matters on non-standard chart types such as Heikin Ashi. |
 
-These are all already set as defaults in the `strategy()` call. You only need to check them if
+All of these except the bar magnifier are already set as defaults in the `strategy()` call. You only need to check them if
 you've changed something.
 
 ---
