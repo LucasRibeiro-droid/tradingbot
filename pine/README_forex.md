@@ -7,7 +7,7 @@ recent swing, and targets a fixed 1:1. The difference is that it's set up for **
 [README.md](README.md). This file only covers what's different.
 
 ## Adding it to a chart
-1. Open a forex pair, for example `OANDA:EURUSD`, `FX:GBPUSD` or `OANDA:USDJPY`, and set the
+1. Open a forex pair (the script stops with an error on futures or stocks), for example `OANDA:EURUSD`, `FX:GBPUSD` or `OANDA:USDJPY`, and set the
    timeframe to **15m**.
 2. In the Pine Editor, create a new script (**script name ▸ Create new ▸ Strategy**). Paste the
    contents of `nowick_forex.pine`, then click **Save** and **Add to chart**.

@@ -161,6 +161,9 @@ f_acc(float v) =>
 int tfSec = timeframe.in_seconds()
 if barstate.isfirst and not timeframe.isintraday
     runtime.error("Use an intraday chart (the script is designed for 15 minutes).")
+// Guard: on a futures/stock chart, "1 lot = 100,000 units" would mean 100,000 contracts/shares.
+if barstate.isfirst and syminfo.type != "forex"
+    runtime.error("NOWICK FX is for forex pairs (e.g. OANDA:EURUSD). For futures like NQ1!/MNQ1!/ES1!/MGC1! use day_trading_backtester.pine instead.")
 int momBars = math.max(1, int(math.round(momMinutes * 60 / tfSec)))   // 30 min on 15m = 2 bars
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
