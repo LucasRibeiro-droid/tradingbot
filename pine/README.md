@@ -1,88 +1,84 @@
-# NOWICK Backtester: no-wick candle levels (Pine Script v6)
+# NOWICK Trend Backtester: tap entries on no-wick candles (Pine Script v6)
 
-`day_trading_backtester.pine` is a TradingView strategy that finds **no-wick candles**, draws a
-level from each one, and trades the **close through and close back** of that level. It only takes
-setups when price has real momentum, not while it is consolidating.
+`day_trading_backtester.pine` is a TradingView strategy that trades **with the trend**. When a
+**no-wick candle** forms in the trend's direction, it rests a limit order at that candle's
+open-side extreme. It enters when price **taps** that level, with the stop at the **most recent
+swing** and a **fixed 1:1** take-profit.
 
-It runs on a **3-minute chart** of **MNQ, ES, MGC or GC**, one instrument per chart. Commission and
-slippage are modelled realistically, and the results are shown in a table on the chart.
+It runs on a **5-minute chart** of **MNQ, ES, MGC or GC**, one instrument per chart. Commission
+and slippage are modelled realistically, and the results are shown in a table on the chart.
 
 ---
 
 ## 1. Adding it to a chart
 
-1. Open a chart of `MNQ1!`, `ES1!`, `MGC1!` or `GC1!` and set the timeframe to **3m**. If the chart
-   has a **B-ADJ** (back-adjust) toggle, turn it off.
-2. In the **Pine Editor**, create a new script (**script name ▸ Create new ▸ Strategy**). Delete
-   the template code and paste in the whole file.
-3. Click **Save**, then **Add to chart** (▶). Don't click **Publish**, which posts the script
-   publicly.
-4. In the Strategy Tester, set the **date range** to the longest one available, and set the
-   **initial capital** to your account size.
-5. Under **Inputs ▸ Costs**, enter your broker's commission.
-
-On the **free TradingView plan**:
-- leave "High detalization" / bar magnifier **off**, because it is a paid feature and causes a
-  runtime error;
-- expect only about two weeks of 3-minute history.
+1. Open `MNQ1!`, `ES1!`, `MGC1!` or `GC1!` and set the timeframe to **5m**. If the chart has a
+   **B-ADJ** (back-adjust) toggle, turn it off.
+2. In the **Pine Editor**, create a new script (**script name ▸ Create new ▸ Strategy**), or open
+   your existing one. Select all, paste the whole file, then click **Save** and **Add to chart**
+   (▶). Don't click **Publish**, which posts the script publicly.
+3. In the Strategy Tester:
+   - set the date range to the longest one available;
+   - set the initial capital to your account size;
+   - on the **free plan**, leave "High detalization" (bar magnifier) **off**.
+4. Under **Inputs ▸ Costs**, enter your broker's commission.
 
 ---
 
-## 2. What you see on the chart
+## 2. The rules
+
+These are written for a **short**. A long is the mirror image: a bullish candle with no bottom
+wick, a buy limit at its low, and the stop at the most recent swing low.
+
+1. **Trend.** Over the last *Look-back window* minutes (default 30, which is 6 bars on 5m), two
+   things must both be true:
+   - Price has moved **down by at least X × ATR**, measured as the close now minus the close at the
+     start of the window.
+   - It got there fairly directly. **Efficiency** is the net move ÷ the total distance travelled,
+     and must be ≥ the minimum (default 0.35).
+
+   If either check fails, the market counts as **consolidating** and nothing is traded. Only
+   bearish no-wick candles in a downtrend, and bullish ones in an uptrend, are used.
+2. **No-wick candle.** A bearish candle where `high − open ≤ wick tolerance` (default 0 ticks)
+   marks a level at its **high**.
+3. **Order.** When that candle closes, a **sell limit** is placed at the level.
+4. **Entry.** Price only needs to **tap** the level. The order fills there, or at a better price if
+   the bar opens beyond it.
+5. **Stop-loss** is at the **most recent confirmed swing high above the entry**. A swing high is a
+   high with *left/right* lower highs either side, so it is confirmed *right* bars after it prints.
+   The setup is skipped in either of these cases:
+   - there is no swing high above the level;
+   - the swing is closer than the *Minimum stop distance*.
+6. **Take-profit** is fixed at **1:1**: the same distance below entry as the stop is above it. The
+   R multiple is an input.
+7. **While the order waits,** the stop and target are recalculated every bar, in case a newer
+   swing prints. The order is cancelled in any of these cases:
+   - it isn't filled within *Cancel the entry order after* bars (default 12 = 1 hour);
+   - the trend flips the other way (input, on by default);
+   - the trading window ends, the flatten time is reached, or the daily loss limit is hit.
+
+   A newer qualifying no-wick candle replaces the waiting order.
+8. **One position at a time.** No-wick candles that form during a trade are ignored. Everything is
+   flattened at 15:55 ET.
+
+---
+
+## 3. What you see on the chart
 
 | Mark | Meaning |
 |---|---|
-| Red **▼ NW** above a candle | Bearish no-wick candle that **created a level** (momentum was bearish). |
-| Teal **▲ NW** below a candle | Bullish no-wick candle that **created a level** (momentum was bullish). |
-| Grey **×** | No-wick candle **ignored**: price was consolidating, momentum pointed the wrong way, or the candle was outside the trading window. |
-| Thin line from the candle | Active level. |
-| Line turns **thick and dashed** | Price has closed through the level. The level is now *armed*, waiting for the close back. |
-| Grey dotted line | Level finished: used, or expired. |
-| **Red box** | Risk zone, from entry to the stop-loss. The label shows the SL price and its distance in ticks. |
-| **Green box** | Reward zone, from entry to the take-profit. The label shows the TP price and the R multiple. |
-| White line + "Entry" label | Entry. It starts at the signal close ("Entry ~") and moves to the real fill price on the next bar. |
+| Red **▼ NW** / teal **▲ NW** | A no-wick candle with the trend: a sell / buy limit was placed at its high / low. |
+| Grey **×** | A no-wick candle that was ignored: no trend (consolidating), against the trend, or outside the trading window. |
+| Thick dashed line | The waiting limit order at the level. It turns grey and dotted when filled, cancelled or replaced. |
+| **Red box** | Risk: from entry to the stop-loss. The label shows the SL price and its distance in ticks. |
+| **Green box** | Reward: from entry to the take-profit. The label shows the TP price and "1R". |
+| White line + "LONG / SHORT" label | Entry level. |
 | Label at the exit | How the trade ended (`TP`, `SL`, `EOD`, `DLL`), plus the net result in currency and in R. |
-| Light green / red background | Momentum is bullish / bearish. **No tint means consolidating**, so no setups are taken. |
-
-TradingView's own entry and exit arrows also appear, labelled `NOWICK L` / `NOWICK S` for entries
-and `TP` / `SL` / `EOD` for exits.
+| Light green / red background | Trend up / down. **No tint means consolidating.** |
+| Orange dots (optional) | Swing highs and lows used for stops. Turn on "Mark swing highs / lows" in Display. |
 
 You can set up **alerts** using Alert ▸ Condition: this strategy ▸ "alert() function calls only".
-An alert fires when a level is created and when a trade is entered.
-
----
-
-## 3. The rules
-
-These are written for a **short**. A long is the mirror image: a bullish candle with no bottom wick
-makes a level at its low.
-
-1. **Momentum.** Over the last *Look-back window* minutes (default 30, so 10 bars on a 3m chart),
-   two things must both be true:
-   - Price has moved **down by at least X × ATR**, measured as the close now minus the close at the
-     start of the window.
-   - It got there fairly directly. **Efficiency** is the net move ÷ the total distance price
-     travelled, and must be ≥ the minimum (default 0.35).
-
-   If either check fails, the market counts as **consolidating** and the no-wick candle is ignored.
-2. **Level.** A bearish candle where `high − open ≤ wick tolerance` (default 0 ticks), formed while
-   momentum is bearish, creates a level at its high.
-3. **Trigger.** Price must **close above** the level and then **close back below** it. The short is
-   sent on that close and fills at the next bar's open.
-   - The trade is **skipped if momentum has turned bullish** by then.
-   - If you turn on "Require momentum still strong at entry", momentum must still be bearish and
-     pass both checks.
-4. **Stop-loss.** This is the **previous candle's high**.
-   - If that is closer than the *Minimum stop distance*, the stop moves to **the high of the candle
-     before it**.
-   - With *Candles to look back* above 2, it keeps stepping back one candle at a time.
-   - If no candle gives a stop far enough away, the trade is skipped.
-5. **Take-profit** is placed at **R multiple × risk** (default 2R).
-6. **Level lifetime.** A level is removed after *N* bars (default 20) or on its first close back,
-   whether or not a trade was taken. If several levels trigger on the same bar, the newest one is
-   used.
-7. **Position limits.** Only one position is held at a time. Trades are only taken inside the
-   trading window, and everything is closed at the flatten time.
+An alert fires when an order is placed and when it fills.
 
 ---
 
@@ -92,50 +88,44 @@ makes a level at its low.
 | Input | Default | What it does |
 |---|---|---|
 | Wick tolerance (ticks) | 0 | How big a wick is still counted as "no wick". |
-| Level expires after (bars) | 20 | How long a level stays active. |
-| Take profit (R multiple) | 2.0 | Target as a multiple of the stop distance. |
-| Trading window (ET) | 09:30–15:45 | Levels are created, and trades taken, only inside this window. |
+| Cancel the entry order after (bars) | 12 | How long the limit waits for the tap. |
+| Take profit (R multiple) | 1.0 | 1.0 = 1:1. |
+| Trading window (ET) | 09:30–15:45 | Orders are only placed, and only fill, inside this window. |
 
-### Stop loss
+### Stop loss (most recent swing)
 | Input | Default | What it does |
 |---|---|---|
-| Minimum stop distance (ticks) | 8 | Stops closer than this are not allowed. MNQ/ES: 8 ticks = 2 points. MGC/GC: 8 ticks = $0.80. |
-| Candles to look back for the stop | 2 | 1 = previous candle only. 2 = previous candle, then the one before it. Higher = keep stepping back. |
-| Stop buffer (ticks) | 0 | Extra ticks beyond the candle's high or low. |
+| Swing left / right bars | 2 / 2 | Defines a swing. A larger *right* value means fewer, but later-confirmed, swings. |
+| Max swing age (bars) | 60 | Older swings are ignored. |
+| Minimum stop distance (ticks) | 8 | Skips setups whose swing stop is closer than this. |
+| Stop buffer (ticks) | 0 | Extra ticks beyond the swing. |
 
-### Momentum (no trades while consolidating)
+### Trend filter
 | Input | Default | What it does |
 |---|---|---|
-| Look-back window (minutes) | 30 | 15–30 is the range you asked for. On a 3m chart, 15 = 5 bars and 30 = 10 bars. |
-| Minimum net move (× ATR) | 1.0 | How far price must have travelled over the window. Raise it to be stricter. |
-| Minimum directional efficiency (0–1) | 0.35 | How "one-way" the move must be. Raise it to filter out more chop. |
-| ATR length (bars) | 14 | Volatility yardstick for the net-move test. |
-| Require momentum still strong at entry | off | Off: entry is only blocked if momentum turned the other way. On: momentum must still pass both checks. |
-
-The background tint shows what the filter sees. If grey × marks appear on candles you would have
-traded, the filter is too strict for your taste; if setups are being taken in obvious ranges, it
-is too loose. Adjust the two thresholds accordingly.
+| Look-back window (minutes) | 30 | 15–30 recommended. |
+| Minimum net move (× ATR) | 1.0 | How far price must have moved over the window. |
+| Minimum directional efficiency | 0.35 | How "one-way" the move must be. |
+| ATR length | 14 | — |
+| Cancel a waiting order if the trend flips | on | — |
 
 ### Day trading rules
 | Input | Default | What it does |
 |---|---|---|
 | Contracts per trade | 1 | — |
-| Trading day starts (ET) | 09:30 | Daily reset for the loss limit and for the levels. Use 08:20 for gold if you trade the COMEX open. |
-| Flatten all at (ET) | 15:55 | Any open position is closed at the next bar's open after this time. |
-| Daily loss limit | off / 500 | Adds realised net P&L today to the estimated open P&L. If that reaches −limit, the position is closed and trading stops until the next day. |
+| Trading day starts (ET) | 09:30 | Daily reset for the loss limit. Use 08:20 for gold if you trade the COMEX open. |
+| Flatten all at (ET) | 15:55 | Closes any position and cancels any waiting order. |
+| Daily loss limit | off / 500 | When reached, closes everything and stops trading until the next day. |
 
 ### Costs: the stress-test panel
 | Input | Default | What it does |
 |---|---|---|
 | Commission per contract per side | 0.62 | Your all-in rate, charged on entry and exit. |
-| Slippage per fill (ticks) | 1 | Charged on every market/stop fill. |
-| Apply slippage to take-profit fills too | on | TradingView never slips limit orders; this charges slippage on TP exits as well. |
-| Require trade-through / distance | on / 1 tick | A take-profit only counts once price trades this far beyond the target. |
+| Slippage per fill (ticks) | 1 | Always charged on stop-loss, EOD and DLL exits. |
+| Apply slippage to limit fills too | on | Also charges slippage on tap entries and take-profits. TradingView never slips limits. |
+| Entry: ticks price must trade THROUGH the level | 0 | 0 = a tap fills you, as your rule says. Try 1 to see how much the results depend on perfect tap fills. |
+| Take-profit: ticks price must trade THROUGH the target | 1 | A take-profit only counts once price goes this far beyond it. |
 | Slippage set in Properties (ticks) | 1 | **Must equal** Settings ▸ Properties ▸ Slippage. |
-
-### Display
-Each element can be switched on or off: the table and its corner, no-wick marks, filtered marks,
-level lines, trade boxes and the momentum tint.
 
 ---
 
@@ -150,30 +140,33 @@ level lines, trade boxes and the momentum tint.
 | Margin long / short | 0 % |
 | Recalculate after order filled / on every tick | Off / Off |
 | Fill orders on bar close | Off |
-| Bar magnifier / "High detalization" | Off on the free plan. **On** if your plan allows it. |
+| Bar magnifier / "High detalization" | Off on the free plan. **On** if your plan allows it, because it matters a lot for this setup. |
 
 ---
 
 ## 6. The results table
 
-The table has columns for **Longs**, **Shorts** and **All**. It only counts closed trades and
-re-prices each one using the Costs inputs:
+The table has columns for **Longs**, **Shorts** and **All**. It only counts closed trades, each
+re-priced using the Costs inputs:
 
-- **Gross P&L** is the result at frictionless prices. The Tester's own slippage is removed, and
-  take-profit fills are moved back to the target.
+- **Gross P&L** is the result at frictionless prices: entry at the level, take-profit at the
+  target, and the Tester's own slippage removed.
 - **Costs** = commission × 2, plus slippage on each fill.
 - **Net P&L** = gross − costs. Win rate, profit factor, expectancy, average win/loss, R and
   drawdown are all calculated on net.
-- **Tester net profit (ref.)** is TradingView's own figure. It is usually a little higher than the
-  table's, because the Tester fills take-profits beyond the target without slippage.
+- **Tester net profit (ref.)** is TradingView's own figure.
 
 Two rows below the main table:
 
-- **Setups funnel.** It counts how many no-wick candles appeared, how many were filtered out as
-  consolidation, how many became levels, how many closed back through, and how many were traded.
-  It also shows why setups were skipped: stop too tight, momentum flipped, or position open /
-  outside hours. Use it to see what each rule is doing.
+- **Setups funnel.** It counts how many no-wick candles appeared, how many were filtered out (no
+  trend), how many orders were placed, and how many were tapped and filled. It also shows why
+  orders didn't fill (expired, trend flipped, replaced) and why setups were skipped (no valid
+  swing stop, already in a trade).
 - **Costs line.** It shows the cost settings the run used.
+
+**At 1:1, costs matter a lot.** On MNQ, one round trip costs about $2.24 with the defaults, while
+an 8-tick stop risks $4. You'd need to win well over 50% of trades just to break even. Watch the
+"Costs % of gross P&L" and "Avg R achieved" rows.
 
 ---
 
@@ -182,18 +175,20 @@ Two rows below the main table:
 Each place where TradingView's fill assumptions could be optimistic is marked
 `⚠ FILL ASSUMPTION` in the code.
 
-- **Stop and target inside the same bar.** Without the bar magnifier (a paid feature), TradingView
-  guesses the price path inside the bar, which can turn losers into winners. On the free plan,
-  treat trades that open and close within one or two bars with suspicion.
-- **Limit fills.** A take-profit is assumed to fill completely once price trades through it by the
-  set number of ticks.
-- **Stop slippage is a fixed number of ticks.** Real stops at the open or during news can slip
-  more. Stress-test with 2–4 ticks.
-- **Planned vs actual entry.** The stop and target are calculated from the signal close, but the
-  trade fills at the next open. The "Avg R achieved" row reflects the real fill.
+- **Entry and exit in the same bar.** Tap entries fill inside a bar, so the entry and the stop or
+  target are often touched in the same 5-minute bar. Without the bar magnifier (a paid feature),
+  TradingView guesses which happened first, and that guess can turn real losers into winners. This
+  is the biggest weakness of a free-plan test of this setup. Be suspicious of trades that open and
+  close in the same bar.
+- **Tap fills.** A resting order at the exact level is assumed to fill completely on a single tap.
+  Live, you may not be filled because of your place in the queue. Test with entry trade-through =
+  1 to see how sensitive the results are.
+- **Stop slippage is a fixed number of ticks.** Stress-test with 2–4 ticks.
+- **Swing confirmation lag.** A swing only counts once *right* bars have passed, so a very recent
+  high may not be used yet.
 - **Daily loss limit** is only checked on bar closes.
 - **Early-close days** are detected using TradingView's session calendar. Check trades on holidays.
-- **Sample size.** On the free plan, about two weeks of data gives only a handful of trades. Don't
-  tune the settings to that; you need 100+ trades before the numbers mean much.
-- **Untested.** I couldn't compile this script myself, so reconcile a few trades by hand against
-  the chart and paper-trade before risking money.
+- **Sample size.** About two weeks of free-plan data isn't enough to judge anything. Aim for 100+
+  trades.
+- **Untested.** I couldn't compile this script myself, so reconcile a few trades by hand and
+  paper-trade before risking money.
