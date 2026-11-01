@@ -192,3 +192,16 @@ Each place where TradingView's fill assumptions could be optimistic is marked
   trades.
 - **Untested.** I couldn't compile this script myself, so reconcile a few trades by hand and
   paper-trade before risking money.
+
+---
+
+## 8. Other versions in this folder
+
+| File | Market | Chart | Notes |
+|---|---|---|---|
+| `day_trading_backtester.pine` | Futures | 5m | This README. |
+| `nowick_futures_15m.pine` | Futures (MNQ, NQ, ES, MES, MGC, GC) | **15m** | Same rules and inputs as this README. The defaults are adjusted so they mean the same time on 15m: the order waits **4 bars (1 hour)**, and the 30-minute trend window is 2 bars (raise it to 60–120 for a steadier read). It stops with an error on non-futures charts. |
+| `nowick_forex.pine` | Forex pairs | 15m | Lots, pips and spread. See [README_forex.md](README_forex.md). It stops with an error on non-forex charts. |
+
+**Commission reminder:** the 0.62 default is a **micro** rate (MNQ, MES, MGC). For **NQ, ES or GC**,
+enter your broker's full-size rate, usually about 2.00–2.50 per side.

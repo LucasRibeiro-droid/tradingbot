@@ -1,0 +1,610 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  NOWICK TREND BACKTESTER — FUTURES, 15-MINUTE CHART
+//  Same strategy as nowick_forex.pine (forex, 15m), sized in contracts/ticks for futures.
+//  Trade with the trend on the retest (tap) of a no-wick candle
+//  Cost-aware: commission, slippage on every fill (optionally on limit fills too) and optional
+//  "trade-through" requirements before a limit order counts as filled.
+//
+//  Built for a 15-minute chart of MNQ / NQ / ES / MES / MGC / GC (one instrument per chart).
+//  All session times are America/New_York, so DST is handled automatically.
+//
+//  THE SETUP (short; long is the mirror image)
+//   1. Trend: over the last N minutes (default 30 = 2 bars on 15m) price must have moved DOWN by at least X × ATR,
+//      and fairly directly (efficiency ratio). Otherwise the market is treated as consolidating
+//      and no-wick candles are ignored (grey ×). Only shorts in a downtrend, longs in an uptrend.
+//   2. A bearish candle with no top wick (high − open ≤ tolerance) marks a level at its high.
+//      As soon as that candle closes, a SELL LIMIT order is placed at the level.
+//   3. Entry: price only has to TAP the level (come back up to it) — the limit order fills there.
+//   4. Stop: the most recent confirmed swing high above the entry.
+//   5. Take profit: fixed 1:1 (R multiple input, default 1.0).
+//   The pending order is cancelled if it is not filled within N bars, if the trend flips the other
+//   way, at the end of the trading window / flatten time, or when a newer no-wick candle replaces it.
+//   Stop and target are recalculated each bar while the order waits (a newer swing may print).
+//
+//  HOW THE RESULTS ARE PRODUCED
+//   TradingView never slips limit orders and a Pine limit has ONE price (trigger = fill). So the
+//   table re-prices every closed trade from the Tester's raw fills: removes the Tester's own
+//   slippage, moves trade-through limit fills back to the real level/target, and charges YOUR
+//   Costs inputs on every fill. The TABLE is the realistic ledger; the Tester's own net profit is
+//   shown as a reference row.
+//
+//  ⚠ OPTIMISTIC-FILL WARNINGS are marked with  "⚠ FILL ASSUMPTION"  throughout the code.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+strategy(title = "NOWICK Trend Backtester — Futures 15m (cost-aware)",
+     shorttitle = "NOWICK FUT 15m",
+     overlay = true,
+     pyramiding = 1,
+     initial_capital = 50000,
+     default_qty_type = strategy.fixed,
+     default_qty_value = 1,
+     // Commission/slippage here only drive the Strategy Tester's OWN numbers (reference only).
+     // Pine requires constants here; the table uses the "Costs" inputs instead.
+     commission_type = strategy.commission.cash_per_contract,
+     commission_value = 0.62,
+     slippage = 1,
+     margin_long = 0,
+     margin_short = 0,
+     process_orders_on_close = false,
+     calc_on_every_tick = false,
+     calc_on_order_fills = false,
+     // ⚠ FILL ASSUMPTION: entries are limit orders that fill INSIDE a bar, so the entry and the
+     // stop or target are often touched in the SAME bar. Without the bar magnifier TradingView
+     // guesses the order of those touches (extreme closest to the open first), which can turn real
+     // losers into winners. OFF here because the free plan raises a runtime error when it is on;
+     // on a paid plan turn it on in the Strategy Tester ("High detalization") — it matters a lot
+     // for this setup.
+     use_bar_magnifier = false,
+     fill_orders_on_standard_ohlc = true,
+     // Keep at 0: the script implements its own (input-driven) trade-through for limit orders.
+     backtest_fill_limits_assumption = 0,
+     max_lines_count = 500,
+     max_labels_count = 500,
+     max_boxes_count = 500,
+     max_bars_back = 500)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// CONSTANTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+const string TZ = "America/New_York"
+const string ID = "NOWICK"
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// INPUTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+const string G_SET = "No-wick setup"
+int    wickTolTicks = input.int(0, "Wick tolerance (ticks)", minval = 0, group = G_SET,
+     tooltip = "Bearish candle: high − open ≤ this. Bullish candle: open − low ≤ this. 0 = no wick at all.")
+int    orderLife    = input.int(4, "Cancel the entry order after (bars)", minval = 1, group = G_SET,
+     tooltip = "How long the limit order waits for price to tap the level. 4 bars on a 15m chart = 1 hour.")
+float  rrTarget     = input.float(1.0, "Take profit (R multiple)", minval = 0.1, step = 0.1, group = G_SET,
+     tooltip = "1.0 = 1:1 — target is as far from entry as the stop.")
+string nwSession    = input.session("0930-1545", "Trading window (ET)", group = G_SET,
+     tooltip = "No-wick candles only create orders, and orders can only fill, inside this window.")
+
+const string G_STOP = "Stop loss (most recent swing)"
+int pivLeft      = input.int(2, "Swing: left bars",  minval = 1, inline = "piv", group = G_STOP)
+int pivRight     = input.int(2, "right bars", minval = 1, inline = "piv", group = G_STOP,
+     tooltip = "A swing high is a high with this many lower highs on each side. It is only known 'right bars' after it prints, so the most recent swing used is the most recent CONFIRMED one (no look-ahead).")
+int swingMaxAge  = input.int(60, "Max swing age (bars)", minval = 5, group = G_STOP)
+int minStopTicks = input.int(8, "Minimum stop distance (ticks)", minval = 0, group = G_STOP,
+     tooltip = "If the most recent swing is closer than this to the entry, the setup is skipped. Very tight stops at 1:1 lose most of their edge to costs.")
+int stopBufTicks = input.int(0, "Stop buffer beyond the swing (ticks)", minval = 0, group = G_STOP)
+
+const string G_MOM = "Trend filter (no trades while consolidating)"
+int   momMinutes = input.int(30, "Look-back window (minutes)", minval = 15, maxval = 480, group = G_MOM,
+     tooltip = "Trend is measured over this many minutes up to and including the no-wick candle. On 15m, 30 min = 2 bars; raise it (e.g. 60–120) for a steadier read.")
+float momMinMove = input.float(1.0, "Minimum net move (× ATR)", minval = 0, step = 0.1, group = G_MOM,
+     tooltip = "Close now vs close at the start of the window must differ by at least this many ATRs. Smaller = consolidation.")
+float momMinEff  = input.float(0.35, "Minimum directional efficiency (0–1)", minval = 0, maxval = 1, step = 0.05, group = G_MOM,
+     tooltip = "Net move ÷ total distance travelled (close to close) in the window. 1 = straight line, near 0 = chop.")
+int   atrLen     = input.int(14, "ATR length (bars)", minval = 1, group = G_MOM)
+bool  cancelOnFlip = input.bool(true, "Cancel a waiting order if the trend flips the other way", group = G_MOM)
+
+const string G_DAY = "Day trading rules"
+int   qty    = input.int(1, "Contracts per trade", minval = 1, group = G_DAY)
+int   dayH   = input.int(9,  "Trading day starts (ET)  hour", minval = 0, maxval = 23, inline = "day", group = G_DAY)
+int   dayM   = input.int(30, "minute", minval = 0, maxval = 59, inline = "day", group = G_DAY,
+     tooltip = "Daily reset for the loss limit. 09:30 for ES/MNQ; e.g. 08:20 for gold.")
+int   flatH  = input.int(15, "Flatten all at  hour (ET)", minval = 0, maxval = 23, inline = "flat", group = G_DAY)
+int   flatM  = input.int(55, "minute", minval = 0, maxval = 59, inline = "flat", group = G_DAY,
+     tooltip = "On the close of the first bar ending at/after this time, any position is closed (fills at the next open) and waiting orders are cancelled.")
+bool  useDLL    = input.bool(false, "Use daily loss limit", group = G_DAY)
+float dllAmount = input.float(500.0, "Daily loss limit (account currency)", minval = 0, group = G_DAY)
+
+const string G_COST = "Costs"
+float commPerSide   = input.float(0.62, "Commission per contract per side", minval = 0, step = 0.01, group = G_COST,
+     tooltip = "Your broker's all-in rate (commission + exchange + NFA + clearing). Charged on entry AND exit. Micros (MNQ/MES/MGC) ~0.50–0.80; minis/full-size (NQ/ES/GC) ~2.00–2.50.")
+int   slipTicks     = input.int(1, "Slippage per fill (ticks)", minval = 0, group = G_COST,
+     tooltip = "Always charged on stop-loss, end-of-day and loss-limit exits (market/stop orders).")
+bool  slipOnLimits  = input.bool(true, "Apply slippage to limit fills too (tap entries and take-profits)", group = G_COST,
+     tooltip = "TradingView never slips limit orders. On = charge the slippage on every fill (pessimistic but robust).")
+int   thruEntry     = input.int(0, "Entry: ticks price must trade THROUGH the level", minval = 0, group = G_COST,
+     tooltip = "0 = a tap fills you (your rule). ⚠ A touch-fill is optimistic: live, a resting order at the exact level often isn't filled on a single tap. Try 1 to see how much the results depend on it.")
+int   thruTP        = input.int(1, "Take-profit: ticks price must trade THROUGH the target", minval = 0, group = G_COST)
+int   testerSlip    = input.int(1, "Slippage set in Properties (ticks)", minval = 0, group = G_COST,
+     tooltip = "Must equal Settings ▸ Properties ▸ Slippage, so the table can strip the Tester's own slippage before applying yours.")
+
+const string G_UI = "Display"
+bool   showTable    = input.bool(true, "Show results table", group = G_UI)
+string tablePosIn   = input.string("Bottom left", "Table position", options = ["Top right", "Top left", "Bottom right", "Bottom left"], group = G_UI)
+bool   showNoWick   = input.bool(true, "Mark no-wick candles that create an order", group = G_UI)
+bool   showFiltered = input.bool(true, "Mark no-wick candles filtered out (no trend / outside window)", group = G_UI)
+bool   showLevels   = input.bool(true, "Draw the level line while the order waits", group = G_UI)
+bool   showTrades   = input.bool(true, "Draw entry / stop / target boxes for each trade", group = G_UI)
+bool   showSwings   = input.bool(false, "Mark swing highs / lows", group = G_UI)
+bool   showMomBg    = input.bool(true, "Tint background by trend (green up, red down, none = consolidating)", group = G_UI)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// INSTRUMENT & TIMEFRAME
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+float tick    = syminfo.mintick      // MNQ/ES 0.25, MGC/GC 0.10
+float pv      = syminfo.pointvalue   // currency per 1.0 point per contract: MNQ 2, ES 50, MGC 10, GC 100
+float stopBuf = stopBufTicks * tick
+float minDist = minStopTicks * tick
+
+int tfSec = timeframe.in_seconds()
+if barstate.isfirst and not timeframe.isintraday
+    runtime.error("Use an intraday chart (the script is designed for 15 minutes).")
+// Guard: this version is sized in contracts with futures costs.
+if barstate.isfirst and syminfo.type != "futures"
+    runtime.error("NOWICK FUT 15m is for futures (e.g. MNQ1!, NQ1!, ES1!, MGC1!). For forex pairs use nowick_forex.pine instead.")
+int momBars = math.max(1, int(math.round(momMinutes * 60 / tfSec)))   // 30 min on 15m = 2 bars
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SESSION CLOCK (America/New_York)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_ts(int h, int m) =>
+    timestamp(TZ, year(time, TZ), month(time, TZ), dayofmonth(time, TZ), h, m, 0)
+
+int dayTs  = f_ts(dayH, dayM)
+int flatTs = f_ts(flatH, flatM)
+
+bool newDay = time >= dayTs and time < flatTs and (na(time[1]) or time[1] < dayTs)
+var bool dayActive = false
+var int  daysCount = 0
+if newDay
+    dayActive := true
+    daysCount += 1
+
+bool conf       = barstate.isconfirmed                 // confirmed bars only — no repainting
+bool afterStart = dayActive and time >= dayTs
+bool beforeFlat = afterStart and time_close < flatTs
+bool flatTime   = afterStart and time_close >= flatTs
+bool inWindow   = not na(time(timeframe.period, nwSession, TZ))
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// TREND — trend vs consolidation over the last `momMinutes`
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// netMove : how far price got (close now − close at the start of the window)
+// pathLen : how far price travelled to get there (sum of |close-to-close| changes)
+// eff     : netMove / pathLen → 1 = one-way move, ~0 = back-and-forth chop
+float atr     = ta.atr(atrLen)
+float netMove = close - close[momBars]
+float pathLen = math.sum(math.abs(close - close[1]), momBars)
+float eff     = pathLen > 0 ? math.abs(netMove) / pathLen : 0.0
+bool  strong  = not na(atr) and not na(netMove) and math.abs(netMove) >= momMinMove * atr and eff >= momMinEff
+int   trend   = strong ? (netMove > 0 ? 1 : -1) : 0   // +1 up, −1 down, 0 consolidating
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SWING POINTS (for the stop) — ta.pivot* returns a pivot on the bar it is CONFIRMED
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+float pl = ta.pivotlow(low, pivLeft, pivRight)
+float ph = ta.pivothigh(high, pivLeft, pivRight)
+var array<float> plPx  = array.new<float>()
+var array<int>   plBar = array.new<int>()
+var array<float> phPx  = array.new<float>()
+var array<int>   phBar = array.new<int>()
+if not na(pl)
+    plPx.unshift(pl)
+    plBar.unshift(bar_index - pivRight)
+    if plPx.size() > 60
+        plPx.pop()
+        plBar.pop()
+if not na(ph)
+    phPx.unshift(ph)
+    phBar.unshift(bar_index - pivRight)
+    if phPx.size() > 60
+        phPx.pop()
+        phBar.pop()
+
+// Stop for direction `dir` with entry at `entry`: the most recent confirmed swing low below
+// (long) / swing high above (short), plus buffer. na if none, or if it is closer than the minimum.
+f_stop(int dir, float entry) =>
+    float res = na
+    array<float> px = dir == 1 ? plPx : phPx
+    array<int>   bx = dir == 1 ? plBar : phBar
+    int n = px.size()
+    if n > 0
+        for i = 0 to n - 1
+            if bar_index - bx.get(i) > swingMaxAge
+                break
+            float p = px.get(i)
+            if (dir == 1 and p < entry) or (dir == -1 and p > entry)
+                res := dir == 1 ? p - stopBuf : p + stopBuf
+                break
+    not na(res) and math.abs(entry - res) >= minDist ? res : na
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// NO-WICK CANDLE DETECTION
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+bool bearNoWick = close < open and math.round((high - open) / tick) <= wickTolTicks
+bool bullNoWick = close > open and math.round((open - low) / tick) <= wickTolTicks
+bool bearOK = conf and bearNoWick and afterStart and inWindow and trend == -1   // with the downtrend
+bool bullOK = conf and bullNoWick and afterStart and inWindow and trend == 1    // with the uptrend
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// RESULTS LEDGER — re-prices every closed trade with YOUR costs. 0 = longs, 1 = shorts, 2 = all.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var array<float> stTrades  = array.new<float>(3, 0.0)
+var array<float> stWins    = array.new<float>(3, 0.0)
+var array<float> stGross   = array.new<float>(3, 0.0)
+var array<float> stNet     = array.new<float>(3, 0.0)
+var array<float> stCost    = array.new<float>(3, 0.0)
+var array<float> stWinSum  = array.new<float>(3, 0.0)
+var array<float> stLossSum = array.new<float>(3, 0.0)
+var array<float> stRSum    = array.new<float>(3, 0.0)
+var array<float> stRCnt    = array.new<float>(3, 0.0)
+var array<float> stPeak    = array.new<float>(3, strategy.initial_capital)
+var array<float> stDD      = array.new<float>(3, 0.0)
+var array<float> stDDPct   = array.new<float>(3, 0.0)
+var array<float> stTester  = array.new<float>(3, 0.0)
+
+f_update(int k, float g, float n, float c, float r, float tNet) =>
+    stTrades.set(k, stTrades.get(k) + 1)
+    stGross.set(k, stGross.get(k) + g)
+    stNet.set(k, stNet.get(k) + n)
+    stCost.set(k, stCost.get(k) + c)
+    stTester.set(k, stTester.get(k) + tNet)
+    if n > 0
+        stWins.set(k, stWins.get(k) + 1)
+        stWinSum.set(k, stWinSum.get(k) + n)
+    else
+        stLossSum.set(k, stLossSum.get(k) + n)
+    if not na(r)
+        stRSum.set(k, stRSum.get(k) + r)
+        stRCnt.set(k, stRCnt.get(k) + 1)
+    float eq = strategy.initial_capital + stNet.get(k)
+    stPeak.set(k, math.max(stPeak.get(k), eq))
+    float dd = stPeak.get(k) - eq
+    stDD.set(k, math.max(stDD.get(k), dd))
+    stDDPct.set(k, math.max(stDDPct.get(k), stPeak.get(k) > 0 ? dd / stPeak.get(k) * 100 : 0.0))
+
+var int   processed = 0
+var float dayNet    = 0.0
+var bool  halted    = false
+var float curStop   = na      // stop / target of the live order or current trade
+var float curTgt    = na
+var float tradeStop = na      // stop of the trade being ledgered (for R)
+var float lastNet   = na
+var float lastR     = na
+if newDay
+    dayNet := 0.0
+    halted := false
+
+if strategy.closedtrades > processed
+    for i = processed to strategy.closedtrades - 1
+        float  sz   = strategy.closedtrades.size(i)
+        int    dir  = sz > 0 ? 1 : -1
+        int    b    = dir == 1 ? 0 : 1
+        float  q    = math.abs(sz)
+        float  ep   = strategy.closedtrades.entry_price(i)
+        float  xp   = strategy.closedtrades.exit_price(i)
+        bool   isTP = str.endswith(strategy.closedtrades.exit_comment(i), "TP")
+        // Entry is a LIMIT order placed `thruEntry` ticks beyond the level: move it back to the
+        // level (the Tester never slips limits). A gap-through fill keeps its genuine improvement.
+        float idealEntry = ep + dir * thruEntry * tick
+        // TP limit: move back from target + trade-through. Stop/EOD/DLL: strip the Tester's slippage.
+        float idealExit  = isTP ? xp - dir * thruTP * tick : xp + dir * testerSlip * tick
+        float grossPnl   = (idealExit - idealEntry) * dir * q * pv
+        float commCost   = commPerSide * q * 2
+        int   slipFills  = (slipOnLimits ? 1 : 0) + (isTP ? (slipOnLimits ? 1 : 0) : 1)
+        float slipCost   = slipFills * slipTicks * tick * pv * q
+        float costT      = commCost + slipCost
+        float netPnl     = grossPnl - costT
+        float fillEntry  = idealEntry + (slipOnLimits ? dir * slipTicks * tick : 0.0)
+        float riskCur    = na(tradeStop) ? na : math.abs(fillEntry - tradeStop) * q * pv
+        float rMult      = na(riskCur) or riskCur <= 0 ? na : netPnl / riskCur
+        float tNet       = strategy.closedtrades.profit(i)
+        f_update(b, grossPnl, netPnl, costT, rMult, tNet)
+        f_update(2, grossPnl, netPnl, costT, rMult, tNet)
+        dayNet  += netPnl
+        lastNet := netPnl
+        lastR   := rMult
+    processed := strategy.closedtrades
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// PENDING ORDER STATE + FILL DETECTION
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var int   pendDir = 0         // 0 = no waiting order, +1 buy limit, −1 sell limit
+var float pendLvl = na
+var int   pendBar = 0
+var line  pendLn  = na
+
+color C_BEAR = color.new(color.red, 0)
+color C_BULL = color.new(color.teal, 0)
+color C_DONE = color.new(color.gray, 60)
+
+// Funnel counters (shown under the table).
+var int cntNoWick   = 0
+var int cntFiltered = 0
+var int cntOrders   = 0
+var int cntFilled   = 0
+var int cntExpired  = 0
+var int cntFlipped  = 0
+var int cntReplaced = 0
+var int cntNoStop   = 0
+var int cntBusy     = 0
+
+f_retireLine(line ln) =>
+    if not na(ln)
+        ln.set_x2(bar_index)
+        ln.set_color(C_DONE)
+        ln.set_style(line.style_dotted)
+
+f_fmt(float p) =>
+    str.tostring(p, format.mintick)
+
+// A new trade = the total number of trades (open + closed) went up since the last bar.
+int  tradeCount = strategy.closedtrades + strategy.opentrades
+var int prevCount = 0
+bool newFill = tradeCount > prevCount
+prevCount := tradeCount
+
+// Trade drawing state
+var box   tvRisk   = na
+var box   tvReward = na
+var line  tvEntry  = na
+var bool  tvActive = false
+var int   tvClosedAtStart = 0
+
+if newFill
+    cntFilled += 1
+    tradeStop := curStop                     // the stop/target that were live when the order filled
+    f_retireLine(pendLn)
+    pendDir := 0
+    pendLn  := line(na)
+    bool  stillOpen = strategy.opentrades > 0
+    float fillPx = stillOpen ? strategy.opentrades.entry_price(0) : strategy.closedtrades.entry_price(strategy.closedtrades - 1)
+    int   fillBar = stillOpen ? strategy.opentrades.entry_bar_index(0) : strategy.closedtrades.entry_bar_index(strategy.closedtrades - 1)
+    float shownEntry = fillPx + (fillPx > curStop ? 1 : -1) * thruEntry * tick   // the level itself
+    alert("NOWICK filled at " + f_fmt(shownEntry) + "  SL " + f_fmt(curStop) + "  TP " + f_fmt(curTgt), alert.freq_once_per_bar_close)
+    if showTrades
+        bool isLong = curStop < shownEntry
+        tvRisk   := box.new(fillBar, math.max(shownEntry, curStop), bar_index, math.min(shownEntry, curStop),
+             border_color = color.new(color.red, 30), bgcolor = color.new(color.red, 82))
+        tvReward := box.new(fillBar, math.max(shownEntry, curTgt), bar_index, math.min(shownEntry, curTgt),
+             border_color = color.new(color.green, 30), bgcolor = color.new(color.green, 82))
+        tvEntry  := line.new(fillBar, shownEntry, bar_index, shownEntry, color = color.white, width = 2)
+        label.new(fillBar, shownEntry, (isLong ? "LONG " : "SHORT ") + f_fmt(shownEntry), style = label.style_label_right,
+             color = color.new(color.gray, 10), textcolor = color.white, size = size.small)
+        string slTxt = "SL " + f_fmt(curStop) + "  (" + str.tostring(math.round(math.abs(shownEntry - curStop) / tick)) + " ticks)"
+        string tpTxt = "TP " + f_fmt(curTgt) + "  (" + str.tostring(rrTarget, "0.0#") + "R)"
+        label.new(fillBar, math.max(curStop, curTgt), isLong ? tpTxt : slTxt, style = label.style_label_down,
+             color = isLong ? color.new(color.green, 10) : color.new(color.red, 10), textcolor = color.white, size = size.small)
+        label.new(fillBar, math.min(curStop, curTgt), isLong ? slTxt : tpTxt, style = label.style_label_up,
+             color = isLong ? color.new(color.red, 10) : color.new(color.green, 10), textcolor = color.white, size = size.small)
+        tvActive := true
+        tvClosedAtStart := strategy.closedtrades - (stillOpen ? 0 : 1)
+
+if tvActive
+    bool done = strategy.closedtrades > tvClosedAtStart
+    tvRisk.set_right(bar_index)
+    tvReward.set_right(bar_index)
+    tvEntry.set_x2(bar_index)
+    if done
+        tvActive := false
+        int    lastI = strategy.closedtrades - 1
+        float  xPx   = strategy.closedtrades.exit_price(lastI)
+        string why   = strategy.closedtrades.exit_comment(lastI)
+        string res   = why + "  " + (lastNet >= 0 ? "+" : "") + str.tostring(lastNet, "#,##0.00") +
+             (na(lastR) ? "" : "  (" + (lastR >= 0 ? "+" : "") + str.tostring(lastR, "0.00") + "R)")
+        label.new(bar_index, xPx, res, style = label.style_label_left,
+             color = lastNet >= 0 ? color.new(color.green, 10) : color.new(color.red, 10),
+             textcolor = color.white, size = size.small)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// DAILY LOSS LIMIT & END-OF-DAY FLATTEN
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+float openQty = math.abs(strategy.position_size)
+float openEst = strategy.openprofit - openQty * (2 * commPerSide + ((slipOnLimits ? 1 : 0) + 1) * slipTicks * tick * pv)
+// ⚠ FILL ASSUMPTION: the limit is only checked on bar closes and the exit fills at the next open.
+if useDLL and conf and afterStart and not halted and dayNet + openEst <= -dllAmount
+    halted := true
+
+if strategy.position_size != 0
+    if halted
+        strategy.close_all(comment = "DLL")
+    else if flatTime
+        strategy.close_all(comment = "EOD")              // fills at the next bar's open + slippage
+    else if session.islastbar
+        // Safety net for early-close (holiday) sessions: exit at this bar's close.
+        // ⚠ FILL ASSUMPTION: relies on TradingView's session calendar knowing the early close.
+        strategy.close_all(comment = "EOD-early", immediately = true)
+
+bool canTrade = conf and beforeFlat and not halted and inWindow
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// ORDER MANAGEMENT — place / update / cancel the resting limit order at the no-wick level
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+bool flat = strategy.position_size == 0
+int  sendDir = 0              // set when an order must be (re)sent this bar
+float sendLvl = na
+
+f_cancelPending() =>
+    strategy.cancel(ID)
+    strategy.cancel(ID + "-X")
+
+if conf
+    // 1) Maintain the waiting order.
+    if pendDir != 0
+        string why = ""
+        if not flat
+            why := "busy"
+        else if not canTrade
+            why := "closed"
+        else if bar_index - pendBar >= orderLife
+            why := "expired"
+        else if cancelOnFlip and trend == -pendDir
+            why := "flipped"
+        if why != ""
+            f_cancelPending()
+            f_retireLine(pendLn)
+            pendDir := 0
+            pendLn  := line(na)
+            cntExpired += why == "expired" ? 1 : 0
+            cntFlipped += why == "flipped" ? 1 : 0
+        else
+            sendDir := pendDir         // re-send so stop/target track the most recent swing
+            sendLvl := pendLvl
+            if not na(pendLn)
+                pendLn.set_x2(bar_index)
+
+    // 2) A new qualifying no-wick candle places (or replaces) the order.
+    if (bearNoWick or bullNoWick) and afterStart and inWindow
+        cntNoWick += 1
+        if not bearOK and not bullOK
+            cntFiltered += 1
+    if (bearOK or bullOK) and canTrade
+        if not flat
+            cntBusy += 1
+        else
+            int   d   = bearOK ? -1 : 1
+            float lvl = bearOK ? high : low
+            if na(f_stop(d, lvl))
+                cntNoStop += 1                 // no swing beyond the level, or it is too close
+            else
+                if pendDir != 0
+                    cntReplaced += 1
+                    f_retireLine(pendLn)
+                pendDir := d
+                pendLvl := lvl
+                pendBar := bar_index
+                pendLn  := showLevels ? line.new(bar_index, lvl, bar_index, lvl, color = d == -1 ? C_BEAR : C_BULL, width = 2, style = line.style_dashed) : line(na)
+                sendDir := d
+                sendLvl := lvl
+                cntOrders += 1
+                alert("NOWICK " + (d == 1 ? "BUY" : "SELL") + " limit placed at " + f_fmt(lvl), alert.freq_once_per_bar_close)
+
+    // 3) (Re)send entry + exits with the latest stop / target.
+    if sendDir != 0
+        float stop = f_stop(sendDir, sendLvl)
+        if na(stop)
+            // The swing beyond the level no longer qualifies (should be rare) — stand down.
+            f_cancelPending()
+            f_retireLine(pendLn)
+            pendDir := 0
+            pendLn  := line(na)
+            cntNoStop += 1
+        else
+            float risk = math.abs(sendLvl - stop)
+            float tgt  = sendLvl + sendDir * rrTarget * risk
+            // ⚠ FILL ASSUMPTION: a tap fills the whole order at the level (no queue, no partial fill).
+            // Use "Entry: ticks price must trade THROUGH the level" to demand more than a tap.
+            strategy.entry(ID, sendDir == 1 ? strategy.long : strategy.short, qty = qty,
+                 limit = sendLvl - sendDir * thruEntry * tick,
+                 comment = sendDir == 1 ? "NOWICK L" : "NOWICK S")
+            // ⚠ FILL ASSUMPTION: stops fill at the stop + slippage (at the open on a gap); real stops
+            // in a fast market can slip more — stress-test "Slippage per fill".
+            strategy.exit(ID + "-X", from_entry = ID, stop = stop,
+                 limit = tgt + sendDir * thruTP * tick,
+                 comment_loss = "SL", comment_profit = "TP")
+            curStop := stop
+            curTgt  := tgt
+
+// Drop a leftover exit order once flat with nothing waiting (e.g. after an EOD flatten).
+if flat and pendDir == 0 and sendDir == 0
+    strategy.cancel(ID + "-X")
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// PLOTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+plotshape(showNoWick and bearOK, "No-wick bearish (sell order)", shape.triangledown, location.abovebar, C_BEAR, size = size.tiny, text = "NW")
+plotshape(showNoWick and bullOK, "No-wick bullish (buy order)",  shape.triangleup,   location.belowbar, C_BULL, size = size.tiny, text = "NW")
+plotshape(showFiltered and conf and bearNoWick and not bearOK, "No-wick bearish (filtered out)", shape.xcross, location.abovebar, color.new(color.gray, 30), size = size.tiny)
+plotshape(showFiltered and conf and bullNoWick and not bullOK, "No-wick bullish (filtered out)", shape.xcross, location.belowbar, color.new(color.gray, 30), size = size.tiny)
+plotshape(showSwings and not na(ph), "Swing high", shape.circle, location.abovebar, color.new(color.orange, 20), offset = -pivRight, size = size.tiny)
+plotshape(showSwings and not na(pl), "Swing low",  shape.circle, location.belowbar, color.new(color.orange, 20), offset = -pivRight, size = size.tiny)
+bgcolor(showMomBg and afterStart and inWindow ? (trend == 1 ? color.new(color.green, 93) : trend == -1 ? color.new(color.red, 93) : na) : na, title = "Trend")
+bgcolor(halted and afterStart and time < flatTs ? color.new(color.red, 85) : na, title = "Daily loss limit hit")
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// RESULTS TABLE (closed trades, re-priced with the Costs inputs)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_pos(string s) =>
+    s == "Top left" ? position.top_left : s == "Top right" ? position.top_right : s == "Bottom right" ? position.bottom_right : position.bottom_left
+
+var table tb = table.new(f_pos(tablePosIn), 4, 22, bgcolor = color.new(color.black, 15), border_color = color.new(color.gray, 60), border_width = 1)
+
+f_cell(int c, int r, string t, color tc) =>
+    table.cell(tb, c, r, t, text_color = tc, text_size = size.small,
+         text_halign = c == 0 ? text.align_left : text.align_right)
+
+f_money(float v) =>
+    na(v) ? "—" : str.tostring(v, "#,##0.00")
+
+f_pct(float v) =>
+    na(v) ? "—" : str.tostring(v, "0.0") + "%"
+
+f_pnlColor(float v) =>
+    na(v) or v == 0 ? color.white : v > 0 ? color.new(color.lime, 0) : color.new(color.red, 0)
+
+if barstate.islast and showTable
+    color W = color.white
+    color H = color.new(color.yellow, 0)
+    color G = color.new(color.gray, 0)
+    f_cell(0, 0, "NOWICK trend results (" + strategy.account_currency + ", closed trades)", H)
+    f_cell(1, 0, "Longs", H)
+    f_cell(2, 0, "Shorts", H)
+    f_cell(3, 0, "All", H)
+    array<string> labels = array.from(
+         "Trades", "Win rate (net)", "Gross P&L", "Net P&L", "Total costs", "Costs % of gross P&L",
+         "Profit factor (net)", "Expectancy / trade (net)", "Avg R achieved (net)",
+         "Avg win (net)", "Avg loss (net)", "Avg cost / trade",
+         "Max drawdown (closed, net)", "Max drawdown %", "Avg trades / day",
+         "Tester net profit (ref.)")
+    for r = 0 to labels.size() - 1
+        f_cell(0, r + 1, labels.get(r), W)
+    for k = 0 to 2
+        int   c       = k + 1
+        float nT      = stTrades.get(k)
+        float wins    = stWins.get(k)
+        float gross   = stGross.get(k)
+        float net     = stNet.get(k)
+        float cost    = stCost.get(k)
+        float winSum  = stWinSum.get(k)
+        float lossSum = stLossSum.get(k)
+        float pf      = lossSum < 0 ? winSum / math.abs(lossSum) : na
+        f_cell(c, 1,  str.tostring(nT, "#"), W)
+        f_cell(c, 2,  nT > 0 ? f_pct(wins / nT * 100) : "—", W)
+        f_cell(c, 3,  f_money(gross), f_pnlColor(gross))
+        f_cell(c, 4,  f_money(net), f_pnlColor(net))
+        f_cell(c, 5,  f_money(cost), W)
+        f_cell(c, 6,  gross > 0 ? f_pct(cost / gross * 100) : "n/a (gross ≤ 0)", W)
+        f_cell(c, 7,  na(pf) ? (winSum > 0 ? "∞" : "—") : str.tostring(pf, "0.00"), W)
+        f_cell(c, 8,  nT > 0 ? f_money(net / nT) : "—", f_pnlColor(nT > 0 ? net / nT : na))
+        f_cell(c, 9,  stRCnt.get(k) > 0 ? str.tostring(stRSum.get(k) / stRCnt.get(k), "0.00") + "R" : "—", W)
+        f_cell(c, 10, wins > 0 ? f_money(winSum / wins) : "—", W)
+        f_cell(c, 11, nT - wins > 0 ? f_money(lossSum / (nT - wins)) : "—", W)
+        f_cell(c, 12, nT > 0 ? f_money(cost / nT) : "—", W)
+        f_cell(c, 13, f_money(stDD.get(k)), W)
+        f_cell(c, 14, f_pct(stDDPct.get(k)), W)
+        f_cell(c, 15, daysCount > 0 ? str.tostring(nT / daysCount, "0.00") : "—", W)
+        f_cell(c, 16, f_money(stTester.get(k)), G)
+    string funnel = "Setups: " + str.tostring(cntNoWick) + " no-wick candles → " + str.tostring(cntFiltered) +
+         " filtered (no trend) → " + str.tostring(cntOrders) + " orders placed → " + str.tostring(cntFilled) +
+         " tapped & filled.  Not filled: expired " + str.tostring(cntExpired) + ", trend flipped " + str.tostring(cntFlipped) +
+         ", replaced " + str.tostring(cntReplaced) + ".  Skipped: no valid swing stop " + str.tostring(cntNoStop) +
+         ", already in a trade " + str.tostring(cntBusy)
+    f_cell(0, 17, funnel, G)
+    table.merge_cells(tb, 0, 17, 3, 17)
+    string costNote = "Costs: " + str.tostring(commPerSide, "0.00") + "/contract/side · slip " + str.tostring(slipTicks) + "t" +
+         (slipOnLimits ? " (incl. limit fills)" : " (market/stop only)") + " · entry trade-through " + str.tostring(thruEntry) +
+         "t · TP trade-through " + str.tostring(thruTP) + "t · " + str.tostring(daysCount) + " sessions · tick " +
+         str.tostring(tick) + " = " + str.tostring(tick * pv, "0.00")
+    f_cell(0, 18, costNote, G)
+    table.merge_cells(tb, 0, 18, 3, 18)
