@@ -10,7 +10,7 @@
 //   • P&L converted from the quote currency to your account currency
 //
 //  THE SETUP (short; long is the mirror image)
-//   1. Trend: over the last N minutes (default 30 = 2 bars on 15m) price must have moved DOWN by at
+//   1. Trend: over the last N minutes (default 120 = 2 hours = 8 bars on 15m) price must have moved DOWN by at
 //      least X × ATR, and fairly directly (efficiency ratio). Otherwise the market is treated as
 //      consolidating and no-wick candles are ignored (grey ×). Only shorts in a downtrend, longs in
 //      an uptrend.
@@ -100,8 +100,8 @@ float minStopPips  = input.float(5.0, "Minimum stop distance (pips)", minval = 0
 float stopBufPips  = input.float(0.0, "Stop buffer beyond the swing (pips)", minval = 0, step = 0.1, group = G_STOP)
 
 const string G_MOM = "Trend filter (no trades while consolidating)"
-int   momMinutes = input.int(30, "Look-back window (minutes)", minval = 15, maxval = 480, group = G_MOM,
-     tooltip = "Trend is measured over this many minutes up to and including the no-wick candle. On 15m, 30 min = 2 bars; raise it (e.g. 60–120) for a steadier read.")
+int   momMinutes = input.int(120, "Look-back window (minutes)", minval = 15, maxval = 480, group = G_MOM,
+     tooltip = "Trend is measured over this many minutes up to and including the no-wick candle. Default 120 min = the previous 2 hours = 8 bars on 15m.")
 float momMinMove = input.float(1.0, "Minimum net move (× ATR)", minval = 0, step = 0.1, group = G_MOM)
 float momMinEff  = input.float(0.35, "Minimum directional efficiency (0–1)", minval = 0, maxval = 1, step = 0.05, group = G_MOM,
      tooltip = "Net move ÷ total distance travelled (close to close) in the window. 1 = straight line, near 0 = chop.")
@@ -164,7 +164,7 @@ if barstate.isfirst and not timeframe.isintraday
 // Guard: on a futures/stock chart, "1 lot = 100,000 units" would mean 100,000 contracts/shares.
 if barstate.isfirst and syminfo.type != "forex"
     runtime.error("NOWICK FX is for forex pairs (e.g. OANDA:EURUSD). For futures like NQ1!/MNQ1!/ES1!/MGC1! use day_trading_backtester.pine instead.")
-int momBars = math.max(1, int(math.round(momMinutes * 60 / tfSec)))   // 30 min on 15m = 2 bars
+int momBars = math.max(1, int(math.round(momMinutes * 60 / tfSec)))   // 120 min on 15m = 8 bars
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // SESSION CLOCK (America/New_York)

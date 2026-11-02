@@ -27,7 +27,8 @@ recent swing, and targets a fixed 1:1. The difference is that it's set up for **
 | Order wait | 12 bars (1 hour) | **4 bars (1 hour)** |
 | Min stop | 8 ticks | **5 pips** |
 
-These rules are unchanged: trend window 30 min, ATR and efficiency thresholds, swing 2/2, 1:1
+The trend filter looks at the **previous 2 hours** (120 minutes = 8 bars on 15m) instead of 30 minutes.
+These rules are unchanged: ATR and efficiency thresholds, swing 2/2, 1:1
 target, trading window 09:30–15:45 ET and flatten at 15:55 ET. The flatten is before the 17:00 ET
 rollover, so no overnight financing (swap) is paid.
 
@@ -55,8 +56,9 @@ rollover, so no overnight financing (swap) is paid.
 | Bar magnifier / "High detalization" | Off on the free plan, on if your plan allows it. |
 
 ## Forex-specific limitations
-- **30 minutes is only 2 bars on 15m.** The trend filter's efficiency check is very coarse at that
-  length. If it lets too much chop through, raise the window to 60–120 minutes.
+- **The 2-hour trend window reacts more slowly.** A trend has to build for a while before setups
+  count, and a fresh reversal takes time to register. Shorten **Look-back window** (for example
+  to 60) if it reacts too late.
 - **Bid prices.** Forex charts usually show bid prices, but buy orders and buy stops really execute
   at the ask. Longs get tapped slightly earlier, and shorts get stopped slightly earlier, than the
   chart shows. The flat spread cost approximates this but doesn't model it exactly, especially
