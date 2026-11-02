@@ -37,3 +37,4 @@
 | 2026-11-02 16:00 | error in the cycle: GET /v3/instruments/NAS100_USD/candles?granularity=M5&price=M&from=2026-11-02T15%3A55%3A00.000000000Z&count=5000: HTTP 504: error code: 504
  | this minute skipped | retry next minute |
 | 2026-11-02 17:21 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
+| 2026-11-02 17:22 | session start (practice): NAV 100000.0441 GBP, 0 trade(s) open in the state |  |  |
