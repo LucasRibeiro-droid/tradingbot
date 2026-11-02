@@ -3,13 +3,13 @@
 //
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 //  NOWICK TREND — VERSION A, MULTI-TRADE, ALL MARKET HOURS (24h), 5-MINUTE chart
-//  Same as nowick_version_a_5m_multi.pine, but it trades EVERY minute the CME market is open:
+//  Same as mnq_mes_trading_strategy.pine, but it trades EVERY minute the CME market is open:
 //   • CME Globex hours: Sunday 18:00 → Friday 17:00 New York time, with a daily break 17:00–18:00.
 //   • The trading day starts at the 18:00 reopen (daily loss limit resets there).
 //   • Everything is flattened at 16:55 ET (input), just before the daily 17:00 close, so nothing is
 //     held through the daily break or the weekend. Trades opened in the evening can stay open
 //     overnight until TP / SL / 16:55.
-//  Rules inherited from nowick_version_a_5m_multi.pine / nowick_version_a_5m.pine:
+//  Rules inherited from mnq_mes_trading_strategy.pine / nowick_version_a_5m.pine:
 //   • every qualifying no-wick candle keeps ITS OWN limit order (no replacing), each with its own
 //     ID (NW1, NW2, …), stop, target and drawing;
 //   • up to `Max trades` (default 3) can be open at once — open trades + waiting orders together

@@ -2,19 +2,8 @@
 // https://mozilla.org/MPL/2.0/
 //
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-//  NOWICK TREND — VERSION A, MULTI-TRADE + EARLY TREND-CHANGE DETECTION, 5-MINUTE chart
-//  Same as nowick_version_a_5m_multi.pine, plus two switchable ways to catch a trend change
-//  EARLIER than the 30-minute trend filter (Inputs ▸ "Early trend change"):
-//   (1) STRUCTURE BREAK — a close above the most recent confirmed swing high (bullish) or below the
-//       most recent confirmed swing low (bearish).
-//   (2) SQUEEZE → BREAKOUT — the market's range compressed (Bollinger Bands inside Keltner
-//       Channels for a few bars), then a large candle closes out of the recent range (optionally
-//       with above-average volume).
-//   Either event OVERRIDES the trend filter in its direction for the next N bars (default 12 = 1h),
-//   so no-wick setups in the new direction are allowed before the slower filter catches up.
-//   The results table has an extra column with ONLY the trades the overrides enabled, so you can
-//   see whether they add edge. Turn both off and the script behaves like Version A Multi.
-//  Rules inherited from nowick_version_a_5m_multi.pine:
+//  MNQ + MES TRADING STRATEGY — no-wick tap entries, up to 3 trades at once, 5-MINUTE chart
+//  Same rules as nowick_version_a_5m.pine, except:
 //   • every qualifying no-wick candle keeps ITS OWN limit order (no replacing), each with its own
 //     ID (NW1, NW2, …), stop, target and drawing;
 //   • up to `Max trades` (default 3) can be open at once — open trades + waiting orders together
@@ -53,8 +42,8 @@
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 
 //@version=6
-strategy(title = "NOWICK Trend — Version A Multi + early trend change (5m)",
-     shorttitle = "NOWICK A 5m x3 ETC",
+strategy(title = "MNQ + MES Trading Strategy (5m, up to 3 trades)",
+     shorttitle = "MNQ+MES Strategy",
      overlay = true,
      pyramiding = 3,                 // hard cap; the script also enforces `Max trades`
      initial_capital = 50000,
@@ -125,25 +114,6 @@ float momMinEff  = input.float(0.35, "Minimum directional efficiency (0–1)", m
 int   atrLen     = input.int(14, "ATR length (bars)", minval = 1, group = G_MOM)
 bool  cancelOnFlip = input.bool(true, "Cancel a waiting order if the trend flips the other way", group = G_MOM)
 
-const string G_ETC = "Early trend change (overrides the trend filter)"
-bool  useBOS       = input.bool(true, "(1) Structure break", group = G_ETC,
-     tooltip = "A close above the most recent confirmed swing high = bullish; below the most recent swing low = bearish. Uses the same swing points as the stop (Swing left/right bars).")
-bool  useSqz       = input.bool(true, "(2) Squeeze → strong breakout", group = G_ETC,
-     tooltip = "The range compressed (Bollinger Bands inside Keltner Channels) for at least the minimum number of bars, then a large candle closes beyond the recent high/low.")
-int   ovHold       = input.int(12, "Override lasts (bars)", minval = 1, group = G_ETC,
-     tooltip = "How long a structure break / breakout sets the trend direction. 12 bars on 5m = 1 hour. An opposite event ends it early.")
-int   sqzLen       = input.int(20, "Squeeze: length", minval = 5, group = G_ETC)
-float sqzBBMult    = input.float(2.0, "Squeeze: Bollinger multiplier", minval = 0.5, step = 0.1, group = G_ETC)
-float sqzKCMult    = input.float(1.5, "Squeeze: Keltner multiplier (× ATR)", minval = 0.5, step = 0.1, group = G_ETC)
-int   sqzMinBars   = input.int(3, "Squeeze: minimum bars", minval = 1, group = G_ETC,
-     tooltip = "The squeeze must have lasted at least this many bars.")
-int   sqzRecent    = input.int(6, "Squeeze: breakout must come within (bars)", minval = 0, group = G_ETC,
-     tooltip = "How many bars after the squeeze ends a breakout still counts.")
-int   rangeBars    = input.int(12, "Breakout: range look-back (bars)", minval = 2, group = G_ETC,
-     tooltip = "The breakout candle must close beyond the highest high / lowest low of this many previous bars (12 = 1 hour on 5m).")
-float brkATRMult   = input.float(1.5, "Breakout: min candle size (× ATR)", minval = 0, step = 0.1, group = G_ETC)
-float brkVolMult   = input.float(1.2, "Breakout: min volume (× 20-bar average, 0 = off)", minval = 0, step = 0.1, group = G_ETC)
-
 const string G_DAY = "Day trading rules"
 int   qty    = input.int(1, "Contracts per trade", minval = 1, group = G_DAY)
 int   dayH   = input.int(9,  "Trading day starts (ET)  hour", minval = 0, maxval = 23, inline = "day", group = G_DAY)
@@ -176,9 +146,7 @@ bool   showFiltered = input.bool(true, "Mark no-wick candles filtered out (no tr
 bool   showLevels   = input.bool(true, "Draw the level line while the order waits", group = G_UI)
 bool   showTrades   = input.bool(true, "Draw entry / stop / target boxes for each trade", group = G_UI)
 bool   showSwings   = input.bool(false, "Mark swing highs / lows", group = G_UI)
-bool   showMomBg    = input.bool(true, "Tint background by trend (green up, red down, none = consolidating)", group = G_UI,
-     tooltip = "Stronger tint = the trend is currently set by an early-trend-change override.")
-bool   showETC      = input.bool(true, "Mark structure breaks (BOS), breakouts (BRK) and squeezes (orange dots)", group = G_UI)
+bool   showMomBg    = input.bool(true, "Tint background by trend (green up, red down, none = consolidating)", group = G_UI)
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // INSTRUMENT & TIMEFRAME
@@ -193,10 +161,10 @@ if barstate.isfirst and not timeframe.isintraday
     runtime.error("Use an intraday chart (the script is designed for 5 minutes).")
 // Version A is defined on 5-minute candles — on any other timeframe it would be a different strategy.
 if barstate.isfirst and tfSec != 300
-    runtime.error("NOWICK Version A Multi + ETC only runs on a 5-minute chart. Switch the chart timeframe to 5m.")
+    runtime.error("MNQ + MES Trading Strategy only runs on a 5-minute chart. Switch the chart timeframe to 5m.")
 // Guard: this version is sized in contracts with futures costs.
 if barstate.isfirst and syminfo.type != "futures"
-    runtime.error("NOWICK Version A Multi + ETC is for futures (e.g. MNQ1!, NQ1!, ES1!, MGC1!). For forex pairs use nowick_forex.pine instead.")
+    runtime.error("MNQ + MES Trading Strategy is for futures (e.g. MNQ1!, NQ1!, ES1!, MGC1!). For forex pairs use nowick_forex.pine instead.")
 int momBars = math.max(1, int(math.round(momMinutes * 60 / tfSec)))   // 30 min on 5m = 6 bars
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
@@ -274,95 +242,29 @@ f_stop(int dir, float entry) =>
     not na(res) and math.abs(entry - res) >= minDist ? res : na
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// EARLY TREND CHANGE — (1) structure break, (2) squeeze → strong breakout
-// Either event sets the trend (`trendEff`) in its direction for `ovHold` bars, overriding the
-// slower 30-minute filter (`trend`). All checks use confirmed bars and confirmed swings only.
-// ════════════════════════════════════════════════════════════════════════════════════════════════
-// (1) Structure break — once per swing point.
-float lastPH    = phPx.size() > 0 ? phPx.get(0) : na
-int   lastPHBar = phBar.size() > 0 ? phBar.get(0) : -1
-float lastPL    = plPx.size() > 0 ? plPx.get(0) : na
-int   lastPLBar = plBar.size() > 0 ? plBar.get(0) : -1
-var int usedPHBar = -1
-var int usedPLBar = -1
-bool bosUp = false
-bool bosDn = false
-if conf and useBOS
-    if not na(lastPH) and lastPHBar != usedPHBar and bar_index - lastPHBar <= swingMaxAge and close > lastPH
-        bosUp := true
-        usedPHBar := lastPHBar
-    if not na(lastPL) and lastPLBar != usedPLBar and bar_index - lastPLBar <= swingMaxAge and close < lastPL
-        bosDn := true
-        usedPLBar := lastPLBar
-
-// (2) Squeeze: Bollinger Bands fully inside the Keltner Channels = volatility compression.
-float bbBasis = ta.sma(close, sqzLen)
-float bbDev   = sqzBBMult * ta.stdev(close, sqzLen)
-float kcBasis = ta.ema(close, sqzLen)
-float kcRange = sqzKCMult * ta.atr(sqzLen)
-bool  sqzOn   = not na(bbDev) and not na(kcRange) and bbBasis + bbDev < kcBasis + kcRange and bbBasis - bbDev > kcBasis - kcRange
-var int sqzRun     = 0          // consecutive squeeze bars so far
-var int lastSqzLen = 0          // length of the most recent finished squeeze
-var int lastSqzEnd = -100000    // bar it ended on
-int prevRun = sqzRun
-sqzRun := sqzOn ? sqzRun + 1 : 0
-if not sqzOn and prevRun > 0
-    lastSqzLen := prevRun
-    lastSqzEnd := bar_index
-bool  sqzReady = (sqzOn and sqzRun >= sqzMinBars) or (lastSqzLen >= sqzMinBars and bar_index - lastSqzEnd <= sqzRecent)
-float rngHi    = ta.highest(high, rangeBars)[1]
-float rngLo    = ta.lowest(low, rangeBars)[1]
-float volAvg   = ta.sma(volume, 20)
-bool  bigBar   = not na(atr) and (high - low) >= brkATRMult * atr
-bool  volOK    = brkVolMult <= 0 or (not na(volAvg) and volume >= brkVolMult * volAvg)
-bool  brkUp    = conf and useSqz and sqzReady and bigBar and volOK and close > open and close > rngHi
-bool  brkDn    = conf and useSqz and sqzReady and bigBar and volOK and close < open and close < rngLo
-if brkUp or brkDn                 // one breakout per squeeze
-    sqzRun     := 0
-    lastSqzLen := 0
-
-// Override state → effective trend.
-var int ovDir   = 0
-var int ovUntil = 0
-var int ovSrc   = 0               // 1 = structure break, 2 = squeeze breakout, 3 = both
-if newDay
-    ovDir := 0
-int evDir = bosUp or brkUp ? 1 : bosDn or brkDn ? -1 : 0
-if evDir != 0
-    bool bosEv = (evDir == 1 and bosUp) or (evDir == -1 and bosDn)
-    bool brkEv = (evDir == 1 and brkUp) or (evDir == -1 and brkDn)
-    ovDir   := evDir
-    ovUntil := bar_index + ovHold
-    ovSrc   := bosEv and brkEv ? 3 : bosEv ? 1 : 2
-if ovDir != 0 and bar_index > ovUntil
-    ovDir := 0
-int trendEff = ovDir != 0 ? ovDir : trend    // what the strategy trades on
-
-// ════════════════════════════════════════════════════════════════════════════════════════════════
 // NO-WICK CANDLE DETECTION
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 bool bearNoWick = close < open and math.round((high - open) / tick) <= wickTolTicks
 bool bullNoWick = close > open and math.round((open - low) / tick) <= wickTolTicks
-bool bearOK = conf and bearNoWick and afterStart and inWindow and trendEff == -1   // with the (effective) downtrend
-bool bullOK = conf and bullNoWick and afterStart and inWindow and trendEff == 1    // with the (effective) uptrend
+bool bearOK = conf and bearNoWick and afterStart and inWindow and trend == -1   // with the downtrend
+bool bullOK = conf and bullNoWick and afterStart and inWindow and trend == 1    // with the uptrend
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// RESULTS LEDGER — re-prices every closed trade with YOUR costs.
-// Buckets: 0 = longs, 1 = shorts, 2 = all, 3 = trades enabled by an early-trend-change override.
+// RESULTS LEDGER — re-prices every closed trade with YOUR costs. 0 = longs, 1 = shorts, 2 = all.
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-var array<float> stTrades  = array.new<float>(4, 0.0)
-var array<float> stWins    = array.new<float>(4, 0.0)
-var array<float> stGross   = array.new<float>(4, 0.0)
-var array<float> stNet     = array.new<float>(4, 0.0)
-var array<float> stCost    = array.new<float>(4, 0.0)
-var array<float> stWinSum  = array.new<float>(4, 0.0)
-var array<float> stLossSum = array.new<float>(4, 0.0)
-var array<float> stRSum    = array.new<float>(4, 0.0)
-var array<float> stRCnt    = array.new<float>(4, 0.0)
-var array<float> stPeak    = array.new<float>(4, strategy.initial_capital)
-var array<float> stDD      = array.new<float>(4, 0.0)
-var array<float> stDDPct   = array.new<float>(4, 0.0)
-var array<float> stTester  = array.new<float>(4, 0.0)
+var array<float> stTrades  = array.new<float>(3, 0.0)
+var array<float> stWins    = array.new<float>(3, 0.0)
+var array<float> stGross   = array.new<float>(3, 0.0)
+var array<float> stNet     = array.new<float>(3, 0.0)
+var array<float> stCost    = array.new<float>(3, 0.0)
+var array<float> stWinSum  = array.new<float>(3, 0.0)
+var array<float> stLossSum = array.new<float>(3, 0.0)
+var array<float> stRSum    = array.new<float>(3, 0.0)
+var array<float> stRCnt    = array.new<float>(3, 0.0)
+var array<float> stPeak    = array.new<float>(3, strategy.initial_capital)
+var array<float> stDD      = array.new<float>(3, 0.0)
+var array<float> stDDPct   = array.new<float>(3, 0.0)
+var array<float> stTester  = array.new<float>(3, 0.0)
 
 f_update(int k, float g, float n, float c, float r, float tNet) =>
     stTrades.set(k, stTrades.get(k) + 1)
@@ -403,7 +305,6 @@ type Pend
     float  stop     // stop / target currently attached (recalculated each bar)
     float  tgt
     line   ln
-    int    src      // 0 = normal trend, 1 = structure break, 2 = squeeze breakout, 3 = both
 
 // An open trade (kept until it closes, for R and for the chart drawing).
 type Live
@@ -415,7 +316,6 @@ type Live
     box    risk
     box    reward
     line   entry
-    int    src
 
 var array<Pend> pend = array.new<Pend>()
 var array<Live> live = array.new<Live>()
@@ -434,8 +334,6 @@ var int cntFlipped  = 0
 var int cntNoStop   = 0
 var int cntFull     = 0
 var int cntOpposite = 0
-var int cntOvBOS    = 0
-var int cntOvSQZ    = 0
 
 f_retireLine(line ln) =>
     if not na(ln)
@@ -509,7 +407,7 @@ if nPend > 0
                      color = isLong ? color.new(color.green, 10) : color.new(color.red, 10), textcolor = color.white, size = size.small)
                 label.new(fillBar, math.min(p.stop, p.tgt), isLong ? slTxt : tpTxt, style = label.style_label_up,
                      color = isLong ? color.new(color.red, 10) : color.new(color.green, 10), textcolor = color.white, size = size.small)
-            live.push(Live.new(p.id, p.dir, p.lvl, p.stop, p.tgt, bR, bW, lE, p.src))
+            live.push(Live.new(p.id, p.dir, p.lvl, p.stop, p.tgt, bR, bW, lE))
             alert("NOWICK " + p.id + " filled at " + f_fmt(p.lvl) + "  SL " + f_fmt(p.stop) + "  TP " + f_fmt(p.tgt), alert.freq_once_per_bar_close)
             pend.remove(j)
 
@@ -544,8 +442,6 @@ if strategy.closedtrades > processed
         float tNet       = strategy.closedtrades.profit(i)
         f_update(b, grossPnl, netPnl, costT, rMult, tNet)
         f_update(2, grossPnl, netPnl, costT, rMult, tNet)
-        if li >= 0 and live.get(li).src > 0
-            f_update(3, grossPnl, netPnl, costT, rMult, tNet)
         dayNet += netPnl
         if li >= 0
             Live L = live.get(li)
@@ -610,7 +506,7 @@ if conf
                 why := "closed"
             else if bar_index - p.bar >= orderLife
                 why := "expired"
-            else if cancelOnFlip and trendEff == -p.dir
+            else if cancelOnFlip and trend == -p.dir
                 why := "flipped"
             else if posDir == -p.dir
                 why := "opposite"      // trades in the other direction are open
@@ -670,14 +566,10 @@ if conf
                 string id  = "NW" + str.tostring(seq)
                 float  tgt = lvl + d * rrTarget * math.abs(lvl - stop)
                 line   ln  = showLevels ? line.new(bar_index, lvl, bar_index, lvl, color = d == -1 ? C_BEAR : C_BULL, width = 2, style = line.style_dashed) : line(na)
-                // Was this setup only allowed because of an override (the 30-min filter disagreed)?
-                int src = trend != d and ovDir == d ? ovSrc : 0
-                cntOvBOS += src == 1 or src == 3 ? 1 : 0
-                cntOvSQZ += src == 2 or src == 3 ? 1 : 0
-                pend.push(Pend.new(id, d, lvl, bar_index, stop, tgt, ln, src))
+                pend.push(Pend.new(id, d, lvl, bar_index, stop, tgt, ln))
                 strategy.entry(id, d == 1 ? strategy.long : strategy.short, qty = qty,
                      limit = lvl - d * thruEntry * tick,
-                     comment = id + (d == 1 ? " L" : " S") + (src == 1 ? " BOS" : src == 2 ? " BRK" : src == 3 ? " BOS+BRK" : ""))
+                     comment = id + (d == 1 ? " L" : " S"))
                 strategy.exit(id + "-X", from_entry = id, stop = stop,
                      limit = tgt + d * thruTP * tick,
                      comment_loss = "SL", comment_profit = "TP")
@@ -695,12 +587,7 @@ plotshape(showFiltered and conf and bearNoWick and not bearOK, "No-wick bearish 
 plotshape(showFiltered and conf and bullNoWick and not bullOK, "No-wick bullish (filtered out)", shape.xcross, location.belowbar, color.new(color.gray, 30), size = size.tiny)
 plotshape(showSwings and not na(ph), "Swing high", shape.circle, location.abovebar, color.new(color.orange, 20), offset = -pivRight, size = size.tiny)
 plotshape(showSwings and not na(pl), "Swing low",  shape.circle, location.belowbar, color.new(color.orange, 20), offset = -pivRight, size = size.tiny)
-bgcolor(showMomBg and afterStart and inWindow ? (trendEff == 1 ? color.new(color.green, ovDir != 0 ? 85 : 93) : trendEff == -1 ? color.new(color.red, ovDir != 0 ? 85 : 93) : na) : na, title = "Trend")
-plotshape(showETC and bosUp, "Structure break up",   shape.labelup,   location.belowbar, color.new(color.blue, 0),   size = size.tiny, text = "BOS", textcolor = color.white)
-plotshape(showETC and bosDn, "Structure break down", shape.labeldown, location.abovebar, color.new(color.blue, 0),   size = size.tiny, text = "BOS", textcolor = color.white)
-plotshape(showETC and brkUp, "Squeeze breakout up",   shape.labelup,   location.belowbar, color.new(color.purple, 0), size = size.tiny, text = "BRK", textcolor = color.white)
-plotshape(showETC and brkDn, "Squeeze breakout down", shape.labeldown, location.abovebar, color.new(color.purple, 0), size = size.tiny, text = "BRK", textcolor = color.white)
-plotshape(showETC and sqzOn, "Squeeze on", shape.circle, location.bottom, color.new(color.orange, 30), size = size.tiny)
+bgcolor(showMomBg and afterStart and inWindow ? (trend == 1 ? color.new(color.green, 93) : trend == -1 ? color.new(color.red, 93) : na) : na, title = "Trend")
 bgcolor(halted and afterStart and time < flatTs ? color.new(color.red, 85) : na, title = "Daily loss limit hit")
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
@@ -709,7 +596,7 @@ bgcolor(halted and afterStart and time < flatTs ? color.new(color.red, 85) : na,
 f_pos(string s) =>
     s == "Top left" ? position.top_left : s == "Top right" ? position.top_right : s == "Bottom right" ? position.bottom_right : position.bottom_left
 
-var table tb = table.new(f_pos(tablePosIn), 5, 22, bgcolor = color.new(color.black, 15), border_color = color.new(color.gray, 60), border_width = 1)
+var table tb = table.new(f_pos(tablePosIn), 4, 22, bgcolor = color.new(color.black, 15), border_color = color.new(color.gray, 60), border_width = 1)
 
 f_cell(int c, int r, string t, color tc) =>
     table.cell(tb, c, r, t, text_color = tc, text_size = size.small,
@@ -728,11 +615,10 @@ if barstate.islast and showTable
     color W = color.white
     color H = color.new(color.yellow, 0)
     color G = color.new(color.gray, 0)
-    f_cell(0, 0, "NOWICK A x3 + ETC results (" + strategy.account_currency + ", closed trades)", H)
+    f_cell(0, 0, "MNQ + MES strategy results (" + strategy.account_currency + ", closed trades)", H)
     f_cell(1, 0, "Longs", H)
     f_cell(2, 0, "Shorts", H)
-    f_cell(3, 0, "Override only", H)
-    f_cell(4, 0, "All", H)
+    f_cell(3, 0, "All", H)
     array<string> labels = array.from(
          "Trades", "Win rate (net)", "Gross P&L", "Net P&L", "Total costs", "Costs % of gross P&L",
          "Profit factor (net)", "Expectancy / trade (net)", "Avg R achieved (net)",
@@ -741,8 +627,8 @@ if barstate.islast and showTable
          "Tester net profit (ref.)")
     for r = 0 to labels.size() - 1
         f_cell(0, r + 1, labels.get(r), W)
-    for k = 0 to 3
-        int   c       = k == 0 ? 1 : k == 1 ? 2 : k == 3 ? 3 : 4   // Longs, Shorts, Override only, All
+    for k = 0 to 2
+        int   c       = k + 1
         float nT      = stTrades.get(k)
         float wins    = stWins.get(k)
         float gross   = stGross.get(k)
@@ -771,13 +657,12 @@ if barstate.islast and showTable
          " filtered (no trend) → " + str.tostring(cntOrders) + " orders placed → " + str.tostring(cntFilled) +
          " tapped & filled.  Not filled: expired " + str.tostring(cntExpired) + ", trend flipped / opposite " + str.tostring(cntFlipped) +
          ".  Skipped: max trades reached " + str.tostring(cntFull) + ", against open trades " + str.tostring(cntOpposite) +
-         ", no valid swing stop " + str.tostring(cntNoStop) + ".  Orders enabled by override: structure break " +
-         str.tostring(cntOvBOS) + ", squeeze breakout " + str.tostring(cntOvSQZ)
+         ", no valid swing stop " + str.tostring(cntNoStop)
     f_cell(0, 17, funnel, G)
-    table.merge_cells(tb, 0, 17, 4, 17)
+    table.merge_cells(tb, 0, 17, 3, 17)
     string costNote = "Costs: " + str.tostring(commPerSide, "0.00") + "/contract/side · slip " + str.tostring(slipTicks) + "t" +
          (slipOnLimits ? " (incl. limit fills)" : " (market/stop only)") + " · entry trade-through " + str.tostring(thruEntry) +
          "t · TP trade-through " + str.tostring(thruTP) + "t · " + str.tostring(daysCount) + " sessions · tick " +
          str.tostring(tick) + " = " + str.tostring(tick * pv, "0.00")
     f_cell(0, 18, costNote, G)
-    table.merge_cells(tb, 0, 18, 4, 18)
+    table.merge_cells(tb, 0, 18, 3, 18)
