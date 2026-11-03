@@ -90,3 +90,4 @@
 | 2026-10-30 19:26 | position REGN 10 at Alpaca is not in the saved state | not managed by this session (its bracket stop and take profit stay live at Alpaca) | closed at flatten; reconcile in the review |
 | 2026-10-30 19:55 | flattened before the close | verified flat after 2 round(s) |  |
 | 2026-10-30 19:55 | session end | 0 trades, 0 instruments | review to write |
+| 2026-11-03 19:00 | session start (paper): equity 97027.95, buying power 388111.8, shorting on |  |  |

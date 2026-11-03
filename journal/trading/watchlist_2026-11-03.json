@@ -1,0 +1,510 @@
+{
+ "t": "2026-11-03T19:01:45+00:00",
+ "watch": [
+  {
+   "symbol": "QQQ",
+   "price": 681.09,
+   "dollar_volume_m": 29091.6,
+   "range_pct": 1.41,
+   "daily_bias": "down",
+   "name": "Invesco QQQ Trust, Series 1",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "MU",
+   "price": 833.59,
+   "dollar_volume_m": 24544.8,
+   "range_pct": 4.42,
+   "daily_bias": "down",
+   "name": "Micron Technology, Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "NVDA",
+   "price": 202.06,
+   "dollar_volume_m": 21492.4,
+   "range_pct": 2.44,
+   "daily_bias": "down",
+   "name": "NVIDIA Corporation Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "META",
+   "price": 606.73,
+   "dollar_volume_m": 15508.2,
+   "range_pct": 2.99,
+   "daily_bias": "down",
+   "name": "Meta Platforms, Inc. Class A Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "SPCX",
+   "price": 136.37,
+   "dollar_volume_m": 14890.8,
+   "range_pct": 4.03,
+   "daily_bias": "down",
+   "name": "Space Exploration Technologies Corp. Class A Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "AAPL",
+   "price": 338.32,
+   "dollar_volume_m": 14546.5,
+   "range_pct": 1.83,
+   "daily_bias": "none",
+   "name": "Apple Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "TSLA",
+   "price": 403.82,
+   "dollar_volume_m": 13788.0,
+   "range_pct": 2.92,
+   "daily_bias": "up",
+   "name": "Tesla, Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "SNDK",
+   "price": 1075.08,
+   "dollar_volume_m": 12002.6,
+   "range_pct": 5.81,
+   "daily_bias": "down",
+   "name": "Sandisk Corporation Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "MSFT",
+   "price": 507.12,
+   "dollar_volume_m": 11661.8,
+   "range_pct": 2.18,
+   "daily_bias": "down",
+   "name": "Microsoft Corporation Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "AMD",
+   "price": 466.84,
+   "dollar_volume_m": 11569.2,
+   "range_pct": 4.46,
+   "daily_bias": "down",
+   "name": "Advanced Micro Devices, Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "GOOGL",
+   "price": 278.99,
+   "dollar_volume_m": 10841.0,
+   "range_pct": 2.21,
+   "daily_bias": "down",
+   "name": "Alphabet Inc. Class A Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "AMZN",
+   "price": 245.63,
+   "dollar_volume_m": 10587.0,
+   "range_pct": 2.61,
+   "daily_bias": "none",
+   "name": "Amazon.com, Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "INTC",
+   "price": 59.97,
+   "dollar_volume_m": 10545.0,
+   "range_pct": 4.96,
+   "daily_bias": "down",
+   "name": "Intel Corporation Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "AVGO",
+   "price": 322.23,
+   "dollar_volume_m": 7178.0,
+   "range_pct": 2.83,
+   "daily_bias": "up",
+   "name": "Broadcom Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "GOOG",
+   "price": 278.04,
+   "dollar_volume_m": 6973.5,
+   "range_pct": 2.18,
+   "daily_bias": "down",
+   "name": "Alphabet Inc. Class C Capital Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "AEHR",
+   "price": 51.47,
+   "dollar_volume_m": 193.4,
+   "range_pct": 9.4,
+   "daily_bias": "down",
+   "name": "Aehr Test Systems Common Stock",
+   "change_pct": 26.52,
+   "why": "mover +26.5%"
+  },
+  {
+   "symbol": "MRVL",
+   "price": 171.41,
+   "dollar_volume_m": 5527.4,
+   "range_pct": 6.58,
+   "daily_bias": "down",
+   "name": "Marvell Technology, Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "SMH",
+   "price": 508.31,
+   "dollar_volume_m": 5349.8,
+   "range_pct": 2.68,
+   "daily_bias": "down",
+   "name": "VanEck Semiconductor ETF",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "TSM",
+   "price": 398.63,
+   "dollar_volume_m": 5117.6,
+   "range_pct": 2.65,
+   "daily_bias": "down",
+   "name": "Taiwan Semiconductor Manufacturing Company Ltd.",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "SOXX",
+   "price": 453.65,
+   "dollar_volume_m": 5059.6,
+   "range_pct": 3.14,
+   "daily_bias": "down",
+   "name": "iShares Semiconductor ETF",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "LITE",
+   "price": 684.4,
+   "dollar_volume_m": 5053.9,
+   "range_pct": 7.69,
+   "daily_bias": "down",
+   "name": "Lumentum Holdings Inc. Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "PLTR",
+   "price": 178.34,
+   "dollar_volume_m": 4888.0,
+   "range_pct": 4.39,
+   "daily_bias": "down",
+   "name": "Palantir Technologies Inc. Class A Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "ORCL",
+   "price": 119.22,
+   "dollar_volume_m": 4681.0,
+   "range_pct": 5.09,
+   "daily_bias": "down",
+   "name": "Oracle Corp",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "NBIS",
+   "price": 141.39,
+   "dollar_volume_m": 4040.1,
+   "range_pct": 7.5,
+   "daily_bias": "down",
+   "name": "Nebius Group N.V. Class A Ordinary Shares",
+   "change_pct": null,
+   "why": "liquid"
+  },
+  {
+   "symbol": "CRWV",
+   "price": 50.15,
+   "dollar_volume_m": 3883.3,
+   "range_pct": 8.22,
+   "daily_bias": "down",
+   "name": "CoreWeave, Inc. Class A Common Stock",
+   "change_pct": null,
+   "why": "liquid"
+  }
+ ],
+ "also_qualified": [
+  {
+   "symbol": "BE",
+   "price": 196.25,
+   "dollar_volume_m": 3506.9,
+   "range_pct": 6.92,
+   "daily_bias": "down",
+   "name": "Bloom Energy Corporation",
+   "change_pct": null
+  },
+  {
+   "symbol": "SKHY",
+   "price": 147.71,
+   "dollar_volume_m": 3421.8,
+   "range_pct": 4.19,
+   "daily_bias": "up",
+   "name": "SK hynix Inc. American Depositary Shares",
+   "change_pct": null
+  },
+  {
+   "symbol": "GLD",
+   "price": 361.65,
+   "dollar_volume_m": 3145.4,
+   "range_pct": 1.01,
+   "daily_bias": "down",
+   "name": "SPDR Gold Trust, SPDR Gold Shares",
+   "change_pct": null
+  },
+  {
+   "symbol": "NFLX",
+   "price": 62.34,
+   "dollar_volume_m": 2942.6,
+   "range_pct": 2.58,
+   "daily_bias": "down",
+   "name": "Netflix, Inc. Common Stock",
+   "change_pct": null
+  },
+  {
+   "symbol": "BAC",
+   "price": 49.57,
+   "dollar_volume_m": 2159.8,
+   "range_pct": 2.03,
+   "daily_bias": "down",
+   "name": "Bank of America Corporation",
+   "change_pct": null
+  },
+  {
+   "symbol": "IREN",
+   "price": 22.02,
+   "dollar_volume_m": 1640.9,
+   "range_pct": 7.8,
+   "daily_bias": "down",
+   "name": "IREN Limited Ordinary Shares",
+   "change_pct": null
+  },
+  {
+   "symbol": "KO",
+   "price": 95.83,
+   "dollar_volume_m": 1513.8,
+   "range_pct": 1.61,
+   "daily_bias": "up",
+   "name": "Coca-Cola Company",
+   "change_pct": null
+  },
+  {
+   "symbol": "SHOP",
+   "price": 156.22,
+   "dollar_volume_m": 1448.6,
+   "range_pct": 4.12,
+   "daily_bias": "down",
+   "name": "Shopify Inc. Class A subordinate voting shares",
+   "change_pct": null
+  },
+  {
+   "symbol": "SMCI",
+   "price": 30.44,
+   "dollar_volume_m": 1269.1,
+   "range_pct": 5.92,
+   "daily_bias": "down",
+   "name": "Super Micro Computer, Inc. Common Stock",
+   "change_pct": null
+  },
+  {
+   "symbol": "NU",
+   "price": 11.62,
+   "dollar_volume_m": 1175.4,
+   "range_pct": 3.76,
+   "daily_bias": "down",
+   "name": "Nu Holdings Ltd.",
+   "change_pct": null
+  },
+  {
+   "symbol": "PFE",
+   "price": 30.67,
+   "dollar_volume_m": 909.5,
+   "range_pct": 1.84,
+   "daily_bias": "up",
+   "name": "Pfizer Inc.",
+   "change_pct": null
+  },
+  {
+   "symbol": "SOFI",
+   "price": 16.6,
+   "dollar_volume_m": 858.6,
+   "range_pct": 4.29,
+   "daily_bias": "none",
+   "name": "SoFi Technologies, Inc. Common Stock",
+   "change_pct": null
+  },
+  {
+   "symbol": "AAL",
+   "price": 13.08,
+   "dollar_volume_m": 771.2,
+   "range_pct": 3.94,
+   "daily_bias": "none",
+   "name": "American Airlines Group Inc. Common Stock",
+   "change_pct": null
+  },
+  {
+   "symbol": "IONQ",
+   "price": 28.17,
+   "dollar_volume_m": 740.8,
+   "range_pct": 6.29,
+   "daily_bias": "down",
+   "name": "IonQ, Inc.",
+   "change_pct": null
+  },
+  {
+   "symbol": "NOK",
+   "price": 8.3,
+   "dollar_volume_m": 729.9,
+   "range_pct": 4.55,
+   "daily_bias": "down",
+   "name": "Nokia Corporation",
+   "change_pct": null
+  },
+  {
+   "symbol": "BITO",
+   "price": 10.19,
+   "dollar_volume_m": 711.2,
+   "range_pct": 1.91,
+   "daily_bias": "down",
+   "name": "ProShares Bitcoin ETF",
+   "change_pct": null
+  },
+  {
+   "symbol": "QID",
+   "price": 15.5,
+   "dollar_volume_m": 612.0,
+   "range_pct": 2.73,
+   "daily_bias": "up",
+   "name": "ProShares UltraShort QQQ",
+   "change_pct": null
+  },
+  {
+   "symbol": "WULF",
+   "price": 10.94,
+   "dollar_volume_m": 542.1,
+   "range_pct": 8.15,
+   "daily_bias": "down",
+   "name": "TeraWulf Inc. Common Stock",
+   "change_pct": null
+  },
+  {
+   "symbol": "CDE",
+   "price": 13.32,
+   "dollar_volume_m": 519.3,
+   "range_pct": 4.22,
+   "daily_bias": "down",
+   "name": "Coeur Mining, Inc.",
+   "change_pct": null
+  },
+  {
+   "symbol": "DT",
+   "price": 55.13,
+   "dollar_volume_m": 504.9,
+   "range_pct": 3.59,
+   "daily_bias": "down",
+   "name": "Dynatrace, Inc.",
+   "change_pct": null
+  },
+  {
+   "symbol": "CIFR",
+   "price": 6.86,
+   "dollar_volume_m": 500.1,
+   "range_pct": 9.23,
+   "daily_bias": "down",
+   "name": "Cipher Digital Inc. Common Stock",
+   "change_pct": null
+  },
+  {
+   "symbol": "RKT",
+   "price": 13.77,
+   "dollar_volume_m": 450.9,
+   "range_pct": 4.54,
+   "daily_bias": "up",
+   "name": "Rocket Companies, Inc.",
+   "change_pct": null
+  }
+ ],
+ "rejected": {
+  "SPY": "average daily range 0.85% < 1.0%",
+  "MERC": "price 0.13 < 5.0; dollar volume 7M < 50M",
+  "HUBC": "price 0.08 < 5.0; dollar volume 4M < 50M",
+  "GRAB": "price 2.86 < 5.0",
+  "NVD": "leveraged/inverse product: GraniteShares ETF Trust GraniteShares 2x Short NVDA Daily ETF",
+  "SOXL": "leveraged/inverse product: Direxion Daily Semiconductor Bull 3X ETF",
+  "PARA": "price 1.69 < 5.0; dollar volume 14M < 50M",
+  "INLF": "price 0.29 < 5.0; dollar volume 12M < 50M",
+  "RBNE": "price 0.15 < 5.0; dollar volume 8M < 50M",
+  "SGRX": "price 0.74 < 5.0; dollar volume 13M < 50M",
+  "SHFS": "price 0.05 < 5.0; dollar volume 27M < 50M",
+  "SOXS": "leveraged/inverse product: Direxion Daily Semiconductor Bear 3X ETF",
+  "TQQQ": "leveraged/inverse product: ProShares UltraPro QQQ",
+  "SNXX": "leveraged/inverse product: Tradr 2X Long SNDK Daily ETF",
+  "BBD": "price 2.56 < 5.0",
+  "PLTD": "leveraged/inverse product: Direxion Shares ETF Trust Direxion Daily PLTR Bear 1X ETF",
+  "SPDN": "leveraged/inverse product: Direxion Daily S&P 500 Bear 1X ETF",
+  "INO": "price 1.89 < 5.0; dollar volume 30M < 50M",
+  "TSLG": "leveraged/inverse product: Themes ETF Trust Leverage Shares 2X Long TSLA Daily ETF",
+  "RWM": "leveraged/inverse product: ProShares Short Russell2000",
+  "CENN": "price 1.99 < 5.0; dollar volume 2M < 50M",
+  "PLUG": "price 1.31 < 5.0",
+  "SQQQ": "leveraged/inverse product: ProShares UltraPro Short QQQ",
+  "CRIS": "price 0.66 < 5.0; dollar volume 1M < 50M",
+  "MSTZ": "leveraged/inverse product: T-Rex 2X Inverse MSTR Daily Target ETF",
+  "SURG": "price 0.15 < 5.0; dollar volume 1M < 50M",
+  "CNSY": "price 1.71 < 5.0; dollar volume 2M < 50M",
+  "ZBAO": "price 0.26 < 5.0; dollar volume 2M < 50M",
+  "MPT": "price 2.18 < 5.0; dollar volume 50M < 50M",
+  "LQD": "average daily range 0.51% < 1.0%",
+  "VOO": "average daily range 0.84% < 1.0%",
+  "RDAC": "dollar volume 5M < 50M",
+  "SCHD": "average daily range 0.82% < 1.0%",
+  "EHGO": "price 1.91 < 5.0; dollar volume 3M < 50M",
+  "RDACU": "dollar volume 0M < 50M; average daily range 0.00% < 1.0%",
+  "HUTG": "leveraged/inverse product: Themes ETF Trust Leverage Shares 2X Long HUT Daily ETF",
+  "RIOX": "leveraged/inverse product: Defiance Daily Target 2X Long RIOT ETF",
+  "PENU": "leveraged/inverse product: T-REX 2X Long PENG Daily Target ETF",
+  "WULX": "leveraged/inverse product: Tradr 2X Long WULF Daily ETF",
+  "GLX": "leveraged/inverse product: Corgi GLXY 2x Daily ETF",
+  "BTDL": "leveraged/inverse product: GraniteShares ETF Trust GraniteShares 2x Long BTDR Daily ETF",
+  "CORZW": "dollar volume 1M < 50M",
+  "TEUP": "leveraged/inverse product: T-REX 2X Long TE Daily Target ETF",
+  "IBTA": "dollar volume 17M < 50M",
+  "ACB": "price 4.22 < 5.0; dollar volume 5M < 50M",
+  "SUPN": "dollar volume 47M < 50M",
+  "STVN": "dollar volume 10M < 50M",
+  "BRCC": "dollar volume 1M < 50M",
+  "GTN.A": "dollar volume 0M < 50M",
+  "IREZ": "leveraged/inverse product: Tradr 2X Short IREN Daily ETF",
+  "XPRO": "dollar volume 14M < 50M",
+  "APLZ": "leveraged/inverse product: Tradr 2X Short APLD Daily ETF",
+  "BEZ": "leveraged/inverse product: Tradr 2X Short BE Daily ETF"
+ }
+}
