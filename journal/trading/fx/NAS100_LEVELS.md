@@ -17,3 +17,5 @@ Model: tradingbot/live/hl_predict.py (fit on QQQ 2016-2026; when it says 80%+ it
 | 14:30 | 28225.1 | 28331.2 | 28104.2 | 76% | 81% |
 | 15:00 | 28155.8 | 28331.2 | 28104.2 | 96% | 51% |
 | 15:30 | 28207.0 | 28331.2 | 28104.2 | 90% | 81% |
+
+**Result:** high 28331.2 (inside the band), low 28104.2 (inside the band).
