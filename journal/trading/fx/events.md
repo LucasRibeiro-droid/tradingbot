@@ -41,3 +41,4 @@
 | 2026-11-02 21:00 | error in the cycle: GET /v3/accounts/101-004-40823841-001/pricing?instruments=XAU_USD%2CNAS100_USD%2CGBP_USD: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
 | 2026-11-02 22:00 | market closed and nothing open: session end |  |  |
 | 2026-11-03 03:47 | session start (practice): NAV 100000.0441 GBP, 0 trade(s) open in the state |  |  |
+| 2026-11-03 09:33 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
