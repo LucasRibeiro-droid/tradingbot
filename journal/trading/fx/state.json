@@ -77,14 +77,14 @@
      "order_id": "24",
      "units": 0.23,
      "target": 28018.9,
-     "trade_id": null
+     "trade_id": "38"
     },
     {
      "client_id": "crt_fx-NAS100_USD-202611040025-1",
      "order_id": "25",
      "units": 0.23,
      "target": 27892.1,
-     "trade_id": null
+     "trade_id": "41"
     }
    ],
    "closed": false,
@@ -117,7 +117,7 @@
      "trade_id": "31"
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-04_0030_NAS100_USD.md"
   }
  ],
