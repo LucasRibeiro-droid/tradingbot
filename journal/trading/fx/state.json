@@ -29,12 +29,46 @@
    ],
    "closed": false,
    "page": "journal/trading/fx/trades/2026-11-04_0015_NAS100_USD.md"
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup_t": "2026-11-04T00:20:00Z",
+   "direction": -1,
+   "entry": 28145.7,
+   "stop": 28221.0,
+   "targets": [
+    28070.4,
+    27919.8
+   ],
+   "expires_at": "2026-11-04T01:00:00+00:00",
+   "parts": [
+    {
+     "client_id": "crt_fx-NAS100_USD-202611040020-0",
+     "order_id": "22",
+     "units": 0.23,
+     "target": 28070.4,
+     "trade_id": null
+    },
+    {
+     "client_id": "crt_fx-NAS100_USD-202611040020-1",
+     "order_id": "23",
+     "units": 0.23,
+     "target": 27919.8,
+     "trade_id": null
+    }
+   ],
+   "closed": false,
+   "page": "journal/trading/fx/trades/2026-11-04_0020_NAS100_USD.md"
   }
  ],
  "seen": [
   [
    "NAS100_USD",
    "2026-11-04T00:15:00Z"
+  ],
+  [
+   "NAS100_USD",
+   "2026-11-04T00:20:00Z"
   ],
   [
    "levels",
