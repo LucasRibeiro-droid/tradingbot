@@ -107,14 +107,14 @@
      "order_id": "26",
      "units": 0.23,
      "target": 28020.9,
-     "trade_id": null
+     "trade_id": "28"
     },
     {
      "client_id": "crt_fx-NAS100_USD-202611040030-1",
      "order_id": "27",
      "units": 0.23,
      "target": 27959.5,
-     "trade_id": null
+     "trade_id": "31"
     }
    ],
    "closed": false,
