@@ -27,7 +27,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-04_0015_NAS100_USD.md"
   },
   {
@@ -57,7 +57,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-04_0020_NAS100_USD.md"
   },
   {
