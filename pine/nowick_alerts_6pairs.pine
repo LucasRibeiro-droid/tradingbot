@@ -1,0 +1,121 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  NO-WICK ALERTS — 6 pairs × 15m / 30m / 1h, ONE alert for everything
+//
+//  Sends a phone notification as soon as a no-wick candle CLOSES on any of his 6 pairs
+//  (AUDUSD, AUDJPY, GBPUSD, USDJPY, USDCHF, AUDCHF) on the 15m, 30m or 1h.
+//  [17:02–17:43] "we simply have indicators that give us alerts. Whenever there's a no-wick candle
+//  that pops up, we get alerted on our phone."
+//
+//  No-wick [02:15–02:57]: bullish candle with NO bottom wick (open = low) / bearish candle with
+//  NO top wick (open = high). A candle is only a no-wick once it has closed, so the alert fires on
+//  the first price tick after the close (normally within seconds).
+//
+//  SET-UP (once):
+//   1. Add this indicator to ANY chart (e.g. AUDUSD 1m or 15m) and keep that chart open in a layout.
+//   2. Alerts ▸ Create alert ▸ Condition: "No-Wick Alerts 6 pairs" ▸ "Any alert() function call".
+//   3. Notifications: tick "Notify in app" (push to the TradingView phone app). Create.
+//   4. Install the TradingView app on your phone, log in, allow notifications.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+indicator("No-Wick Alerts 6 pairs", shorttitle = "NW Alerts", overlay = true)
+
+const string G_P = "Pairs"
+string p1 = input.symbol("OANDA:AUDUSD", "Pair 1", group = G_P)
+string p2 = input.symbol("OANDA:AUDJPY", "Pair 2", group = G_P)
+string p3 = input.symbol("OANDA:GBPUSD", "Pair 3", group = G_P)
+string p4 = input.symbol("OANDA:USDJPY", "Pair 4", group = G_P)
+string p5 = input.symbol("OANDA:USDCHF", "Pair 5", group = G_P)
+string p6 = input.symbol("OANDA:AUDCHF", "Pair 6", group = G_P)
+
+const string G_T = "Timeframes"
+bool use15 = input.bool(true, "15 minutes", group = G_T)
+bool use30 = input.bool(true, "30 minutes", group = G_T)
+bool use60 = input.bool(true, "1 hour", group = G_T)
+
+bool showTable = input.bool(true, "Show last no-wick per pair", group = "Display")
+
+// Evaluated on the requested pair + timeframe: the LAST CLOSED candle ([1] + lookahead_on is the
+// standard non-repainting form — it switches to the new candle on the first tick after the close).
+f_nw() =>
+    bool bull = close[1] > open[1] and open[1] - low[1] <= syminfo.mintick * 0.01
+    bool bear = close[1] < open[1] and high[1] - open[1] <= syminfo.mintick * 0.01
+    [bull ? 1 : bear ? -1 : 0, open[1], time_close[1]]
+
+f_req(string sym, string tf) =>
+    request.security(sym, tf, f_nw(), lookahead = barmerge.lookahead_on)
+
+[d1a, l1a, t1a] = f_req(p1, "15")
+[d1b, l1b, t1b] = f_req(p1, "30")
+[d1c, l1c, t1c] = f_req(p1, "60")
+[d2a, l2a, t2a] = f_req(p2, "15")
+[d2b, l2b, t2b] = f_req(p2, "30")
+[d2c, l2c, t2c] = f_req(p2, "60")
+[d3a, l3a, t3a] = f_req(p3, "15")
+[d3b, l3b, t3b] = f_req(p3, "30")
+[d3c, l3c, t3c] = f_req(p3, "60")
+[d4a, l4a, t4a] = f_req(p4, "15")
+[d4b, l4b, t4b] = f_req(p4, "30")
+[d4c, l4c, t4c] = f_req(p4, "60")
+[d5a, l5a, t5a] = f_req(p5, "15")
+[d5b, l5b, t5b] = f_req(p5, "30")
+[d5c, l5c, t5c] = f_req(p5, "60")
+[d6a, l6a, t6a] = f_req(p6, "15")
+[d6b, l6b, t6b] = f_req(p6, "30")
+[d6c, l6c, t6c] = f_req(p6, "60")
+
+// varip: remembered across realtime ticks, so each candle is announced exactly once.
+// (Kept as plain strings — the safest varip type.)
+varip string stateT   = ""                         // last seen close time per pair/timeframe (18 values)
+varip string stateTxt = "—|—|—|—|—|—"              // last no-wick per pair, for the table
+varip bool   armed    = false
+
+f_name(string sym) =>
+    array<string> parts = str.split(sym, ":")
+    parts.size() > 1 ? parts.get(1) : sym
+
+f_fmtT(int t) =>
+    str.format_time(t, "HH:mm", "America/New_York")
+
+array<string> syms = array.from(p1, p2, p3, p4, p5, p6)
+array<string> tfn  = array.from("15m", "30m", "1h")
+array<bool>   on   = array.from(use15, use30, use60)
+array<int>    ts   = array.from(t1a, t1b, t1c, t2a, t2b, t2c, t3a, t3b, t3c, t4a, t4b, t4c, t5a, t5b, t5c, t6a, t6b, t6c)
+array<int>    ds   = array.from(d1a, d1b, d1c, d2a, d2b, d2c, d3a, d3b, d3c, d4a, d4b, d4c, d5a, d5b, d5c, d6a, d6b, d6c)
+array<float>  ls   = array.from(l1a, l1b, l1c, l2a, l2b, l2c, l3a, l3b, l3c, l4a, l4b, l4c, l5a, l5b, l5c, l6a, l6b, l6c)
+
+if barstate.isrealtime
+    array<string> prev = stateT == "" ? array.new<string>(18, "0") : str.split(stateT, ",")
+    array<string> txt  = str.split(stateTxt, "|")
+    string body = ""
+    for i = 0 to 17
+        int    t   = ts.get(i)
+        string tS  = na(t) ? "0" : str.tostring(t)
+        if on.get(i % 3) and tS != prev.get(i)
+            int d = ds.get(i)
+            // The first realtime tick only records what is already closed (no alert storm on load).
+            if armed and d != 0 and not na(t)
+                string msgLine = f_name(syms.get(int(i / 3))) + " " + tfn.get(i % 3) +
+                     (d == 1 ? " BULLISH no-wick (no bottom wick)" : " BEARISH no-wick (no top wick)") +
+                     " · level " + str.tostring(ls.get(i)) + " · closed " + f_fmtT(t) + " NY"
+                body := body == "" ? msgLine : body + "\n" + msgLine
+                txt.set(int(i / 3), tfn.get(i % 3) + (d == 1 ? " ▲ " : " ▼ ") + f_fmtT(t))
+        prev.set(i, tS)
+    stateT   := array.join(prev, ",")
+    stateTxt := array.join(txt, "|")
+    armed    := true
+    if body != ""
+        alert(body, alert.freq_all)
+
+// Small status table so you can see it is alive.
+var table tb = table.new(position.top_right, 2, 7, bgcolor = color.new(color.black, 20), border_width = 1, border_color = color.new(color.gray, 60))
+if barstate.islast and showTable
+    table.cell(tb, 0, 0, "No-wick alerts", text_color = color.yellow, text_size = size.small)
+    table.cell(tb, 1, 0, armed ? "live" : "waiting for live data", text_color = armed ? color.lime : color.gray, text_size = size.small)
+    for i = 0 to 5
+        table.cell(tb, 0, i + 1, f_name(syms.get(i)), text_color = color.white, text_size = size.small, text_halign = text.align_left)
+        table.cell(tb, 1, i + 1, str.split(stateTxt, "|").get(i), text_color = color.white, text_size = size.small, text_halign = text.align_right)
+plot(na, "placeholder", display = display.none)
