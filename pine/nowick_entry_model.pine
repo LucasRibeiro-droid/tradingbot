@@ -178,9 +178,10 @@ f_structurePrev(int len, float dPct) =>
 // Trend alignment [12:37–14:34]:
 //  • internal and external agree → one BOS on the internal is enough;
 //  • internal against external → need two BOS in a row on the internal ("two-step BOS").
-//  An external trend with no BOS yet is treated as not opposing [ASSUMPTION].
+//  Only the 4h direction may be traded; the ONLY way against it is his exception of two BOS in a
+//  row on the 15m. If the 4h has no BOS yet (no trend), the same two-step BOS is required.
 f_allowed(int dir) =>
-    bool ok = intTr == dir and (extTr == -dir ? intCnt >= 2 : intCnt >= 1)
+    bool ok = intTr == dir and (extTr == dir ? intCnt >= 1 : intCnt >= 2)
     // 5. Avoid late trends [36:42] / early trend beats late trend [17:54–19:30].
     if avLate and intCnt > lateBOS
         ok := false

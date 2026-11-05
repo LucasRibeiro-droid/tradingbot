@@ -224,7 +224,7 @@ How each item he left open is coded. Each one is an input labelled `[ASSUMPTION]
 | Tap window | the tap must happen on candles 1–9 after the no-wick (counted in 30m/1h candles for a higher-timeframe no-wick) |
 | Higher-timeframe priority | 30m/1h candles built from the 15m bars; a 1h no-wick beats a 30m one, which beats a 15m one; the stop still uses 15m structure |
 | BOS | a close beyond the most recent body swing; the trend is the direction of the latest BOS; the consecutive-BOS count gives "two-step" |
-| External trend | the same method on the last closed 4h candle; an external trend with no BOS yet does not oppose |
+| External trend | the same method on the last closed 4h candle. Trades go only in the 4h direction (1 internal BOS). Against the 4h, or when the 4h has no trend yet, only his exception applies: two internal BOS in a row |
 | Stop (structure) | beyond the wick of the most recent swing low/high on the correct side of entry, plus 0.8 pip |
 | Pre-entry | only when the no-wick is below (long) / above (short) the 0.5 of the leg. Gann = enter at 0.5; Retest = previous swing high/low between the level and price |
 | Stop-loss priority (lower TP) | off by default; when on, caps the TP at the first opposing swing if ≥ 2 swings sit between entry and 1R |
