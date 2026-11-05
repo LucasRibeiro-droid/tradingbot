@@ -242,3 +242,21 @@ How each item he left open is coded. Each one is an input labelled `[ASSUMPTION]
 - decision areas and ranges, waiting on that video;
 - the imbalance exception, waiting on your definition (question 17);
 - "trades you don't feel confident in", which can't be coded.
+
+## Update — your answers to the remaining questions
+
+| # | Your answer | Coded as |
+|---|---|---|
+| Timeframes | Changing the timeframe means switching the chart, not combining 15m candles | 30m, 1h and 4h are read from the **real** timeframes. A 30m/1h candle is only used on the 15m bar where it closes, so nothing comes from the future |
+| 1 | Exactly no wick | open = low (bull) / open = high (bear) |
+| 2 | Keep the assumption | doji = body ≤ 10% of range |
+| 3 | Yes | the tap must happen within 9 candles of the no-wick's timeframe |
+| 4 | Any tap | a limit order at the level fills on any touch |
+| 5 / 6 | Current | two-step permission lasts until an opposite BOS; late = more than 3 BOS in a row |
+| 7 | Use the timeframe the no-wick appears on | swings, BOS count, stop, pre-entry leg and the 9-candle window all come from that timeframe |
+| 8 / 9 / 10 / 11 | Current | TP lowering (off; when on, from 2 swings in the way), huge = 3 × ATR, breakeven after 0.25R, conflict = an opposite no-wick while waiting |
+| 12 | Significant enough that price wants to come back | imbalance = ≥ 3 candles of one colour in a row moving ≥ 2 × ATR(14), still unfilled (price hasn't traded back to where the move started). A one-step BOS against the 4h is allowed if one lies in the trade direction; TP goes at the imbalance, and it must be ≥ 1R [26:42–27:21] |
+| 14 | Several setups at once, same timeframe only | when trades are open, only setups of the same timeframe and direction can fill. When flat, only the highest timeframe with waiting setups is live |
+| 15 | 1% of the starting balance, results in % | fixed risk of 1% of initial capital per trade; the table shows returns and drawdown in % |
+| 16 | Off | news filter off |
+| 17 | Later | — |
