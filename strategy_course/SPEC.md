@@ -1,12 +1,12 @@
 # No-Wick Entry Model — strategy spec (draft for your confirmation)
 
-Built **only** from the frame-by-frame logs in `strategy_course/logs/` (parts 1–5) and the captions you supplied.
+Built **only** from the frame-by-frame logs in `strategy_course/logs/` (parts 1–6) and the captions you supplied.
 Every rule cites the video timestamp (absolute time in the full video, `MM:SS`) and, where useful, the log frame (e.g. `p1_f106`).
 His terminology is used throughout: **no-wick candle**, **internal / external trend**, **BOS**, **two-step BOS**, **pre-entry**,
 **retest area**, **leg**, **decision area**, **imbalance**, **breathing room**, **stop loss priority**.
 
-> **Part 6 (35:03 → 42:02) has not been received yet.** Rules from that section (trade management, "trades to avoid",
-> account rotation) are included from the **captions only** and marked **[captions only — verify with Part 6 frames]**.
+> **All 6 parts are now logged.** Part 6 confirmed the trade management, "trades to avoid" and account-rotation rules
+> against the frames. No trading rules appear after 38:42; the rest is homework, the mentorship pitch and the outro.
 
 > **Decision areas are excluded from the baseline**, as you instructed. He tells viewers to learn them from a separate video
 > (21:14–21:43, `p4_f012`). The range/decision-area rules he gives in this video are listed in §9 as a **deferred layer**, not
@@ -79,13 +79,13 @@ He gives **two methods** and says they have about the same win rate ("try out wh
 | **Stop loss priority / TP feasibility.** If a 1:1 TP would require price to break through several previous highs (buy) or lows (sell), **lower the TP** to a level price can realistically reach, below 1R. This applies to trades with an unusually large stop and target, "not normal trades". | 33:35–35:03, `p5_f115`–`f134` |
 | **Imbalance target** (see §8): when trading the imbalance exception, the TP goes at the **top of the imbalance**, which can be more than 1:1. | 27:13–27:21, `p4_f123`–`f124` |
 
-## 7. Trade management [captions only — verify with Part 6 frames]
+## 7. Trade management
 
 | Rule | Source |
 |---|---|
-| Normally, once in a trade, **don't touch anything**. | 35:47 |
-| **Only exception: an opposite no-wick candle forms against you** while you're in the trade. Once it has **closed**, wait for price to move a bit in your favour, then **move the stop to breakeven**. | 35:47–36:08 |
-| If you're **in drawdown** when the opposite no-wick candle appears, **move the TP to breakeven** instead. | 36:08–36:20 |
+| Normally, once in a trade, **don't touch anything**. | 35:41–35:50, `p6_f009`–`f010` |
+| **Only exception: an opposite no-wick candle forms against you** while you're in the trade. Once it has **closed**, wait for price to move a bit in your favour, then **move the stop to breakeven**. Example shown: a GBPUSD 15m short, with a bullish no-wick candle printing just after entry. | 35:50–36:14, `p6_f009`–`f013` |
+| If you're **in drawdown** when the opposite no-wick candle appears, **move the TP to breakeven** instead. | 36:06–36:20, `p6_f012`–`f013` (speech only; not demonstrated on the chart) |
 
 ## 8. Exceptions that "overrule the trend logic"
 
@@ -115,16 +115,16 @@ it isn't lost:
 |---|---|
 | **Trade London, NY and late Asia.** | 16:42–17:02, `p3_f026`–`f030` (on-screen text) |
 | **Avoid the NYSE open, the first 3 hours of Asia, and late NY ("right before market close").** | 16:50–17:02, `p3_f030` |
-| **Red-folder news:** ignore the news spike (24:21, `p4_f066`). Don't trade **1 hour before and 1 hour after** red-folder news [captions only]. | 24:21; 36:54 |
-| **Trades to avoid** [captions only — verify with Part 6 frames]: no-wick candles that **conflict** with each other; **counter-trend** trades; trades **tapping into support/resistance**; trades with a **super large stop and TP** (or fix the TP per §6); **late, overextended** trends; red-folder news ±1h; outside your session; any trade you're "not super confident" in. | 36:20–37:14 |
+| **Red-folder news:** ignore the news spike (24:21, `p4_f066`). Don't trade **1 hour before and 1 hour after** red-folder news. | 24:21; 36:46, `p6_f020` (on-screen "6. Avoid trading near red folder news") |
+| **"Avoid these trades"** (on-screen list, built up item by item): **1.** trades with conflicting no-wicks ("two no-wicks telling different stories"); **2.** counter-trend trades; **3.** trades tapping into **decision areas** (his speech says "support or resistances"); **4.** trades with a huge SL & TP (or, if taken, put the TP where price can reach it, per §6); **5.** late trends ("super overextended"); **6.** trading near red-folder news (±1h); **7.** trading outside your session; **8.** trades you don't feel confident in. | 36:20–37:08, `p6_f014`–`f024` |
 
-## 11. Account rotation (prop-firm execution layer) [captions only — verify with Part 6 frames]
+## 11. Account rotation (prop-firm execution layer)
 
 | Rule | Source |
 |---|---|
-| Buy **3 funded accounts at once** and trade them **in order**. | 37:34–37:58 |
-| Move to the next account after **2 wins in a row or 1 loss**. After all three accounts have been traded, **stop for the day**, then reset the next day. | 37:58–38:38 |
-| Effect: worst day = 3 losses (one per account); best day = 6 wins. | 38:18–38:38 |
+| Buy **3 funded accounts at once** and trade them **in order**. | 37:30–37:46, `p6_f036`–`f044` |
+| Move to the next account after **2 wins in a row or 1 loss**. After all three accounts have been traded, **stop for the day**, then reset the next day. Two worked days are shown on screen: day 1 = W W (acc 1), L (acc 2), L (acc 3) → done; day 2 = L (acc 1), W W (acc 2), W W (acc 3) → done. | 37:41–38:16, `p6_f043`–`f063` |
+| Effect: worst day = 3 losses (one per account); best day = 6 wins. He says you only need about a 60% win rate with this system. | 37:21, 38:18–38:20, `p6_f030`, `p6_f065`–`f067` |
 
 ---
 
@@ -176,6 +176,11 @@ assumption.
     keep a fixed 1:1?
 
 **F. Management, avoid list and rotation (Part 6)**
+15a. **Contradiction to resolve (for when you send the decision-area video).** The on-screen avoid list says "Avoid trades
+    tapping into decision areas" (36:28, `p6_f016`). But in Part 4 he calls a no-wick candle plus a decision-area tap "a very
+    strong combination" and trades it in ranges (22:53–24:51). My reading is that tapping a decision area *against* your
+    trade is to be avoided, while trading *from* a decision area in a range is the separate range play. This won't affect the
+    baseline, since decision areas are excluded until you send that video.
 15. **Breakeven rule details:** "wait for price to come down a bit" after the opposite no-wick candle closes before moving the
     stop to breakeven. How far is "a bit"? Should "in drawdown → move TP to breakeven" be coded as described?
 16. **What counts as a "conflicting" no-wick candle?** For example, a bullish and a bearish no-wick candle both active and
