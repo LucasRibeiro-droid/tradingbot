@@ -1,0 +1,558 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  NO-WICK ENTRY MODEL — exact baseline from the course video (Bard FX, "the complete no-wick entry
+//  model"). Every rule cites the video timestamp it comes from: [mm:ss]. The full frame-by-frame logs
+//  and the written spec are in strategy_course/ (logs/part1–6, SPEC.md).
+//
+//  Anything he did NOT specify is an input marked  [ASSUMPTION]  — not his rule.
+//  Decision areas / ranges (21:05–26:17) are deliberately NOT in this baseline: they come later as a
+//  separate switchable layer once the decision-area video is provided.
+//
+//  Chart: one of his 6 forex pairs on the 15-minute chart [14:56] [16:12]
+//         AUDUSD, AUDJPY, GBPUSD, USDJPY, USDCHF, AUDCHF (OANDA).
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+strategy(title = "No-Wick Entry Model (course baseline)",
+     shorttitle = "NoWick Model",
+     overlay = true,
+     pyramiding = 0,                       // one position at a time [ASSUMPTION — he never says]
+     initial_capital = 100000,
+     currency = currency.USD,
+     default_qty_type = strategy.fixed,
+     default_qty_value = 1,
+     commission_type = strategy.commission.percent,
+     commission_value = 0,                 // spread is handled in the results table (input below)
+     slippage = 0,
+     margin_long = 0,
+     margin_short = 0,
+     process_orders_on_close = false,
+     calc_on_every_tick = false,
+     // ⚠ Entries are limit orders that fill inside a bar, so entry + stop/TP can happen in the same
+     // 15m bar. Without the bar magnifier TradingView guesses that order. Free plan: keep it off
+     // (it errors). Paid plan: turn on "Bar magnifier / High detalization" in the Strategy Tester.
+     use_bar_magnifier = false,
+     max_lines_count = 500,
+     max_labels_count = 500,
+     max_boxes_count = 500,
+     max_bars_back = 2000)
+
+const string TZ = "America/New_York"
+const string ID = "NW"
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// INPUTS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+const string G_NW = "No-wick candle"
+float nwTolPips  = input.float(0.0, "No-wick tolerance (pips) [ASSUMPTION]", minval = 0, step = 0.01, group = G_NW,
+     tooltip = "[02:15–02:57] A bullish no-wick candle has no bottom wick, a bearish one no top wick. He uses the xGhozt Wickless Candles indicator. 0 = the open must equal the low (bull) / high (bear) exactly.")
+int   tapWindow  = input.int(9, "Tap must happen within (candles)", minval = 1, group = G_NW,
+     tooltip = "[04:47–05:11] 'there cannot be more than nine candles from when this candle gets created to when it gets tapped… on the 10th candle you don't take the trade.' Counted in candles of the timeframe the no-wick formed on.")
+bool  useHTFprio = input.bool(true, "Prioritise 30m / 1h no-wick when the higher candle is also no-wick", group = G_NW,
+     tooltip = "[15:06–16:10] 'If there is a play on the 30 minute as well as on the 15, you prioritise the 30 minute… 1 hour.' The 30m/1h candles are built from the 15m bars (no repainting). The 9-candle window is then counted in 30m/1h candles.")
+
+const string G_TR = "Trend (internal 15m / external 4h)"
+int   pivLen   = input.int(2, "Swing size: candles each side", minval = 1, maxval = 10, group = G_TR,
+     tooltip = "[10:27–11:47] Internal trend = the lowest possible trend, 'every single pivot', read on candle BODIES [09:01–09:37]. His zig-zag indicator is set to 2. A swing high = a body top higher than the body tops of N candles on each side (confirmed N candles later, so no look-ahead).")
+float dojiPct  = input.float(10.0, "Doji = body ≤ this % of the candle range [ASSUMPTION]", minval = 0, maxval = 50, step = 1, group = G_TR,
+     tooltip = "[29:27] 'Doji candles, we don't take doji candles into account as structure.' He never defines a doji.")
+string extTF   = input.timeframe("240", "External trend timeframe", group = G_TR,
+     tooltip = "[12:25–12:37] 'the external is on the 4 hour'. Same body-based swing / BOS method, using only CLOSED 4h candles.")
+
+const string G_EN = "Entry"
+string preMode = input.string("Off", "Pre-entry", options = ["Off", "Gann box 0.5", "Retest area"], group = G_EN,
+     tooltip = "[30:06–33:29] When the no-wick candle is LOW in the leg (below the 0.5 of the leg, bodies), price may not come back all the way.\nGann box 0.5: enter at the 0.5 of the leg [32:39].\nRetest area: enter at the previous high (long) / previous low (short) [31:57–32:25].\nOff: always enter at the no-wick level (pure tap).")
+
+const string G_SL = "Stop loss / take profit"
+string slMode  = input.string("Structure", "Stop method", options = ["Structure", "Previous candle"], group = G_SL,
+     tooltip = "[28:29–29:56] Two methods, 'around the same win rate'.\nStructure: above the most recent high (short) / below the most recent low (long) before the no-wick [05:26–05:45].\nPrevious candle: the high/low of the candle before the no-wick, skipping dojis [29:35–29:56].")
+float breathPips = input.float(0.8, "Breathing room (pips) [ASSUMPTION — from your screenshot]", minval = 0, step = 0.1, group = G_SL,
+     tooltip = "[29:01] 'with a little bit of breathing room'. He gives no number; 0.8 pip measured from your screenshot.")
+float rrTarget = input.float(1.0, "Take profit (R)", minval = 0.1, step = 0.1, group = G_SL,
+     tooltip = "[05:47] 'TP at a 1:1 ratio'.")
+bool  useTPprio = input.bool(false, "Stop-loss priority: lower TP if 1R needs to break several highs/lows", group = G_SL,
+     tooltip = "[33:35–35:03] 'you want your TP to be easy to hit… we lower the take-profit to a feasible area'. He applies it by eye to trades with a big stop. Off by default because it is discretionary.")
+int   tpPrioN  = input.int(2, "…if at least this many swings lie between entry and 1R [ASSUMPTION]", minval = 1, group = G_SL)
+
+const string G_MG = "Trade management"
+bool  useMgmt  = input.bool(true, "Opposite no-wick → breakeven", group = G_MG,
+     tooltip = "[35:41–36:20] Only touch a trade if a no-wick candle forms against you. Once it closes: wait for price to come a bit your way, then move SL to breakeven. If you are in drawdown at that moment, move TP to breakeven instead.")
+float beAfterR = input.float(0.25, "'A bit' = price moves this many R your way [ASSUMPTION]", minval = 0, step = 0.05, group = G_MG)
+
+const string G_AV = "Trades to avoid [36:20–37:08]"
+bool  avConflict = input.bool(true, "1. Avoid conflicting no-wicks", group = G_AV,
+     tooltip = "'When there's two no-wicks telling different stories, avoid those.' Implemented: skip / cancel a setup if an opposite no-wick candle prints while it is waiting for its tap.")
+// 2. counter-trend trades → handled by the trend alignment rules (always on).
+// 3. decision areas → excluded from the baseline (decision-area video pending).
+bool  avHuge     = input.bool(true, "4. Avoid huge SL & TP", group = G_AV)
+float hugeATR    = input.float(3.0, "…huge = stop wider than this × ATR(14) [ASSUMPTION]", minval = 0.5, step = 0.5, group = G_AV)
+bool  avLate     = input.bool(true, "5. Avoid late trends", group = G_AV,
+     tooltip = "[17:54–19:30] 'early trend always beats late trend'. Implemented as a maximum number of consecutive internal BOS in the trade direction.")
+int   lateBOS    = input.int(3, "…late = more than this many BOS in a row [ASSUMPTION]", minval = 2, group = G_AV)
+bool  avNews     = input.bool(false, "6. Avoid red-folder news ±1h (needs your news list)", group = G_AV,
+     tooltip = "[36:46] 'Skip 1 hour before, 1 hour after.' TradingView cannot read a news calendar in a backtest — type the times below.")
+string newsList  = input.text_area("", "Red-folder news times, New York time, one per line: 2026-09-11 08:30", group = G_AV)
+// 7. outside your session → session inputs below. 8. trades you don't feel confident in → not codeable.
+
+const string G_SS = "Sessions, New York time [16:42–17:02] — clock times are [ASSUMPTION]"
+string sAsiaLate = input.session("2200-0400", "Trade: late Asia", group = G_SS,
+     tooltip = "He says trade London, NY and late Asia; avoid the first 3 hours of Asia (Asia ≈ 19:00 NY → avoid 19:00–22:00).")
+string sLondon   = input.session("0300-1200", "Trade: London", group = G_SS)
+string sNY       = input.session("0800-1500", "Trade: NY (ends before 'late NY')", group = G_SS)
+string sAvoidNYO = input.session("0930-1030", "Avoid: NYSE open", group = G_SS,
+     tooltip = "He gives no duration; 1 hour assumed.")
+string sAvoidLNY = input.session("1500-1700", "Avoid: late NY (before 17:00 close)", group = G_SS)
+
+const string G_RO = "Account rotation [37:30–38:20]"
+bool  useRot = input.bool(false, "Simulate 3-account rotation (daily stop)", group = G_RO,
+     tooltip = "Trade 3 accounts in order; move on after 2 wins or 1 loss; after all 3, stop for the day. In one backtest this is a daily stop: max 3 losses or 6 wins per day. Day resets at 17:00 New York.")
+
+const string G_RK = "Size & costs"
+float riskPct   = input.float(1.0, "Risk per trade (% of equity) [ASSUMPTION]", minval = 0.01, step = 0.25, group = G_RK)
+float spreadPip = input.float(1.0, "Spread (pips) — charged in the results table", minval = 0, step = 0.1, group = G_RK)
+
+const string G_UI = "Display"
+bool showNW    = input.bool(true, "Mark no-wick candles (▲ bull / ▼ bear)", group = G_UI)
+bool showSwing = input.bool(false, "Mark swing highs / lows", group = G_UI)
+bool showTable = input.bool(true, "Results table", group = G_UI)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// GUARDS & UNITS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+if barstate.isfirst and timeframe.in_seconds() != 900
+    runtime.error("Use the 15-minute chart — he looks for trades on the 15m [14:56].")
+if barstate.isfirst and syminfo.type != "forex"
+    runtime.error("This model is for his forex pairs (AUDUSD, AUDJPY, GBPUSD, USDJPY, USDCHF, AUDCHF) [16:12].")
+
+float pip    = syminfo.currency == "JPY" ? 0.01 : 0.0001
+float tol    = nwTolPips * pip
+float breath = breathPips * pip
+float atr14  = ta.atr(14)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// STRUCTURE — body-based swings and BOS [07:01–11:14]
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// Returns [trend, consecutive BOS count]. A BOS is a CLOSE beyond the most recent swing high/low
+// (bodies, not wicks [09:21 "always the closure… always the bodies"]). Trend = direction of the most
+// recent BOS [10:57 "you just look at the most recent BOS"]. Dojis are not structure [29:27].
+f_structure(int len, float dPct) =>
+    float bt   = math.max(open, close)
+    float bb   = math.min(open, close)
+    float rng  = high - low
+    bool  doji = rng > 0 and math.abs(close - open) <= dPct / 100 * rng
+    float ph   = ta.pivothigh(bt, len, len)
+    float pl   = ta.pivotlow(bb, len, len)
+    var float shL = na
+    var float slL = na
+    var bool  shB = false
+    var bool  slB = false
+    var int   tr  = 0
+    var int   cnt = 0
+    if not na(ph) and not doji[len]
+        shL := ph
+        shB := false
+    if not na(pl) and not doji[len]
+        slL := pl
+        slB := false
+    if not na(shL) and not shB and close > shL
+        shB := true
+        cnt := tr == 1 ? cnt + 1 : 1
+        tr  := 1
+    if not na(slL) and not slB and close < slL
+        slB := true
+        cnt := tr == -1 ? cnt + 1 : 1
+        tr  := -1
+    [tr, cnt]
+
+f_structurePrev(int len, float dPct) =>
+    [t, c] = f_structure(len, dPct)
+    [t[1], c[1]]
+
+// Internal trend: the 15m chart [12:25].
+[intTr, intCnt] = f_structure(pivLen, dojiPct)
+// External trend: last CLOSED 4h candle (no repainting) [12:25].
+[extTr, extCnt] = request.security(syminfo.tickerid, extTF, f_structurePrev(pivLen, dojiPct), lookahead = barmerge.lookahead_on)
+
+// Trend alignment [12:37–14:34]:
+//  • internal and external agree → one BOS on the internal is enough;
+//  • internal against external → need two BOS in a row on the internal ("two-step BOS").
+//  An external trend with no BOS yet is treated as not opposing [ASSUMPTION].
+f_allowed(int dir) =>
+    bool ok = intTr == dir and (extTr == -dir ? intCnt >= 2 : intCnt >= 1)
+    // 5. Avoid late trends [36:42] / early trend beats late trend [17:54–19:30].
+    if avLate and intCnt > lateBOS
+        ok := false
+    ok
+
+// Swing points kept for stops / pre-entry (same body pivots; wick extreme stored for the stop).
+float bodyTop = math.max(open, close)
+float bodyBot = math.min(open, close)
+bool  isDoji  = (high - low) > 0 and math.abs(close - open) <= dojiPct / 100 * (high - low)
+float pH = ta.pivothigh(bodyTop, pivLen, pivLen)
+float pL = ta.pivotlow(bodyBot, pivLen, pivLen)
+var array<float> shBody = array.new<float>()
+var array<float> shWick = array.new<float>()
+var array<float> slBody = array.new<float>()
+var array<float> slWick = array.new<float>()
+var float legLowLvl  = na     // leg for the Gann box (long): last swing low body → highest body since
+var float legHiLvl   = na
+var float legHighLvl = na     // leg (short): last swing high body → lowest body since
+var float legLoLvl   = na
+float recentLoBody = ta.lowest(bodyBot, pivLen + 1)
+float recentHiBody = ta.highest(bodyTop, pivLen + 1)
+if not na(pH) and not isDoji[pivLen]
+    shBody.unshift(pH)
+    shWick.unshift(high[pivLen])
+    legHighLvl := pH
+    legLoLvl   := recentLoBody
+    if shBody.size() > 50
+        shBody.pop()
+        shWick.pop()
+if not na(pL) and not isDoji[pivLen]
+    slBody.unshift(pL)
+    slWick.unshift(low[pivLen])
+    legLowLvl := pL
+    legHiLvl  := recentHiBody
+    if slBody.size() > 50
+        slBody.pop()
+        slWick.pop()
+legHiLvl := na(legHiLvl) ? bodyTop : math.max(legHiLvl, bodyTop)
+legLoLvl := na(legLoLvl) ? bodyBot : math.min(legLoLvl, bodyBot)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SESSIONS [16:42–17:02], NEWS [36:46], DAY
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_in(string s) =>
+    not na(time(timeframe.period, s, TZ))
+bool inSession = (f_in(sAsiaLate) or f_in(sLondon) or f_in(sNY)) and not f_in(sAvoidNYO) and not f_in(sAvoidLNY)
+
+var array<int> newsTs = array.new<int>()
+if barstate.isfirst and avNews and str.length(newsList) > 0
+    for ln in str.split(newsList, "\n")
+        array<string> p = str.split(str.trim(ln), " ")
+        if p.size() >= 2
+            array<string> d = str.split(p.get(0), "-")
+            array<string> t = str.split(p.get(1), ":")
+            if d.size() == 3 and t.size() == 2
+                newsTs.push(timestamp(TZ, int(str.tonumber(d.get(0))), int(str.tonumber(d.get(1))), int(str.tonumber(d.get(2))),
+                     int(str.tonumber(t.get(0))), int(str.tonumber(t.get(1))), 0))
+f_nearNews() =>
+    bool hit = false
+    if avNews and newsTs.size() > 0
+        for t in newsTs
+            if math.abs(time - t) <= 3600000 or math.abs(time_close - t) <= 3600000
+                hit := true
+                break
+    hit
+
+bool canTradeNow = inSession and not f_nearNews()
+
+// Trading day for the rotation: a new day starts at the 17:00 New York roll-over.
+bool after17 = hour(time, TZ) >= 17
+bool newDay  = after17 and not after17[1]
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// NO-WICK CANDLES on 15m, and on 30m / 1h built from the 15m bars [02:15–04:20] [15:06–16:10]
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+bool bull15 = close > open and (open - low) <= tol + syminfo.mintick * 0.01
+bool bear15 = close < open and (high - open) <= tol + syminfo.mintick * 0.01
+
+f_agg(int mins) =>
+    int ms = mins * 60000
+    var float o = na
+    var float h = na
+    var float l = na
+    if na(o) or time % ms == 0
+        o := open
+        h := high
+        l := low
+    else
+        h := math.max(h, high)
+        l := math.min(l, low)
+    bool done = time_close % ms == 0
+    [o, h, l, done]
+[o30, h30, l30, done30] = f_agg(30)
+[o60, h60, l60, done60] = f_agg(60)
+bool bull30 = done30 and close > o30 and (o30 - l30) <= tol + syminfo.mintick * 0.01
+bool bear30 = done30 and close < o30 and (h30 - o30) <= tol + syminfo.mintick * 0.01
+bool bull60 = done60 and close > o60 and (o60 - l60) <= tol + syminfo.mintick * 0.01
+bool bear60 = done60 and close < o60 and (h60 - o60) <= tol + syminfo.mintick * 0.01
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SETUP STATE — one waiting setup at a time; a newer / higher-timeframe no-wick replaces it [ASSUMPTION]
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var int   sDir    = 0          // +1 long, −1 short, 0 none
+var float sEntry  = na         // limit price: the no-wick level (its open = flat side [04:23–04:31]) or pre-entry
+var float sStop   = na
+var float sTP     = na
+var int   sExpiry = 0          // last bar on which the tap may happen
+var int   sTF     = 15
+var line  sLine   = na
+var float ordRisk = na         // |entry − stop| of the order / open trade (for R and management)
+
+var int cntSetups   = 0
+var int cntNoStop   = 0
+var int cntHuge     = 0
+var int cntExpired  = 0
+var int cntConflict = 0
+
+f_retire(line ln) =>
+    if not na(ln)
+        ln.set_x2(bar_index)
+        ln.set_color(color.new(color.gray, 50))
+        ln.set_style(line.style_dotted)
+
+// Stop by structure [05:26–05:45] [28:29–29:13]: most recent swing low (long) below entry / swing
+// high (short) above entry, beyond its wick, plus breathing room.
+f_stopStructure(int dir, float entry) =>
+    float res = na
+    array<float> wk = dir == 1 ? slWick : shWick
+    if wk.size() > 0
+        for i = 0 to wk.size() - 1
+            float w = wk.get(i)
+            if (dir == 1 and w < entry) or (dir == -1 and w > entry)
+                res := dir == 1 ? w - breath : w + breath
+                break
+    res
+
+// Stop by previous candle [29:35–29:56]: high/low of the candle before the no-wick, skipping dojis.
+// For a 30m / 1h no-wick, "previous candle" = the 15m candle just before it started [ASSUMPTION].
+f_stopPrevCandle(int dir, int startOffset) =>
+    float res = na
+    for k = startOffset to startOffset + 10
+        if not isDoji[k]
+            res := dir == 1 ? low[k] - breath : high[k] + breath
+            break
+    res
+
+// Opposing swings between entry and a target (stop-loss priority [33:35–35:03]).
+f_swingsBetween(int dir, float entry, float tgt) =>
+    int   n   = 0
+    float fst = na
+    array<float> bd = dir == 1 ? shBody : slBody
+    if bd.size() > 0
+        for v in bd
+            if (dir == 1 and v > entry and v < tgt) or (dir == -1 and v < entry and v > tgt)
+                n += 1
+                fst := na(fst) ? v : dir == 1 ? math.min(fst, v) : math.max(fst, v)
+    [n, fst]
+
+// Build a setup from a no-wick candle that just closed.
+// Returns [status, entry, stop, tp]: 1 = ok, 0 = not with the trend, 2 = no valid stop, 3 = huge stop.
+f_build(int dir, float lvl, int startOff) =>
+    int   status = 0
+    float entry  = lvl
+    float stop   = na
+    float tp     = na
+    if f_allowed(dir)                                             // only with the trend [04:01–04:20]
+        // Pre-entry [30:06–33:29] — only when the no-wick sits low in the leg (below the 0.5, bodies).
+        float mid = dir == 1 ? legLowLvl + 0.5 * (legHiLvl - legLowLvl) : legHighLvl - 0.5 * (legHighLvl - legLoLvl)
+        bool  lowInLeg = not na(mid) and (dir == 1 ? lvl < mid : lvl > mid)
+        if preMode == "Gann box 0.5" and lowInLeg
+            entry := mid                                           // "you enter at the 0.5" [32:39]
+        else if preMode == "Retest area" and lowInLeg
+            // previous high (long) / previous low (short) between the level and price [31:57–32:25]
+            array<float> bd = dir == 1 ? shBody : slBody
+            if bd.size() > 0
+                for v in bd
+                    if (dir == 1 and v > lvl and v < close) or (dir == -1 and v < lvl and v > close)
+                        entry := v
+                        break
+        stop := slMode == "Structure" ? f_stopStructure(dir, lvl) : f_stopPrevCandle(dir, startOff + 1)
+        if na(stop) or (dir == 1 and stop >= entry) or (dir == -1 and stop <= entry)
+            status := 2
+        else if avHuge and math.abs(entry - stop) > hugeATR * atr14     // 4. avoid huge SL & TP [36:32]
+            status := 3
+        else
+            status := 1
+            float risk = math.abs(entry - stop)
+            tp := entry + dir * rrTarget * risk                         // TP 1:1 [05:47]
+            if useTPprio
+                [nSw, firstSw] = f_swingsBetween(dir, entry, tp)
+                if nSw >= tpPrioN and not na(firstSw)
+                    tp := firstSw                                       // "lower the take-profit to a feasible area"
+    [status, entry, stop, tp]
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// FILLS, CLOSED TRADES (R ledger) AND ACCOUNT ROTATION — processed first on every bar
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var float tEntry  = na
+var float tStop   = na
+var float tTP     = na
+var int   tDir    = 0
+var bool  oppSeen = false
+var bool  beDone  = false
+var int   prevOpen = 0
+
+var int  rotAcc  = 0           // account in use: 0, 1, 2; 3 = all three traded → done for the day
+var int  rotWins = 0
+if newDay
+    rotAcc  := 0
+    rotWins := 0
+
+if strategy.opentrades > prevOpen                                   // entry just filled
+    tDir    := sDir
+    tEntry  := strategy.opentrades.entry_price(0)
+    tStop   := sStop
+    tTP     := sTP
+    oppSeen := false
+    beDone  := false
+    f_retire(sLine)
+    box.new(bar_index, math.max(tEntry, tStop), bar_index + 8, math.min(tEntry, tStop), border_color = color.new(color.red, 40), bgcolor = color.new(color.red, 85))
+    box.new(bar_index, math.max(tEntry, tTP), bar_index + 8, math.min(tEntry, tTP), border_color = color.new(color.green, 40), bgcolor = color.new(color.green, 85))
+    sDir := 0
+prevOpen := strategy.opentrades
+
+var int   processed = 0
+var int   nT = 0
+var int   nW = 0
+var int   nL = 0
+var int   nBE = 0
+var float sumR = 0.0
+var float sumRnet = 0.0
+if strategy.closedtrades > processed
+    for i = processed to strategy.closedtrades - 1
+        float ep = strategy.closedtrades.entry_price(i)
+        float xp = strategy.closedtrades.exit_price(i)
+        int   d  = strategy.closedtrades.size(i) > 0 ? 1 : -1
+        float rk = na(ordRisk) or ordRisk <= 0 ? math.abs(ep - xp) : ordRisk
+        float r  = rk > 0 ? (xp - ep) * d / rk : 0.0
+        nT += 1
+        sumR += r
+        sumRnet += r - (rk > 0 ? spreadPip * pip / rk : 0.0)
+        if math.abs(xp - ep) < syminfo.mintick
+            nBE += 1                                                 // breakeven: no rotation step
+        else if r > 0
+            nW += 1
+            rotWins += 1
+            if rotWins >= 2                                          // two wins → next account [37:58]
+                rotAcc  += 1
+                rotWins := 0
+        else
+            nL += 1
+            rotAcc  += 1                                             // one loss → next account [37:58]
+            rotWins := 0
+    processed := strategy.closedtrades
+    tDir := 0
+    if sDir != 0                                                     // filled and closed in the same bar
+        f_retire(sLine)
+        sDir := 0
+        strategy.cancel(ID)
+
+bool rotHalt = useRot and rotAcc >= 3                               // done for the day [38:06–38:16]
+bool flat    = strategy.position_size == 0
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// NEW SETUPS / EXPIRY / CONFLICTS — on confirmed bars only
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+if barstate.isconfirmed and flat
+    if rotHalt and sDir != 0
+        f_retire(sLine)
+        sDir := 0
+        strategy.cancel(ID)
+    // 1. Conflicting no-wicks [36:20]: an opposite no-wick while a setup waits → drop it.
+    if sDir != 0 and avConflict and ((sDir == 1 and bear15) or (sDir == -1 and bull15))
+        f_retire(sLine)
+        sDir := 0
+        strategy.cancel(ID)
+        cntConflict += 1
+    // No tap within the window → no trade [04:47–05:11].
+    if sDir != 0 and bar_index >= sExpiry
+        f_retire(sLine)
+        sDir := 0
+        strategy.cancel(ID)
+        cntExpired += 1
+    // New setup. Higher timeframe first [15:06–16:10]: 1h, then 30m, then 15m.
+    if not rotHalt
+        bool placed = false
+        bool counted = false
+        for c = 0 to 2
+            bool isB = c == 0 ? (useHTFprio and bull60) : c == 1 ? (useHTFprio and bull30) : bull15
+            bool isS = c == 0 ? (useHTFprio and bear60) : c == 1 ? (useHTFprio and bear30) : bear15
+            if not placed and (isB or isS)
+                int   d   = isB ? 1 : -1
+                float lv  = c == 0 ? o60 : c == 1 ? o30 : open
+                int   off = c == 0 ? 3 : c == 1 ? 1 : 0
+                int   tf  = c == 0 ? 60 : c == 1 ? 30 : 15
+                [st, en, sp, tp] = f_build(d, lv, off)
+                if st == 1
+                    f_retire(sLine)
+                    strategy.cancel(ID)
+                    sDir    := d
+                    sEntry  := en
+                    sStop   := sp
+                    sTP     := tp
+                    sTF     := tf
+                    sExpiry := bar_index + tapWindow * int(tf / 15)
+                    sLine   := line.new(bar_index - off, en, bar_index, en, color = d == 1 ? color.teal : color.red, width = 2)
+                    cntSetups += 1
+                    placed := true
+                else if not counted and st == 2
+                    cntNoStop += 1
+                    counted := true
+                else if not counted and st == 3
+                    cntHuge += 1
+                    counted := true
+
+// Limit order at the level while the setup is alive. Entry on the tap, with the trend [05:19–05:25].
+// The order is only live inside the trading session [16:42–17:02] and away from listed news [36:46].
+if barstate.isconfirmed and flat and sDir != 0
+    if canTradeNow
+        float riskDist = math.abs(sEntry - sStop)
+        float units = math.floor(strategy.convert_to_symbol(strategy.equity * riskPct / 100) / (riskDist * syminfo.pointvalue))
+        if units >= 1
+            ordRisk := riskDist
+            strategy.entry(ID, sDir == 1 ? strategy.long : strategy.short, qty = units, limit = sEntry,
+                 comment = (sDir == 1 ? "NW L " : "NW S ") + str.tostring(sTF) + "m")
+            strategy.exit(ID + "-X", from_entry = ID, stop = sStop, limit = sTP, comment_loss = "SL", comment_profit = "TP")
+        if not na(sLine)
+            sLine.set_x2(bar_index)
+    else
+        strategy.cancel(ID)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// IN THE TRADE — management [35:41–36:20]
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+if useMgmt and barstate.isconfirmed and strategy.position_size != 0 and tDir != 0
+    bool oppNW = (tDir == 1 and bear15) or (tDir == -1 and bull15)
+    if oppNW and not oppSeen
+        oppSeen := true
+        bool inDD = tDir == 1 ? close < tEntry : close > tEntry
+        if inDD
+            tTP := tEntry                                            // "in drawdown → move TP to break even"
+            strategy.exit(ID + "-X", from_entry = ID, stop = tStop, limit = tTP, comment_loss = "SL", comment_profit = "TP-BE")
+    if oppSeen and not beDone and tTP != tEntry
+        bool aBit = tDir == 1 ? close >= tEntry + beAfterR * ordRisk : close <= tEntry - beAfterR * ordRisk
+        if aBit
+            beDone := true
+            tStop  := tEntry                                         // "move stop loss to break even"
+            strategy.exit(ID + "-X", from_entry = ID, stop = tStop, limit = tTP, comment_loss = "BE", comment_profit = "TP")
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// PLOTS & TABLE
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+plotshape(showNW and bull15, "Bullish no-wick (15m)", shape.triangleup,   location.belowbar, color.new(color.yellow, 0), size = size.tiny)
+plotshape(showNW and bear15, "Bearish no-wick (15m)", shape.triangledown, location.abovebar, color.new(color.yellow, 0), size = size.tiny)
+plotshape(showSwing and not na(pH) and not isDoji[pivLen], "Swing high", shape.circle, location.abovebar, color.new(color.orange, 30), offset = -pivLen, size = size.tiny)
+plotshape(showSwing and not na(pL) and not isDoji[pivLen], "Swing low",  shape.circle, location.belowbar, color.new(color.orange, 30), offset = -pivLen, size = size.tiny)
+bgcolor(not inSession ? color.new(color.gray, 92) : na, title = "Outside trading session")
+
+var table tb = table.new(position.bottom_right, 2, 12, bgcolor = color.new(color.black, 15), border_width = 1, border_color = color.new(color.gray, 60))
+f_row(int r, string k, string v) =>
+    table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, r, v, text_color = color.white, text_size = size.small, text_halign = text.align_right)
+if barstate.islast and showTable
+    f_row(0, "No-Wick model — " + syminfo.ticker, "")
+    f_row(1, "Trades (W / L / BE)", str.tostring(nT) + "  (" + str.tostring(nW) + " / " + str.tostring(nL) + " / " + str.tostring(nBE) + ")")
+    f_row(2, "Win rate (excl. BE)", nW + nL > 0 ? str.tostring(100.0 * nW / (nW + nL), "0.0") + "%" : "—")
+    f_row(3, "Total R (gross)", str.tostring(sumR, "0.00") + "R")
+    f_row(4, "Total R after " + str.tostring(spreadPip, "0.0#") + " pip spread", str.tostring(sumRnet, "0.00") + "R")
+    f_row(5, "Avg R / trade (net)", nT > 0 ? str.tostring(sumRnet / nT, "0.00") + "R" : "—")
+    f_row(6, "Setups placed", str.tostring(cntSetups))
+    f_row(7, "Not tapped in window", str.tostring(cntExpired))
+    f_row(8, "Skipped: no valid stop / huge SL", str.tostring(cntNoStop) + " / " + str.tostring(cntHuge))
+    f_row(9, "Dropped: conflicting no-wick", str.tostring(cntConflict))
+    f_row(10, "Stop / pre-entry", slMode + " / " + preMode)
+    f_row(11, "Rotation", useRot ? "on (account " + str.tostring(math.min(rotAcc, 3)) + "/3 today)" : "off")

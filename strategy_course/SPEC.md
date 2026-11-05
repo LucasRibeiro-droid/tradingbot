@@ -206,3 +206,39 @@ assumption.
 
 Once you confirm or adjust these, and send Part 6 so I can verify §7, §10 and §11 against the frames, I'll write the Pine
 Script with a timestamp citation on every rule.
+
+---
+
+# Confirmed choices and the Pine baseline (`pine/nowick_entry_model.pine`)
+
+Your answers: **forex on his 6 pairs**; **body-based swings with 2 candles each side**; **structure stop with ≈0.8 pip
+breathing room** (from your screenshot); **both pre-entry methods as switchable options**; **sessions and the avoid list as he
+says**; **account rotation as an on/off daily-stop switch**.
+
+How each item he left open is coded. Each one is an input labelled `[ASSUMPTION]`:
+
+| Item | Coded as |
+|---|---|
+| No-wick | open = low (bull) / open = high (bear), tolerance 0 pips |
+| Doji | body ≤ 10% of the candle range |
+| Tap window | the tap must happen on candles 1–9 after the no-wick (counted in 30m/1h candles for a higher-timeframe no-wick) |
+| Higher-timeframe priority | 30m/1h candles built from the 15m bars; a 1h no-wick beats a 30m one, which beats a 15m one; the stop still uses 15m structure |
+| BOS | a close beyond the most recent body swing; the trend is the direction of the latest BOS; the consecutive-BOS count gives "two-step" |
+| External trend | the same method on the last closed 4h candle; an external trend with no BOS yet does not oppose |
+| Stop (structure) | beyond the wick of the most recent swing low/high on the correct side of entry, plus 0.8 pip |
+| Pre-entry | only when the no-wick is below (long) / above (short) the 0.5 of the leg. Gann = enter at 0.5; Retest = previous swing high/low between the level and price |
+| Stop-loss priority (lower TP) | off by default; when on, caps the TP at the first opposing swing if ≥ 2 swings sit between entry and 1R |
+| Management | after an opposite no-wick closes: if in drawdown → TP to breakeven; otherwise SL to breakeven once price moves 0.25R your way |
+| Conflicting no-wicks | an opposite no-wick prints while a setup waits → setup dropped |
+| Huge SL & TP | stop wider than 3 × ATR(14) → skipped |
+| Late trend | more than 3 consecutive internal BOS in the trade direction → skipped |
+| Sessions (New York time) | trade late Asia 22:00–04:00, London 03:00–12:00, NY 08:00–15:00; avoid 09:30–10:30 (NYSE open) and 15:00–17:00 (late NY) |
+| News | optional list of red-folder times you type in; ±1 hour blocked |
+| Rotation | 2 wins or 1 loss moves to the next account; all 3 used → no more trades until the 17:00 New York roll-over |
+| Position size | 1% equity risk per trade; one position at a time |
+| Spread | not charged by the Tester; subtracted in the results table (in R) |
+
+**Not in the baseline:**
+- decision areas and ranges, waiting on that video;
+- the imbalance exception, waiting on your definition (question 17);
+- "trades you don't feel confident in", which can't be coded.
