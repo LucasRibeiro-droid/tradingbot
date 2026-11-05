@@ -65,3 +65,4 @@
 | 2026-11-05 15:00 | error in the cycle: GET /v3/instruments/XAU_USD/candles?granularity=M5&price=M&from=2026-11-05T14%3A55%3A00.000000000Z&count=5000: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
 | 2026-11-05 15:25 | error in the cycle: GET /v3/accounts/101-004-40823841-001/pricing?instruments=XAU_USD%2CNAS100_USD%2CGBP_USD: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
 | 2026-11-05 16:10 | error in the cycle: GET /v3/accounts/101-004-40823841-001/pricing?instruments=XAU_USD%2CNAS100_USD%2CGBP_USD: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
+| 2026-11-05 17:10 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
