@@ -38,8 +38,7 @@ strategy(title = "No-Wick Entry Model (course baseline)",
      use_bar_magnifier = false,
      max_lines_count = 500,
      max_labels_count = 500,
-     max_boxes_count = 500,
-     max_bars_back = 2000)
+     max_boxes_count = 500)
 
 const string TZ = "America/New_York"
 
@@ -133,127 +132,224 @@ float pip    = syminfo.currency == "JPY" ? 0.01 : 0.0001
 float breath = breathPips * pip
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// PER-TIMEFRAME STATE — evaluated on the 15m chart directly and on the REAL 30m / 1h charts
+// PER-TIMEFRAME ENGINE — one light state object per timeframe (15m, 30m, 1h, 4h).
+// The other timeframes only send their CLOSED candles (open/high/low/close); the structure is then
+// computed here, exactly as if you were looking at that chart. This keeps the script light.
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// Structure [07:01–11:14]: body swings; a BOS = a CLOSE beyond the most recent swing [09:21];
-// trend = direction of the most recent BOS [10:57]; dojis are not structure [29:27].
-f_tf(int len, float dPct, int impN, float impATR) =>
-    float bt   = math.max(open, close)
-    float bb   = math.min(open, close)
-    float rng  = high - low
-    bool  doji = rng > 0 and math.abs(close - open) <= dPct / 100 * rng
-    float ph   = ta.pivothigh(bt, len, len)
-    float pl   = ta.pivotlow(bb, len, len)
-    float rLo  = ta.lowest(bb, len + 1)
-    float rHi  = ta.highest(bt, len + 1)
-    float a    = ta.atr(14)
-    var float shL = na
-    var float slL = na
-    var bool  shB = false
-    var bool  slB = false
-    var int   tr  = 0
-    var int   cnt = 0
-    var float sh1w = na
-    var float sh2w = na
-    var float sh3w = na
-    var float sl1w = na
-    var float sl2w = na
-    var float sl3w = na
-    var float sh1b = na
-    var float sh2b = na
-    var float sl1b = na
-    var float sl2b = na
-    var float legLow  = na     // long leg: last swing low (body) → highest body since
-    var float legHi   = na
-    var float legHigh = na     // short leg: last swing high (body) → lowest body since
-    var float legLo   = na
-    if not na(ph) and not doji[len]
-        shL := ph
-        shB := false
-        sh3w := sh2w
-        sh2w := sh1w
-        sh1w := high[len]
-        sh2b := sh1b
-        sh1b := ph
-        legHigh := ph
-        legLo   := rLo
-    if not na(pl) and not doji[len]
-        slL := pl
-        slB := false
-        sl3w := sl2w
-        sl2w := sl1w
-        sl1w := low[len]
-        sl2b := sl1b
-        sl1b := pl
-        legLow := pl
-        legHi  := rHi
-    legHi := na(legHi) ? bt : math.max(legHi, bt)
-    legLo := na(legLo) ? bb : math.min(legLo, bb)
-    if not na(shL) and not shB and close > shL
-        shB := true
-        cnt := tr == 1 ? cnt + 1 : 1
-        tr  := 1
-    if not na(slL) and not slB and close < slL
-        slB := true
-        cnt := tr == -1 ? cnt + 1 : 1
-        tr  := -1
-    // No-wick candle [02:15–02:57]: bullish with NO bottom wick / bearish with NO top wick (exact).
-    bool bull = close > open and open - low <= syminfo.mintick * 0.01
-    bool bear = close < open and high - open <= syminfo.mintick * 0.01
-    // Previous non-doji candle (previous-candle stop) [29:35–29:56].
+type TF
+    int          tf
+    array<float> bt
+    array<float> bb
+    array<float> hi
+    array<float> lo
+    array<bool>  dj
+    float atr = na
+    int   nATR = 0
+    float prevC = na
+    float shL = na
+    float slL = na
+    bool  shB = false
+    bool  slB = false
+    int   tr = 0
+    int   cnt = 0
+    float sh1w = na
+    float sh2w = na
+    float sh3w = na
+    float sl1w = na
+    float sl2w = na
+    float sl3w = na
+    float sh1b = na
+    float sh2b = na
+    float sl1b = na
+    float sl2b = na
+    float legLow = na
+    float legHi = na
+    float legHigh = na
+    float legLo = na
+    float ndH = na
+    float ndL = na
     float pvH = na
     float pvL = na
-    for k = 1 to 10
-        if not doji[k]
-            pvH := high[k]
-            pvL := low[k]
-            break
-    // Imbalance [26:17–28:31]: a run of ≥ impN same-colour candles moving ≥ impATR × ATR. The most
-    // recent unfilled one of each kind is kept; "filled" = price trades back to where the run started.
-    var int   bearRun = 0
-    var int   bullRun = 0
-    var float bearStart = na
-    var float bullStart = na
-    var float imbDnTop = na       // after a bearish run: unfilled zone ABOVE (target for longs)
-    var float imbUpBot = na       // after a bullish run: unfilled zone BELOW (target for shorts)
-    bool isBear = close < open
-    bool isBull = close > open
-    if not isBear and bearRun >= impN and not na(a) and bearStart - close[1] >= impATR * a
-        imbDnTop := bearStart
-    if not isBull and bullRun >= impN and not na(a) and close[1] - bullStart >= impATR * a
-        imbUpBot := bullStart
+    int   bearRun = 0
+    int   bullRun = 0
+    float bearStart = na
+    float bullStart = na
+    float imbDnTop = na
+    float imbUpBot = na
+    float o = na
+    float c = na
+    int   tc = 0
+    bool  bull = false
+    bool  bear = false
+
+f_newTF(int tf) =>
+    TF.new(tf = tf, bt = array.new<float>(), bb = array.new<float>(), hi = array.new<float>(), lo = array.new<float>(), dj = array.new<bool>())
+
+// Feed one CLOSED candle of this timeframe.
+// Structure [07:01–11:14]: body swings (N candles each side); a BOS = a CLOSE beyond the most recent
+// swing [09:21 "always the closure… always the bodies"]; trend = direction of the most recent BOS
+// [10:57]; dojis are not structure [29:27].
+method upd(TF s, float o, float h, float l, float c, int tc) =>
+    float bt   = math.max(o, c)
+    float bb   = math.min(o, c)
+    float rng  = h - l
+    bool  doji = rng > 0 and math.abs(c - o) <= dojiPct / 100 * rng
+    // ATR(14), Wilder
+    float trv = na(s.prevC) ? rng : math.max(rng, math.abs(h - s.prevC), math.abs(l - s.prevC))
+    s.nATR += 1
+    s.atr := na(s.atr) ? trv : s.atr + (trv - s.atr) / math.min(s.nATR, 14)
+    // previous non-doji candle (previous-candle stop [29:35–29:56])
+    s.pvH := s.ndH
+    s.pvL := s.ndL
+    if not doji
+        s.ndH := h
+        s.ndL := l
+    // candle buffer for swing detection
+    s.bt.push(bt)
+    s.bb.push(bb)
+    s.hi.push(h)
+    s.lo.push(l)
+    s.dj.push(doji)
+    int need = 2 * pivLen + 1
+    while s.bt.size() > need
+        s.bt.shift()
+        s.bb.shift()
+        s.hi.shift()
+        s.lo.shift()
+        s.dj.shift()
+    s.legHi := na(s.legHi) ? bt : math.max(s.legHi, bt)
+    s.legLo := na(s.legLo) ? bb : math.min(s.legLo, bb)
+    if s.bt.size() == need and not s.dj.get(pivLen)
+        float cbt = s.bt.get(pivLen)
+        float cbb = s.bb.get(pivLen)
+        bool isPH = true
+        bool isPL = true
+        float hiAfter = cbt
+        float loAfter = cbb
+        for k = 0 to need - 1
+            if k < pivLen
+                if s.bt.get(k) >= cbt
+                    isPH := false
+                if s.bb.get(k) <= cbb
+                    isPL := false
+            else if k > pivLen
+                if s.bt.get(k) > cbt
+                    isPH := false
+                if s.bb.get(k) < cbb
+                    isPL := false
+                hiAfter := math.max(hiAfter, s.bt.get(k))
+                loAfter := math.min(loAfter, s.bb.get(k))
+        if isPH
+            s.shL := cbt
+            s.shB := false
+            s.sh3w := s.sh2w
+            s.sh2w := s.sh1w
+            s.sh1w := s.hi.get(pivLen)
+            s.sh2b := s.sh1b
+            s.sh1b := cbt
+            s.legHigh := cbt
+            s.legLo   := loAfter
+        if isPL
+            s.slL := cbb
+            s.slB := false
+            s.sl3w := s.sl2w
+            s.sl2w := s.sl1w
+            s.sl1w := s.lo.get(pivLen)
+            s.sl2b := s.sl1b
+            s.sl1b := cbb
+            s.legLow := cbb
+            s.legHi  := hiAfter
+    if not na(s.shL) and not s.shB and c > s.shL
+        s.shB := true
+        s.cnt := s.tr == 1 ? s.cnt + 1 : 1
+        s.tr  := 1
+    if not na(s.slL) and not s.slB and c < s.slL
+        s.slB := true
+        s.cnt := s.tr == -1 ? s.cnt + 1 : 1
+        s.tr  := -1
+    // No-wick candle [02:15–02:57]: bullish with NO bottom wick / bearish with NO top wick (exact).
+    s.bull := c > o and o - l <= syminfo.mintick * 0.01
+    s.bear := c < o and h - o <= syminfo.mintick * 0.01
+    // Imbalance [26:17–28:31]: ≥ imbMinN candles of one colour in a row moving ≥ imbMinATR × ATR;
+    // the latest unfilled one of each kind is kept; filled = price trades back to where it started.
+    bool isBear = c < o
+    bool isBull = c > o
+    if not isBear and s.bearRun >= imbMinN and not na(s.prevC) and s.bearStart - s.prevC >= imbMinATR * s.atr
+        s.imbDnTop := s.bearStart
+    if not isBull and s.bullRun >= imbMinN and not na(s.prevC) and s.prevC - s.bullStart >= imbMinATR * s.atr
+        s.imbUpBot := s.bullStart
     if isBear
-        if bearRun == 0
-            bearStart := open
-        bearRun += 1
+        if s.bearRun == 0
+            s.bearStart := o
+        s.bearRun += 1
     else
-        bearRun := 0
+        s.bearRun := 0
     if isBull
-        if bullRun == 0
-            bullStart := open
-        bullRun += 1
+        if s.bullRun == 0
+            s.bullStart := o
+        s.bullRun += 1
     else
-        bullRun := 0
-    if not na(imbDnTop) and high >= imbDnTop
-        imbDnTop := na
-    if not na(imbUpBot) and low <= imbUpBot
-        imbUpBot := na
-    [tr, cnt, bull, bear, open, close, time_close, sh1w, sh2w, sh3w, sl1w, sl2w, sl3w, sh1b, sh2b, sl1b, sl2b, legLow, legHi, legHigh, legLo, pvH, pvL, a, imbDnTop, imbUpBot]
+        s.bullRun := 0
+    if not na(s.imbDnTop) and h >= s.imbDnTop
+        s.imbDnTop := na
+    if not na(s.imbUpBot) and l <= s.imbUpBot
+        s.imbUpBot := na
+    s.prevC := c
+    s.o  := o
+    s.c  := c
+    s.tc := tc
 
-// 15m (the chart itself)
-[tr15, cnt15, bull15, bear15, o15, c15, tc15, sh1w15, sh2w15, sh3w15, sl1w15, sl2w15, sl3w15, sh1b15, sh2b15, sl1b15, sl2b15, lgL15, lgH15, lgHH15, lgLL15, pvH15, pvL15, a15, imbT15, imbB15] = f_tf(pivLen, dojiPct, imbMinN, imbMinATR)
-// Real 30m and 1h charts. lookahead_off: a higher-timeframe candle's values are only used on the
-// 15m bar where that candle CLOSES (tc == time_close), so nothing is taken from the future.
-[tr30, cnt30, bull30, bear30, o30, c30, tc30, sh1w30, sh2w30, sh3w30, sl1w30, sl2w30, sl3w30, sh1b30, sh2b30, sl1b30, sl2b30, lgL30, lgH30, lgHH30, lgLL30, pvH30, pvL30, a30, imbT30, imbB30] = request.security(syminfo.tickerid, "30", f_tf(pivLen, dojiPct, imbMinN, imbMinATR), lookahead = barmerge.lookahead_off)
-[tr60, cnt60, bull60, bear60, o60, c60, tc60, sh1w60, sh2w60, sh3w60, sl1w60, sl2w60, sl3w60, sh1b60, sh2b60, sl1b60, sl2b60, lgL60, lgH60, lgHH60, lgLL60, pvH60, pvL60, a60, imbT60, imbB60] = request.security(syminfo.tickerid, "60", f_tf(pivLen, dojiPct, imbMinN, imbMinATR), lookahead = barmerge.lookahead_off)
-bool closed30 = barstate.isconfirmed and tc30 == time_close
-bool closed60 = barstate.isconfirmed and tc60 == time_close
+var TF st15  = f_newTF(15)
+var TF st30  = f_newTF(30)
+var TF st60  = f_newTF(60)
+var TF stExt = f_newTF(240)
 
-// External trend: last CLOSED 4h candle [12:25].
-f_struct4h(int len, float dPct) =>
-    [t, c, b1, b2, o, cl, tc, x1, x2, x3, x4, x5, x6, x7, x8, x9, x10, x11, x12, x13, x14, x15, x16, x17, x18, x19] = f_tf(len, dPct, 99, 99.0)
-    [t[1], c[1]]
-[extTr, extCnt] = request.security(syminfo.tickerid, extTF, f_struct4h(pivLen, dojiPct), lookahead = barmerge.lookahead_on)
+// Closed candles of the real 30m / 1h / 4h charts. Two requests per timeframe: (a) the candle that
+// closes on this 15m bar (lookahead off), and (b) the previous closed candle (classic non-repainting
+// form) as a fallback, so every closed candle is fed exactly once and never before it has closed.
+[o30a, h30a, l30a, c30a, t30a] = request.security(syminfo.tickerid, "30", [open, high, low, close, time_close], lookahead = barmerge.lookahead_off)
+[o30b, h30b, l30b, c30b, t30b] = request.security(syminfo.tickerid, "30", [open[1], high[1], low[1], close[1], time_close[1]], lookahead = barmerge.lookahead_on)
+[o60a, h60a, l60a, c60a, t60a] = request.security(syminfo.tickerid, "60", [open, high, low, close, time_close], lookahead = barmerge.lookahead_off)
+[o60b, h60b, l60b, c60b, t60b] = request.security(syminfo.tickerid, "60", [open[1], high[1], low[1], close[1], time_close[1]], lookahead = barmerge.lookahead_on)
+[oEb, hEb, lEb, cEb, tEb]      = request.security(syminfo.tickerid, extTF, [open[1], high[1], low[1], close[1], time_close[1]], lookahead = barmerge.lookahead_on)
+
+var int last30 = 0
+var int last60 = 0
+var int lastE  = 0
+bool closed15 = barstate.isconfirmed
+bool closed30 = false
+bool closed60 = false
+if barstate.isconfirmed
+    st15.upd(open, high, low, close, time_close)
+    if t30a == time_close and t30a > last30
+        st30.upd(o30a, h30a, l30a, c30a, t30a)
+        last30 := t30a
+        closed30 := true
+    else if not na(t30b) and t30b > last30
+        st30.upd(o30b, h30b, l30b, c30b, t30b)
+        last30 := t30b
+        closed30 := true
+    if t60a == time_close and t60a > last60
+        st60.upd(o60a, h60a, l60a, c60a, t60a)
+        last60 := t60a
+        closed60 := true
+    else if not na(t60b) and t60b > last60
+        st60.upd(o60b, h60b, l60b, c60b, t60b)
+        last60 := t60b
+        closed60 := true
+    if not na(tEb) and tEb > lastE
+        stExt.upd(oEb, hEb, lEb, cEb, tEb)                         // external trend: 4h [12:25]
+        lastE := tEb
+int extTr = stExt.tr
+
+f_st(int tf) =>
+    tf == 60 ? st60 : tf == 30 ? st30 : st15
+
+// Did a no-wick of timeframe tf (direction dir) close on this bar?
+f_nwClosed(int tf, int dir) =>
+    TF s = f_st(tf)
+    bool cl = tf == 60 ? closed60 : tf == 30 ? closed30 : closed15
+    cl and (dir == 1 ? s.bull : s.bear)
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // SESSIONS [16:42–17:02], NEWS [36:46], DAY
@@ -285,58 +381,58 @@ bool canTradeNow = inSession and not f_nearNews()
 bool after17 = hour(time, TZ) >= 17
 bool newDay  = after17 and not after17[1]                 // forex day rolls at 17:00 New York
 
+
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// SETUP BUILDER
+// SETUP BUILDER — uses the timeframe the no-wick formed on (your rule)
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // Returns [status, entry, stop, tp, usedImbalance]:
 //   1 ok · 0 not allowed by trend · 2 no valid stop · 3 huge stop · 4 imbalance target < 1R
-f_build(int dir, float lvl, float c, int tr, int cnt, float sh1w, float sh2w, float sh3w, float sl1w, float sl2w, float sl3w,
-     float sh1b, float sh2b, float sl1b, float sl2b, float lgL, float lgH, float lgHH, float lgLL, float pvH, float pvL, float a, float imbT, float imbB) =>
+f_build(int dir, TF s) =>
     int   status = 0
+    float lvl    = s.o                                             // the no-wick's flat side = its open [04:23–04:31]
     float entry  = lvl
     float stop   = na
     float tp     = na
     bool  usedImb = false
     // Trend [12:37–14:34]: only the 4h direction (one internal BOS); against the 4h — or with no 4h
     // trend yet — only after two BOS in a row on the internal (his "two-step BOS" exception).
-    bool aligned = tr == dir and (extTr == dir ? cnt >= 1 : cnt >= 2)
+    bool aligned = s.tr == dir and (extTr == dir ? s.cnt >= 1 : s.cnt >= 2)
     // Imbalance exception [26:42–27:21]: one-step BOS against the 4h is OK if an unfilled imbalance
     // lies in the trade direction; TP at the imbalance [27:13].
-    float imbTgt = dir == 1 ? imbT : imbB
-    bool  imbOK  = useImb and not aligned and tr == dir and cnt == 1 and not na(imbTgt) and (dir == 1 ? imbTgt > lvl : imbTgt < lvl)
-    bool  late   = avLate and cnt > lateBOS                          // 5. late trends [36:42]
+    float imbTgt = dir == 1 ? s.imbDnTop : s.imbUpBot
+    bool  imbOK  = useImb and not aligned and s.tr == dir and s.cnt == 1 and not na(imbTgt) and (dir == 1 ? imbTgt > lvl : imbTgt < lvl)
+    bool  late   = avLate and s.cnt > lateBOS                      // 5. late trends [36:42]
     if (aligned or imbOK) and not late
         // Pre-entry [30:06–33:29] — only when the no-wick sits low in the leg (below the 0.5, bodies).
-        float mid = dir == 1 ? lgL + 0.5 * (lgH - lgL) : lgHH - 0.5 * (lgHH - lgLL)
+        float mid = dir == 1 ? s.legLow + 0.5 * (s.legHi - s.legLow) : s.legHigh - 0.5 * (s.legHigh - s.legLo)
         bool  lowInLeg = not na(mid) and (dir == 1 ? lvl < mid : lvl > mid)
         if preMode == "Gann box 0.5" and lowInLeg
-            entry := mid                                            // "you enter at the 0.5" [32:39]
+            entry := mid                                           // "you enter at the 0.5" [32:39]
         else if preMode == "Retest area" and lowInLeg
             // previous high (long) / previous low (short) between the level and price [31:57–32:25]
-            float r1 = dir == 1 ? sh1b : sl1b
-            float r2 = dir == 1 ? sh2b : sl2b
-            if not na(r1) and (dir == 1 ? r1 > lvl and r1 < c : r1 < lvl and r1 > c)
+            float r1 = dir == 1 ? s.sh1b : s.sl1b
+            float r2 = dir == 1 ? s.sh2b : s.sl2b
+            if not na(r1) and (dir == 1 ? r1 > lvl and r1 < s.c : r1 < lvl and r1 > s.c)
                 entry := r1
-            else if not na(r2) and (dir == 1 ? r2 > lvl and r2 < c : r2 < lvl and r2 > c)
+            else if not na(r2) and (dir == 1 ? r2 > lvl and r2 < s.c : r2 < lvl and r2 > s.c)
                 entry := r2
         // Stop [05:26–05:45] [28:29–29:56]
         if slMode == "Structure"
-            // most recent swing beyond entry (its wick) + breathing room
-            if dir == 1
-                stop := not na(sl1w) and sl1w < entry ? sl1w : not na(sl2w) and sl2w < entry ? sl2w : not na(sl3w) and sl3w < entry ? sl3w : na
+            if dir == 1                                             // most recent swing low below entry (wick)
+                stop := not na(s.sl1w) and s.sl1w < entry ? s.sl1w : not na(s.sl2w) and s.sl2w < entry ? s.sl2w : not na(s.sl3w) and s.sl3w < entry ? s.sl3w : na
                 stop := na(stop) ? na : stop - breath
-            else
-                stop := not na(sh1w) and sh1w > entry ? sh1w : not na(sh2w) and sh2w > entry ? sh2w : not na(sh3w) and sh3w > entry ? sh3w : na
+            else                                                    // most recent swing high above entry (wick)
+                stop := not na(s.sh1w) and s.sh1w > entry ? s.sh1w : not na(s.sh2w) and s.sh2w > entry ? s.sh2w : not na(s.sh3w) and s.sh3w > entry ? s.sh3w : na
                 stop := na(stop) ? na : stop + breath
         else
-            stop := dir == 1 ? (na(pvL) ? na : pvL - breath) : (na(pvH) ? na : pvH + breath)
+            stop := dir == 1 ? (na(s.pvL) ? na : s.pvL - breath) : (na(s.pvH) ? na : s.pvH + breath)
         if na(stop) or (dir == 1 and stop >= entry) or (dir == -1 and stop <= entry)
             status := 2
-        else if avHuge and not na(a) and math.abs(entry - stop) > hugeATR * a     // 4. huge SL & TP [36:32]
+        else if avHuge and not na(s.atr) and math.abs(entry - stop) > hugeATR * s.atr   // 4. huge SL & TP [36:32]
             status := 3
         else
             float risk = math.abs(entry - stop)
-            tp := entry + dir * rrTarget * risk                       // TP 1:1 [05:47]
+            tp := entry + dir * rrTarget * risk                     // TP 1:1 [05:47]
             if imbOK
                 // "TP at the top of the imbalance. A bit of a higher R than 1:1" [27:13–27:21]
                 if (imbTgt - entry) * dir >= risk
@@ -349,14 +445,16 @@ f_build(int dir, float lvl, float c, int tr, int cnt, float sh1w, float sh2w, fl
                 status := 1
                 if useTPprio
                     // stop-loss priority [33:35–35:03]: swings in the way of the 1R target → lower TP
-                    float s1 = dir == 1 ? sh1b : sl1b
-                    float s2 = dir == 1 ? sh2b : sl2b
+                    float s1 = dir == 1 ? s.sh1b : s.sl1b
+                    float s2 = dir == 1 ? s.sh2b : s.sl2b
                     int   n  = 0
                     float first = na
-                    for s in array.from(s1, s2)
-                        if not na(s) and (dir == 1 ? s > entry and s < tp : s < entry and s > tp)
-                            n += 1
-                            first := na(first) ? s : dir == 1 ? math.min(first, s) : math.max(first, s)
+                    if not na(s1) and (dir == 1 ? s1 > entry and s1 < tp : s1 < entry and s1 > tp)
+                        n += 1
+                        first := s1
+                    if not na(s2) and (dir == 1 ? s2 > entry and s2 < tp : s2 < entry and s2 > tp)
+                        n += 1
+                        first := na(first) ? s2 : dir == 1 ? math.min(first, s2) : math.max(first, s2)
                     if n >= tpPrioN and not na(first)
                         tp := first
     [status, entry, stop, tp, usedImb]
@@ -495,10 +593,6 @@ bool rotHalt = useRot and rotAcc >= 3                                 // done fo
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // EXPIRY, CONFLICTS, NEW SETUPS (confirmed bars only)
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// Did a no-wick of timeframe tf close on this bar?
-f_nwClosed(int tf, int dir) =>
-    tf == 15 ? (barstate.isconfirmed and (dir == 1 ? bull15 : bear15)) : tf == 30 ? (closed30 and (dir == 1 ? bull30 : bear30)) : (closed60 and (dir == 1 ? bull60 : bear60))
-
 if barstate.isconfirmed
     int n0 = pend.size()
     if n0 > 0
@@ -526,22 +620,14 @@ if barstate.isconfirmed
             for dd = 0 to 1
                 int dir = dd == 0 ? 1 : -1
                 if okTF and f_nwClosed(tf, dir)
-                    // pick the values of the timeframe the no-wick formed on (60 / 30 / 15)
-                    bool h = tf == 60
-                    bool m = tf == 30
-                    [st, en, sp, tp, im] = f_build(dir,
-                         h ? o60 : m ? o30 : o15, h ? c60 : m ? c30 : c15, h ? tr60 : m ? tr30 : tr15, h ? cnt60 : m ? cnt30 : cnt15,
-                         h ? sh1w60 : m ? sh1w30 : sh1w15, h ? sh2w60 : m ? sh2w30 : sh2w15, h ? sh3w60 : m ? sh3w30 : sh3w15,
-                         h ? sl1w60 : m ? sl1w30 : sl1w15, h ? sl2w60 : m ? sl2w30 : sl2w15, h ? sl3w60 : m ? sl3w30 : sl3w15,
-                         h ? sh1b60 : m ? sh1b30 : sh1b15, h ? sh2b60 : m ? sh2b30 : sh2b15, h ? sl1b60 : m ? sl1b30 : sl1b15, h ? sl2b60 : m ? sl2b30 : sl2b15,
-                         h ? lgL60 : m ? lgL30 : lgL15, h ? lgH60 : m ? lgH30 : lgH15, h ? lgHH60 : m ? lgHH30 : lgHH15, h ? lgLL60 : m ? lgLL30 : lgLL15,
-                         h ? pvH60 : m ? pvH30 : pvH15, h ? pvL60 : m ? pvL30 : pvL15, h ? a60 : m ? a30 : a15, h ? imbT60 : m ? imbT30 : imbT15, h ? imbB60 : m ? imbB30 : imbB15)
+                    TF stf = f_st(tf)
+                    [st, en, sp, tp, im] = f_build(dir, stf)
                     if st == 1
                         seq += 1
                         string id = "NW" + str.tostring(tf) + "_" + str.tostring(seq)
                         int barsBack = int(tf / 15) - 1
                         line ln = line.new(bar_index - barsBack, en, bar_index, en, color = dir == 1 ? color.teal : color.red, width = tf == 15 ? 1 : tf == 30 ? 2 : 3)
-                        pend.push(Setup.new(id, dir, tf, en, sp, tp, time_close + tapWindow * tf * 60000, im, ln))
+                        pend.push(Setup.new(id, dir, tf, en, sp, tp, stf.tc + tapWindow * tf * 60000, im, ln))
                         riskById.put(id, math.abs(en - sp))
                         tfById.put(id, tf)
                         cntSetups += 1
@@ -607,10 +693,10 @@ if useMgmt and live.size() > 0
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // PLOTS & TABLE (returns in % — every trade risks riskPct % of the starting balance)
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-plotshape(showNW and bull15, "Bullish no-wick (15m)", shape.triangleup,   location.belowbar, color.new(color.yellow, 0), size = size.tiny)
-plotshape(showNW and bear15, "Bearish no-wick (15m)", shape.triangledown, location.abovebar, color.new(color.yellow, 0), size = size.tiny)
-plotshape(showNW and closed30 and (bull30 or bear30), "No-wick closed on the 30m", shape.diamond, location.top, color.new(color.aqua, 0), size = size.tiny)
-plotshape(showNW and closed60 and (bull60 or bear60), "No-wick closed on the 1h", shape.diamond, location.bottom, color.new(color.fuchsia, 0), size = size.tiny)
+plotshape(showNW and closed15 and st15.bull, "Bullish no-wick (15m)", shape.triangleup,   location.belowbar, color.new(color.yellow, 0), size = size.tiny)
+plotshape(showNW and closed15 and st15.bear, "Bearish no-wick (15m)", shape.triangledown, location.abovebar, color.new(color.yellow, 0), size = size.tiny)
+plotshape(showNW and closed30 and (st30.bull or st30.bear), "No-wick closed on the 30m", shape.diamond, location.top, color.new(color.aqua, 0), size = size.tiny)
+plotshape(showNW and closed60 and (st60.bull or st60.bear), "No-wick closed on the 1h", shape.diamond, location.bottom, color.new(color.fuchsia, 0), size = size.tiny)
 bgcolor(not inSession ? color.new(color.gray, 92) : na, title = "Outside trading session")
 
 var table tb = table.new(position.bottom_right, 2, 14, bgcolor = color.new(color.black, 15), border_width = 1, border_color = color.new(color.gray, 60))
@@ -634,3 +720,4 @@ if barstate.islast and showTable
     f_row(11, "Dropped: conflicting no-wick", str.tostring(cntConflict))
     f_row(12, "Stop / pre-entry", slMode + " / " + preMode)
     f_row(13, "Rotation", useRot ? "on (account " + str.tostring(math.min(rotAcc + 1, 3)) + "/3 today" + (rotHalt ? ", done" : "") + ")" : "off")
+
