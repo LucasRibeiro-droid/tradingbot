@@ -20,8 +20,8 @@ indicator("Key Levels (1 week)", shorttitle = "KeyLvl", overlay = true,
 
 int   lookDays = input.int(7, "Look-back (days)", minval = 1, maxval = 30)
 int   pivLen   = input.int(5, "Swing size (candles each side)", minval = 2, maxval = 20)
-float zoneATR  = input.float(0.6, "Zone width (× ATR)", minval = 0.1, step = 0.1)
-int   minTouch = input.int(4, "Key zone = at least this many swings", minval = 2)
+float zoneATR  = input.float(1.0, "Zone width (× ATR)", minval = 0.1, step = 0.1)
+int   minTouch = input.int(2, "Key zone = at least this many swings", minval = 2)
 int   nShow    = input.int(1, "Zones to show above and below price", minval = 1, maxval = 6)
 float breakATR = input.float(1.2, "Breakout candle body ≥ this × ATR", minval = 0.5, step = 0.1)
 int   coolBars = input.int(20, "No repeat signal for (candles)", minval = 1)
@@ -136,7 +136,13 @@ alertcondition(brkDn, "Breakout down", "Big candle closed below a key support zo
 
 // ── draw only the nearest key zones ─────────────────────────────────────────────────────────────
 var array<box> drawn = array.new<box>()
+var table st = table.new(position.top_right, 1, 1, bgcolor = color.new(color.black, 30))
 if barstate.islast
+    int nKey = 0
+    for z in zones
+        if z.n >= minTouch and not z.broken
+            nKey += 1
+    table.cell(st, 0, 0, "Key levels: " + str.tostring(swPx.size()) + " swings, " + str.tostring(nKey) + " zones", text_color = color.white, text_size = size.small)
     for b in drawn
         b.delete()
     drawn.clear()
