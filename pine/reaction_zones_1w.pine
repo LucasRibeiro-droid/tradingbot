@@ -143,7 +143,10 @@ if barstate.islast
     array<Zone> below = array.new<Zone>()
     for z in zones
         if z.n >= minTouch and not z.broken
-            ((z.top + z.bot) / 2 > close ? above : below).push(z)
+            if (z.top + z.bot) / 2 > close
+                above.push(z)
+            else
+                below.push(z)
     for side = 0 to 1
         array<Zone> list = side == 0 ? above : below
         bool isRes = side == 0
