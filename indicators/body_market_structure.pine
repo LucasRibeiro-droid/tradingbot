@@ -1,212 +1,218 @@
-// Body-based market structure: shows the most recent swing high and swing low, the trend, and
-// how a reversal happens. Every level uses candle BODIES (open/close), never the wicks.
+// Body-based market structure. Every level uses candle BODIES (open/close), never the wicks, and
+// a level only counts as broken when a candle CLOSES beyond it.
 //
-// Trend reversal rule (bullish -> bearish; bearish -> bullish is the mirror image):
-//   1. CHoCH  - a candle CLOSES below the most recent swing low (the last higher low).
-//               The trend is NOT reversed yet; it is only "pending".
-//   2. The CHoCH leg keeps running until price pulls back and prints a swing high (a lower high).
-//      The lowest body of that leg is the confirmation level.
-//   3. LL     - a candle CLOSES below that level = a new lower low. Only now is the trend bearish.
-//   If, before step 3, a candle closes back above the high the uptrend made (the high before the
-//   CHoCH), the CHoCH failed and the trend stays bullish.
+// Uptrend (a downtrend is the mirror image):
+//   low -> HIGH -> pullback (the potential HL) -> a body CLOSES above the high's body
+//     = BOS: the high becomes a HH and the pullback low is CONFIRMED as the HL (new protected low).
+//   While price stays between the high and the protected HL it is INTERNAL STRUCTURE: it is shaded
+//   grey and none of its swings count.
+//
+// Reversal (bullish -> bearish):
+//   1. CHoCH: a body CLOSES below the protected HL. The trend is not reversed yet (pending).
+//   2. The down leg runs, then price pulls back and forms a LOWER HIGH (it may sit inside the old
+//      internal structure).
+//   3. BOS: a body CLOSES below the low of the CHoCH leg -> the LH is confirmed, trend is bearish.
+//   If, while pending, a body closes back above the old high, the CHoCH failed and the uptrend
+//   carries on.
 //
 // Paste into TradingView: Pine Editor -> new indicator -> replace everything -> Add to chart.
 //@version=6
-indicator("Body Market Structure (CHoCH + confirmation)", "Body MS", overlay = true, max_labels_count = 500, max_lines_count = 500)
+indicator("Body Market Structure (BOS / CHoCH / internal)", "Body MS", overlay = true, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
 
 // ---------- inputs ----------
-swingLen   = input.int(3, "Swing strength (bars each side)", minval = 1)
-showSwings = input.bool(true, "Label swing points (HH / HL / LH / LL)")
-showBreaks = input.bool(true, "Show BOS / CHoCH / confirmation lines")
-bullCol    = input.color(color.new(color.teal, 0), "Bullish colour")
-bearCol    = input.color(color.new(color.red, 0), "Bearish colour")
-pendCol    = input.color(color.new(color.orange, 0), "Pending (CHoCH) colour")
+pbLen         = input.int(2, "Pullback confirmation (bars each side of a body swing)", minval = 1)
+showInternal  = input.bool(true, "Shade internal structure")
+showIntSwings = input.bool(true, "Mark internal swings (grey dots)")
+bullCol       = input.color(color.teal, "Bullish colour")
+bearCol       = input.color(color.red, "Bearish colour")
+pendCol       = input.color(color.orange, "CHoCH / pending colour")
+intCol        = input.color(color.gray, "Internal structure colour")
 
 // ---------- body prices ----------
 bodyTop = math.max(open, close)
 bodyBot = math.min(open, close)
 
-ph = ta.pivothigh(bodyTop, swingLen, swingLen)
-pl = ta.pivotlow(bodyBot, swingLen, swingLen)
+// body swings, used only to know that a pullback has started
+ph     = ta.pivothigh(bodyTop, pbLen, pbLen)
+pl     = ta.pivotlow(bodyBot, pbLen, pbLen)
+pivBar = bar_index - pbLen
 
 // ---------- state ----------
-var float swingHigh    = na
-var int   swingHighBar = na
-var bool  highBroken   = false
-var float swingLow     = na
-var int   swingLowBar  = na
-var bool  lowBroken    = false
+// dir 1: tracking an up leg (ext = leg high, pot = potential HL, prot = protected low)
+// dir -1: tracking a down leg (ext = leg low, pot = potential LH, prot = protected high)
+var int   dir           = 1
+var bool  confirmed     = false   // false = trend still forming, or CHoCH waiting for its BOS
+var bool  everConfirmed = false
+var float ext           = na
+var int   extBar        = na
+var bool  pb            = false   // pullback started -> price is in internal structure
+var float pot           = na
+var int   potBar        = na
+var float prot          = na
+var int   protBar       = na
+var box   intBox        = na
 
-var int   trend   = 0      // 1 bullish, -1 bearish, 0 not yet known
-var int   pending = 0      // -1 bearish CHoCH waiting for a LL, 1 bullish CHoCH waiting for a HH
-
-var float runHigh    = na  // highest body of the current uptrend
-var int   runHighBar = na
-var float runLow     = na  // lowest body of the current downtrend
-var int   runLowBar  = na
-
-var float legExtreme    = na   // extreme body of the CHoCH leg (the level to confirm)
-var int   legExtremeBar = na
-var bool  legFrozen     = false
-var float invalidLevel  = na
-var int   chochBar      = na
+if barstate.isfirst
+    ext     := bodyTop
+    extBar  := bar_index
+    prot    := bodyBot
+    protBar := bar_index
 
 bool chochBear = false
 bool chochBull = false
 bool revBear   = false
 bool revBull   = false
 
+// ---------- drawing helpers ----------
 breakLine(int fromBar, float level, color col, string txt, string style) =>
-    if showBreaks
-        line.new(fromBar, level, bar_index, level, color = col, style = style, width = 1)
-        label.new(int(math.round((fromBar + bar_index) / 2)), level, txt, color = color.new(col, 100), textcolor = col, style = label.style_none, size = size.small)
+    line.new(fromBar, level, bar_index, level, color = col, style = style, width = 1)
+    label.new(math.round((fromBar + bar_index) / 2), level, txt, color = color.new(col, 100), textcolor = col, style = label.style_none, size = size.small)
 
-// ---------- new swing points (confirmed swingLen bars later) ----------
-if not na(ph)
-    if showSwings
-        txt = na(swingHigh) ? "H" : ph > swingHigh ? "HH" : "LH"
-        label.new(bar_index - swingLen, ph, txt, color = color.new(color.white, 100), textcolor = ph > nz(swingHigh, ph) ? bullCol : bearCol, style = label.style_label_down, size = size.tiny)
-    swingHigh    := ph
-    swingHighBar := bar_index - swingLen
-    highBroken   := false
-    if pending == -1 and swingHighBar > chochBar
-        legFrozen := true      // pullback printed a lower high -> CHoCH leg low is now fixed
+swingLabel(int b, float p, string txt, color col, bool isHigh) =>
+    label.new(b, p, txt, color = color.new(col, 100), textcolor = col, style = isHigh ? label.style_label_down : label.style_label_up, size = size.small)
 
-if not na(pl)
-    if showSwings
-        txt = na(swingLow) ? "L" : pl < swingLow ? "LL" : "HL"
-        label.new(bar_index - swingLen, pl, txt, color = color.new(color.white, 100), textcolor = pl < nz(swingLow, pl) ? bearCol : bullCol, style = label.style_label_up, size = size.tiny)
-    swingLow    := pl
-    swingLowBar := bar_index - swingLen
-    lowBroken   := false
-    if pending == 1 and swingLowBar > chochBar
-        legFrozen := true      // pullback printed a higher low -> CHoCH leg high is now fixed
+closeBox() =>
+    if not na(intBox)
+        box.set_right(intBox, bar_index)
 
-// ---------- structure logic (closes only, i.e. bodies) ----------
-if pending == -1
-    if not legFrozen and bodyBot < legExtreme
-        legExtreme    := bodyBot
-        legExtremeBar := bar_index
-    if close > invalidLevel
-        breakLine(runHighBar, invalidLevel, bullCol, "CHoCH failed", line.style_dotted)
-        pending    := 0
-        runHigh    := bodyTop
-        runHighBar := bar_index
-    else if legFrozen and close < legExtreme
-        breakLine(legExtremeBar, legExtreme, bearCol, "LL - bearish confirmed", line.style_solid)
-        trend     := -1
-        pending   := 0
-        revBear   := true
-        runLow    := bodyBot
-        runLowBar := bar_index
-else if pending == 1
-    if not legFrozen and bodyTop > legExtreme
-        legExtreme    := bodyTop
-        legExtremeBar := bar_index
-    if close < invalidLevel
-        breakLine(runLowBar, invalidLevel, bearCol, "CHoCH failed", line.style_dotted)
-        pending   := 0
-        runLow    := bodyBot
-        runLowBar := bar_index
-    else if legFrozen and close > legExtreme
-        breakLine(legExtremeBar, legExtreme, bullCol, "HH - bullish confirmed", line.style_solid)
-        trend      := 1
-        pending    := 0
-        revBull    := true
-        runHigh    := bodyTop
-        runHighBar := bar_index
+// ---------- structure logic ----------
+isBull = dir == 1
+broke  = isBull ? close < prot : close > prot
+
+if broke
+    closeBox()
+    intBox := na
+    if confirmed
+        // CHoCH: trend is not reversed yet, it needs a LH/HL and then a BOS
+        breakLine(protBar, prot, pendCol, "CHoCH", line.style_dashed)
+        if isBull
+            chochBear := true
+        else
+            chochBull := true
+        // the old extreme (HH / LL) is now the level that cancels the CHoCH
+        prot    := ext
+        protBar := extBar
+        dir     := -dir
+        confirmed := false
+    else
+        // a pending CHoCH failed: the old trend carries on
+        if everConfirmed
+            breakLine(protBar, prot, isBull ? bearCol : bullCol, "CHoCH failed", line.style_dotted)
+            confirmed := true
+        // the extreme of the failed move becomes the new protected HL / LH
+        prot    := ext
+        protBar := extBar
+        dir     := -dir
+    ext    := isBull ? bodyBot : bodyTop
+    extBar := bar_index
+    pb     := false
+    pot    := na
+    potBar := na
+else if not pb
+    // leg still running: extend it, or record the deepest pullback body
+    if isBull ? bodyTop >= ext : bodyBot <= ext
+        ext    := isBull ? bodyTop : bodyBot
+        extBar := bar_index
+        pot    := na
+        potBar := na
+    else if na(pot) or (isBull ? bodyBot < pot : bodyTop > pot)
+        pot    := isBull ? bodyBot : bodyTop
+        potBar := bar_index
+    // a body swing against the leg, after the leg's extreme = pullback started
+    if (isBull ? not na(pl) : not na(ph)) and pivBar > extBar and not na(pot)
+        pb := true
+        txt = isBull ? (confirmed ? "HH" : "H") : (confirmed ? "LL" : "L")
+        swingLabel(extBar, ext, txt, isBull ? bullCol : bearCol, isBull)
+        if showInternal
+            intBox := box.new(extBar, isBull ? ext : prot, bar_index, isBull ? prot : ext, border_color = color.new(intCol, 50), bgcolor = color.new(intCol, 88), border_style = line.style_dotted, text = "internal structure", text_color = color.new(intCol, 20), text_size = size.small, text_halign = text.align_left, text_valign = isBull ? text.align_top : text.align_bottom)
 else
-    if trend == 0
-        if not na(swingHigh) and close > swingHigh
-            trend      := 1
-            runHigh    := bodyTop
-            runHighBar := bar_index
-            highBroken := true
-        else if not na(swingLow) and close < swingLow
-            trend     := -1
-            runLow    := bodyBot
-            runLowBar := bar_index
-            lowBroken := true
-    else if trend == 1
-        if bodyTop > runHigh
-            runHigh    := bodyTop
-            runHighBar := bar_index
-        if not highBroken and not na(swingHigh) and close > swingHigh
-            breakLine(swingHighBar, swingHigh, bullCol, "BOS", line.style_dashed)
-            highBroken := true
-        if not lowBroken and not na(swingLow) and close < swingLow
-            breakLine(swingLowBar, swingLow, pendCol, "CHoCH", line.style_dashed)
-            lowBroken     := true
-            pending       := -1
-            chochBear     := true
-            chochBar      := bar_index
-            legExtreme    := bodyBot
-            legExtremeBar := bar_index
-            legFrozen     := false
-            invalidLevel  := runHigh
-    else if trend == -1
-        if bodyBot < runLow
-            runLow    := bodyBot
-            runLowBar := bar_index
-        if not lowBroken and not na(swingLow) and close < swingLow
-            breakLine(swingLowBar, swingLow, bearCol, "BOS", line.style_dashed)
-            lowBroken := true
-        if not highBroken and not na(swingHigh) and close > swingHigh
-            breakLine(swingHighBar, swingHigh, pendCol, "CHoCH", line.style_dashed)
-            highBroken    := true
-            pending       := 1
-            chochBull     := true
-            chochBar      := bar_index
-            legExtreme    := bodyTop
-            legExtremeBar := bar_index
-            legFrozen     := false
-            invalidLevel  := runLow
+    // internal structure: only a body close beyond the leg extreme counts
+    if isBull ? close > ext : close < ext
+        closeBox()
+        intBox := na
+        swingLabel(potBar, pot, isBull ? "HL" : "LH", isBull ? bullCol : bearCol, not isBull)
+        newTrend = not confirmed
+        breakLine(extBar, ext, isBull ? bullCol : bearCol, newTrend and everConfirmed ? (isBull ? "BOS - bullish confirmed" : "BOS - bearish confirmed") : "BOS", newTrend and everConfirmed ? line.style_solid : line.style_dashed)
+        if newTrend
+            if isBull
+                revBull := true
+            else
+                revBear := true
+        confirmed     := true
+        everConfirmed := true
+        prot    := pot
+        protBar := potBar
+        ext     := isBull ? bodyTop : bodyBot
+        extBar  := bar_index
+        pb      := false
+        pot     := na
+        potBar  := na
+    else
+        if isBull ? bodyBot < pot : bodyTop > pot
+            pot    := isBull ? bodyBot : bodyTop
+            potBar := bar_index
+        if showIntSwings and pivBar > extBar
+            if not na(ph)
+                label.new(pivBar, ph, "•", color = color.new(intCol, 100), textcolor = intCol, style = label.style_label_down, size = size.tiny)
+            if not na(pl)
+                label.new(pivBar, pl, "•", color = color.new(intCol, 100), textcolor = intCol, style = label.style_label_up, size = size.tiny)
+
+if not na(intBox)
+    box.set_right(intBox, bar_index)
 
 // ---------- most recent high / low lines ----------
-var line  hiLine = line.new(na, na, na, na, color = bearCol, width = 2, extend = extend.right)
-var line  loLine = line.new(na, na, na, na, color = bullCol, width = 2, extend = extend.right)
-var label hiLbl  = label.new(na, na, "", style = label.style_label_left, color = color.new(bearCol, 20), textcolor = color.white, size = size.small)
-var label loLbl  = label.new(na, na, "", style = label.style_label_left, color = color.new(bullCol, 20), textcolor = color.white, size = size.small)
-var line  cfLine = line.new(na, na, na, na, color = pendCol, style = line.style_dotted, width = 1, extend = extend.right)
+var line  hiLine  = line.new(na, na, na, na, color = bearCol, width = 2, extend = extend.right)
+var line  loLine  = line.new(na, na, na, na, color = bullCol, width = 2, extend = extend.right)
+var line  potLine = line.new(na, na, na, na, color = pendCol, style = line.style_dotted, width = 1, extend = extend.right)
+var label hiLbl   = label.new(na, na, "", style = label.style_label_left, color = color.new(bearCol, 20), textcolor = color.white, size = size.small)
+var label loLbl   = label.new(na, na, "", style = label.style_label_left, color = color.new(bullCol, 20), textcolor = color.white, size = size.small)
+var label potLbl  = label.new(na, na, "", style = label.style_label_left, color = color.new(pendCol, 20), textcolor = color.white, size = size.small)
 
-if not na(swingHigh)
-    line.set_xy1(hiLine, swingHighBar, swingHigh)
-    line.set_xy2(hiLine, bar_index, swingHigh)
-    label.set_xy(hiLbl, bar_index + 3, swingHigh)
-    label.set_text(hiLbl, "Recent high " + str.tostring(swingHigh, format.mintick))
-if not na(swingLow)
-    line.set_xy1(loLine, swingLowBar, swingLow)
-    line.set_xy2(loLine, bar_index, swingLow)
-    label.set_xy(loLbl, bar_index + 3, swingLow)
-    label.set_text(loLbl, "Recent low " + str.tostring(swingLow, format.mintick))
+hiLvl = dir == 1 ? ext : prot
+hiBar = dir == 1 ? extBar : protBar
+loLvl = dir == 1 ? prot : ext
+loBar = dir == 1 ? protBar : extBar
+hiTxt = dir == 1 ? (pb ? "High (close above = BOS) " : "Leg high (forming) ") : (confirmed ? "Protected LH (close above = CHoCH) " : "Old high (close above = CHoCH failed) ")
+loTxt = dir == 1 ? (confirmed ? "Protected HL (close below = CHoCH) " : "Old low (close below = CHoCH failed) ") : (pb ? "Low (close below = BOS) " : "Leg low (forming) ")
 
-// level that must be broken to confirm a pending reversal
-if pending != 0 and legFrozen
-    line.set_xy1(cfLine, legExtremeBar, legExtreme)
-    line.set_xy2(cfLine, bar_index, legExtreme)
+line.set_xy1(hiLine, hiBar, hiLvl)
+line.set_xy2(hiLine, bar_index, hiLvl)
+label.set_xy(hiLbl, bar_index + 3, hiLvl)
+label.set_text(hiLbl, hiTxt + str.tostring(hiLvl, format.mintick))
+line.set_xy1(loLine, loBar, loLvl)
+line.set_xy2(loLine, bar_index, loLvl)
+label.set_xy(loLbl, bar_index + 3, loLvl)
+label.set_text(loLbl, loTxt + str.tostring(loLvl, format.mintick))
+
+if pb
+    line.set_xy1(potLine, potBar, pot)
+    line.set_xy2(potLine, bar_index, pot)
+    label.set_xy(potLbl, bar_index + 3, pot)
+    label.set_text(potLbl, (dir == 1 ? "Potential HL " : "Potential LH ") + str.tostring(pot, format.mintick))
 else
-    line.set_xy1(cfLine, na, na)
-    line.set_xy2(cfLine, na, na)
+    line.set_xy1(potLine, na, na)
+    line.set_xy2(potLine, na, na)
+    label.set_xy(potLbl, na, na)
 
 // ---------- status panel ----------
 var table panel = table.new(position.top_right, 2, 4, bgcolor = color.new(color.black, 30), border_width = 1)
 if barstate.islast
-    trendTxt = trend == 1 ? "Bullish" : trend == -1 ? "Bearish" : "Undefined"
-    trendCol = trend == 1 ? bullCol : trend == -1 ? bearCol : color.gray
-    stateTxt = pending == -1 ? (legFrozen ? "CHoCH down - waiting for close < " + str.tostring(legExtreme, format.mintick) : "CHoCH down - waiting for lower high") : pending == 1 ? (legFrozen ? "CHoCH up - waiting for close > " + str.tostring(legExtreme, format.mintick) : "CHoCH up - waiting for higher low") : "Trend intact"
+    trendTxt = not everConfirmed ? "Forming" : confirmed ? (dir == 1 ? "Bullish" : "Bearish") : (dir == 1 ? "Bearish - CHoCH up, waiting for HL + BOS" : "Bullish - CHoCH down, waiting for LH + BOS")
+    trendCol = not everConfirmed ? color.gray : confirmed ? (dir == 1 ? bullCol : bearCol) : pendCol
+    stateTxt = pb ? "Internal structure (ignored)" : "Leg running - waiting for pullback"
     table.cell(panel, 0, 0, "Trend", text_color = color.white)
     table.cell(panel, 1, 0, trendTxt, text_color = trendCol)
     table.cell(panel, 0, 1, "Status", text_color = color.white)
-    table.cell(panel, 1, 1, stateTxt, text_color = pending != 0 ? pendCol : color.white)
+    table.cell(panel, 1, 1, stateTxt, text_color = pb ? intCol : color.white)
     table.cell(panel, 0, 2, "Recent high", text_color = color.white)
-    table.cell(panel, 1, 2, str.tostring(swingHigh, format.mintick), text_color = color.white)
+    table.cell(panel, 1, 2, str.tostring(hiLvl, format.mintick), text_color = color.white)
     table.cell(panel, 0, 3, "Recent low", text_color = color.white)
-    table.cell(panel, 1, 3, str.tostring(swingLow, format.mintick), text_color = color.white)
+    table.cell(panel, 1, 3, str.tostring(loLvl, format.mintick), text_color = color.white)
 
-bgcolor(trend == 1 ? color.new(bullCol, 94) : trend == -1 ? color.new(bearCol, 94) : na)
+bgcolor(not everConfirmed ? na : not confirmed ? color.new(pendCol, 94) : dir == 1 ? color.new(bullCol, 94) : color.new(bearCol, 94))
 
 // ---------- alerts ----------
-alertcondition(chochBear, "Bearish CHoCH", "Bearish CHoCH (body close below recent low) - waiting for a new lower low")
-alertcondition(chochBull, "Bullish CHoCH", "Bullish CHoCH (body close above recent high) - waiting for a new higher high")
-alertcondition(revBear, "Bearish reversal confirmed", "New lower low after CHoCH - trend is now bearish")
-alertcondition(revBull, "Bullish reversal confirmed", "New higher high after CHoCH - trend is now bullish")
+alertcondition(chochBear, "Bearish CHoCH", "Bearish CHoCH (body close below protected HL) - waiting for LH + BOS")
+alertcondition(chochBull, "Bullish CHoCH", "Bullish CHoCH (body close above protected LH) - waiting for HL + BOS")
+alertcondition(revBear, "Bearish reversal confirmed", "LH + body close below the CHoCH low - trend is now bearish")
+alertcondition(revBull, "Bullish reversal confirmed", "HL + body close above the CHoCH high - trend is now bullish")
