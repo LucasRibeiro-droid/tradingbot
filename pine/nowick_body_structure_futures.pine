@@ -31,6 +31,7 @@
 strategy(title = "No-Wick × Body Structure (futures 5m/15m)",
      shorttitle = "NW BodyMS",
      overlay = true,
+     scale = scale.right,                  // same price scale as the candles, so drawings stay fixed to price
      pyramiding = 10,
      initial_capital = 100000,
      currency = currency.USD,
