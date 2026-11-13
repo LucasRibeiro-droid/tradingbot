@@ -5,10 +5,7 @@
 //   low -> HIGH -> pullback (the potential HL) -> a body CLOSES above the high's body
 //     = BOS: the high becomes a HH and the pullback low is CONFIRMED as the HL (new protected low).
 //   A pullback only counts when the leg's bullish candles are followed by bearish candle(s) and then
-//   a bullish candle again, AND the pullback reaches at least 30% (setting) of the move from the
-//   protected low to the high. Anything smaller is just part of the same leg.
-//   Downtrend: bearish candles, then bullish candle(s), then bearish again, retracing >= 30% of the
-//   move from the protected high to the low.
+//   a bullish candle again. Downtrend: bearish candles, then bullish candle(s), then bearish again.
 //   While price stays between the high and the protected HL it is INTERNAL STRUCTURE: it is shaded
 //   grey and none of its swings count.
 //
@@ -25,7 +22,6 @@
 indicator("Body Market Structure (BOS / CHoCH / internal)", "Body MS", overlay = true, max_labels_count = 500, max_lines_count = 500, max_boxes_count = 500)
 
 // ---------- inputs ----------
-minPb         = input.float(30, "Minimum pullback (% of the move)", minval = 0, maxval = 100, step = 5)
 dotLen        = input.int(2, "Internal swing dots: bars each side", minval = 1)
 showInternal  = input.bool(true, "Shade internal structure")
 showIntSwings = input.bool(true, "Mark internal swings (grey dots)")
@@ -121,11 +117,8 @@ if broke
     sawCounter := false
 else
     if not pb
-        // pullback = opposite candle(s) after the leg extreme, then a candle in the trend direction
-        // again, with the retrace at least minPb % of the move (protected level -> leg extreme)
-        move  = math.abs(ext - prot)
-        depth = na(pot) or move == 0 ? 0.0 : math.abs(ext - pot) / move * 100
-        if sawCounter and (isBull ? bullCandle : bearCandle) and depth >= minPb
+        // pullback = opposite candle(s) after the leg extreme, then a candle in the trend direction again
+        if sawCounter and not na(pot) and (isBull ? bullCandle : bearCandle)
             pb      := true
             txt = isBull ? (confirmed ? "HH" : "H") : (confirmed ? "LL" : "L")
             swingLabel(extBar, ext, txt, isBull ? bullCol : bearCol, isBull)
@@ -221,9 +214,7 @@ var table panel = table.new(position.top_right, 2, 4, bgcolor = color.new(color.
 if barstate.islast
     trendTxt = not everConfirmed ? "Forming" : confirmed ? (dir == 1 ? "Bullish" : "Bearish") : (dir == 1 ? "Bearish - CHoCH up, waiting for HL + BOS" : "Bullish - CHoCH down, waiting for LH + BOS")
     trendCol = not everConfirmed ? color.gray : confirmed ? (dir == 1 ? bullCol : bearCol) : pendCol
-    mv       = math.abs(ext - prot)
-    curDepth = na(pot) or mv == 0 ? 0.0 : math.abs(ext - pot) / mv * 100
-    stateTxt = pb ? "Internal structure (ignored)" : "Leg running - pullback " + str.tostring(curDepth, "#") + "% of move (needs " + str.tostring(minPb, "#") + "% + " + (dir == 1 ? "bullish" : "bearish") + " candle)"
+    stateTxt = pb ? "Internal structure (ignored)" : "Leg running - waiting for " + (dir == 1 ? "bearish then bullish" : "bullish then bearish") + " candles"
     table.cell(panel, 0, 0, "Trend", text_color = color.white)
     table.cell(panel, 1, 0, trendTxt, text_color = trendCol)
     table.cell(panel, 0, 1, "Status", text_color = color.white)
