@@ -15,7 +15,7 @@
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 
 //@version=6
-indicator("Key Levels (1 week)", shorttitle = "KeyLvl", overlay = true, scale = scale.right,
+indicator("Key Levels (1 week)", shorttitle = "KeyLvl", overlay = true,
      max_boxes_count = 50)
 
 int   lookDays = input.int(7, "Look-back (days)", minval = 1, maxval = 30)

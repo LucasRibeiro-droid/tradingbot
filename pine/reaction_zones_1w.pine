@@ -15,7 +15,7 @@
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 
 //@version=6
-indicator("Reaction Zones (1 week)", shorttitle = "RZ 1W", overlay = true, scale = scale.right,
+indicator("Reaction Zones (1 week)", shorttitle = "RZ 1W", overlay = true,
      max_boxes_count = 50)
 
 int   lookDays = input.int(7, "Look-back (days)", minval = 1, maxval = 30)
