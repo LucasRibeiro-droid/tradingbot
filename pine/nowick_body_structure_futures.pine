@@ -73,7 +73,9 @@ string ntz     = input.session("2000-0000", "No trading zone (London time)", gro
 bool  useA     = input.bool(true, "Close on an A setup against us (and take the new one)", group = G_F)
 
 const string G_C = "Size & costs"
-float riskPct   = input.float(1.0, "Risk per trade: % of the STARTING balance", minval = 0.01, step = 0.25, group = G_C)
+float riskPct   = input.float(1.0, "Risk per trade (%)", minval = 0.01, step = 0.25, group = G_C)
+string riskBase = input.string("Current equity", "…of", options = ["Current equity", "Starting balance"], group = G_C,
+     tooltip = "Current equity: every trade risks the same 1% of the account as it is at that moment (compounds).\nStarting balance: every trade risks the same cash amount (1% of initial capital).")
 float commSide  = input.float(2.25, "Commission per contract per side ($) — NQ ≈ 2.25, MNQ ≈ 0.62", minval = 0, step = 0.05, group = G_C)
 int   slipTicks = input.int(1, "Slippage on stop / market exits (ticks)", minval = 0, group = G_C)
 
@@ -315,6 +317,9 @@ var float sumR = 0.0
 var float sumRnet = 0.0
 var float peakR = 0.0
 var float maxDDR = 0.0
+var float eqNet  = 1.0          // account multiple after costs (1.0 = starting balance)
+var float eqPeak = 1.0
+var float ddPct  = 0.0
 if strategy.closedtrades > processed
     for i = processed to strategy.closedtrades - 1
         string eid = strategy.closedtrades.entry_id(i)
@@ -330,6 +335,10 @@ if strategy.closedtrades > processed
         sumRnet += r - (rk > 0 ? costPts / rk : 0.0)
         peakR := math.max(peakR, sumRnet)
         maxDDR := math.max(maxDDR, peakR - sumRnet)
+        float rn = r - (rk > 0 ? costPts / rk : 0.0)
+        eqNet  := riskBase == "Current equity" ? eqNet * (1 + rn * riskPct / 100) : 1 + sumRnet * riskPct / 100
+        eqPeak := math.max(eqPeak, eqNet)
+        ddPct  := math.max(ddPct, (eqPeak - eqNet) / eqPeak * 100)
         if r > 0
             nW += 1
         else
@@ -411,7 +420,7 @@ if barstate.isconfirmed
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // ORDERS — limit at the entry; max open trades; one direction at a time
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-float riskCash = strategy.initial_capital * riskPct / 100
+float riskCash = (riskBase == "Current equity" ? strategy.equity : strategy.initial_capital) * riskPct / 100
 if barstate.isconfirmed and pend.size() > 0
     int slots = maxOpen - live.size()
     int liveDir = live.size() > 0 ? live.get(0).dir : 0
@@ -446,13 +455,13 @@ f_row(int r, string k, string v) =>
 f_pct(float rm) =>
     (rm >= 0 ? "+" : "") + str.tostring(rm * riskPct, "0.00") + "%"
 if barstate.islast and showTable
-    f_row(0, "NW × Body structure — " + syminfo.ticker + " " + timeframe.period + "m", "risk " + str.tostring(riskPct, "0.##") + "%")
+    f_row(0, "NW × Body structure — " + syminfo.ticker + " " + timeframe.period + "m", "risk " + str.tostring(riskPct, "0.##") + "% of " + (riskBase == "Current equity" ? "equity" : "start bal."))
     f_row(1, "Trend now", trend == 1 ? "Bullish" : trend == -1 ? "Bearish" : everConfirmed ? "CHoCH pending" : "Forming")
     f_row(2, "Trades (W / L)", str.tostring(nT) + "  (" + str.tostring(nW) + " / " + str.tostring(nL) + ")")
     f_row(3, "Win rate", nT > 0 ? str.tostring(100.0 * nW / nT, "0.0") + "%" : "—")
-    f_row(4, "Return (before costs)", f_pct(sumR))
-    f_row(5, "Return (after costs)", f_pct(sumRnet))
-    f_row(6, "Max drawdown (closed trades)", str.tostring(maxDDR * riskPct, "0.00") + "%")
+    f_row(4, "Return (before costs, not compounded)", f_pct(sumR))
+    f_row(5, "Return (after costs)", (eqNet >= 1 ? "+" : "") + str.tostring((eqNet - 1) * 100, "0.00") + "%")
+    f_row(6, "Max drawdown (closed trades, after costs)", str.tostring(ddPct, "0.00") + "%")
     f_row(7, "Setups placed", str.tostring(cSetups))
     f_row(8, "Dropped: structure before tap / tap > " + str.tostring(tapWindow), str.tostring(cStruct) + " / " + str.tostring(cExpired))
     f_row(9, "No-wicks skipped: against / no trend / choppy", str.tostring(cAgainst) + " / " + str.tostring(cNoTrend) + " / " + str.tostring(cChop))
