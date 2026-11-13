@@ -1,0 +1,170 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  REACTION ZONES (last 7 days) — clean version
+//
+//  ZONES: swing highs / lows of the last 7 days grouped by price. Only the strongest UNBROKEN zones
+//  nearest to price are drawn (default 3 above = resistance "R", 3 below = support "S").
+//  "R 4×" = price turned at this level 4 times in the last week.
+//
+//  SIGNALS (closed candles only, only at the nearest key zone):
+//    green ▲ = price dipped into support and closed back above it  → possible bullish reversal
+//    red ▼   = price spiked into resistance and closed back below it → possible bearish reversal
+//    lime / purple arrow = big candle closed through the zone        → breakout, zone removed
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+indicator("Key Levels (1 week)", shorttitle = "KeyLvl", overlay = true, scale = scale.right,
+     max_boxes_count = 50)
+
+int   lookDays = input.int(7, "Look-back (days)", minval = 1, maxval = 30)
+int   pivLen   = input.int(5, "Swing size (candles each side)", minval = 2, maxval = 20)
+float zoneATR  = input.float(0.6, "Zone width (× ATR)", minval = 0.1, step = 0.1)
+int   minTouch = input.int(4, "Key zone = at least this many swings", minval = 2)
+int   nShow    = input.int(1, "Zones to show above and below price", minval = 1, maxval = 6)
+float breakATR = input.float(1.2, "Breakout candle body ≥ this × ATR", minval = 0.5, step = 0.1)
+int   coolBars = input.int(20, "No repeat signal for (candles)", minval = 1)
+bool  showBrk  = input.bool(false, "Show breakout arrows")
+color resCol   = input.color(color.red, "Resistance")
+color supCol   = input.color(color.teal, "Support")
+
+float atr = ta.atr(14)
+
+// ── swings of the last N days ───────────────────────────────────────────────────────────────────
+float ph = ta.pivothigh(high, pivLen, pivLen)
+float pl = ta.pivotlow(low, pivLen, pivLen)
+var array<float> swPx  = array.new<float>()
+var array<int>   swBar = array.new<int>()
+var array<int>   swT   = array.new<int>()
+bool changed = false
+if not na(ph)
+    swPx.push(ph)
+    swBar.push(bar_index - pivLen)
+    swT.push(time[pivLen])
+    changed := true
+if not na(pl)
+    swPx.push(pl)
+    swBar.push(bar_index - pivLen)
+    swT.push(time[pivLen])
+    changed := true
+while swT.size() > 0 and swT.get(0) < time - lookDays * 86400000
+    swPx.shift()
+    swBar.shift()
+    swT.shift()
+    changed := true
+
+// ── zones ───────────────────────────────────────────────────────────────────────────────────────
+type Zone
+    float top
+    float bot
+    int   n
+    int   firstBar
+    bool  broken
+
+var array<Zone> zones = array.new<Zone>()
+if changed and swPx.size() > 0 and not na(atr)
+    array<Zone> nz = array.new<Zone>()
+    array<int> idx = array.sort_indices(swPx, order.ascending)
+    float w = zoneATR * atr
+    Zone cur = na
+    for i in idx
+        float p = swPx.get(i)
+        if na(cur) or p - cur.bot > w
+            cur := Zone.new(p, p, 1, swBar.get(i), false)
+            nz.push(cur)
+        else
+            cur.top := math.max(cur.top, p)
+            cur.n += 1
+            cur.firstBar := math.min(cur.firstBar, swBar.get(i))
+    for z in nz                                       // keep "broken" for zones already broken
+        for o in zones
+            if o.broken and math.abs((o.top + o.bot) / 2 - (z.top + z.bot) / 2) < w
+                z.broken := true
+    zones := nz
+
+// nearest unbroken key zone below (support) and above (resistance) the previous close
+f_nearest(bool above) =>
+    Zone best = na
+    for z in zones
+        if z.n >= minTouch and not z.broken
+            float mid = (z.top + z.bot) / 2
+            if above ? mid > close[1] : mid < close[1]
+                if na(best) or (above ? mid < (best.top + best.bot) / 2 : mid > (best.top + best.bot) / 2)
+                    best := z
+    best
+
+// ── signals ─────────────────────────────────────────────────────────────────────────────────────
+var int lastSig = -1000
+bool rejUp = false
+bool rejDn = false
+bool brkUp = false
+bool brkDn = false
+if barstate.isconfirmed and not na(atr) and zones.size() > 0
+    float pad  = 0.1 * atr
+    float body = math.abs(close - open)
+    Zone s = f_nearest(false)
+    Zone r = f_nearest(true)
+    if not na(s)
+        if close < s.bot - pad
+            s.broken := true                                       // closed below support → gone
+            brkDn := close < open and body >= breakATR * atr
+        else if low <= s.top + pad and close > s.top + pad and close > open
+            rejUp := true
+    if not na(r)
+        if close > r.top + pad
+            r.broken := true                                       // closed above resistance → gone
+            brkUp := close > open and body >= breakATR * atr
+        else if high >= r.bot - pad and close < r.bot - pad and close < open
+            rejDn := true
+    bool any = rejUp or rejDn or brkUp or brkDn
+    if any and bar_index - lastSig < coolBars and not (brkUp or brkDn)
+        rejUp := false
+        rejDn := false
+    else if any
+        lastSig := bar_index
+
+plotshape(rejUp, "Rejection up", shape.triangleup, location.belowbar, supCol, size = size.small)
+plotshape(rejDn, "Rejection down", shape.triangledown, location.abovebar, resCol, size = size.small)
+plotshape(showBrk and brkUp, "Breakout up", shape.arrowup, location.belowbar, color.lime, size = size.normal)
+plotshape(showBrk and brkDn, "Breakout down", shape.arrowdown, location.abovebar, color.fuchsia, size = size.normal)
+
+alertcondition(rejUp, "Rejection up", "Price rejected a key support zone (possible bullish reversal)")
+alertcondition(rejDn, "Rejection down", "Price rejected a key resistance zone (possible bearish reversal)")
+alertcondition(brkUp, "Breakout up", "Big candle closed above a key resistance zone")
+alertcondition(brkDn, "Breakout down", "Big candle closed below a key support zone")
+
+// ── draw only the nearest key zones ─────────────────────────────────────────────────────────────
+var array<box> drawn = array.new<box>()
+if barstate.islast
+    for b in drawn
+        b.delete()
+    drawn.clear()
+    array<Zone> above = array.new<Zone>()
+    array<Zone> below = array.new<Zone>()
+    for z in zones
+        if z.n >= minTouch and not z.broken
+            if (z.top + z.bot) / 2 > close
+                above.push(z)
+            else
+                below.push(z)
+    for side = 0 to 1
+        array<Zone> list = side == 0 ? above : below
+        bool isRes = side == 0
+        int shown = 0
+        while list.size() > 0 and shown < nShow
+            // take the zone nearest to price
+            int bi = 0
+            for k = 0 to list.size() - 1
+                float mk = (list.get(k).top + list.get(k).bot) / 2
+                float mb = (list.get(bi).top + list.get(bi).bot) / 2
+                if isRes ? mk < mb : mk > mb
+                    bi := k
+            Zone z = list.remove(bi)
+            color c = isRes ? resCol : supCol
+            float pad = 0.1 * atr
+            drawn.push(box.new(z.firstBar, z.top + pad, bar_index + 10, z.bot - pad,
+                 border_color = color.new(c, 30), bgcolor = color.new(c, 88 - math.min(z.n, 6) * 4),
+                 text = (isRes ? "R " : "S ") + str.tostring(z.n) + "×", text_color = c, text_size = size.small,
+                 text_halign = text.align_right))
+            shown += 1
