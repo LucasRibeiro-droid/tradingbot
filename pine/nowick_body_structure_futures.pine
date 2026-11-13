@@ -54,7 +54,7 @@ strategy(title = "No-Wick × Body Structure (futures 5m/15m)",
 // INPUTS
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 const string G_P = "Pips"
-float pipPts = input.float(1.0, "1 pip = this many points [ASSUMPTION]", minval = syminfo.mintick, step = 0.25, group = G_P,
+float pipPts = input.float(1.0, "1 pip = this many points [ASSUMPTION]", minval = 0.01, step = 0.25, group = G_P,
      tooltip = "Futures have no pips. Default 1 point (= 4 ticks on NQ/ES, 10 ticks on MGC/GC). Change if you mean ticks.")
 
 const string G_E = "Entry / stop / target"
