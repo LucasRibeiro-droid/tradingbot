@@ -214,8 +214,9 @@ else
                 potWick := isBull ? low : high
                 potBar  := bar_index
 
-// Trend for trading: only a CONFIRMED trend counts (a pending CHoCH is not a trend).
-int trend = everConfirmed and confirmed ? dir : 0
+// Trend for trading — same as your indicator's panel: while a CHoCH is pending (waiting for its
+// LH/HL + BOS) the OLD trend is still the trend; it only flips once the reversal is confirmed.
+int trend = not everConfirmed ? 0 : confirmed ? dir : -dir
 bgcolor(trend == 1 ? color.new(bullCol, 94) : trend == -1 ? color.new(bearCol, 94) : everConfirmed ? color.new(pendCol, 94) : na, title = "Trend")
 
 // Choppy / sideways: no external structure for chopBars candles.
@@ -402,7 +403,10 @@ if barstate.isconfirmed
             cChop += 1
         else
             float lvl  = open
-            float stop = d == 1 ? protWick - breath : protWick + breath
+            // Stop: protected HL (buy) / LH (sell) wick. While a CHoCH is pending the old HL/LH was
+            // broken by the CHoCH, so the extreme of the CHoCH leg is the level to hide behind.
+            float stopRef = confirmed ? protWick : extWick
+            float stop = d == 1 ? stopRef - breath : stopRef + breath
             if na(stop) or (d == 1 ? stop >= lvl : stop <= lvl)
                 cBadStop += 1
             else
@@ -456,7 +460,7 @@ f_pct(float rm) =>
     (rm >= 0 ? "+" : "") + str.tostring(rm * riskPct, "0.00") + "%"
 if barstate.islast and showTable
     f_row(0, "NW × Body structure — " + syminfo.ticker + " " + timeframe.period + "m", "risk " + str.tostring(riskPct, "0.##") + "% of " + (riskBase == "Current equity" ? "equity" : "start bal."))
-    f_row(1, "Trend now", trend == 1 ? "Bullish" : trend == -1 ? "Bearish" : everConfirmed ? "CHoCH pending" : "Forming")
+    f_row(1, "Trend now", (trend == 1 ? "Bullish" : trend == -1 ? "Bearish" : "Forming") + (everConfirmed and not confirmed ? " (CHoCH pending)" : ""))
     f_row(2, "Trades (W / L)", str.tostring(nT) + "  (" + str.tostring(nW) + " / " + str.tostring(nL) + ")")
     f_row(3, "Win rate", nT > 0 ? str.tostring(100.0 * nW / nT, "0.0") + "%" : "—")
     f_row(4, "Return (before costs, not compounded)", f_pct(sumR))
