@@ -192,8 +192,7 @@ else
 // Trend used for trading
 bool pending = everConfirmed and not confirmed
 int trend = not everConfirmed ? 0 : confirmed ? dir : pendMode == "Old trend" ? -dir : pendMode == "New direction" ? dir : 0
-if showBg
-    bgcolor(trend == 1 ? color.new(bullCol, 95) : trend == -1 ? color.new(bearCol, 95) : na, title = "Trend")
+bgcolor(showBg and trend == 1 ? color.new(bullCol, 95) : showBg and trend == -1 ? color.new(bearCol, 95) : na, title = "Trend")
 
 var int lastEventBar = 0
 if structEvent
