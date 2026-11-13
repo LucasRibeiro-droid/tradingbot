@@ -71,7 +71,6 @@ int    slipTicks = input.int(1, "Slippage on stop / market exits (ticks)", minva
 
 const string G_D = "Display"
 bool showNW    = input.bool(true, "Mark no-wick candles", group = G_D)
-bool showBg    = input.bool(true, "Trend background", group = G_D)
 bool showTable = input.bool(true, "Results table", group = G_D)
 color bullCol = color.teal
 color bearCol = color.red
@@ -192,7 +191,6 @@ else
 // Trend used for trading
 bool pending = everConfirmed and not confirmed
 int trend = not everConfirmed ? 0 : confirmed ? dir : pendMode == "Old trend" ? -dir : pendMode == "New direction" ? dir : 0
-bgcolor(showBg and trend == 1 ? color.new(bullCol, 95) : showBg and trend == -1 ? color.new(bearCol, 95) : na, title = "Trend")
 
 var int lastEventBar = 0
 if structEvent
@@ -209,7 +207,6 @@ if revBear
     lastRevDir := -1
 
 bool inNTZ = not na(time(timeframe.period, ntz, "Europe/London"))
-bgcolor(inNTZ ? color.new(color.gray, 88) : na, title = "No trading zone")
 
 bool bullNW = barstate.isconfirmed and close > open and open - low <= syminfo.mintick * 0.01
 bool bearNW = barstate.isconfirmed and close < open and high - open <= syminfo.mintick * 0.01
