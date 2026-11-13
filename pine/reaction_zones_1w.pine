@@ -1,0 +1,149 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  REACTION ZONES (last 7 days) — where price tends to REJECT or BREAK THROUGH
+//
+//  1. Every swing high / low (wicks) of the last N days (default 7) is collected.
+//  2. Swings at about the same price (within a fraction of the ATR) are grouped into a ZONE.
+//     More swings in a zone = price reacted there more often = stronger zone.
+//  3. Signals on closed candles (no repainting, no future data):
+//     ▲ REJECT  — price dips into a strong zone and the candle closes back ABOVE it (bullish).
+//     ▼ REJECT  — price spikes into a strong zone and closes back BELOW it (bearish).
+//     BREAK ↑/↓ — a large candle closes clean THROUGH a strong zone.
+//  Zones and signals use only data up to each candle, so historical signals are what you would
+//  have seen live. This shows reaction levels; it cannot predict the future.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+indicator("Reaction Zones (1 week)", shorttitle = "RZ 1W", overlay = true, scale = scale.right,
+     max_boxes_count = 100, max_labels_count = 500)
+
+// ── inputs ──────────────────────────────────────────────────────────────────────────────────────
+int   lookDays  = input.int(7, "Look-back (days)", minval = 1, maxval = 30)
+int   pivLen    = input.int(5, "Swing size (candles each side)", minval = 2, maxval = 20,
+     tooltip = "A swing high = a high with this many lower highs on each side. Bigger = only major swings.")
+float zoneATR   = input.float(0.5, "Zone width (× ATR)", minval = 0.1, step = 0.1,
+     tooltip = "Swings closer together than this are the same zone.")
+int   minTouch  = input.int(3, "Strong zone = at least this many swings", minval = 2)
+float breakATR  = input.float(1.2, "Breakout candle body ≥ this × ATR", minval = 0.5, step = 0.1)
+bool  showZones = input.bool(true, "Draw zones")
+bool  showWeak  = input.bool(false, "Also draw weak zones (fewer swings)")
+color resCol    = input.color(color.red, "Resistance colour")
+color supCol    = input.color(color.teal, "Support colour")
+
+float atr = ta.atr(14)
+
+// ── swings of the last N days ───────────────────────────────────────────────────────────────────
+float ph = ta.pivothigh(high, pivLen, pivLen)
+float pl = ta.pivotlow(low, pivLen, pivLen)
+
+var array<float> swPx  = array.new<float>()
+var array<int>   swBar = array.new<int>()
+var array<int>   swT   = array.new<int>()
+bool newSwing = false
+if not na(ph)
+    swPx.push(ph)
+    swBar.push(bar_index - pivLen)
+    swT.push(time[pivLen])
+    newSwing := true
+if not na(pl)
+    swPx.push(pl)
+    swBar.push(bar_index - pivLen)
+    swT.push(time[pivLen])
+    newSwing := true
+// drop swings older than the look-back
+int cutoff = time - lookDays * 86400000
+while swT.size() > 0 and swT.get(0) < cutoff
+    swPx.shift()
+    swBar.shift()
+    swT.shift()
+    newSwing := true
+
+// ── zones ───────────────────────────────────────────────────────────────────────────────────────
+type Zone
+    float top
+    float bot
+    int   n          // swings in the zone
+    int   firstBar
+    bool  broken     // a breakout closed through it
+
+var array<Zone> zones = array.new<Zone>()
+
+// Rebuild zones when the swing list changes: sort swings by price, group neighbours within the width.
+if newSwing and swPx.size() > 0 and not na(atr)
+    array<Zone> nz = array.new<Zone>()
+    array<int> idx = array.sort_indices(swPx, order.ascending)
+    float w = zoneATR * atr
+    Zone cur = na
+    for i in idx
+        float p = swPx.get(i)
+        int   b = swBar.get(i)
+        if na(cur) or p - cur.bot > w
+            cur := Zone.new(p, p, 1, b, false)
+            nz.push(cur)
+        else
+            cur.top := math.max(cur.top, p)
+            cur.n += 1
+            cur.firstBar := math.min(cur.firstBar, b)
+    // keep the "broken" flag of zones that still exist at the same place
+    for z in nz
+        for o in zones
+            if o.broken and math.abs((o.top + o.bot) / 2 - (z.top + z.bot) / 2) < w
+                z.broken := true
+    zones := nz
+
+// ── signals (closed candles only) ───────────────────────────────────────────────────────────────
+bool rejUp = false
+bool rejDn = false
+bool brkUp = false
+bool brkDn = false
+if barstate.isconfirmed and zones.size() > 0 and not na(atr)
+    float body = math.abs(close - open)
+    for z in zones
+        if z.n >= minTouch
+            float pad = 0.1 * atr                         // a zone has a little thickness even with 1 price
+            float zt = z.top + pad
+            float zb = z.bot - pad
+            // rejection from support: dipped into the zone, closed back above it, bullish candle
+            if low <= zt and close > zt and close > open and close[1] > zb
+                rejUp := true
+            // rejection from resistance: spiked into the zone, closed back below it, bearish candle
+            if high >= zb and close < zb and close < open and close[1] < zt
+                rejDn := true
+            // breakouts: big candle closing clean through the zone
+            if close[1] <= zt and close > zt and open < zt and body >= breakATR * atr and close > open
+                brkUp := true
+                z.broken := true
+            if close[1] >= zb and close < zb and open > zb and body >= breakATR * atr and close < open
+                brkDn := true
+                z.broken := true
+
+plotshape(rejUp and not brkUp, "Rejection up (possible bullish reversal)", shape.triangleup, location.belowbar, supCol, size = size.small, text = "REJECT")
+plotshape(rejDn and not brkDn, "Rejection down (possible bearish reversal)", shape.triangledown, location.abovebar, resCol, size = size.small, text = "REJECT")
+plotshape(brkUp, "Breakout up", shape.arrowup, location.belowbar, color.new(color.lime, 0), size = size.normal, text = "BREAK")
+plotshape(brkDn, "Breakout down", shape.arrowdown, location.abovebar, color.new(color.fuchsia, 0), size = size.normal, text = "BREAK")
+
+alertcondition(rejUp, "Rejection up", "Price rejected a strong support zone (possible bullish reversal)")
+alertcondition(rejDn, "Rejection down", "Price rejected a strong resistance zone (possible bearish reversal)")
+alertcondition(brkUp, "Breakout up", "Large candle closed above a strong zone")
+alertcondition(brkDn, "Breakout down", "Large candle closed below a strong zone")
+
+// ── drawing (last bar only) ─────────────────────────────────────────────────────────────────────
+var array<box> drawn = array.new<box>()
+if barstate.islast and showZones
+    for b in drawn
+        b.delete()
+    drawn.clear()
+    for z in zones
+        if z.n >= minTouch or showWeak
+            bool isRes = (z.top + z.bot) / 2 > close
+            color c = isRes ? resCol : supCol
+            int strength = math.min(z.n, 8)
+            int transp = z.n >= minTouch ? 85 - strength * 5 : 92
+            float pad = 0.1 * atr
+            string txt = (isRes ? "Resistance " : "Support ") + str.tostring(z.n) + "×" + (z.broken ? " (broken)" : "")
+            drawn.push(box.new(z.firstBar, z.top + pad, bar_index + 15, z.bot - pad,
+                 border_color = color.new(c, z.broken ? 70 : 40), bgcolor = color.new(c, z.broken ? 94 : transp),
+                 border_style = z.broken ? line.style_dashed : line.style_solid,
+                 text = txt, text_color = color.new(c, 0), text_size = size.small, text_halign = text.align_right))
