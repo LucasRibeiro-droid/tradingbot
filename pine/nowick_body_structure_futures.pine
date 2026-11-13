@@ -4,87 +4,77 @@
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 //  NO-WICK × BODY MARKET STRUCTURE — futures, 5m or 15m
 //
-//  TREND = your "Body Market Structure (BOS / CHoCH / internal)" logic (bodies only, closes only):
-//    bullish = confirmed uptrend, bearish = confirmed downtrend. A pending CHoCH (not yet confirmed
-//    by LH/HL + BOS) is NOT a trend → no new trades.
+//  TREND = your Body Market Structure logic (bodies only, a level breaks only on a CLOSE).
+//  ENTRY: confirmed bullish trend + bullish no-wick (no bottom wick) = BUY at the no-wick open on
+//         the tap; confirmed bearish trend + bearish no-wick = SELL.
+//  STOP:  buy → beyond the WICK of the protected HL; sell → beyond the WICK of the protected LH;
+//         + breathing room (default 5 pips).
+//  TP:    1:1.  PRE-ENTRY: if the stop is more than 10 pips away, enter 2 pips before the tap.
+//  NO TRADE: external structure before the tap · tap after 10 candles · choppy · NTZ 20–24 London
+//            (positions closed when the NTZ starts) · while a CHoCH is pending (default).
+//  EARLY EXIT: only on an A setup against us (reversal confirmed after entry + opposite no-wick).
+//  RISK: 1% of current equity per trade (option: starting balance).
 //
-//  ENTRY: bullish trend + bullish no-wick (no bottom wick) = BUY at the no-wick open on the tap;
-//         bearish trend + bearish no-wick (no top wick) = SELL. Mirror image.
-//  STOP:  buy → below the protected HL, sell → above the protected LH, measured from that candle's
-//         WICK, plus breathing room (default 5 pips).
-//  TP:    fixed 1:1.
-//  PRE-ENTRY: if the stop is more than 10 pips from the no-wick level, enter 2 pips BEFORE the tap.
-//
-//  DO NOT TAKE THE TRADE
-//   • external structure forms before the tap (any BOS / CHoCH / CHoCH-failed / reversal);
-//   • tap after 10 candles;
-//   • choppy / sideways: no external structure for a long time (input);
-//   • inside the NTZ (20:00–24:00 London). All open positions are closed when the NTZ starts.
-//
-//  EXIT before SL/TP only on an A SETUP against us: the 3 reversal steps (CHoCH → LH/HL → BOS) happen
-//  after entry and then an opposite no-wick prints → close, and that no-wick becomes the new setup.
-//  Max open trades: input (default 1).
-//  Inputs marked [ASSUMPTION] are values you did not specify.
+//  CHART: only the trades are labelled — each trade shows its entry / SL / TP, the HL or LH used
+//  for the stop and the HH or LL that confirmed the trend. All labels are anchored to their
+//  candle (above / below the bar), so they never drift away from the candles.
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 
 //@version=6
 strategy(title = "No-Wick × Body Structure (futures 5m/15m)",
      shorttitle = "NW BodyMS",
      overlay = true,
-     scale = scale.right,                  // same price scale as the candles, so drawings stay fixed to price
+     scale = scale.right,
      pyramiding = 10,
      initial_capital = 100000,
      currency = currency.USD,
      default_qty_type = strategy.fixed,
      default_qty_value = 1,
      commission_type = strategy.commission.cash_per_contract,
-     commission_value = 0,                 // costs are charged in the results table (inputs below)
+     commission_value = 0,                 // costs are charged in the results table
      slippage = 0,
      margin_long = 0,
      margin_short = 0,
      close_entries_rule = "ANY",
      process_orders_on_close = false,
      calc_on_every_tick = false,
-     // ⚠ Free plan: keep the bar magnifier off (it errors). Without it, when entry and SL/TP fall in
-     // the same bar TradingView guesses the order — results can look better than reality.
-     use_bar_magnifier = false,
-     max_lines_count = 500,
+     use_bar_magnifier = false,            // free plan: keep off
      max_labels_count = 500)
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // INPUTS
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 const string G_P = "Pips"
-float pipPts = input.float(1.0, "1 pip = this many points [ASSUMPTION]", minval = 0.01, step = 0.25, group = G_P,
-     tooltip = "Futures have no pips. Default 1 point (= 4 ticks on NQ/ES, 10 ticks on MGC/GC). Change if you mean ticks.")
+float pipPts = input.float(1.0, "1 pip = this many points", minval = 0.01, step = 0.25, group = G_P,
+     tooltip = "Futures have no pips. Default 1 point (= 4 ticks on NQ/ES). Set 0.25 if you mean ticks on NQ/ES.")
 
 const string G_E = "Entry / stop / target"
 float breathPips  = input.float(5.0, "Breathing room beyond the HL/LH wick (pips)", minval = 0, step = 0.5, group = G_E)
 float preIfSLPips = input.float(10.0, "Pre-entry if SL is more than (pips)", minval = 0, step = 0.5, group = G_E)
 float prePips     = input.float(2.0, "…enter this many pips before the tap", minval = 0, step = 0.5, group = G_E)
 float rrTarget    = input.float(1.0, "Take profit (R)", minval = 0.1, step = 0.1, group = G_E)
-int   tapWindow   = input.int(10, "Tap must happen within (candles)", minval = 1, group = G_E,
-     tooltip = "Tap after 10 candles → no trade.")
+int   tapWindow   = input.int(10, "Tap must happen within (candles)", minval = 1, group = G_E)
 int   maxOpen     = input.int(1, "Max open trades at once", minval = 1, maxval = 10, group = G_E)
 
 const string G_F = "Filters"
-int   chopBars = input.int(30, "Choppy: no external structure for this many candles → no trades [ASSUMPTION]", minval = 5, group = G_F)
-string ntz     = input.session("2000-0000", "No trading zone (London time)", group = G_F)
-bool  useA     = input.bool(true, "Close on an A setup against us (and take the new one)", group = G_F)
+string pendMode = input.string("No trades", "While a CHoCH is pending", options = ["No trades", "Old trend", "New direction"], group = G_F,
+     tooltip = "A CHoCH is not a confirmed reversal until its HL/LH + BOS.\nNo trades: wait for confirmation (or for the CHoCH to fail).\nOld trend: keep trading the previous trend.\nNew direction: already trade the CHoCH direction.")
+int    chopBars = input.int(30, "Choppy: no external structure for this many candles → no trades", minval = 5, group = G_F)
+string ntz      = input.session("2000-0000", "No trading zone (London time)", group = G_F)
+bool   useA     = input.bool(true, "Close on an A setup against us (and take the new one)", group = G_F)
 
 const string G_C = "Size & costs"
-float riskPct   = input.float(1.0, "Risk per trade (%)", minval = 0.01, step = 0.25, group = G_C)
-string riskBase = input.string("Current equity", "…of", options = ["Current equity", "Starting balance"], group = G_C,
-     tooltip = "Current equity: every trade risks the same 1% of the account as it is at that moment (compounds).\nStarting balance: every trade risks the same cash amount (1% of initial capital).")
-float commSide  = input.float(2.25, "Commission per contract per side ($) — NQ ≈ 2.25, MNQ ≈ 0.62", minval = 0, step = 0.05, group = G_C)
-int   slipTicks = input.int(1, "Slippage on stop / market exits (ticks)", minval = 0, group = G_C)
+float  riskPct   = input.float(1.0, "Risk per trade (%)", minval = 0.01, step = 0.25, group = G_C)
+string riskBase  = input.string("Current equity", "…of", options = ["Current equity", "Starting balance"], group = G_C)
+float  commSide  = input.float(2.25, "Commission per contract per side ($) — NQ ≈ 2.25, MNQ ≈ 0.62", minval = 0, step = 0.05, group = G_C)
+int    slipTicks = input.int(1, "Slippage on stop / market exits (ticks)", minval = 0, group = G_C)
 
 const string G_D = "Display"
-bool showStruct = input.bool(true, "Show BOS / CHoCH / HL / LH labels", group = G_D)
-bool showTable  = input.bool(true, "Results table", group = G_D)
+bool showNW    = input.bool(true, "Mark no-wick candles", group = G_D)
+bool showBg    = input.bool(true, "Trend background", group = G_D)
+bool showTable = input.bool(true, "Results table", group = G_D)
 color bullCol = color.teal
 color bearCol = color.red
-color pendCol = color.orange
 
 if barstate.isfirst and timeframe.in_seconds() != 300 and timeframe.in_seconds() != 900
     runtime.error("Use the 5-minute or 15-minute chart.")
@@ -95,7 +85,7 @@ float pip    = pipPts
 float breath = breathPips * pip
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// BODY MARKET STRUCTURE — your indicator's logic (bodies, closes), plus the WICK of each level
+// BODY MARKET STRUCTURE (your logic) — also remembers each level's candle and wick
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 float bodyTop = math.max(open, close)
 float bodyBot = math.min(open, close)
@@ -105,17 +95,18 @@ bool  bearCandle = close < open
 var int   dir           = 1
 var bool  confirmed     = false
 var bool  everConfirmed = false
-var float ext           = na
-var float extWick       = na      // wick of the leg-extreme candle
-var int   extBar        = na
-var bool  pb            = false
-var float pot           = na
-var float potWick       = na      // wick of the potential HL / LH candle
-var int   potBar        = na
-var float prot          = na      // protected HL (uptrend) / LH (downtrend), body level
-var float protWick      = na      // its candle's wick → the stop reference
-var int   protBar       = na
-var bool  sawCounter    = false
+var float ext      = na         // leg extreme (body)
+var float extWick  = na
+var int   extBar   = na
+var bool  pb       = false
+var float pot      = na         // potential HL / LH (body)
+var float potWick  = na
+var int   potBar   = na
+var float prot     = na         // protected HL (uptrend) / LH (downtrend) (body)
+var float protWick = na
+var int   protBar  = na
+var bool  sawCounter = false
+var int   lastExtBar = na       // candle of the last confirmed HH (uptrend) / LL (downtrend)
 
 if barstate.isfirst
     ext      := bodyTop
@@ -125,47 +116,34 @@ if barstate.isfirst
     protWick := low
     protBar  := bar_index
 
-bool structEvent = false          // any EXTERNAL structure: BOS, CHoCH, CHoCH failed
-bool revBear = false              // reversal confirmed (CHoCH → LH → BOS)
+bool structEvent = false
 bool revBull = false
-
-f_lbl(int b, float p, string txt, color col, bool up) =>
-    if showStruct
-        label.new(b, p, txt, color = color.new(col, 100), textcolor = col, style = up ? label.style_label_down : label.style_label_up, size = size.small)
-
+bool revBear = false
 bool isBull = dir == 1
-bool broke  = isBull ? close < prot : close > prot
 
-if broke
+if isBull ? close < prot : close > prot
+    // CHoCH (if a trend was confirmed) or a failed CHoCH (if one was pending)
     structEvent := true
-    if confirmed
-        f_lbl(bar_index, prot, "CHoCH", pendCol, not isBull)       // trend not reversed yet
-        prot     := ext
-        protWick := extWick
-        protBar  := extBar
-        dir      := -dir
-        confirmed := false
-    else
-        if everConfirmed
-            f_lbl(bar_index, prot, "CHoCH failed", isBull ? bearCol : bullCol, not isBull)
-            confirmed := true
-        prot     := ext
-        protWick := extWick
-        protBar  := extBar
-        dir      := -dir
-    ext     := isBull ? bodyBot : bodyTop
-    extWick := isBull ? low : high
-    extBar  := bar_index
-    pb      := false
-    pot     := na
-    potWick := na
-    potBar  := na
+    if not confirmed and everConfirmed
+        confirmed := true                       // CHoCH failed → the old trend carries on
+    else if confirmed
+        confirmed := false                      // CHoCH → pending
+    prot     := ext
+    protWick := extWick
+    protBar  := extBar
+    dir      := -dir
+    ext      := isBull ? bodyBot : bodyTop
+    extWick  := isBull ? low : high
+    extBar   := bar_index
+    pb       := false
+    pot      := na
+    potWick  := na
+    potBar   := na
     sawCounter := false
 else
     if not pb
-        // pullback = opposite candle(s) after the leg extreme, then a candle in the trend direction again
         if sawCounter and not na(pot) and (isBull ? bullCandle : bearCandle)
-            pb := true
+            pb := true                          // pullback complete → internal structure
         else
             bool counter = isBull ? bearCandle : bullCandle
             if isBull ? bodyTop >= ext : bodyBot <= ext
@@ -184,19 +162,17 @@ else
                     potWick := isBull ? low : high
                     potBar  := bar_index
     if pb
-        // internal structure: only a body close beyond the leg extreme counts (BOS)
         if isBull ? close > ext : close < ext
+            // BOS: the leg extreme becomes the HH / LL, the pullback the protected HL / LH
             structEvent := true
-            f_lbl(potBar, pot, isBull ? "HL" : "LH", isBull ? bullCol : bearCol, not isBull)
-            bool newTrend = not confirmed
-            f_lbl(bar_index, ext, newTrend and everConfirmed ? "BOS — reversal" : "BOS", isBull ? bullCol : bearCol, isBull)
-            if newTrend and everConfirmed
+            if not confirmed and everConfirmed
                 if isBull
                     revBull := true
                 else
                     revBear := true
             confirmed     := true
             everConfirmed := true
+            lastExtBar := extBar
             prot     := pot
             protWick := potWick
             protBar  := potBar
@@ -208,24 +184,22 @@ else
             potWick  := na
             potBar   := na
             sawCounter := false
-        else
-            if isBull ? bodyBot < pot : bodyTop > pot
-                pot     := isBull ? bodyBot : bodyTop
-                potWick := isBull ? low : high
-                potBar  := bar_index
+        else if isBull ? bodyBot < pot : bodyTop > pot
+            pot     := isBull ? bodyBot : bodyTop
+            potWick := isBull ? low : high
+            potBar  := bar_index
 
-// Trend for trading — same as your indicator's panel: while a CHoCH is pending (waiting for its
-// LH/HL + BOS) the OLD trend is still the trend; it only flips once the reversal is confirmed.
-int trend = not everConfirmed ? 0 : confirmed ? dir : -dir
-bgcolor(trend == 1 ? color.new(bullCol, 94) : trend == -1 ? color.new(bearCol, 94) : everConfirmed ? color.new(pendCol, 94) : na, title = "Trend")
+// Trend used for trading
+bool pending = everConfirmed and not confirmed
+int trend = not everConfirmed ? 0 : confirmed ? dir : pendMode == "Old trend" ? -dir : pendMode == "New direction" ? dir : 0
+if showBg
+    bgcolor(trend == 1 ? color.new(bullCol, 95) : trend == -1 ? color.new(bearCol, 95) : na, title = "Trend")
 
-// Choppy / sideways: no external structure for chopBars candles.
 var int lastEventBar = 0
 if structEvent
     lastEventBar := bar_index
 bool choppy = bar_index - lastEventBar > chopBars
 
-// Reversal confirmations (for the A setup)
 var int lastRevBar = -1
 var int lastRevDir = 0
 if revBull
@@ -235,15 +209,22 @@ if revBear
     lastRevBar := bar_index
     lastRevDir := -1
 
-// NTZ 20:00–24:00 London
 bool inNTZ = not na(time(timeframe.period, ntz, "Europe/London"))
-bgcolor(inNTZ ? color.new(color.gray, 85) : na, title = "No trading zone")
+bgcolor(inNTZ ? color.new(color.gray, 88) : na, title = "No trading zone")
 
-// No-wick candles
 bool bullNW = barstate.isconfirmed and close > open and open - low <= syminfo.mintick * 0.01
 bool bearNW = barstate.isconfirmed and close < open and high - open <= syminfo.mintick * 0.01
-plotshape(bullNW, "Bullish no-wick", shape.triangleup,   location.belowbar, color.new(color.yellow, 0), size = size.tiny)
-plotshape(bearNW, "Bearish no-wick", shape.triangledown, location.abovebar, color.new(color.yellow, 0), size = size.tiny)
+plotshape(showNW and bullNW, "Bullish no-wick", shape.triangleup,   location.belowbar, color.new(color.yellow, 0), size = size.tiny)
+plotshape(showNW and bearNW, "Bearish no-wick", shape.triangledown, location.abovebar, color.new(color.yellow, 0), size = size.tiny)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// LABELS — always anchored to the candle (yloc above / below bar), never to a price level
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_tag(int b, string txt, bool above, color col) =>
+    if not na(b)
+        label.new(b, 0, txt, yloc = above ? yloc.abovebar : yloc.belowbar,
+             style = above ? label.style_label_down : label.style_label_up,
+             color = color.new(col, 15), textcolor = color.white, size = size.small)
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 // BOOK-KEEPING
@@ -256,7 +237,10 @@ type Setup
     float  tp
     int    expiryBar
     int    evCount
-    line   ln
+    int    stopBar      // candle of the HL / LH used for the stop
+    string stopTxt
+    int    trendBar     // candle of the HH / LL that confirmed the trend
+    string trendTxt
 
 type Live
     string id
@@ -281,12 +265,6 @@ var int cExpired = 0
 var int cStruct = 0
 var int cA = 0
 
-f_retire(line ln) =>
-    if not na(ln)
-        ln.set_x2(bar_index)
-        ln.set_color(color.new(color.gray, 50))
-        ln.set_style(line.style_dotted)
-
 f_openIdx(string id) =>
     int res = -1
     if strategy.opentrades > 0
@@ -296,29 +274,27 @@ f_openIdx(string id) =>
                 break
     res
 
-// fills: pending → live
+// fills: label the trade and the swings it used
 int np = pend.size()
 if np > 0
     for j = np - 1 to 0
         Setup s = pend.get(j)
         if f_openIdx(s.id) >= 0
             live.push(Live.new(s.id, s.dir, bar_index))
-            f_retire(s.ln)
-            box.new(bar_index, math.max(s.entry, s.stop), bar_index + 6, math.min(s.entry, s.stop), border_color = color.new(color.red, 40), bgcolor = color.new(color.red, 85))
-            box.new(bar_index, math.max(s.entry, s.tp), bar_index + 6, math.min(s.entry, s.tp), border_color = color.new(color.green, 40), bgcolor = color.new(color.green, 85))
-            label.new(bar_index, s.dir == 1 ? s.stop : s.stop, (s.dir == 1 ? "BUY " : "SELL ") + str.tostring(s.entry, format.mintick) + "\nSL " + str.tostring(s.stop, format.mintick) + "\nTP " + str.tostring(s.tp, format.mintick), style = s.dir == 1 ? label.style_label_up : label.style_label_down, color = color.new(color.black, 20), textcolor = color.white, size = size.small)
+            bool isBuy = s.dir == 1
+            f_tag(bar_index, (isBuy ? "BUY " : "SELL ") + str.tostring(s.entry, format.mintick) + "\nSL " + str.tostring(s.stop, format.mintick) + "\nTP " + str.tostring(s.tp, format.mintick),
+                 not isBuy, isBuy ? bullCol : bearCol)
+            f_tag(s.stopBar, s.stopTxt, not isBuy, color.new(color.orange, 0))      // HL below / LH above
+            f_tag(s.trendBar, s.trendTxt, isBuy, isBuy ? bullCol : bearCol)       // HH above / LL below
             pend.remove(j)
 
-// closed trades → ledger in R
+// closed trades → ledger
 var int processed = 0
 var int nT = 0
 var int nW = 0
 var int nL = 0
 var float sumR = 0.0
-var float sumRnet = 0.0
-var float peakR = 0.0
-var float maxDDR = 0.0
-var float eqNet  = 1.0          // account multiple after costs (1.0 = starting balance)
+var float eqNet  = 1.0
 var float eqPeak = 1.0
 var float ddPct  = 0.0
 if strategy.closedtrades > processed
@@ -331,13 +307,10 @@ if strategy.closedtrades > processed
         float r  = rk > 0 ? (xp - ep) * d / rk : 0.0
         bool  isTP = strategy.closedtrades.exit_comment(i) == "TP"
         float costPts = 2 * commSide / syminfo.pointvalue + (isTP ? 0 : slipTicks * syminfo.mintick)
+        float rn = r - (rk > 0 ? costPts / rk : 0.0)
         nT += 1
         sumR += r
-        sumRnet += r - (rk > 0 ? costPts / rk : 0.0)
-        peakR := math.max(peakR, sumRnet)
-        maxDDR := math.max(maxDDR, peakR - sumRnet)
-        float rn = r - (rk > 0 ? costPts / rk : 0.0)
-        eqNet  := riskBase == "Current equity" ? eqNet * (1 + rn * riskPct / 100) : 1 + sumRnet * riskPct / 100
+        eqNet  := riskBase == "Current equity" ? eqNet * (1 + rn * riskPct / 100) : eqNet + rn * riskPct / 100
         eqPeak := math.max(eqPeak, eqNet)
         ddPct  := math.max(ddPct, (eqPeak - eqNet) / eqPeak * 100)
         if r > 0
@@ -353,13 +326,10 @@ if strategy.closedtrades > processed
         if npp > 0
             for k = npp - 1 to 0
                 if pend.get(k).id == eid
-                    f_retire(pend.get(k).ln)
                     pend.remove(k)
     processed := strategy.closedtrades
 
-// ════════════════════════════════════════════════════════════════════════════════════════════════
-// NTZ: close everything, no entries
-// ════════════════════════════════════════════════════════════════════════════════════════════════
+// NTZ: close everything
 if inNTZ and strategy.position_size != 0
     strategy.close_all(comment = "NTZ")
 
@@ -367,32 +337,29 @@ if inNTZ and strategy.position_size != 0
 // SETUPS (confirmed bars)
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 if barstate.isconfirmed
-    // drop waiting setups
     int n0 = pend.size()
     if n0 > 0
         for j = n0 - 1 to 0
             Setup s = pend.get(j)
             bool drop = false
-            if evCount != s.evCount                       // external structure before the tap
+            if evCount != s.evCount                 // external structure before the tap
                 drop := true
                 cStruct += 1
-            else if bar_index >= s.expiryBar              // tap after 10 candles
+            else if bar_index >= s.expiryBar        // tap after 10 candles
                 drop := true
                 cExpired += 1
             if drop
                 strategy.cancel(s.id)
-                f_retire(s.ln)
                 pend.remove(j)
 
     if bullNW or bearNW
         int d = bullNW ? 1 : -1
-        // A setup against us: reversal confirmed after our entry, then this opposite no-wick → close.
-        if useA and live.size() > 0 and trend == d and lastRevDir == d
+        // A setup against us: reversal confirmed after our entry + this opposite no-wick → close
+        if useA and live.size() > 0 and confirmed and dir == d and lastRevDir == d
             for t in live
                 if t.dir == -d and lastRevBar > t.entryBar
                     strategy.close(t.id, comment = "A setup")
                     cA += 1
-        // new setup
         if inNTZ
             cNTZ += 1
         else if trend == 0
@@ -402,72 +369,76 @@ if barstate.isconfirmed
         else if choppy
             cChop += 1
         else
+            // which swing protects the trade
+            float stopRef  = na
+            int   stopBar  = na
+            string stopTxt = ""
+            int   trendBar = na
+            string trendTxt = ""
+            if confirmed
+                stopRef  := protWick
+                stopBar  := protBar
+                stopTxt  := d == 1 ? "HL" : "LH"
+                trendBar := lastExtBar
+                trendTxt := d == 1 ? "HH" : "LL"
+            else if pendMode == "Old trend"
+                stopRef  := extWick                // the CHoCH leg broke the old HL/LH
+                stopBar  := extBar
+                stopTxt  := d == 1 ? "CHoCH low" : "CHoCH high"
+            else                                    // New direction
+                stopRef  := protWick
+                stopBar  := protBar
+                stopTxt  := d == 1 ? "LL" : "HH"
             float lvl  = open
-            // Stop: protected HL (buy) / LH (sell) wick. While a CHoCH is pending the old HL/LH was
-            // broken by the CHoCH, so the extreme of the CHoCH leg is the level to hide behind.
-            float stopRef = confirmed ? protWick : extWick
-            float stop = d == 1 ? stopRef - breath : stopRef + breath
+            float stop = na(stopRef) ? na : d == 1 ? stopRef - breath : stopRef + breath
             if na(stop) or (d == 1 ? stop >= lvl : stop <= lvl)
                 cBadStop += 1
             else
                 float entry = lvl
                 if math.abs(lvl - stop) > preIfSLPips * pip
-                    entry := lvl + d * prePips * pip          // enter 2 pips before the tap
+                    entry := lvl + d * prePips * pip
                 float tp = entry + d * rrTarget * math.abs(entry - stop)
                 seq += 1
                 string id = "NW" + str.tostring(seq)
-                line ln = line.new(bar_index, entry, bar_index, entry, color = d == 1 ? bullCol : bearCol, width = 2)
-                pend.push(Setup.new(id, d, entry, stop, tp, bar_index + tapWindow, evCount, ln))
+                pend.push(Setup.new(id, d, entry, stop, tp, bar_index + tapWindow, evCount, stopBar, stopTxt, trendBar, trendTxt))
                 riskById.put(id, math.abs(entry - stop))
                 cSetups += 1
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// ORDERS — limit at the entry; max open trades; one direction at a time
+// ORDERS
 // ════════════════════════════════════════════════════════════════════════════════════════════════
 float riskCash = (riskBase == "Current equity" ? strategy.equity : strategy.initial_capital) * riskPct / 100
 if barstate.isconfirmed and pend.size() > 0
     int slots = maxOpen - live.size()
     int liveDir = live.size() > 0 ? live.get(0).dir : 0
-    for j = pend.size() - 1 to 0                           // newest setups first
+    for j = pend.size() - 1 to 0
         Setup s = pend.get(j)
         float rd = math.abs(s.entry - s.stop)
         int contracts = rd > 0 ? int(math.floor(riskCash / (rd * syminfo.pointvalue))) : 0
-        bool may = not inNTZ and slots > 0 and contracts >= 1 and (liveDir == 0 or liveDir == s.dir)
-        if may
+        if not inNTZ and slots > 0 and contracts >= 1 and (liveDir == 0 or liveDir == s.dir)
             strategy.entry(s.id, s.dir == 1 ? strategy.long : strategy.short, qty = contracts, limit = s.entry,
                  comment = s.dir == 1 ? "NW L" : "NW S")
             strategy.exit(s.id + "-X", from_entry = s.id, stop = s.stop, limit = s.tp, comment_loss = "SL", comment_profit = "TP")
             slots -= 1
         else
             strategy.cancel(s.id)
-        if not na(s.ln)
-            s.ln.set_x2(bar_index)
 
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-// LEVEL LINES & TABLE
+// TABLE
 // ════════════════════════════════════════════════════════════════════════════════════════════════
-var line protLine = line.new(na, na, na, na, color = color.new(color.white, 40), style = line.style_dashed, extend = extend.right)
-if not na(protBar)
-    line.set_xy1(protLine, protBar, protWick)
-    line.set_xy2(protLine, bar_index, protWick)
-    line.set_color(protLine, dir == 1 ? bullCol : bearCol)
-
-var table tb = table.new(position.bottom_right, 2, 12, bgcolor = color.new(color.black, 15), border_width = 1, border_color = color.new(color.gray, 60))
+var table tb = table.new(position.bottom_right, 2, 11, bgcolor = color.new(color.black, 15), border_width = 1, border_color = color.new(color.gray, 60))
 f_row(int r, string k, string v) =>
     table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
     table.cell(tb, 1, r, v, text_color = color.white, text_size = size.small, text_halign = text.align_right)
-f_pct(float rm) =>
-    (rm >= 0 ? "+" : "") + str.tostring(rm * riskPct, "0.00") + "%"
 if barstate.islast and showTable
-    f_row(0, "NW × Body structure — " + syminfo.ticker + " " + timeframe.period + "m", "risk " + str.tostring(riskPct, "0.##") + "% of " + (riskBase == "Current equity" ? "equity" : "start bal."))
-    f_row(1, "Trend now", (trend == 1 ? "Bullish" : trend == -1 ? "Bearish" : "Forming") + (everConfirmed and not confirmed ? " (CHoCH pending)" : ""))
+    f_row(0, "NW × Body structure — " + syminfo.ticker, str.tostring(riskPct, "0.##") + "% of " + (riskBase == "Current equity" ? "equity" : "start bal."))
+    f_row(1, "Trend now", (not everConfirmed ? "Forming" : dir == 1 ? "Bullish" : "Bearish") + (pending ? " CHoCH (pending)" : ""))
     f_row(2, "Trades (W / L)", str.tostring(nT) + "  (" + str.tostring(nW) + " / " + str.tostring(nL) + ")")
     f_row(3, "Win rate", nT > 0 ? str.tostring(100.0 * nW / nT, "0.0") + "%" : "—")
-    f_row(4, "Return (before costs, not compounded)", f_pct(sumR))
-    f_row(5, "Return (after costs)", (eqNet >= 1 ? "+" : "") + str.tostring((eqNet - 1) * 100, "0.00") + "%")
-    f_row(6, "Max drawdown (closed trades, after costs)", str.tostring(ddPct, "0.00") + "%")
-    f_row(7, "Setups placed", str.tostring(cSetups))
-    f_row(8, "Dropped: structure before tap / tap > " + str.tostring(tapWindow), str.tostring(cStruct) + " / " + str.tostring(cExpired))
-    f_row(9, "No-wicks skipped: against / no trend / choppy", str.tostring(cAgainst) + " / " + str.tostring(cNoTrend) + " / " + str.tostring(cChop))
-    f_row(10, "Skipped: NTZ / bad stop", str.tostring(cNTZ) + " / " + str.tostring(cBadStop))
-    f_row(11, "Closed on A setup", str.tostring(cA))
+    f_row(4, "Return after costs", (eqNet >= 1 ? "+" : "") + str.tostring((eqNet - 1) * 100, "0.00") + "%")
+    f_row(5, "Max drawdown", str.tostring(ddPct, "0.00") + "%")
+    f_row(6, "Setups placed", str.tostring(cSetups))
+    f_row(7, "Dropped: structure before tap / tap > " + str.tostring(tapWindow), str.tostring(cStruct) + " / " + str.tostring(cExpired))
+    f_row(8, "Skipped: against / no trend or pending / choppy", str.tostring(cAgainst) + " / " + str.tostring(cNoTrend) + " / " + str.tostring(cChop))
+    f_row(9, "Skipped: NTZ / bad stop", str.tostring(cNTZ) + " / " + str.tostring(cBadStop))
+    f_row(10, "Closed on A setup", str.tostring(cA))
