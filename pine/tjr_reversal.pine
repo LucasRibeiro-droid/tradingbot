@@ -1,0 +1,201 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  TJR REVERSAL — liquidity sweep → break of structure → retrace into order block / FVG / equilibrium
+//
+//  TJR's sequence [knowledge/methodology.md]:
+//   1. LIQUIDITY SWEEP: price wicks beyond a prominent high/low (last swing or previous day's high/low)
+//      but the candle CLOSES back inside → resting orders were taken.            [Days 8–12]
+//   2. BREAK OF STRUCTURE the other way: a candle BODY closes beyond the most recent opposite swing
+//      → reversal confirmed.                                                      [Day 6]
+//   3. RETRACEMENT ZONE where he enters: the ORDER BLOCK (the leg that swept the liquidity, boxed from
+//      the wick to the start of the body), the FAIR VALUE GAP left by the move, and EQUILIBRIUM —
+//      enter only in the PREMIUM (sells) / DISCOUNT (buys).                       [Days 14–28]
+//  Only closed candles are used. Only the latest active setup's zones are drawn.
+//  This marks where TJR's reversal conditions are met — it cannot know the future.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+indicator("TJR Reversal (sweep → BOS → OB/FVG)", shorttitle = "TJR Rev", overlay = true,
+     max_boxes_count = 20, max_lines_count = 20, max_labels_count = 500, max_bars_back = 500)
+
+int  swingLen = input.int(3, "Swing size (candles each side)", minval = 1, maxval = 10,
+     tooltip = "Highs/lows that hold liquidity. Bigger = only more prominent swings.")
+bool usePD    = input.bool(true, "Also count previous day high / low as liquidity")
+int  window   = input.int(30, "BOS must come within (candles) after the sweep", minval = 3)
+bool showSweep = input.bool(true, "Mark sweeps")
+color bullCol = input.color(color.teal, "Bullish")
+color bearCol = input.color(color.red, "Bearish")
+
+// ── liquidity: last swing high / low (wicks) + previous day high / low ────────────────────────────
+float ph = ta.pivothigh(high, swingLen, swingLen)
+float pl = ta.pivotlow(low, swingLen, swingLen)
+var float swHi = na
+var float swLo = na
+var bool  swHiTaken = false
+var bool  swLoTaken = false
+if not na(ph)
+    swHi := ph
+    swHiTaken := false
+if not na(pl)
+    swLo := pl
+    swLoTaken := false
+[pdh, pdl] = request.security(syminfo.tickerid, "D", [high[1], low[1]], lookahead = barmerge.lookahead_on)
+var bool pdhTaken = false
+var bool pdlTaken = false
+if timeframe.change("D")
+    pdhTaken := false
+    pdlTaken := false
+
+// ── state ───────────────────────────────────────────────────────────────────────────────────────
+var int   bArmed = 0         // 1 = waiting for bullish BOS after a sell-side sweep; -1 bearish; 0 none
+var float swpExt = na        // the sweep extreme (low for bullish, high for bearish)
+var int   swpBar = na
+var float bosLvl = na        // the level whose close-through confirms the reversal
+var int   armBar = na
+
+// active setup (drawn)
+var int   aDir  = 0
+var float aExt  = na
+var float aFar  = na         // extreme of the move after the BOS (for equilibrium)
+var box   obBox = na
+var box   gapBox = na
+var line  eqLine = na
+var line  invLine = na
+
+bool sweepBull = false
+bool sweepBear = false
+bool revBull = false
+bool revBear = false
+bool zoneTouch = false
+
+if barstate.isconfirmed
+    // 1. SWEEPS — wick beyond liquidity, close back inside [Days 8–12]
+    bool takeLo = (not na(swLo) and not swLoTaken and low < swLo and close > swLo) or (usePD and not pdlTaken and low < pdl and close > pdl)
+    bool takeHi = (not na(swHi) and not swHiTaken and high > swHi and close < swHi) or (usePD and not pdhTaken and high > pdh and close < pdh)
+    if takeLo
+        sweepBull := true
+        swLoTaken := swLoTaken or low < swLo
+        pdlTaken  := pdlTaken or low < pdl
+        bArmed := 1
+        swpExt := low
+        swpBar := bar_index
+        bosLvl := swHi                     // break the most recent high to confirm
+        armBar := bar_index
+    else if takeHi
+        sweepBear := true
+        swHiTaken := swHiTaken or high > swHi
+        pdhTaken  := pdhTaken or high > pdh
+        bArmed := -1
+        swpExt := high
+        swpBar := bar_index
+        bosLvl := swLo
+        armBar := bar_index
+    else if bArmed != 0
+        // a deeper sweep candle extends the extreme; a close beyond it cancels
+        if bArmed == 1
+            if low < swpExt
+                swpExt := low
+                swpBar := bar_index
+            if close < swpExt
+                bArmed := 0
+        else
+            if high > swpExt
+                swpExt := high
+                swpBar := bar_index
+            if close > swpExt
+                bArmed := 0
+        if bArmed != 0 and bar_index - armBar > window
+            bArmed := 0
+
+    // 2. BOS the other way — body closes beyond the opposite swing [Day 6]
+    if bArmed == 1 and not na(bosLvl) and close > bosLvl and bar_index > armBar
+        revBull := true
+    if bArmed == -1 and not na(bosLvl) and close < bosLvl and bar_index > armBar
+        revBear := true
+
+    if revBull or revBear
+        int d = revBull ? 1 : -1
+        int back = bar_index - swpBar
+        // 3a. ORDER BLOCK: the sweep leg, from the wick to the start of the body [Day 24, 10:15–11:49]
+        //     bullish: last BEARISH candle at/before the sweep → box from its low (wick) to its open
+        float obA = na
+        float obB = na
+        int   obX = swpBar
+        for k = back to math.min(back + 10, 400)
+            if d == 1 ? close[k] < open[k] : close[k] > open[k]
+                obA := d == 1 ? low[k] : high[k]
+                obB := open[k]
+                obX := bar_index - k
+                break
+        // 3b. FAIR VALUE GAP left by the move (3 candles, wicks don't overlap) [Day 16, 04:12–05:45]
+        float gA = na
+        float gB = na
+        int   gX = na
+        for k = 0 to math.max(back - 1, 0)
+            if d == 1 ? low[k] > high[k + 2] : high[k] < low[k + 2]
+                gA := d == 1 ? high[k + 2] : low[k + 2]
+                gB := d == 1 ? low[k] : high[k]
+                gX := bar_index - k - 2
+                break
+        // draw the new setup (remove the old one)
+        box.delete(obBox)
+        box.delete(gapBox)
+        line.delete(eqLine)
+        line.delete(invLine)
+        color c = d == 1 ? bullCol : bearCol
+        aDir := d
+        aExt := swpExt
+        aFar := d == 1 ? high : low
+        obBox  := na
+        gapBox := na
+        if not na(obA)
+            obBox := box.new(obX, math.max(obA, obB), bar_index + 5, math.min(obA, obB), border_color = c, bgcolor = color.new(c, 75),
+                 text = "Order block", text_color = c, text_size = size.small, text_halign = text.align_left)
+        if not na(gA)
+            gapBox := box.new(gX, math.max(gA, gB), bar_index + 5, math.min(gA, gB), border_color = color.new(c, 40), bgcolor = color.new(c, 88),
+                 border_style = line.style_dashed, text = "FVG", text_color = c, text_size = size.small, text_halign = text.align_left)
+        eqLine  := line.new(swpBar, (swpExt + aFar) / 2, bar_index + 5, (swpExt + aFar) / 2, color = color.gray, style = line.style_dashed)
+        invLine := line.new(swpBar, swpExt, bar_index + 5, swpExt, color = c, style = line.style_dotted)
+        label.new(bar_index, 0, d == 1 ? "REVERSAL ↑" : "REVERSAL ↓", yloc = d == 1 ? yloc.belowbar : yloc.abovebar,
+             style = d == 1 ? label.style_label_up : label.style_label_down, color = c, textcolor = color.white, size = size.small)
+        bArmed := 0
+
+    // keep the active setup up to date: equilibrium follows the new extreme; cancel if the sweep extreme is closed through
+    if aDir != 0 and not (revBull or revBear)
+        if aDir == 1 ? high > aFar : low < aFar
+            aFar := aDir == 1 ? high : low
+        if aDir == 1 ? close < aExt : close > aExt
+            aDir := 0                                          // invalidated
+            if not na(obBox)
+                box.set_bgcolor(obBox, color.new(color.gray, 90))
+            if not na(gapBox)
+                box.set_bgcolor(gapBox, color.new(color.gray, 94))
+        else
+            float eq = (aExt + aFar) / 2
+            line.set_y1(eqLine, eq)
+            line.set_y2(eqLine, eq)
+            // price back in the zone, on the right side of equilibrium (discount for buys, premium for sells)
+            bool inZone = not na(obBox) and (aDir == 1 ? low <= box.get_top(obBox) : high >= box.get_bottom(obBox))
+            bool inGap  = not na(gapBox) and (aDir == 1 ? low <= box.get_top(gapBox) : high >= box.get_bottom(gapBox))
+            bool rightSide = aDir == 1 ? low < eq : high > eq
+            zoneTouch := (inZone or inGap) and rightSide
+
+if aDir != 0
+    if not na(obBox)
+        box.set_right(obBox, bar_index + 5)
+    if not na(gapBox)
+        box.set_right(gapBox, bar_index + 5)
+    line.set_x2(eqLine, bar_index + 5)
+    line.set_x2(invLine, bar_index + 5)
+
+plotshape(showSweep and sweepBull, "Sell-side sweep (lows taken)", shape.xcross, location.belowbar, color.new(bullCol, 30), size = size.tiny)
+plotshape(showSweep and sweepBear, "Buy-side sweep (highs taken)", shape.xcross, location.abovebar, color.new(bearCol, 30), size = size.tiny)
+plotshape(zoneTouch and aDir == 1, "In buy zone", shape.circle, location.belowbar, bullCol, size = size.tiny)
+plotshape(zoneTouch and aDir == -1, "In sell zone", shape.circle, location.abovebar, bearCol, size = size.tiny)
+
+alertcondition(sweepBull or sweepBear, "Liquidity sweep", "Liquidity sweep — watch for a break of structure the other way")
+alertcondition(revBull, "Bullish reversal", "Sweep of lows + bullish break of structure — wait for the retrace into the order block / FVG in the discount")
+alertcondition(revBear, "Bearish reversal", "Sweep of highs + bearish break of structure — wait for the retrace into the order block / FVG in the premium")
+alertcondition(zoneTouch, "Price in entry zone", "Price is back in the order block / FVG on the right side of equilibrium")
