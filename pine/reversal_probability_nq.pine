@@ -1,0 +1,240 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  REVERSAL PROBABILITY — NQ (built from 5.3 years of NQ 1-minute data, Jan 2021 → Apr 2026)
+//
+//  WHAT THE DATA SAID (21,900 structure flips + 318,000 five-minute candles studied):
+//   • A structure flip (body CHoCH) on its own is a coin flip: 50% reach 1R, 34% reach 2R — the same
+//     as random. Sweeps, FVGs, RSI divergence, premium/discount, displacement... none of them changed
+//     that by more than 1–2%, and an AI model that combined all of them could not either.
+//   • What IS predictable is whether TODAY'S HIGH (or LOW) IS ALREADY IN. Three things decide it:
+//     time of day, how much of the average daily range (ADR) is used, and how far price has pulled
+//     back from the extreme. Tested on 2024-26 after learning on 2021-23: when it said 80-90%, the
+//     high/low really held 89% of the time; when it said 90%+, 97% (AUC 0.86).
+//   • The only reversal entry that kept a small positive result: a body CHoCH AWAY from the day's
+//     extreme while that extreme is ≥ 80% likely to be in. Entry at the CHoCH close, stop beyond the
+//     swing extreme, target 2R:  ≈ 500 signals/yr, 37% win, +0.05R per trade after costs,
+//     positive in 4 of 6 years. 12:00–16:00 New York was the best window (+0.07…0.09R).
+//     It is a SMALL edge — use the probability mainly as a map (don't buy after the top is in).
+//
+//  ON THE CHART
+//   • Table: probability that today's HIGH / LOW is already in, the bias, ADR and range used.
+//   • "REV ▼ / REV ▲" label on the candle = CHoCH confirmed while the opposite extreme is likely in.
+//     Dashed lines: entry (close), stop (swing extreme), target (2R). Outcome label: "2R ✓" / "SL ✗".
+//   • Trading day = futures session (18:00 New York). Use NQ1!/MNQ1! on the 5-minute chart.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+indicator("Reversal Probability NQ", shorttitle = "RevProb", overlay = true,
+     max_labels_count = 300, max_lines_count = 300, max_bars_back = 500)
+
+float thr      = input.float(80, "Signal when the extreme is at least this likely to be in (%)", minval = 50, maxval = 99) / 100
+bool  useWin   = input.bool(true, "Only signal inside the window", tooltip = "12:00-16:00 New York was the best window in the study.")
+string winSess = input.session("1200-1600", "Window (New York time)")
+float rr       = input.float(2.0, "Target (R)", minval = 0.5, step = 0.5)
+int   adrDays  = input.int(20, "ADR = median range of the last N days", minval = 5, maxval = 60)
+bool  showLvl  = input.bool(true, "Show today's high / low lines")
+bool  showTbl  = input.bool(true, "Show table")
+color upCol    = input.color(color.teal, "Bullish")
+color dnCol    = input.color(color.red, "Bearish")
+
+if barstate.isfirst and not timeframe.isintraday
+    runtime.error("Use an intraday chart (built and tested on the 5-minute chart).")
+
+const string TZ = "America/New_York"
+
+// ── probability table: 24 hours (from 18:00 NY) × 9 range-used buckets × 8 pull-back buckets ─────
+var array<int> P = array.new<int>()
+if barstate.isfirst
+    array<string> rows = array.from(
+     "020612221507070704060708242914141518182033343226343232384336504738373638383838463535353535353535353535353535353535353535353535353535353535353535",
+     "020611192807070703061321272517170910100931363322211817192749404329272828242753494036383741414156353636363636363735353535353535353535353535353535",
+     "020810201909090904071124322619190504050522334219141618152639393519191619202738394036384345405165373637393939394838393438393939493535353535353535",
+     "020812182410101003081118323519190507081015292717161722293333485019161421263924452525252532255247363234404340405539393540414141543535353535353535",
+     "020713212711111103051218273918180407121222354322131110213521412722131216213442543227323135285358342835344949455236323435343638563535353535353535",
+     "040713203412121203081218303619190507111021356123080912192531453515130912133540503729252431384656413137405552506227383437313135492323232322202319",
+     "020714192812121203051318333719190710070920345122091213152845483714131512133137552520242736306151414143325049386441374142534545562222222222211915",
+     "020813212413131303061517323819190509071421314821121118202157474420141724332940541921201422354658333228293657465842393954594949642625272828282828",
+     "040813212913131303081321313820200407121023364422121515182942494016142022283443522520171722314159312525293946346344514344636256693229323034343643",
+     "061112212514141403101620314021210412151725374725061317223636555617141519333538582218232326363861262227242941366348403536406256784137434545494355",
+     "040817203415151503091822314022220307162130435428071115222939515911101212273547692229262932463562231921302440536231323234384452803935333140393666",
+     "041017232717171704081624334023230509162330445529050717263940584911101014293144611920213433413661282626253136526436352925344654813735334042413970",
+     "040919262718181806111523344624240608172727455329060914274241596011111619203347661714182129364061272624353738515937352527264049844637454241415376",
+     "060816323920202005061727344725250408162731436030081213203744665812141520262761611913221520325160272225223855496241393125313043874842384042395177",
+     "050821304422222205091924374826260608132335465731050812192949676212091523373550661211091130394061211920213954487036323336433551815043413137454082",
+     "081526313024242406111526405728280411172638516734071117243751635908131818284061701117132237434967171823243453507125302930294057813538434135434286",
+     "131225383927272706141931455331310711253044587441081119253859737109132230425669781214202540506782141722314047587724252735425653872631274246414890",
+     "262526232927272720182545546342421017253855738150101619304465828709132434486275881215233849577192141825414752688716172626485068922116232433497492",
+     "353535353535353526243046737050502223244867828758101529395274888211152844557179921417274348718496131525384766739115183033374970941616212644566194",
+     "353535353535353535273558767455552439445472848664152637455781938813172945607389951221324367768797142229345271789514243234435273971718272837606597",
+     "353535353535353535395069728462622636536282888870213137566891979614203346638393961728355668859198142138466172829712203139587590991928323143697798",
+     "353535353535353549434976808567673641638888959580192452698692989615234058779296982040476581919899143349557382939822324668778995991927356070859199",
+     "353535353535353576818286888581814960769197979587495968879398999631516173919697993248688192969799285866778892949831496382929395993447617482919299",
+     "353535353535353570697279757168688392929697979390879495979897979589919696989898988594969598989899839497979898989979879697959596998790929697989799")
+    for r in rows
+        for k = 0 to 71
+            P.push(int(str.tonumber(str.substring(r, k * 2, k * 2 + 2))))
+
+f_ub(float u) =>
+    u >= 1.5 ? 8 : u >= 1.2 ? 7 : u >= 1.0 ? 6 : u >= 0.85 ? 5 : u >= 0.7 ? 4 : u >= 0.55 ? 3 : u >= 0.4 ? 2 : u >= 0.25 ? 1 : 0
+f_pb(float p) =>
+    p >= 0.6 ? 7 : p >= 0.45 ? 6 : p >= 0.3 ? 5 : p >= 0.2 ? 4 : p >= 0.12 ? 3 : p >= 0.07 ? 2 : p >= 0.03 ? 1 : 0
+
+// ── trading day, running high / low, ADR ────────────────────────────────────────────────────────
+var float dHi = na
+var float dLo = na
+var array<float> ranges = array.new<float>()
+bool newDay = timeframe.change("D")
+if newDay
+    if not na(dHi)
+        ranges.push(dHi - dLo)
+        if ranges.size() > adrDays
+            ranges.shift()
+    dHi := high
+    dLo := low
+else
+    dHi := math.max(nz(dHi, high), high)
+    dLo := math.min(nz(dLo, low), low)
+float adr = ranges.size() >= 5 ? ranges.median() : na
+
+int hb = (hour(time, TZ) - 18 + 24) % 24
+float pHi = na
+float pLo = na
+if not na(adr) and adr > 0 and P.size() == 1728
+    int ub = f_ub((dHi - dLo) / adr)
+    pHi := P.get(hb * 72 + ub * 8 + f_pb((dHi - close) / adr)) / 100.0
+    pLo := P.get(hb * 72 + ub * 8 + f_pb((close - dLo) / adr)) / 100.0
+
+// ── body structure (CHoCH) — same engine as the study: body pivots 2/2, break on a close ─────────
+float bTop = math.max(open, close)
+float bBot = math.min(open, close)
+float ph = ta.pivothigh(bTop, 2, 2)
+float pl = ta.pivotlow(bBot, 2, 2)
+var float lastH = na
+var float lastL = na
+if not na(ph)
+    lastH := ph
+if not na(pl)
+    lastL := pl
+var int trend = 0
+var int flipBar = 0
+int nt = trend
+if not na(lastH) and close > lastH
+    nt := 1
+    lastH := na
+else if not na(lastL) and close < lastL
+    nt := -1
+    lastL := na
+
+bool inWin = not useWin or not na(time(timeframe.period, winSess, TZ))
+
+type Sig
+    int   dir
+    float entry
+    float stop
+    float tp
+    int   bar
+    line  lE
+    line  lS
+    line  lT
+
+var array<Sig> open_ = array.new<Sig>()
+var int nSig = 0
+var int nWin = 0
+var int nLoss = 0
+var float sumR = 0.0
+bool sigDn = false
+bool sigUp = false
+
+if barstate.isconfirmed and nt != trend
+    if trend != 0 and bar_index - flipBar <= 400 and not na(pHi)
+        // extreme since the previous flip = the swing the stop goes beyond
+        float ext = nt == -1 ? high : low
+        for k = 0 to bar_index - flipBar
+            ext := nt == -1 ? math.max(ext, high[k]) : math.min(ext, low[k])
+        float stop = ext + (nt == -1 ? 0.25 : -0.25)
+        float rk = math.abs(close - stop)
+        float pExt = nt == -1 ? pHi : pLo          // CHoCH down needs the day's HIGH to be in
+        if pExt >= thr and inWin and rk >= 2
+            float tp = nt == -1 ? close - rr * rk : close + rr * rk
+            color col = nt == -1 ? dnCol : upCol
+            string txt = (nt == -1 ? "REV ▼ " : "REV ▲ ") + str.tostring(math.round(pExt * 100)) + "%"
+            label.new(bar_index, na, txt, yloc = nt == -1 ? yloc.abovebar : yloc.belowbar,
+                 style = nt == -1 ? label.style_label_down : label.style_label_up, color = col, textcolor = color.white, size = size.small)
+            line lE = line.new(bar_index, close, bar_index + 1, close, color = color.gray, style = line.style_dashed)
+            line lS = line.new(bar_index, stop, bar_index + 1, stop, color = color.new(color.red, 20), style = line.style_dashed)
+            line lT = line.new(bar_index, tp, bar_index + 1, tp, color = color.new(color.green, 20), style = line.style_dashed)
+            open_.push(Sig.new(nt, close, stop, tp, bar_index, lE, lS, lT))
+            nSig += 1
+            sigDn := nt == -1
+            sigUp := nt == 1
+    trend := nt
+    flipBar := bar_index
+
+// ── outcomes (stop first if both are hit in the same candle) ────────────────────────────────────
+if barstate.isconfirmed and open_.size() > 0
+    for j = open_.size() - 1 to 0
+        Sig s = open_.get(j)
+        if bar_index > s.bar
+            bool hitS = s.dir == -1 ? high >= s.stop : low <= s.stop
+            bool hitT = s.dir == -1 ? low <= s.tp : high >= s.tp
+            bool done = hitS or hitT or bar_index - s.bar >= 300
+            for l in array.from(s.lE, s.lS, s.lT)
+                l.set_x2(bar_index)
+            if done
+                if hitS
+                    nLoss += 1
+                    sumR -= 1
+                    label.new(bar_index, na, "SL ✗", yloc = s.dir == -1 ? yloc.abovebar : yloc.belowbar,
+                         style = label.style_none, textcolor = color.red, size = size.small)
+                else if hitT
+                    nWin += 1
+                    sumR += rr
+                    label.new(bar_index, na, str.tostring(rr) + "R ✓", yloc = s.dir == -1 ? yloc.belowbar : yloc.abovebar,
+                         style = label.style_none, textcolor = color.green, size = size.small)
+                else
+                    sumR += (close - s.entry) * s.dir / math.abs(s.entry - s.stop)
+                open_.remove(j)
+
+if sigDn
+    alert("NQ reversal DOWN: CHoCH while today's high is " + str.tostring(math.round(pHi * 100)) + "% likely in", alert.freq_once_per_bar_close)
+if sigUp
+    alert("NQ reversal UP: CHoCH while today's low is " + str.tostring(math.round(pLo * 100)) + "% likely in", alert.freq_once_per_bar_close)
+
+// ── today's high / low lines ────────────────────────────────────────────────────────────────────
+var line hiLn = na
+var line loLn = na
+var int dStart = 0
+if newDay
+    dStart := bar_index
+    hiLn := na
+    loLn := na
+if showLvl and not na(pHi)
+    color hc = color.new(dnCol, pHi >= thr ? 0 : 60)
+    color lc = color.new(upCol, pLo >= thr ? 0 : 60)
+    if na(hiLn)
+        hiLn := line.new(dStart, dHi, bar_index, dHi, color = hc, width = 1)
+        loLn := line.new(dStart, dLo, bar_index, dLo, color = lc, width = 1)
+    else
+        hiLn.set_xy1(dStart, dHi)
+        hiLn.set_xy2(bar_index, dHi)
+        hiLn.set_color(hc)
+        loLn.set_xy1(dStart, dLo)
+        loLn.set_xy2(bar_index, dLo)
+        loLn.set_color(lc)
+
+// ── table ────────────────────────────────────────────────────────────────────────────────────────
+var table tb = table.new(position.top_right, 2, 6, bgcolor = color.new(color.black, 25), border_width = 1, border_color = color.new(color.gray, 60))
+f_row(int r, string k, string v, color c) =>
+    table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, r, v, text_color = c, text_size = size.small, text_halign = text.align_right)
+if showTbl and barstate.islast and not na(pHi)
+    string bias = pHi >= thr and pLo >= thr ? "both extremes likely in → range" :
+         pHi >= thr ? "top likely in → favour SELLS" : pLo >= thr ? "bottom likely in → favour BUYS" : "day still open → no reversal yet"
+    f_row(0, "Today's HIGH is in", str.tostring(math.round(pHi * 100)) + "%", pHi >= thr ? dnCol : color.white)
+    f_row(1, "Today's LOW is in", str.tostring(math.round(pLo * 100)) + "%", pLo >= thr ? upCol : color.white)
+    f_row(2, "Bias", bias, color.yellow)
+    f_row(3, "Range used / ADR", str.tostring((dHi - dLo) / adr * 100, "0") + "% of " + str.tostring(adr, "0"), color.white)
+    f_row(4, "Signals on chart", str.tostring(nSig) + "  (" + str.tostring(nWin) + "✓ " + str.tostring(nLoss) + "✗)", color.white)
+    f_row(5, "Result (no costs)", str.tostring(sumR, "+0.0;-0.0") + " R", sumR >= 0 ? color.green : color.red)
