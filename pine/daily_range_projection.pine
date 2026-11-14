@@ -1,0 +1,100 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  DAILY HIGH / LOW PROJECTION (average daily range)
+//
+//  From 3 months of NQ daily data (Jul 9 – Nov 13 2026, 92 weekdays):
+//    typical day range = 1.70% of the open (≈ 475 pts), 70% of days ≤ 2.09%, 90% ≤ 3.08%;
+//    one side of the open moves little (median 0.29%), the other does most of the work (1.22%).
+//  So the DIRECTION can't be known in advance, but the SIZE of the day is fairly stable:
+//  once one extreme is in, the other is very likely about one ADR away.
+//
+//  LINES (updated live, they tighten as the day develops):
+//    projected HIGH  = today's low  + ADR      (solid)   ·  extended = today's low  + 70th-pct range (dotted)
+//    projected LOW   = today's high − ADR      (solid)   ·  extended = today's high − 70th-pct range (dotted)
+//  ADR and the 70th percentile are measured on the last N completed daily candles (default 60),
+//  so they adapt to the market. Table: ADR, how much of it today has used, distance to each line.
+//  When "range used" passes ~100%, the day has done its typical move → late in the move.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+indicator("Daily High/Low Projection (ADR)", shorttitle = "Daily Proj", overlay = true, max_lines_count = 100, max_labels_count = 50)
+
+int   nDays   = input.int(60, "Days used for the average range", minval = 5, maxval = 250)
+int   pctExt  = input.int(70, "Extended line = this percentile of daily ranges", minval = 50, maxval = 95)
+int   keepDays = input.int(5, "Keep lines of past days", minval = 0, maxval = 30)
+color hiCol   = input.color(color.red, "Projected high")
+color loCol   = input.color(color.teal, "Projected low")
+
+if barstate.isfirst and not timeframe.isintraday
+    runtime.error("Use an intraday chart (e.g. 5m or 15m).")
+
+// ── typical daily range (in % of the open) from COMPLETED daily candles only ─────────────────────
+f_stats() =>
+    float r = (high - low) / open * 100
+    [ta.median(r, nDays)[1], ta.percentile_linear_interpolation(r, nDays, pctExt)[1]]
+[adrPct, extPct] = request.security(syminfo.tickerid, "D", f_stats(), lookahead = barmerge.lookahead_on)
+
+// ── today's open / high / low from the chart's candles ─────────────────────────────────────────
+var float dOpen = na
+var float dHigh = na
+var float dLow  = na
+var int   dStart = na
+bool newDay = timeframe.change("D")
+if newDay or na(dOpen)
+    dOpen  := open
+    dHigh  := high
+    dLow   := low
+    dStart := bar_index
+else
+    dHigh := math.max(dHigh, high)
+    dLow  := math.min(dLow, low)
+
+float adr  = adrPct / 100 * dOpen
+float ext  = extPct / 100 * dOpen
+float pHi  = dLow + adr
+float pLo  = dHigh - adr
+float pHiX = dLow + ext
+float pLoX = dHigh - ext
+
+// ── lines: one set per day, updated every candle ──────────────────────────────────────────────────
+var line lHi  = na
+var line lLo  = na
+var line lHiX = na
+var line lLoX = na
+var array<line> old = array.new<line>()
+if newDay and not na(lHi)
+    for l in array.from(lHi, lLo, lHiX, lLoX)
+        old.push(l)
+    while old.size() > keepDays * 4
+        line.delete(old.shift())
+    lHi := na
+if not na(adr)
+    if na(lHi)
+        lHi  := line.new(dStart, pHi, bar_index + 1, pHi, color = hiCol, width = 2)
+        lLo  := line.new(dStart, pLo, bar_index + 1, pLo, color = loCol, width = 2)
+        lHiX := line.new(dStart, pHiX, bar_index + 1, pHiX, color = color.new(hiCol, 40), style = line.style_dotted)
+        lLoX := line.new(dStart, pLoX, bar_index + 1, pLoX, color = color.new(loCol, 40), style = line.style_dotted)
+    else
+        line.set_xy1(lHi, dStart, pHi)
+        line.set_xy2(lHi, bar_index + 1, pHi)
+        line.set_xy1(lLo, dStart, pLo)
+        line.set_xy2(lLo, bar_index + 1, pLo)
+        line.set_xy1(lHiX, dStart, pHiX)
+        line.set_xy2(lHiX, bar_index + 1, pHiX)
+        line.set_xy1(lLoX, dStart, pLoX)
+        line.set_xy2(lLoX, bar_index + 1, pLoX)
+
+// ── table ────────────────────────────────────────────────────────────────────────────────────────
+var table tb = table.new(position.top_right, 2, 5, bgcolor = color.new(color.black, 25), border_width = 1, border_color = color.new(color.gray, 60))
+f_row(int r, string k, string v, color c) =>
+    table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, r, v, text_color = c, text_size = size.small, text_halign = text.align_right)
+if barstate.islast and not na(adr)
+    float used = (dHigh - dLow) / adr * 100
+    f_row(0, "Average daily range (" + str.tostring(nDays) + "d)", str.tostring(adr, format.mintick) + "  (" + str.tostring(adrPct, "0.00") + "%)", color.white)
+    f_row(1, "Today's range used", str.tostring(used, "0") + "%", used >= 100 ? color.orange : color.white)
+    f_row(2, "Projected high (low + ADR)", str.tostring(pHi, format.mintick) + "  (" + str.tostring(pHi - close, format.mintick) + " away)", hiCol)
+    f_row(3, "Projected low (high − ADR)", str.tostring(pLo, format.mintick) + "  (" + str.tostring(close - pLo, format.mintick) + " away)", loCol)
+    f_row(4, "Extended (" + str.tostring(pctExt) + "th pct)", str.tostring(pHiX, format.mintick) + " / " + str.tostring(pLoX, format.mintick), color.gray)
