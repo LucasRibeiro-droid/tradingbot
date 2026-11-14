@@ -63,6 +63,12 @@ var box   obBox = na
 var box   gapBox = na
 var line  eqLine = na
 var line  invLine = na
+var line  entLine = na
+var line  tpLine  = na
+var float aEntry = na
+var float aTP    = na
+var bool  entered = false
+var bool  done    = false
 
 bool sweepBull = false
 bool sweepBear = false
@@ -144,6 +150,8 @@ if barstate.isconfirmed
         box.delete(gapBox)
         line.delete(eqLine)
         line.delete(invLine)
+        line.delete(entLine)
+        line.delete(tpLine)
         color c = d == 1 ? bullCol : bearCol
         aDir := d
         aExt := swpExt
@@ -158,9 +166,35 @@ if barstate.isconfirmed
                  border_style = line.style_dashed, text = "FVG", text_color = c, text_size = size.small, text_halign = text.align_left)
         eqLine  := line.new(swpBar, (swpExt + aFar) / 2, bar_index + 5, (swpExt + aFar) / 2, color = color.gray, style = line.style_dashed)
         invLine := line.new(swpBar, swpExt, bar_index + 5, swpExt, color = c, style = line.style_dotted)
+        // ENTRY = near edge of the order block (else the FVG, else equilibrium); STOP = sweep extreme;
+        // TP1 = 1:1 from the entry [TJR Day 30 model 2: "enter at the order block, stop above the highs"]
+        float ent = not na(obA) ? (d == 1 ? math.max(obA, obB) : math.min(obA, obB)) : not na(gA) ? (d == 1 ? math.max(gA, gB) : math.min(gA, gB)) : (swpExt + aFar) / 2
+        aEntry  := ent
+        aTP     := ent + d * math.abs(ent - swpExt)
+        entered := false
+        done    := false
+        entLine := line.new(bar_index, aEntry, bar_index + 5, aEntry, color = color.white, width = 1)
+        tpLine  := line.new(bar_index, aTP, bar_index + 5, aTP, color = color.yellow, width = 2)
+        label.new(bar_index + 5, aTP, "TP1 1:1", style = label.style_label_left, color = color.new(color.yellow, 20), textcolor = color.black, size = size.tiny)
         label.new(bar_index, 0, d == 1 ? "REVERSAL ↑" : "REVERSAL ↓", yloc = d == 1 ? yloc.belowbar : yloc.abovebar,
              style = d == 1 ? label.style_label_up : label.style_label_down, color = c, textcolor = color.white, size = size.small)
         bArmed := 0
+
+    // TP1 / stop outcome once price has come back to the entry
+    if aDir != 0 and not done and not (revBull or revBear)
+        if not entered and (aDir == 1 ? low <= aEntry : high >= aEntry)
+            entered := true
+        if entered
+            bool slHit = aDir == 1 ? low <= aExt : high >= aExt
+            bool tpHit = aDir == 1 ? high >= aTP : low <= aTP
+            if slHit                                           // if both in one candle, count the stop (conservative)
+                done := true
+                label.new(bar_index, 0, "SL ✗", yloc = aDir == 1 ? yloc.belowbar : yloc.abovebar,
+                     style = aDir == 1 ? label.style_label_up : label.style_label_down, color = color.gray, textcolor = color.white, size = size.tiny)
+            else if tpHit
+                done := true
+                label.new(bar_index, 0, "TP1 ✓", yloc = aDir == 1 ? yloc.abovebar : yloc.belowbar,
+                     style = aDir == 1 ? label.style_label_down : label.style_label_up, color = color.yellow, textcolor = color.black, size = size.tiny)
 
     // keep the active setup up to date: equilibrium follows the new extreme; cancel if the sweep extreme is closed through
     if aDir != 0 and not (revBull or revBear)
@@ -189,6 +223,8 @@ if aDir != 0
         box.set_right(gapBox, bar_index + 5)
     line.set_x2(eqLine, bar_index + 5)
     line.set_x2(invLine, bar_index + 5)
+    line.set_x2(entLine, bar_index + 5)
+    line.set_x2(tpLine, bar_index + 5)
 
 plotshape(showSweep and sweepBull, "Sell-side sweep (lows taken)", shape.xcross, location.belowbar, color.new(bullCol, 30), size = size.tiny)
 plotshape(showSweep and sweepBear, "Buy-side sweep (highs taken)", shape.xcross, location.abovebar, color.new(bearCol, 30), size = size.tiny)
@@ -198,4 +234,5 @@ plotshape(zoneTouch and aDir == -1, "In sell zone", shape.circle, location.above
 alertcondition(sweepBull or sweepBear, "Liquidity sweep", "Liquidity sweep — watch for a break of structure the other way")
 alertcondition(revBull, "Bullish reversal", "Sweep of lows + bullish break of structure — wait for the retrace into the order block / FVG in the discount")
 alertcondition(revBear, "Bearish reversal", "Sweep of highs + bearish break of structure — wait for the retrace into the order block / FVG in the premium")
+alertcondition(entered and done and not na(aTP), "Setup finished", "TJR reversal setup finished (TP1 or stop)")
 alertcondition(zoneTouch, "Price in entry zone", "Price is back in the order block / FVG on the right side of equilibrium")
