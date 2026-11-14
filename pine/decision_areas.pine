@@ -24,8 +24,10 @@ indicator("Decision Areas (5 days)", shorttitle = "DA 5D", overlay = true,
 int   nDays     = input.int(5, "Look-back (trading days)", minval = 1, maxval = 20)
 int   minRej    = input.int(4, "Rejections needed (more than 3 = 4)", minval = 2)
 int   pivLen    = input.int(3, "Swing size for candidate levels (candles each side)", minval = 1, maxval = 10)
-float zoneATR   = input.float(0.5, "Zone height (× ATR)", minval = 0.1, step = 0.1,
+float zoneATR   = input.float(0.5, "Group swings closer than (× ATR)", minval = 0.1, step = 0.1,
      tooltip = "Swings closer than this are the same zone.")
+float minHATR   = input.float(1.0, "Minimum zone height (× ATR)", minval = 0.1, step = 0.1,
+     tooltip = "Each zone covers the wick-to-body area of its rejection candles, and is at least this tall.")
 float awayATR   = input.float(1.0, "Price must move this far away (× ATR) before the next rejection counts", minval = 0.2, step = 0.1)
 float bigATR    = input.float(3.0, "Big breakthrough = runs this far beyond the zone (× ATR)", minval = 1.0, step = 0.5,
      tooltip = "A close through the zone that comes back BEFORE travelling this far is a fake break → zone rejected.")
@@ -45,16 +47,20 @@ if timeframe.change("D") or barstate.isfirst
 // candidate swings (wicks)
 float ph = ta.pivothigh(high, pivLen, pivLen)
 float pl = ta.pivotlow(low, pivLen, pivLen)
-var array<float> swP = array.new<float>()
+var array<float> swP = array.new<float>()       // wick tip
+var array<float> swE = array.new<float>()       // body edge of the same candle (wick-to-body = the area)
 var array<int>   swB = array.new<int>()
 if not na(ph)
     swP.push(ph)
+    swE.push(math.max(open[pivLen], close[pivLen]))
     swB.push(bar_index - pivLen)
 if not na(pl)
     swP.push(pl)
+    swE.push(math.min(open[pivLen], close[pivLen]))
     swB.push(bar_index - pivLen)
 if swP.size() > 1500
     swP.shift()
+    swE.shift()
     swB.shift()
 
 type Zone
@@ -86,26 +92,34 @@ if barstate.islast and not na(atr)
 
     // 1. cluster the swings of the window into candidate zones
     array<float> px = array.new<float>()
+    array<float> pe = array.new<float>()
     if swP.size() > 0
         for i = 0 to swP.size() - 1
             if swB.get(i) >= startBar
                 px.push(swP.get(i))
-    px.sort(order.ascending)
+                pe.push(swE.get(i))
+    array<int> ord = px.size() > 0 ? array.sort_indices(px, order.ascending) : array.new<int>()
     float w = zoneATR * atr
     array<Zone> zones = array.new<Zone>()
     Zone cur = na
-    for p in px
-        if na(cur) or p - cur.bot > w
-            cur := Zone.new(p, p, 0, false)
+    float curRef = na
+    for i in ord
+        float p = px.get(i)
+        float e = pe.get(i)
+        if na(cur) or p - curRef > w
+            cur := Zone.new(math.max(p, e), math.min(p, e), 0, false)
+            curRef := p
             zones.push(cur)
         else
-            cur.top := math.max(cur.top, p)
-    // give every zone a minimum thickness
+            // the zone covers the wick-to-body area of every swing candle in it
+            cur.top := math.max(cur.top, p, e)
+            cur.bot := math.min(cur.bot, p, e)
+    // minimum height
     for z in zones
         float mid = (z.top + z.bot) / 2
-        if z.top - z.bot < 0.2 * atr
-            z.top := mid + 0.1 * atr
-            z.bot := mid - 0.1 * atr
+        if z.top - z.bot < minHATR * atr
+            z.top := mid + minHATR * atr / 2
+            z.bot := mid - minHATR * atr / 2
 
     // 2. walk the window bar by bar (oldest → newest) and score each zone
     for z in zones
