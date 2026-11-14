@@ -75,6 +75,7 @@ bool sweepBear = false
 bool revBull = false
 bool revBear = false
 bool zoneTouch = false
+bool tp1Now = false
 
 if barstate.isconfirmed
     // 1. SWEEPS — wick beyond liquidity, close back inside [Days 8–12]
@@ -193,6 +194,7 @@ if barstate.isconfirmed
                      style = aDir == 1 ? label.style_label_up : label.style_label_down, color = color.gray, textcolor = color.white, size = size.tiny)
             else if tpHit
                 done := true
+                tp1Now := true
                 label.new(bar_index, 0, "TP1 ✓", yloc = aDir == 1 ? yloc.abovebar : yloc.belowbar,
                      style = aDir == 1 ? label.style_label_down : label.style_label_up, color = color.yellow, textcolor = color.black, size = size.tiny)
 
@@ -234,5 +236,5 @@ plotshape(zoneTouch and aDir == -1, "In sell zone", shape.circle, location.above
 alertcondition(sweepBull or sweepBear, "Liquidity sweep", "Liquidity sweep — watch for a break of structure the other way")
 alertcondition(revBull, "Bullish reversal", "Sweep of lows + bullish break of structure — wait for the retrace into the order block / FVG in the discount")
 alertcondition(revBear, "Bearish reversal", "Sweep of highs + bearish break of structure — wait for the retrace into the order block / FVG in the premium")
-alertcondition(entered and done and not na(aTP), "Setup finished", "TJR reversal setup finished (TP1 or stop)")
+alertcondition(tp1Now, "TP1 hit", "TJR reversal reached TP1 (1:1)")
 alertcondition(zoneTouch, "Price in entry zone", "Price is back in the order block / FVG on the right side of equilibrium")
