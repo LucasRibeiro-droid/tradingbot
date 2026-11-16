@@ -27,7 +27,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-16_0930_XAU_USD.md"
   }
  ],
