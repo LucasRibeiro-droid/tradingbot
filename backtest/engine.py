@@ -110,8 +110,13 @@ def simulate(o, h, l, c, a, trend, nwdir, okbar, mstart, mend, m_h, m_l, m_c, m_
             else:
                 for k in range(i - 1, i - 4, -1):
                     if h[k] > lvl + 0.001: st = h[k] + breath; break
-        else:
+        elif stop_mode == 2:
             st = lvl - d * atr_mult * a[i]
+        else:
+            if d == 1:
+                st = l[i - 9:i + 1].min() - breath
+            else:
+                st = h[i - 9:i + 1].max() + breath
         if np.isnan(st): continue
         risk = abs(lvl - st)
         if risk < min_sl or risk > max_atr * a[i]: continue

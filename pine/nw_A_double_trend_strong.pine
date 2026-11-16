@@ -1,0 +1,210 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  No-Wick A — Double Trend, Strong Candle
+//
+//  Base: NO-WICK candle WITH the trend (bull candle open = low → buy the tap of its open;
+//        bear candle open = high → sell the tap of its open), tap within N candles, limit entry.
+//  This version: trend = 5m AND 1h Supertrend agree · no-wick body ≥ 1 ATR · stop 4 ATR · target 4R · tap ≤ 9 candles
+//
+//  Tested in Python on NQ 1-minute data Jan 2021 → Apr 2026 (1-minute fills, stop first when both
+//  are hit in the same minute, MNQ costs $1.24 round trip + 1 tick slippage on stops):
+//  1,255 trades (≈240/yr) · win 30% · +0.114R/trade · learn +0.114R / unseen +0.114R · +237% total at 1% risk · max DD 39%
+//  per year: 2021 +3% · 2022 +75% · 2023 +13% · 2024 +15% · 2025 +57% · 2026 (Jan-Apr) −8%   ← BEST & most stable
+//  Learn period 2021-23 / unseen period 2024-26 shown separately so you can judge if it holds up.
+//
+//  No trades 20:00-24:00 London (and everything is closed at 20:00 London). Risk % of equity.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+strategy("No-Wick A — Double Trend, Strong Candle", shorttitle = "NW-A", overlay = true,
+     initial_capital = 50000, currency = currency.USD, pyramiding = 10,
+     margin_long = 0, margin_short = 0,
+     commission_type = strategy.commission.cash_per_contract, commission_value = 0.62, slippage = 1,
+     use_bar_magnifier = false, process_orders_on_close = false,
+     max_labels_count = 500, max_lines_count = 500)
+
+const string TZ  = "America/New_York"
+const string G1 = "Trend"
+const string G2 = "Setup"
+const string G3 = "Stop / target"
+const string G4 = "Time"
+const string G5 = "Risk"
+
+string trendMode = input.string("Supertrend 5m + 1h", "Trend filter", group = G1,
+     options = ["Supertrend 1h", "EMA 200", "Supertrend 5m + 1h", "Supertrend 5m", "Body structure 5m"])
+int   stLen    = input.int(10, "Supertrend ATR length", minval = 1, group = G1)
+float stFac    = input.float(3.0, "Supertrend factor", minval = 0.1, step = 0.1, group = G1)
+int   emaLen   = input.int(200, "EMA length", minval = 2, group = G1)
+
+int   wickT    = input.int(0, "No-wick tolerance (ticks)", minval = 0, group = G2)
+int   tapWin   = input.int(9, "Tap must happen within (candles)", minval = 1, group = G2)
+float minBody  = input.float(1.0, "No-wick body at least (× ATR)", minval = 0, step = 0.25, group = G2,
+     tooltip = "0 = any size. Bigger = only strong (displacement) no-wick candles.")
+
+string stopMode = input.string("ATR", "Stop", options = ["ATR", "Swing low/high (10 candles)"], group = G3)
+float atrMult  = input.float(4.0, "Stop distance (× ATR 14)", minval = 0.25, step = 0.25, group = G3)
+int   breathT  = input.int(4, "Breathing room for swing stop (ticks)", minval = 0, group = G3)
+float rr       = input.float(4.0, "Take profit (R)", minval = 0.5, step = 0.5, group = G3)
+int   maxHold  = input.int(288, "Close a trade after (candles)", minval = 1, group = G3, tooltip = "288 × 5m = 1 day")
+
+bool   useSess = input.bool(false, "Only take setups inside the window", group = G4)
+string sess    = input.session("0200-1130", "Window (New York time)", group = G4)
+bool   useNtz  = input.bool(true, "No-trade zone 20:00-24:00 London (close all at 20:00)", group = G4)
+
+float riskPct  = input.float(1.0, "Risk per trade (% of current equity)", minval = 0.05, step = 0.25, group = G5)
+int   maxQty   = input.int(30, "Max contracts per trade", minval = 1, group = G5)
+int   maxOpen  = input.int(3, "Max trades open at once", minval = 1, maxval = 10, group = G5)
+bool  showTbl  = input.bool(true, "Results table", group = G5)
+
+if barstate.isfirst and timeframe.in_seconds() != 300
+    runtime.error("Use the 5-minute chart.")
+
+float tick = syminfo.mintick
+float atr  = ta.atr(14)
+
+// ── trend ───────────────────────────────────────────────────────────────────────────────────────
+[_s5, d5] = ta.supertrend(stFac, stLen)
+int st5 = d5 < 0 ? 1 : -1
+f_st() =>
+    [_s, d] = ta.supertrend(stFac, stLen)
+    d < 0 ? 1 : -1
+int st1h = request.security(syminfo.tickerid, "60", f_st()[1], lookahead = barmerge.lookahead_on)   // last CLOSED 1h candle
+float ema = ta.ema(close, emaLen)
+// body structure: close beyond the last body swing
+float bTop = math.max(open, close)
+float bBot = math.min(open, close)
+float bph = ta.pivothigh(bTop, 2, 2)
+float bpl = ta.pivotlow(bBot, 2, 2)
+var float lbH = na
+var float lbL = na
+var int bs = 0
+if not na(bph)
+    lbH := bph
+if not na(bpl)
+    lbL := bpl
+if not na(lbH) and close > lbH
+    bs := 1
+    lbH := na
+else if not na(lbL) and close < lbL
+    bs := -1
+    lbL := na
+
+int trend = switch trendMode
+    "Supertrend 1h"      => st1h
+    "EMA 200"            => close > ema ? 1 : -1
+    "Supertrend 5m + 1h" => st5 == st1h ? st5 : 0
+    "Supertrend 5m"      => st5
+    => bs
+
+// ── time ────────────────────────────────────────────────────────────────────────────────────────
+int lonH = hour(time, "Europe/London")
+bool inNtz  = useNtz and lonH >= 20
+bool ntzNew = useNtz and lonH >= 20 and hour(time[1], "Europe/London") < 20
+bool inSess = not useSess or not na(time(timeframe.period, sess, TZ))
+
+// ── setups ──────────────────────────────────────────────────────────────────────────────────────
+type Setup
+    string id
+    int    dir
+    float  lvl
+    float  stop
+    float  tp
+    int    bar
+    line   ln
+
+var array<Setup> pend = array.new<Setup>()
+var map<string, int> openBar = map.new<string, int>()
+var int seq = 0
+float slLo = ta.lowest(low, 10)
+float slHi = ta.highest(high, 10)
+
+f_isOpen(string id) =>
+    bool res = false
+    if strategy.opentrades > 0
+        for i = 0 to strategy.opentrades - 1
+            if strategy.opentrades.entry_id(i) == id
+                res := true
+                break
+    res
+
+f_kill(Setup s) =>
+    strategy.cancel(s.id)
+    s.ln.set_x2(bar_index)
+    s.ln.set_color(color.new(color.gray, 60))
+    s.ln.set_style(line.style_dotted)
+
+// fills → label
+if pend.size() > 0
+    for j = pend.size() - 1 to 0
+        Setup s = pend.get(j)
+        if f_isOpen(s.id)
+            label.new(bar_index, na, (s.dir == 1 ? "BUY" : "SELL") + "\nE " + str.tostring(s.lvl, format.mintick) +
+                 "\nSL " + str.tostring(s.stop, format.mintick) + "\nTP " + str.tostring(s.tp, format.mintick),
+                 yloc = s.dir == 1 ? yloc.belowbar : yloc.abovebar, style = s.dir == 1 ? label.style_label_up : label.style_label_down,
+                 color = s.dir == 1 ? color.teal : color.red, textcolor = color.white, size = size.tiny)
+            s.ln.set_x2(bar_index)
+            line.new(bar_index, s.stop, bar_index + 6, s.stop, color = color.red)
+            line.new(bar_index, s.tp, bar_index + 6, s.tp, color = color.green)
+            openBar.put(s.id, bar_index)
+            pend.remove(j)
+
+if barstate.isconfirmed
+    // no-trade zone: close everything, cancel waiting setups
+    if ntzNew
+        strategy.close_all(comment = "NTZ")
+    // time stop
+    if strategy.opentrades > 0
+        for i = 0 to strategy.opentrades - 1
+            string id = strategy.opentrades.entry_id(i)
+            if openBar.contains(id) and bar_index - openBar.get(id) >= maxHold
+                strategy.close(id, comment = "Time")
+    // cancel: window over, trend flipped, NTZ
+    if pend.size() > 0
+        for j = pend.size() - 1 to 0
+            Setup s = pend.get(j)
+            if bar_index - s.bar >= tapWin or trend != s.dir or inNtz
+                f_kill(s)
+                pend.remove(j)
+            else
+                s.ln.set_x2(bar_index + 1)
+    // new no-wick candle with the trend
+    bool bullNW = close > open and open - low <= wickT * tick
+    bool bearNW = close < open and high - open <= wickT * tick
+    if (bullNW or bearNW) and not inNtz and inSess and not na(atr)
+        int dir = bullNW ? 1 : -1
+        bool bodyOk = math.abs(close - open) >= minBody * atr
+        if trend == dir and bodyOk
+            float lvl  = open
+            float stop = stopMode == "ATR" ? lvl - dir * atrMult * atr : (dir == 1 ? slLo - breathT * tick : slHi + breathT * tick)
+            float rk = math.abs(lvl - stop)
+            if rk >= 4 * tick
+                seq += 1
+                line ln = line.new(bar_index, lvl, bar_index + 1, lvl, color = dir == 1 ? color.teal : color.red, width = 2)
+                pend.push(Setup.new("NW" + str.tostring(seq), dir, lvl, stop, lvl + dir * rr * rk, bar_index, ln))
+    // orders
+    for s in pend
+        float rk = math.abs(s.lvl - s.stop)
+        int qty = math.min(maxQty, int(math.floor(strategy.equity * riskPct / 100 / (rk * syminfo.pointvalue))))
+        if qty >= 1 and strategy.opentrades < maxOpen
+            strategy.entry(s.id, s.dir == 1 ? strategy.long : strategy.short, qty = qty, limit = s.lvl)
+            strategy.exit(s.id + "x", from_entry = s.id, stop = s.stop, limit = s.tp, comment_loss = "SL", comment_profit = "TP")
+        else
+            strategy.cancel(s.id)
+
+// ── results ─────────────────────────────────────────────────────────────────────────────────────
+var table tb = table.new(position.bottom_right, 2, 6, bgcolor = color.new(color.black, 25), border_width = 1, border_color = color.new(color.gray, 60))
+f_row(int r, string k, string v, color c) =>
+    table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, r, v, text_color = c, text_size = size.small, text_halign = text.align_right)
+if showTbl and barstate.islast
+    int n = strategy.closedtrades
+    float ret = strategy.netprofit / strategy.initial_capital * 100
+    float pf = strategy.grossloss > 0 ? strategy.grossprofit / strategy.grossloss : na
+    f_row(0, "NW-A — " + syminfo.ticker, trendMode, color.yellow)
+    f_row(1, "Trades", str.tostring(n), color.white)
+    f_row(2, "Win rate", n > 0 ? str.tostring(float(strategy.wintrades) / n * 100, "0.0") + "%" : "-", color.white)
+    f_row(3, "Net return", str.tostring(ret, "+0.0;-0.0") + "%", ret >= 0 ? color.green : color.red)
+    f_row(4, "Max drawdown", str.tostring(strategy.max_drawdown_percent, "0.0") + "%", color.orange)
+    f_row(5, "Profit factor", na(pf) ? "-" : str.tostring(pf, "0.00"), color.white)

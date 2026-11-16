@@ -52,10 +52,12 @@ def stats(r, t):
                 compound_pct=comp*100, cagr=((1+comp)**(1/max(yrs,0.1))-1)*100, per_yr=len(r)/max(yrs,0.1))
 
 def run(trend="st5", W=9, stop_mode=0, piv=2, breath=1.0, atr_mult=1.0, rr=1.0, pre_pts=0.0, pre_min_sl=1e9,
-        max_atr=3.0, min_sl=4.0, max_hold=60*24, sess=None, cap=3, ntz=True, ret_trades=False):
+        max_atr=3.0, min_sl=4.0, max_hold=60*24, sess=None, cap=3, ntz=True, ret_trades=False, mask=None):
     okbar = ~ntz5 if ntz else np.ones(len(b), bool)
     if sess is not None:
         okbar = okbar & np.isin(session_of(nyh5), sess)
+    if mask is not None:
+        okbar = okbar & mask
     m_ok = ~m_ntz if ntz else np.ones(len(m1), bool)
     m_flat = m_ntz & ~np.append(False, m_ntz[:-1]) if ntz else np.zeros(len(m1), bool)   # first NTZ minute
     res = simulate(o,h,l,c,a, trends[trend], nw, okbar, mstart, mend, m1.h.values, m1.l.values, m1.c.values,
@@ -70,4 +72,8 @@ def run(trend="st5", W=9, stop_mode=0, piv=2, breath=1.0, atr_mult=1.0, rr=1.0, 
     if ret_trades:
         return pd.DataFrame(dict(t=t, bar=b.index[bar[order]], dir=d[order], r_gross=r[order], r_net=rn,
                                  risk_pts=rk[order], code=code[order], sess=session_of(nyh5[bar[order]])))
-    return stats(rn, t)
+    tr_ = t.year <= 2023
+    a_, b_ = stats(rn[tr_], t[tr_]), stats(rn[~tr_], t[~tr_])
+    return dict(n=len(rn), avgR=rn.mean() if len(rn) else 0, win=(rn > 0).mean()*100 if len(rn) else 0,
+                trainR=a_.get("avgR", 0), testR=b_.get("avgR", 0), n_test=b_.get("n", 0), pf=stats(rn, t).get("pf", 0) if len(rn) else 0,
+                ddR=stats(rn, t).get("ddR", 0) if len(rn) else 0)
