@@ -1,0 +1,278 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  NO-WICK (TradeSmart rules) — 5-minute MES / MNQ / MCL
+//
+//  LONG  1) green candle with NO bottom wick (open = low)       SHORT 1) red candle with NO top wick
+//        2) uptrend (BOS / CHoCH structure)                           2) downtrend
+//        3) price returns to the no-wick level within 9 candles → entry (limit at the open)
+//        4) no trade in the first 3 hours of the Asian session (futures open 18:00 New York)
+//        5) news: Pine can't read ForexFactory — optional manual "avoid times" (±2 h) below
+//        6) no FVG AGAINST the trade: 40-candle look-back; a gap inside the stop-loss region or
+//           covered at least halfway is ignored
+//        7) skip a no-wick that is the lowest point of the swing (long) / highest point (short)
+//        8) price nearly touches the level and leaves → a later touch is skipped
+//  STOP  slightly beyond the recent low / high (10-candle look-back) + breathing room
+//  TP    1:1
+//  Two no-wicks near each other (same direction, both waiting) → risk split 50 / 50.
+//  Risk: % of CURRENT equity per trade. Results in %.
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+strategy("No-Wick TradeSmart 5m Futures v2", shorttitle = "NW TS 5m v2", overlay = true,
+     margin_long = 0, margin_short = 0,
+     initial_capital = 50000, currency = currency.USD, pyramiding = 10,
+     commission_type = strategy.commission.cash_per_contract, commission_value = 0.62, slippage = 1,
+     use_bar_magnifier = false, process_orders_on_close = false,
+     max_labels_count = 500, max_lines_count = 500)
+
+const string TZ = "America/New_York"
+const string G1 = "Setup"
+const string G2 = "Filters"
+const string G3 = "Stop / target"
+const string G4 = "Sessions & news"
+const string G5 = "Risk"
+
+int   wickTicks  = input.int(0, "No-wick tolerance (ticks)", minval = 0, group = G1,
+     tooltip = "0 = open exactly equal to the low (long) / high (short).")
+int   tapWin     = input.int(9, "Tap must happen within (candles)", minval = 1, group = G1)
+int   pivLen     = input.int(3, "Swing size for structure (candles each side)", minval = 1, maxval = 10, group = G1)
+
+bool  useFvg     = input.bool(true, "6) No FVG against the trade", group = G2)
+int   fvgLook    = input.int(40, "   FVG look-back (candles)", minval = 5, maxval = 200, group = G2)
+float fvgCover   = input.float(50, "   Ignore an FVG covered at least (%)", minval = 1, maxval = 100, group = G2) / 100
+bool  useExtreme = input.bool(true, "7) Skip no-wick at the swing extreme", group = G2)
+int   extLook    = input.int(10, "   Swing look-back (candles)", minval = 2, group = G2)
+bool  useNear    = input.bool(true, "8) Skip after a near miss", group = G2)
+int   nearTicks  = input.int(4, "   Near miss = within (ticks) without touching", minval = 1, group = G2)
+bool  flipCancel = input.bool(false, "Cancel waiting setups if the trend flips (not in the rules)", group = G2)
+
+int   slLook     = input.int(10, "Stop = recent low / high of the last (candles)", minval = 2, group = G3)
+int   breathT    = input.int(4, "Breathing room (ticks)", minval = 0, group = G3,
+     tooltip = "MNQ/MES tick = 0.25 pt, MCL tick = 0.01.")
+int   minRiskT   = input.int(8, "Minimum stop size (ticks)", minval = 1, group = G3)
+float rr         = input.float(1.0, "Take profit (R)", minval = 0.1, step = 0.1, group = G3)
+
+bool   noAsia    = input.bool(true, "4) No trades in the first 3 h of Asia", group = G4)
+string asiaSess  = input.session("1800-2100", "   Blocked window (New York time)", group = G4)
+bool   useNews   = input.bool(false, "5) Avoid news times (±2 h)", group = G4,
+     tooltip = "Type the high-impact news times from the ForexFactory calendar (New York time).")
+string news1     = input.session("0700-1100", "   Blocked window 1 (e.g. 08:30 news ± 2 h)", group = G4)
+string news2     = input.session("1200-1600", "   Blocked window 2 (e.g. 14:00 FOMC ± 2 h)", group = G4)
+bool   useNews2  = input.bool(false, "   Use window 2", group = G4)
+
+float riskPct    = input.float(1.0, "Risk per trade (% of current equity)", minval = 0.05, step = 0.25, group = G5)
+int   maxQty     = input.int(30, "Max contracts per trade", minval = 1, group = G5)
+bool  showTbl    = input.bool(true, "Results table", group = G5)
+
+if barstate.isfirst and timeframe.in_seconds() != 300
+    runtime.error("Use the 5-minute chart.")
+
+float tick = syminfo.mintick
+float slLo  = ta.lowest(low, slLook)
+float slHi  = ta.highest(high, slLook)
+float extLo = ta.lowest(low, extLook)
+float extHi = ta.highest(high, extLook)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// STRUCTURE — swing highs/lows; a CLOSE beyond the last swing = BOS (same way) or CHoCH (flip)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+float ph = ta.pivothigh(high, pivLen, pivLen)
+float pl = ta.pivotlow(low, pivLen, pivLen)
+var float swH = na
+var float swL = na
+var int trend = 0
+if not na(ph)
+    swH := ph
+if not na(pl)
+    swL := pl
+if not na(swH) and close > swH
+    trend := 1
+    swH := na
+else if not na(swL) and close < swL
+    trend := -1
+    swL := na
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// FAIR VALUE GAPS (last N candles) with how much of each has been covered
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+type Gap
+    int   dir        // 1 = bullish gap (below price after an up move), -1 = bearish gap
+    float top
+    float bot
+    int   bar
+    float ext        // deepest price back into the gap since it formed
+
+var array<Gap> gaps = array.new<Gap>()
+// update coverage, drop old / filled gaps
+if gaps.size() > 0
+    for j = gaps.size() - 1 to 0
+        Gap g = gaps.get(j)
+        if bar_index > g.bar
+            g.ext := g.dir == 1 ? math.min(g.ext, low) : math.max(g.ext, high)
+        bool filled = g.dir == 1 ? g.ext <= g.bot : g.ext >= g.top
+        if bar_index - g.bar > fvgLook or filled
+            gaps.remove(j)
+if low > high[2]
+    gaps.push(Gap.new(1, low, high[2], bar_index, low))
+if high < low[2]
+    gaps.push(Gap.new(-1, low[2], high, bar_index, high))
+
+f_cover(Gap g) =>
+    float h = g.top - g.bot
+    h <= 0 ? 1.0 : g.dir == 1 ? (g.top - g.ext) / h : (g.ext - g.bot) / h
+
+// an open gap BEYOND the stop (price would have to run the stop to fill it) = against the trade
+f_gapAgainst(int dir, float stop) =>
+    bool res = false
+    for g in gaps
+        if g.dir == dir and f_cover(g) < fvgCover
+            if (dir == 1 and g.top < stop) or (dir == -1 and g.bot > stop)
+                res := true
+                break
+    res
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SESSIONS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+f_in(string s) => not na(time(timeframe.period, s, TZ))
+bool blocked = (noAsia and f_in(asiaSess)) or (useNews and f_in(news1)) or (useNews and useNews2 and f_in(news2))
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// SETUPS
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+type Setup
+    string id
+    int    dir
+    float  lvl
+    float  stop
+    float  tp
+    int    bar
+    bool   half
+    line   ln
+
+var array<Setup> pend = array.new<Setup>()
+var int seq = 0
+var int cSetups = 0
+var int cTrend = 0
+var int cFvg = 0
+var int cExt = 0
+var int cNear = 0
+var int cLate = 0
+var int cSmall = 0
+var int cBlock = 0
+
+f_isOpen(string id) =>
+    bool res = false
+    if strategy.opentrades > 0
+        for i = 0 to strategy.opentrades - 1
+            if strategy.opentrades.entry_id(i) == id
+                res := true
+                break
+    res
+
+f_retire(Setup s) =>
+    s.ln.set_x2(bar_index)
+    s.ln.set_color(color.new(color.gray, 60))
+    s.ln.set_style(line.style_dotted)
+
+// 1) waiting setups that got filled this candle → label the trade
+if pend.size() > 0
+    for j = pend.size() - 1 to 0
+        Setup s = pend.get(j)
+        if f_isOpen(s.id)
+            string t = (s.dir == 1 ? "BUY" : "SELL") + (s.half ? " ½" : "") + "\nE " + str.tostring(s.lvl, format.mintick) +
+                 "\nSL " + str.tostring(s.stop, format.mintick) + "\nTP " + str.tostring(s.tp, format.mintick)
+            label.new(bar_index, na, t, yloc = s.dir == 1 ? yloc.belowbar : yloc.abovebar,
+                 style = s.dir == 1 ? label.style_label_up : label.style_label_down,
+                 color = s.dir == 1 ? color.teal : color.red, textcolor = color.white, size = size.tiny)
+            s.ln.set_x2(bar_index)
+            line.new(bar_index, s.stop, bar_index + 5, s.stop, color = color.red)
+            line.new(bar_index, s.tp, bar_index + 5, s.tp, color = color.green)
+            pend.remove(j)
+
+if barstate.isconfirmed
+    // 2) cancel waiting setups: too late, near miss, trend flip, blocked time
+    if pend.size() > 0
+        for j = pend.size() - 1 to 0
+            Setup s = pend.get(j)
+            bool kill = false
+            if bar_index - s.bar >= tapWin
+                kill := true
+                cLate += 1
+            else if useNear and bar_index > s.bar and (s.dir == 1 ? low > s.lvl and low - s.lvl <= nearTicks * tick : high < s.lvl and s.lvl - high <= nearTicks * tick)
+                kill := true
+                cNear += 1
+            else if flipCancel and trend != s.dir
+                kill := true
+            if kill
+                strategy.cancel(s.id)
+                f_retire(s)
+                pend.remove(j)
+            else
+                s.ln.set_x2(bar_index + 1)
+
+    // 3) new no-wick candle
+    bool bullNW = close > open and open - low <= wickTicks * tick
+    bool bearNW = close < open and high - open <= wickTicks * tick
+    if bullNW or bearNW
+        int dir = bullNW ? 1 : -1
+        float lvl = open
+        float stop = dir == 1 ? slLo - breathT * tick : slHi + breathT * tick
+        bool atExtreme = dir == 1 ? low <= extLo : high >= extHi
+        if trend != dir
+            cTrend += 1
+        else if blocked
+            cBlock += 1
+        else if useExtreme and atExtreme
+            cExt += 1
+        else if math.abs(lvl - stop) < minRiskT * tick
+            cSmall += 1
+        else if useFvg and f_gapAgainst(dir, stop)
+            cFvg += 1
+        else
+            seq += 1
+            float tp = lvl + dir * rr * math.abs(lvl - stop)
+            bool half = false
+            // 10) two no-wicks close together → split 50/50
+            for s in pend
+                if s.dir == dir and bar_index - s.bar <= tapWin
+                    s.half := true
+                    half := true
+            line ln = line.new(bar_index, lvl, bar_index + 1, lvl, color = dir == 1 ? color.teal : color.red, width = 2)
+            pend.push(Setup.new("NW" + str.tostring(seq), dir, lvl, stop, tp, bar_index, half, ln))
+            cSetups += 1
+
+    // 4) (re)place the orders — risk % of current equity, halved for split setups
+    for s in pend
+        float riskPts = math.abs(s.lvl - s.stop)
+        float cash = strategy.equity * riskPct / 100 * (s.half ? 0.5 : 1.0)
+        int qty = math.min(maxQty, int(math.floor(cash / (riskPts * syminfo.pointvalue))))
+        if qty >= 1 and not (noAsia and f_in(asiaSess))
+            strategy.entry(s.id, s.dir == 1 ? strategy.long : strategy.short, qty = qty, limit = s.lvl)
+            strategy.exit(s.id + "x", from_entry = s.id, stop = s.stop, limit = s.tp, comment_loss = "SL", comment_profit = "TP")
+        else
+            strategy.cancel(s.id)
+
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+// RESULTS (%)
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+var table tb = table.new(position.bottom_right, 2, 9, bgcolor = color.new(color.black, 25), border_width = 1, border_color = color.new(color.gray, 60))
+f_row(int r, string k, string v, color c) =>
+    table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, r, v, text_color = c, text_size = size.small, text_halign = text.align_right)
+if showTbl and barstate.islast
+    int n = strategy.closedtrades
+    float ret = strategy.netprofit / strategy.initial_capital * 100
+    float dd = strategy.max_drawdown_percent
+    float pf = strategy.grossloss > 0 ? strategy.grossprofit / strategy.grossloss : na
+    f_row(0, syminfo.ticker + " 5m — trades", str.tostring(n), color.white)
+    f_row(1, "Win rate", n > 0 ? str.tostring(float(strategy.wintrades) / n * 100, "0.0") + "%" : "-", color.white)
+    f_row(2, "Net return", str.tostring(ret, "+0.0;-0.0") + "%", ret >= 0 ? color.green : color.red)
+    f_row(3, "Max drawdown", str.tostring(dd, "0.0") + "%", color.orange)
+    f_row(4, "Profit factor", na(pf) ? "-" : str.tostring(pf, "0.00"), color.white)
+    f_row(5, "Setups / tap too late / near miss", str.tostring(cSetups) + " / " + str.tostring(cLate) + " / " + str.tostring(cNear), color.gray)
+    f_row(6, "Skipped: against trend / Asia-news", str.tostring(cTrend) + " / " + str.tostring(cBlock), color.gray)
+    f_row(7, "Skipped: swing extreme / FVG against", str.tostring(cExt) + " / " + str.tostring(cFvg), color.gray)
+    f_row(8, "Skipped: stop too small", str.tostring(cSmall), color.gray)
