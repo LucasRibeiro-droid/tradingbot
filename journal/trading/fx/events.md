@@ -155,3 +155,4 @@
 | 2026-11-17 06:25 | error in the cycle: GET /v3/instruments/XAU_USD/candles?granularity=M5&price=M&from=2026-11-17T06%3A20%3A00.000000000Z&count=5000: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
 | 2026-11-17 08:39 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
 | 2026-11-17 08:40 | session start (practice): NAV 100032.5529 GBP, 0 trade(s) open in the state |  |  |
+| 2026-11-17 14:26 | session hand-off (runner time limit) | orders and trades stay protected at OANDA | next run resumes |
