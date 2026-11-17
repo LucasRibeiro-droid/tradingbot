@@ -152,3 +152,4 @@
 | 2026-11-16 21:45 | error in the cycle: GET /v3/accounts/101-004-40823841-001/pricing?instruments=XAU_USD%2CNAS100_USD%2CGBP_USD: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
 | 2026-11-16 22:00 | market closed and nothing open: session end |  |  |
 | 2026-11-17 02:54 | session start (practice): NAV 100032.5529 GBP, 0 trade(s) open in the state |  |  |
+| 2026-11-17 06:25 | error in the cycle: GET /v3/instruments/XAU_USD/candles?granularity=M5&price=M&from=2026-11-17T06%3A20%3A00.000000000Z&count=5000: HTTP 401: {"errorMessage":"Insufficient authorization to perform request."} | this minute skipped | retry next minute |
