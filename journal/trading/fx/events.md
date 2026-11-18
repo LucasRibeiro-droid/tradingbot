@@ -161,3 +161,5 @@
 | 2026-11-17 20:13 | session start (practice): NAV 100032.5529 GBP, 0 trade(s) open in the state |  |  |
 | 2026-11-17 22:00 | market closed and nothing open: session end |  |  |
 | 2026-11-18 02:00 | session start (practice): NAV 100032.5529 GBP, 0 trade(s) open in the state |  |  |
+| 2026-11-18 06:00 | error in the cycle: GET /v3/instruments/XAU_USD/candles?granularity=M5&price=M&from=2026-11-18T05%3A55%3A00.000000000Z&count=5000: HTTP 504: error code: 504
+ | this minute skipped | retry next minute |
