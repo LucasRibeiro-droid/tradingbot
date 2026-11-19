@@ -111,3 +111,4 @@
 | 2026-11-18 19:56 | session start (paper): equity 97027.95, buying power 388111.8, shorting on |  |  |
 | 2026-11-18 20:55 | session end | 0 trades, 0 instruments | review to write |
 | 2026-11-19 19:55 | session start (paper): equity 97027.95, buying power 388111.8, shorting on |  |  |
+| 2026-11-19 20:55 | session end | 0 trades, 0 instruments | review to write |
