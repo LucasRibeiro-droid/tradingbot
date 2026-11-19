@@ -1,21 +1,8 @@
-# NAS100 high and low of the New York session: 2026-11-18
+# NAS100 high and low of the New York session: 2026-11-19
 
-Predicted at the open (27201.6): range 1.82%; **high** most likely ~27418 (80% band 27246–27712); **low** most likely ~27005 (80% band 26609–27165).
+Predicted at the open (27613.8): range 1.67%; **high** most likely ~27797 (80% band 27650–28048); **low** most likely ~27442 (80% band 27092–27583).
 Model: tradingbot/live/hl_predict.py (fit on QQQ 2016-2026; when it says 80%+ it was right ~90% out of sample).
 
 | Time (ET) | Price | High so far | Low so far | Chance the high is in | Chance the low is in |
 |---|---|---|---|---|---|
-| 10:00 | 27196.0 | 27267.8 | 26903.0 | 13% | 67% |
-| 10:30 | 27150.8 | 27274.8 | 26903.0 | 25% | 62% |
-| 11:00 | 27090.2 | 27274.8 | 26903.0 | 47% | 52% |
-| 11:30 | 26972.2 | 27274.8 | 26871.9 | 83% | 31% |
-| 12:00 | 27001.2 | 27274.8 | 26871.9 | 83% | 43% |
-| 12:30 | 27223.8 | 27274.8 | 26871.9 | 22% | 94% |
-| 13:00 | 27119.4 | 27274.8 | 26871.9 | 61% | 85% |
-| 13:30 | 27146.4 | 27274.8 | 26871.9 | 57% | 91% |
-| 14:00 | 27216.4 | 27274.8 | 26871.9 | 34% | 98% |
-| 14:30 | 27153.1 | 27274.8 | 26871.9 | 65% | 95% |
-| 15:00 | 27096.4 | 27274.8 | 26871.9 | 87% | 92% |
-| 15:30 | 27071.8 | 27274.8 | 26871.9 | 93% | 90% |
 
-**Result:** high 27274.8 (inside the band), low 26871.9 (inside the band).
