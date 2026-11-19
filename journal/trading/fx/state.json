@@ -59,6 +59,36 @@
    ],
    "closed": true,
    "page": "journal/trading/fx/trades/2026-11-19_0925_XAU_USD.md"
+  },
+  {
+   "instrument": "XAU_USD",
+   "setup_t": "2026-11-19T09:50:00Z",
+   "direction": -1,
+   "entry": 3731.005,
+   "stop": 3732.09,
+   "targets": [
+    3729.92,
+    3727.75
+   ],
+   "expires_at": "2026-11-19T10:00:00+00:00",
+   "parts": [
+    {
+     "client_id": "crt_fx-XAU_USD-202611190950-0",
+     "order_id": "70",
+     "units": 1.7,
+     "target": 3729.92,
+     "trade_id": null
+    },
+    {
+     "client_id": "crt_fx-XAU_USD-202611190950-1",
+     "order_id": "71",
+     "units": 1.7,
+     "target": 3727.75,
+     "trade_id": null
+    }
+   ],
+   "closed": false,
+   "page": "journal/trading/fx/trades/2026-11-19_0950_XAU_USD.md"
   }
  ],
  "seen": [
@@ -69,6 +99,10 @@
   [
    "XAU_USD",
    "2026-11-19T09:25:00Z"
+  ],
+  [
+   "XAU_USD",
+   "2026-11-19T09:50:00Z"
   ],
   [
    "levels",
