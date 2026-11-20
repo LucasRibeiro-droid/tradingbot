@@ -6,3 +6,4 @@
 | 2026-11-04 00:30 | NAS100_USD | short | -1.03 | -10.62 | [page](trades/2026-11-04_0030_NAS100_USD.md) |
 | 2026-11-04 00:25 | NAS100_USD | short | +2.01 | +43.13 | [page](trades/2026-11-04_0025_NAS100_USD.md) |
 | 2026-11-19 09:25 | XAU_USD | short | -1.01 | -14.55 | [page](trades/2026-11-19_0925_XAU_USD.md) |
+| 2026-11-20 14:15 | XAU_USD | long | -1.01 | -17.61 | [page](trades/2026-11-20_1415_XAU_USD.md) |

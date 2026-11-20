@@ -117,7 +117,7 @@
      "trade_id": "81"
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-20_1415_XAU_USD.md"
   }
  ],
