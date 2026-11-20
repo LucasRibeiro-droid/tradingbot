@@ -107,14 +107,14 @@
      "order_id": "76",
      "units": 1.8,
      "target": 3581.3,
-     "trade_id": null
+     "trade_id": "78"
     },
     {
      "client_id": "crt_fx-XAU_USD-202611201415-1",
      "order_id": "77",
      "units": 1.8,
      "target": 3593.88,
-     "trade_id": null
+     "trade_id": "81"
     }
    ],
    "closed": false,
