@@ -1,0 +1,436 @@
+//@version=6
+// =====================================================================================
+// Body-Based Structure + No-Wick Strategy (Trend / Range with Volume-Profile LVNs)
+// -------------------------------------------------------------------------------------
+// TREND DAYS (clear structure at 09:00 London):
+//   • Only trade no-wick candles in the direction of the body-based trend.
+//   • Wait for price to come back to the no-wick candle's open (limit order).
+//   • Stop loss at the previous swing low (longs) / swing high (shorts).
+//   • Take profit at 1:1.
+// RANGE DAYS (no clear structure at 09:00 London):
+//   • Fixed-range volume profile from yesterday 09:00 to today 09:00 (London).
+//   • The 3 lowest-volume nodes (LVNs) become "decision areas".
+//   • While price consolidates between decision areas:
+//       - bearish no-wick at the top of the range  -> sell, SL 5 ticks above the area
+//       - bullish no-wick at the bottom of the range -> buy, SL 5 ticks below the area
+//   • Take profit at 1:1.
+// SESSION (London time): trade 09:00-20:00, pause from NY open (09:30 New York) for 1 hour.
+//
+// Market structure (HH/HL/LH/LL, BOS, CHoCH) uses CANDLE BODIES ONLY:
+//   body high = max(open, close), body low = min(open, close).
+//   A level is broken only when a candle CLOSES beyond it.
+// Use on an intraday chart (1m-15m recommended).
+// =====================================================================================
+strategy("Body Structure No-Wick Strategy", overlay = true, pyramiding = 0,
+     initial_capital = 10000, default_qty_type = strategy.fixed, default_qty_value = 1,
+     max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
+
+// ───────────────────────────── Inputs ─────────────────────────────
+const string G_STR  = "Market Structure (bodies only)"
+swingLen      = input.int(5, "Swing length (bars each side)", minval = 1, group = G_STR)
+showSwings    = input.bool(true, "Show HH / HL / LH / LL", group = G_STR)
+showBOS       = input.bool(true, "Show BOS", group = G_STR)
+showCHoCH     = input.bool(true, "Show CHoCH", group = G_STR)
+colBull       = input.color(color.new(#089981, 0), "Bullish colour", group = G_STR)
+colBear       = input.color(color.new(#F23645, 0), "Bearish colour", group = G_STR)
+colCHoCH      = input.color(color.new(#FF9800, 0), "CHoCH colour", group = G_STR)
+
+const string G_NW   = "No-Wick Candles"
+nwTolTicks    = input.int(0, "Wick tolerance (ticks)", minval = 0, tooltip = "0 = the open must be exactly the low (bullish) / high (bearish).", group = G_NW)
+nwMinBody     = input.int(2, "Minimum body size (ticks)", minval = 1, group = G_NW)
+showNW        = input.bool(true, "Mark no-wick candles", group = G_NW)
+
+const string G_TR   = "Trend Trades"
+slRef         = input.string("Body", "Stop at previous swing", options = ["Body", "Wick"], tooltip = "Body = the body-based swing level. Wick = the lowest low / highest high around that swing.", group = G_TR)
+slBufTicks    = input.int(0, "Extra stop buffer (ticks)", minval = 0, group = G_TR)
+rr            = input.float(1.0, "Reward : Risk", minval = 0.1, step = 0.1, group = G_TR)
+expiryBars    = input.int(20, "Cancel unfilled order after N bars", minval = 1, group = G_TR)
+replacePend   = input.bool(true, "Newer no-wick replaces pending order", group = G_TR)
+
+const string G_VP   = "Range Trades / Volume Profile"
+vpRows        = input.int(60, "Profile rows", minval = 20, maxval = 150, group = G_VP)
+vpSmooth      = input.int(1, "Smoothing (rows each side)", minval = 0, maxval = 5, group = G_VP)
+vpEdgePct     = input.float(10, "Ignore profile edges (%)", minval = 1, maxval = 30, tooltip = "Rows at the very top/bottom of the profile always have low volume; they are ignored when picking decision areas.", group = G_VP)
+vpMinSep      = input.int(4, "Min distance between decision areas (rows)", minval = 1, group = G_VP)
+nZones        = input.int(3, "Number of decision areas", minval = 2, maxval = 6, group = G_VP)
+zoneProxTicks = input.int(4, "Touch tolerance around area (ticks)", minval = 0, group = G_VP)
+rangeSlTicks  = input.int(5, "Range stop beyond area (ticks)", minval = 0, group = G_VP)
+rangeEntry    = input.string("Retest", "Range entry", options = ["Retest", "Market on close"], group = G_VP)
+switchToTrend = input.bool(true, "Switch to trend mode if range breaks and a clear trend forms", group = G_VP)
+showProfile   = input.bool(true, "Draw volume profile", group = G_VP)
+colZone       = input.color(color.new(#2962FF, 75), "Decision area colour", group = G_VP)
+
+const string G_SS   = "Session (London time)"
+tradeSess     = input.session("0900-2000", "Trading hours (London)", group = G_SS)
+nyBreakSess   = input.session("0930-1030", "NY open break (New York time)", group = G_SS)
+closeEOD      = input.bool(true, "Close open trades at end of session", group = G_SS)
+showBg        = input.bool(true, "Shade NY break", group = G_SS)
+
+// ───────────────────────────── Helpers ─────────────────────────────
+tick     = syminfo.mintick
+bodyHi   = math.max(open, close)
+bodyLo   = math.min(open, close)
+
+inSess   = not na(time(timeframe.period, tradeSess, "Europe/London"))
+inNY     = not na(time(timeframe.period, nyBreakSess, "America/New_York"))
+newDay   = inSess and not inSess[1]          // first bar at/after 09:00 London
+endDay   = not inSess and inSess[1]          // first bar at/after 20:00 London
+canTrade = inSess and not inNY
+
+// ─────────────────────── Market structure (bodies) ───────────────────────
+ph        = ta.pivothigh(bodyHi, swingLen, swingLen)
+pl        = ta.pivotlow(bodyLo, swingLen, swingLen)
+winWickHi = ta.highest(high, swingLen * 2 + 1)
+winWickLo = ta.lowest(low, swingLen * 2 + 1)
+
+var int    trend        = 0       // 1 bull, -1 bear, 0 undefined
+var int    lastSwingDir = 0       // 1 = last swing was a high, -1 = a low
+
+var float  lastHigh     = na
+var float  prevHigh     = na
+var float  lastHighWick = na
+var int    lastHighBar  = na
+var string lastHighType = ""
+var bool   highBroken   = true
+var label  lastHighLbl  = na
+
+var float  lastLow      = na
+var float  prevLow      = na
+var float  lastLowWick  = na
+var int    lastLowBar   = na
+var string lastLowType  = ""
+var bool   lowBroken    = true
+var label  lastLowLbl   = na
+
+pivBar = bar_index - swingLen
+
+// New swing high
+if not na(ph)
+    bool accept = lastSwingDir != 1 or na(lastHigh) or ph > lastHigh
+    if accept
+        if lastSwingDir != 1
+            prevHigh := lastHigh                 // new leg: previous high becomes reference
+        lastHigh     := ph
+        lastHighWick := winWickHi
+        lastHighBar  := pivBar
+        highBroken   := false
+        lastHighType := na(prevHigh) ? "H" : ph > prevHigh ? "HH" : "LH"
+        if showSwings
+            if lastSwingDir == 1 and not na(lastHighLbl)
+                label.delete(lastHighLbl)        // consecutive highs: keep only the higher one
+            lastHighLbl := label.new(pivBar, ph, lastHighType, style = label.style_label_down,
+                 color = color.new(color.black, 100), textcolor = lastHighType == "HH" ? colBull : colBear, size = size.small)
+        lastSwingDir := 1
+
+// New swing low
+if not na(pl)
+    bool accept = lastSwingDir != -1 or na(lastLow) or pl < lastLow
+    if accept
+        if lastSwingDir != -1
+            prevLow := lastLow
+        lastLow     := pl
+        lastLowWick := winWickLo
+        lastLowBar  := pivBar
+        lowBroken   := false
+        lastLowType := na(prevLow) ? "L" : pl < prevLow ? "LL" : "HL"
+        if showSwings
+            if lastSwingDir == -1 and not na(lastLowLbl)
+                label.delete(lastLowLbl)
+            lastLowLbl := label.new(pivBar, pl, lastLowType, style = label.style_label_up,
+                 color = color.new(color.black, 100), textcolor = lastLowType == "HL" ? colBull : colBear, size = size.small)
+        lastSwingDir := -1
+
+// Breaks (candle must CLOSE beyond the body level)
+bullBOS   = false
+bullCHoCH = false
+bearBOS   = false
+bearCHoCH = false
+
+if not highBroken and not na(lastHigh) and close > lastHigh
+    bool isCh = trend == -1
+    bullCHoCH := isCh
+    bullBOS   := not isCh
+    if (isCh and showCHoCH) or (not isCh and showBOS)
+        line.new(lastHighBar, lastHigh, bar_index, lastHigh, color = isCh ? colCHoCH : colBull,
+             style = isCh ? line.style_dashed : line.style_solid, width = 1)
+        label.new(int(math.avg(lastHighBar, bar_index)), lastHigh, isCh ? "CHoCH" : "BOS",
+             style = label.style_label_down, color = color.new(color.black, 100),
+             textcolor = isCh ? colCHoCH : colBull, size = size.tiny)
+    trend      := 1
+    highBroken := true
+
+if not lowBroken and not na(lastLow) and close < lastLow
+    bool isCh = trend == 1
+    bearCHoCH := isCh
+    bearBOS   := not isCh
+    if (isCh and showCHoCH) or (not isCh and showBOS)
+        line.new(lastLowBar, lastLow, bar_index, lastLow, color = isCh ? colCHoCH : colBear,
+             style = isCh ? line.style_dashed : line.style_solid, width = 1)
+        label.new(int(math.avg(lastLowBar, bar_index)), lastLow, isCh ? "CHoCH" : "BOS",
+             style = label.style_label_up, color = color.new(color.black, 100),
+             textcolor = isCh ? colCHoCH : colBear, size = size.tiny)
+    trend     := -1
+    lowBroken := true
+
+// A "clear" trend = trend state agrees with the last swing high AND swing low
+clearBull = trend == 1  and lastHighType == "HH" and lastLowType == "HL"
+clearBear = trend == -1 and lastHighType == "LH" and lastLowType == "LL"
+
+// ───────────────────────────── No-wick candles ─────────────────────────────
+bodySize   = math.abs(close - open)
+bullNoWick = close > open and (open - low)  <= nwTolTicks * tick and bodySize >= nwMinBody * tick
+bearNoWick = close < open and (high - open) <= nwTolTicks * tick and bodySize >= nwMinBody * tick
+
+plotshape(showNW and bullNoWick, "Bullish no-wick", shape.triangleup,   location.belowbar, colBull, size = size.tiny)
+plotshape(showNW and bearNoWick, "Bearish no-wick", shape.triangledown, location.abovebar, colBear, size = size.tiny)
+
+// ─────────────── Fixed-range volume profile (09:00 -> 09:00 London) ───────────────
+var array<float> vpHi  = array.new_float()
+var array<float> vpLo  = array.new_float()
+var array<float> vpVol = array.new_float()
+var int          winStart = na               // time of the 09:00 bar that opened the window
+
+var array<float> zBot = array.new_float()    // decision areas, sorted low -> high
+var array<float> zTop = array.new_float()
+var array<box>   profBoxes = array.new<box>()
+
+if newDay
+    zBot.clear()
+    zTop.clear()
+    int n = vpVol.size()
+    if n > 0 and not na(winStart)
+        float pTop = vpHi.max()
+        float pBot = vpLo.min()
+        float step = (pTop - pBot) / vpRows
+        if step > 0
+            // 1) Distribute every bar's volume across the rows its range covers
+            vols = array.new_float(vpRows, 0.0)
+            for i = 0 to n - 1
+                float h = vpHi.get(i)
+                float l = vpLo.get(i)
+                float v = vpVol.get(i)
+                int r0 = math.max(0, math.min(vpRows - 1, int(math.floor((l - pBot) / step))))
+                int r1 = math.max(0, math.min(vpRows - 1, int(math.floor((h - pBot) / step))))
+                if h == l or r0 == r1
+                    vols.set(r0, vols.get(r0) + v)
+                else
+                    for r = r0 to r1
+                        float rLo = pBot + r * step
+                        float ov  = math.min(h, rLo + step) - math.max(l, rLo)
+                        if ov > 0
+                            vols.set(r, vols.get(r) + v * ov / (h - l))
+
+            // 2) Smooth the profile
+            sm = array.new_float(vpRows, 0.0)
+            for r = 0 to vpRows - 1
+                float s = 0.0
+                int   c = 0
+                for k = -vpSmooth to vpSmooth
+                    int j = r + k
+                    if j >= 0 and j < vpRows
+                        s += vols.get(j)
+                        c += 1
+                sm.set(r, s / c)
+
+            // 3) Pick the lowest-volume nodes (local minima first, then any row), away from the edges
+            int skip = math.max(1, int(math.round(vpRows * vpEdgePct / 100)))
+            picked = array.new_int()
+            for pass = 0 to 1
+                while picked.size() < nZones
+                    int   best  = -1
+                    float bestV = 1e100
+                    for r = skip to vpRows - 1 - skip
+                        bool ok = true
+                        for p in picked
+                            if math.abs(p - r) < vpMinSep
+                                ok := false
+                        if ok and pass == 0
+                            ok := sm.get(r) <= sm.get(r - 1) and sm.get(r) <= sm.get(r + 1)
+                        if ok and sm.get(r) < bestV
+                            best  := r
+                            bestV := sm.get(r)
+                    if best == -1
+                        break
+                    picked.push(best)
+            picked.sort(order.ascending)
+            for r in picked
+                zBot.push(pBot + r * step)
+                zTop.push(pBot + (r + 1) * step)
+
+            // 4) Draw
+            int dayEnd = time + 11 * 3600000
+            for r in picked
+                float zb = pBot + r * step
+                box.new(time, zb + step, dayEnd, zb, border_color = color.new(colZone, 30), bgcolor = colZone,
+                     xloc = xloc.bar_time, text = "Decision area", text_size = size.tiny,
+                     text_color = color.new(colZone, 0), text_halign = text.align_right)
+            if showProfile
+                for b in profBoxes
+                    box.delete(b)
+                profBoxes.clear()
+                float maxV  = vols.max()
+                int   width = int((time - winStart) * 0.3)
+                if maxV > 0
+                    for r = 0 to vpRows - 1
+                        float rb = pBot + r * step
+                        int   w  = int(width * vols.get(r) / maxV)
+                        profBoxes.push(box.new(winStart, rb + step, winStart + math.max(w, 1), rb,
+                             xloc = xloc.bar_time, border_color = color.new(color.gray, 100),
+                             bgcolor = picked.includes(r) ? color.new(colZone, 40) : color.new(color.gray, 75)))
+    // start a fresh 24h window from this bar
+    vpHi.clear()
+    vpLo.clear()
+    vpVol.clear()
+    winStart := time
+
+if not na(winStart)
+    vpHi.push(high)
+    vpLo.push(low)
+    vpVol.push(nz(volume))
+
+// ───────────────────────────── Day mode ─────────────────────────────
+// "TREND" = clear structure at 09:00, "RANGE" = trade decision areas, "WAIT" = no trades
+var string dayMode = "WAIT"
+
+nZ        = zBot.size()
+rangeLo   = nZ > 0 ? zBot.min() : na
+rangeHi   = nZ > 0 ? zTop.max() : na
+inRangeNow = nZ >= 2 and close >= rangeLo - zoneProxTicks * tick and close <= rangeHi + zoneProxTicks * tick
+
+if newDay
+    dayMode := clearBull or clearBear ? "TREND" : nZ >= 2 ? "RANGE" : "WAIT"
+    label.new(bar_index, high, "09:00 " + dayMode, style = label.style_label_down, size = size.small,
+         color = dayMode == "TREND" ? color.new(colBull, 20) : dayMode == "RANGE" ? color.new(#2962FF, 20) : color.gray,
+         textcolor = color.white)
+else if dayMode == "RANGE" and not inRangeNow
+    dayMode := "WAIT"                                    // consolidation is over
+else if dayMode == "WAIT" and switchToTrend and inSess and (clearBull or clearBear) and not newDay
+    dayMode := "TREND"
+
+// ───────────────────────────── Orders ─────────────────────────────
+var int    pendDir  = 0
+var float  pendEnt  = na
+var float  pendSL   = na
+var float  pendTP   = na
+var int    pendBar  = na
+var string pendTag  = ""
+var array<line> pendLines = array.new<line>()
+
+flat = strategy.position_size == 0
+
+cancelPending(string why) =>
+    strategy.cancel("Long")
+    strategy.cancel("Short")
+    for l in pendLines
+        l.set_x2(bar_index)
+    pendLines.clear()
+
+// Filled -> forget pending state
+if not flat and pendDir != 0
+    pendDir := 0
+    pendLines.clear()
+
+// Cancel unfilled pending orders when the setup is no longer valid
+if flat and pendDir != 0
+    bool kill = not canTrade or bar_index - pendBar > expiryBars
+    if pendDir == 1
+        kill := kill or close < pendSL or high >= pendTP or (pendTag == "Trend" and trend != 1)
+    else
+        kill := kill or close > pendSL or low <= pendTP or (pendTag == "Trend" and trend != -1)
+    if pendTag == "Range" and dayMode != "RANGE"
+        kill := true
+    if kill
+        cancelPending("invalid")
+        pendDir := 0
+
+placeOrder(int dir, float ent, float sl, float tp, string tag, bool market) =>
+    string id = dir == 1 ? "Long" : "Short"
+    if market
+        strategy.entry(id, dir == 1 ? strategy.long : strategy.short, comment = tag)
+    else
+        strategy.entry(id, dir == 1 ? strategy.long : strategy.short, limit = ent, comment = tag)
+    strategy.exit(id + " exit", id, stop = sl, limit = tp, comment_loss = "SL", comment_profit = "TP")
+    pendLines.push(line.new(bar_index, ent, bar_index + expiryBars, ent, color = color.gray))
+    pendLines.push(line.new(bar_index, sl,  bar_index + expiryBars, sl,  color = colBear))
+    pendLines.push(line.new(bar_index, tp,  bar_index + expiryBars, tp,  color = colBull))
+    alert(tag + " " + id + " | entry " + str.tostring(ent, format.mintick) + " SL " + str.tostring(sl, format.mintick) + " TP " + str.tostring(tp, format.mintick), alert.freq_once_per_bar_close)
+
+bool canNew = flat and canTrade and barstate.isconfirmed and (pendDir == 0 or replacePend)
+
+// ---- Trend setups: no-wick candle WITH the trend, enter on retest of its open ----
+if canNew and dayMode == "TREND"
+    if trend == 1 and bullNoWick and not na(lastLow)
+        float ent = open
+        float sl  = (slRef == "Body" ? lastLow : lastLowWick) - slBufTicks * tick
+        if sl < ent
+            float tp = ent + (ent - sl) * rr
+            if pendDir != 0
+                cancelPending("replaced")
+            placeOrder(1, ent, sl, tp, "Trend", false)
+            pendDir := 1, pendEnt := ent, pendSL := sl, pendTP := tp, pendBar := bar_index, pendTag := "Trend"
+    else if trend == -1 and bearNoWick and not na(lastHigh)
+        float ent = open
+        float sl  = (slRef == "Body" ? lastHigh : lastHighWick) + slBufTicks * tick
+        if sl > ent
+            float tp = ent - (sl - ent) * rr
+            if pendDir != 0
+                cancelPending("replaced")
+            placeOrder(-1, ent, sl, tp, "Trend", false)
+            pendDir := -1, pendEnt := ent, pendSL := sl, pendTP := tp, pendBar := bar_index, pendTag := "Trend"
+
+// ---- Range setups: bearish no-wick at top decision area / bullish no-wick at bottom ----
+if canNew and dayMode == "RANGE" and inRangeNow
+    float prox = zoneProxTicks * tick
+    bool  mkt  = rangeEntry == "Market on close"
+    if bearNoWick
+        // the candle's high (= its open) must be touching a decision area that has another area below it
+        for i = 1 to nZ - 1
+            if high >= zBot.get(i) - prox and high <= zTop.get(i) + prox
+                float ent = mkt ? close : open
+                float sl  = zTop.get(i) + rangeSlTicks * tick
+                if sl > ent
+                    float tp = ent - (sl - ent) * rr
+                    if pendDir != 0
+                        cancelPending("replaced")
+                    placeOrder(-1, ent, sl, tp, "Range", mkt)
+                    pendDir := -1, pendEnt := ent, pendSL := sl, pendTP := tp, pendBar := bar_index, pendTag := "Range"
+                break
+    else if bullNoWick
+        // the candle's low (= its open) must be touching a decision area that has another area above it
+        for i = 0 to nZ - 2
+            if low >= zBot.get(i) - prox and low <= zTop.get(i) + prox
+                float ent = mkt ? close : open
+                float sl  = zBot.get(i) - rangeSlTicks * tick
+                if sl < ent
+                    float tp = ent + (ent - sl) * rr
+                    if pendDir != 0
+                        cancelPending("replaced")
+                    placeOrder(1, ent, sl, tp, "Range", mkt)
+                    pendDir := 1, pendEnt := ent, pendSL := sl, pendTP := tp, pendBar := bar_index, pendTag := "Range"
+                break
+
+// Market range entries fill next bar; don't keep them as "pending"
+if pendTag == "Range" and rangeEntry == "Market on close" and pendDir != 0 and bar_index > pendBar
+    pendDir := 0
+
+// ---- End of day: flatten and cancel ----
+if endDay
+    if pendDir != 0
+        cancelPending("eod")
+        pendDir := 0
+    if closeEOD
+        strategy.close_all(comment = "EOD 20:00")
+
+// ───────────────────────────── Visuals ─────────────────────────────
+bgcolor(showBg and inSess and inNY ? color.new(color.gray, 85) : na, title = "NY open break")
+bgcolor(showBg and not inSess ? color.new(color.gray, 93) : na, title = "Outside trading hours")
+
+// Structure alerts (strategies use alert(); create one alert with "Any alert() function call")
+if bullBOS
+    alert("Bullish BOS (body close) on " + syminfo.ticker, alert.freq_once_per_bar_close)
+if bearBOS
+    alert("Bearish BOS (body close) on " + syminfo.ticker, alert.freq_once_per_bar_close)
+if bullCHoCH
+    alert("Bullish CHoCH (body close) on " + syminfo.ticker, alert.freq_once_per_bar_close)
+if bearCHoCH
+    alert("Bearish CHoCH (body close) on " + syminfo.ticker, alert.freq_once_per_bar_close)
