@@ -22,7 +22,8 @@
 // Use on an intraday chart (1m-15m recommended).
 // =====================================================================================
 strategy("Body Structure No-Wick Strategy", overlay = true, pyramiding = 0,
-     initial_capital = 10000, default_qty_type = strategy.fixed, default_qty_value = 1,
+     initial_capital = 100000, default_qty_type = strategy.fixed, default_qty_value = 1,
+     margin_long = 0, margin_short = 0,   // 0 = no margin check (default 100% rejects futures orders)
      max_lines_count = 500, max_labels_count = 500, max_boxes_count = 500)
 
 // ───────────────────────────── Inputs ─────────────────────────────
@@ -178,8 +179,9 @@ clearBear = trend == -1 and lastHighType == "LH" and lastLowType == "LL"
 
 // ───────────────────────────── No-wick candles ─────────────────────────────
 bodySize   = math.abs(close - open)
-bullNoWick = close > open and (open - low)  <= nwTolTicks * tick and bodySize >= nwMinBody * tick
-bearNoWick = close < open and (high - open) <= nwTolTicks * tick and bodySize >= nwMinBody * tick
+nwTol      = nwTolTicks * tick + tick * 0.5   // half-tick slack for floating-point rounding
+bullNoWick = close > open and (open - low)  <= nwTol and bodySize >= nwMinBody * tick - tick * 0.5
+bearNoWick = close < open and (high - open) <= nwTol and bodySize >= nwMinBody * tick - tick * 0.5
 
 plotshape(showNW and bullNoWick, "Bullish no-wick", shape.triangleup,   location.belowbar, colBull, size = size.tiny)
 plotshape(showNW and bearNoWick, "Bearish no-wick", shape.triangledown, location.abovebar, colBear, size = size.tiny)
@@ -302,10 +304,15 @@ if newDay
     label.new(bar_index, high, "09:00 " + dayMode, style = label.style_label_down, size = size.small,
          color = dayMode == "TREND" ? color.new(colBull, 20) : dayMode == "RANGE" ? color.new(#2962FF, 20) : color.gray,
          textcolor = color.white)
-else if dayMode == "RANGE" and not inRangeNow
-    dayMode := "WAIT"                                    // consolidation is over
-else if dayMode == "WAIT" and switchToTrend and inSess and (clearBull or clearBear) and not newDay
-    dayMode := "TREND"
+else if dayMode != "TREND" and switchToTrend and inSess and not inRangeNow and (clearBull or clearBear)
+    dayMode := "TREND"                                   // price left the range and a clear trend formed
+// In RANGE mode, trades are only taken while price is inside the decision areas (inRangeNow).
+
+// ───────────────────────────── Debug counters ─────────────────────────────
+var int cntNoWick = 0
+var int cntSetups = 0
+if (bullNoWick or bearNoWick) and inSess
+    cntNoWick += 1
 
 // ───────────────────────────── Orders ─────────────────────────────
 var int    pendDir  = 0
@@ -413,6 +420,9 @@ if canNew and dayMode == "RANGE" and inRangeNow
 if pendTag == "Range" and rangeEntry == "Market on close" and pendDir != 0 and bar_index > pendBar
     pendDir := 0
 
+if pendBar == bar_index
+    cntSetups += 1
+
 // ---- End of day: flatten and cancel ----
 if endDay
     if pendDir != 0
@@ -424,6 +434,22 @@ if endDay
 // ───────────────────────────── Visuals ─────────────────────────────
 bgcolor(showBg and inSess and inNY ? color.new(color.gray, 85) : na, title = "NY open break")
 bgcolor(showBg and not inSess ? color.new(color.gray, 93) : na, title = "Outside trading hours")
+
+// Status table (bottom-right) – shows why trades are / aren't happening
+var table dbg = table.new(position.bottom_right, 2, 6, bgcolor = color.new(color.black, 30), border_width = 1)
+if barstate.islast
+    table.cell(dbg, 0, 0, "Day mode",        text_color = color.white, text_size = size.small)
+    table.cell(dbg, 1, 0, dayMode,           text_color = color.white, text_size = size.small)
+    table.cell(dbg, 0, 1, "Trend",           text_color = color.white, text_size = size.small)
+    table.cell(dbg, 1, 1, trend == 1 ? "Bullish" : trend == -1 ? "Bearish" : "Undefined", text_color = color.white, text_size = size.small)
+    table.cell(dbg, 0, 2, "Decision areas",  text_color = color.white, text_size = size.small)
+    table.cell(dbg, 1, 2, str.tostring(nZ),  text_color = color.white, text_size = size.small)
+    table.cell(dbg, 0, 3, "No-wick candles (session)", text_color = color.white, text_size = size.small)
+    table.cell(dbg, 1, 3, str.tostring(cntNoWick), text_color = color.white, text_size = size.small)
+    table.cell(dbg, 0, 4, "Orders placed",   text_color = color.white, text_size = size.small)
+    table.cell(dbg, 1, 4, str.tostring(cntSetups), text_color = color.white, text_size = size.small)
+    table.cell(dbg, 0, 5, "Trades",          text_color = color.white, text_size = size.small)
+    table.cell(dbg, 1, 5, str.tostring(strategy.closedtrades + strategy.opentrades), text_color = color.white, text_size = size.small)
 
 // Structure alerts (strategies use alert(); create one alert with "Any alert() function call")
 if bullBOS
