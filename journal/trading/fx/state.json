@@ -207,7 +207,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-26_1710_NAS100_USD.md"
   }
  ],
@@ -379,6 +379,10 @@
   [
    "levels",
    "2026-11-26-750"
+  ],
+  [
+   "levels",
+   "2026-11-26-780"
   ]
  ]
 }
