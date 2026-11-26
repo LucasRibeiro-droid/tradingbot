@@ -43,3 +43,4 @@
 {"type": "exit", "t": "2026-11-26T10:51:21+00:00", "instrument": "XAU_USD", "setup_t": "2026-11-26T10:45:00Z", "entry": 3556.49, "stop": 3558.645, "targets": [3554.155, 3549.665], "exits": [[3558.73, 1.8, "stop"], [3558.73, 1.8, "stop"]], "units": 3.6, "r": -1.039, "realized_pl_account_ccy": -6.21}
 {"type": "not_filled", "t": "2026-11-26T11:00:21+00:00", "instrument": "XAU_USD", "setup_t": "2026-11-26T10:10:00Z", "limit": 3569.035}
 {"type": "not_filled", "t": "2026-11-26T11:00:21+00:00", "instrument": "XAU_USD", "setup_t": "2026-11-26T10:15:00Z", "limit": 3566.655}
+{"type": "exit", "t": "2026-11-26T11:09:20+00:00", "instrument": "XAU_USD", "setup_t": "2026-11-26T10:40:00Z", "entry": 3558.72, "stop": 3561.51, "targets": [3555.78, 3550.05], "exits": [[3555.59, 1.8, "target"], [3561.51, 1.8, "stop"]], "units": 3.6, "r": 0.061, "realized_pl_account_ccy": 0.38}

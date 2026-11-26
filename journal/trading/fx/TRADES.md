@@ -9,3 +9,4 @@
 | 2026-11-20 14:15 | XAU_USD | long | -1.01 | -17.61 | [page](trades/2026-11-20_1415_XAU_USD.md) |
 | 2026-11-26 10:20 | XAU_USD | short | +2.05 | +16.21 | [page](trades/2026-11-26_1020_XAU_USD.md) |
 | 2026-11-26 10:45 | XAU_USD | short | -1.04 | -6.21 | [page](trades/2026-11-26_1045_XAU_USD.md) |
+| 2026-11-26 10:40 | XAU_USD | short | +0.06 | +0.38 | [page](trades/2026-11-26_1040_XAU_USD.md) |
