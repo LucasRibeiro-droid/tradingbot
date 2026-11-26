@@ -27,7 +27,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-26_1010_XAU_USD.md"
   },
   {
@@ -57,7 +57,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-26_1015_XAU_USD.md"
   },
   {
