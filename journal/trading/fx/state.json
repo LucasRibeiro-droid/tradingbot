@@ -149,9 +149,43 @@
    ],
    "closed": true,
    "page": "journal/trading/fx/trades/2026-11-26_1045_XAU_USD.md"
+  },
+  {
+   "instrument": "NAS100_USD",
+   "setup_t": "2026-11-26T14:25:00Z",
+   "direction": -1,
+   "entry": 26199.2,
+   "stop": 26216.8,
+   "targets": [
+    26181.6,
+    26146.4
+   ],
+   "expires_at": "2026-11-26T15:00:00+00:00",
+   "parts": [
+    {
+     "client_id": "crt_fx-NAS100_USD-202611261425-0",
+     "order_id": "132",
+     "units": 0.25,
+     "target": 26181.6,
+     "trade_id": "133"
+    },
+    {
+     "client_id": "crt_fx-NAS100_USD-202611261425-1",
+     "order_id": "136",
+     "units": 0.25,
+     "target": 26146.4,
+     "trade_id": "137"
+    }
+   ],
+   "closed": true,
+   "page": "journal/trading/fx/trades/2026-11-26_1425_NAS100_USD.md"
   }
  ],
  "seen": [
+  [
+   "NAS100_USD",
+   "2026-11-26T14:25:00Z"
+  ],
   [
    "XAU_USD",
    "2026-11-26T10:10:00Z"
