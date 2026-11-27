@@ -6,3 +6,4 @@ Model: tradingbot/live/hl_predict.py (fit on QQQ 2016-2026; when it says 80%+ it
 | Time (ET) | Price | High so far | Low so far | Chance the high is in | Chance the low is in |
 |---|---|---|---|---|---|
 | 10:00 | 26207.0 | 26541.4 | 26179.6 | 57% | 14% |
+| 10:30 | 26363.2 | 26541.4 | 26164.8 | 30% | 44% |
