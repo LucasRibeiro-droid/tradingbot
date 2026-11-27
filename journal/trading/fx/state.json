@@ -237,7 +237,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-27_1420_NAS100_USD.md"
   },
   {
@@ -267,7 +267,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-27_1430_NAS100_USD.md"
   },
   {
@@ -297,7 +297,7 @@
      "trade_id": null
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-27_1435_NAS100_USD.md"
   },
   {
@@ -491,6 +491,10 @@
   [
    "levels",
    "2026-11-27-575"
+  ],
+  [
+   "levels",
+   "2026-11-27-600"
   ]
  ]
 }
