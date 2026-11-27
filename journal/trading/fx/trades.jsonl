@@ -59,3 +59,4 @@
 {"type": "not_filled", "t": "2026-11-27T15:00:20+00:00", "instrument": "NAS100_USD", "setup_t": "2026-11-27T14:20:00Z", "limit": 26583.7}
 {"type": "not_filled", "t": "2026-11-27T15:00:20+00:00", "instrument": "NAS100_USD", "setup_t": "2026-11-27T14:30:00Z", "limit": 26541.4}
 {"type": "not_filled", "t": "2026-11-27T15:00:21+00:00", "instrument": "NAS100_USD", "setup_t": "2026-11-27T14:35:00Z", "limit": 26382.8}
+{"type": "exit", "t": "2026-11-27T15:20:21+00:00", "instrument": "NAS100_USD", "setup_t": "2026-11-27T14:40:00Z", "entry": 26311.3, "stop": 26382.8, "targets": [26221.8, 26060.8], "exits": [[26221.5, 0.24, "target"], [26383.5, 0.24, "stop"]], "units": 0.48, "r": 0.123, "realized_pl_account_ccy": 2.92}

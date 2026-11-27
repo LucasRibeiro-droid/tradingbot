@@ -327,7 +327,7 @@
      "trade_id": "159"
     }
    ],
-   "closed": false,
+   "closed": true,
    "page": "journal/trading/fx/trades/2026-11-27_1440_NAS100_USD.md"
   }
  ],
