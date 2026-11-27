@@ -1,0 +1,187 @@
+// This Pine Script® code is subject to the terms of the Mozilla Public License 2.0
+// https://mozilla.org/MPL/2.0/
+//
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+//  LONDON RANGE BREAK + 3-CANDLE REVERSION — 3-minute chart
+//
+//  1. RANGE: highest wick and lowest wick of the 3m candles from 06:12 to 07:12 London.
+//  2. BREAK: after 07:12, a candle wicks OR closes through a level.
+//       broke the HIGH → look for SELLS · broke the LOW → look for BUYS (the latest break counts).
+//  3. REVERSION (on 3m, 5m or 15m candles — your choice), after the break:
+//       SELL: bullish candle → bearish candle → bearish candle that CLOSES BELOW the bullish candle's body
+//       BUY : bearish candle → bullish candle → bullish candle that CLOSES ABOVE the bearish candle's body
+//  4. ENTRY at the next open · STOP above the high made since the break (below the low for buys)
+//     · TARGET 1:1.
+//  Labels: RANGE box, "BREAK ▲/▼", "SELL/BUY" with entry/SL/TP, then "TP ✓" or "SL ✗".
+// ════════════════════════════════════════════════════════════════════════════════════════════════
+
+//@version=6
+strategy("London Range Reversion 3m", shorttitle = "LRR 3m", overlay = true,
+     initial_capital = 50000, currency = currency.USD, pyramiding = 1,
+     margin_long = 0, margin_short = 0,
+     commission_type = strategy.commission.cash_per_contract, commission_value = 0.62, slippage = 1,
+     use_bar_magnifier = false, process_orders_on_close = false,
+     max_labels_count = 500, max_lines_count = 500, max_boxes_count = 200)
+
+const string TZ = "Europe/London"
+const string G1 = "Range & break"
+const string G2 = "Reversion"
+const string G3 = "Trade"
+const string G4 = "Risk"
+
+string rangeSess = input.session("0612-0712", "Range window (London time)", group = G1)
+string tradeSess = input.session("0712-1600", "Look for setups (London time)", group = G1)
+string exitTime  = input.session("2000-2001", "Close any open trade at (London time)", group = G1)
+string revTf     = input.string("3", "Reversion candles", options = ["3", "5", "15"], group = G2,
+     tooltip = "3 = 3-minute, 5 = 5-minute, 15 = 15-minute candles for the bullish/bearish/bearish pattern.")
+int   bufTicks   = input.int(0, "Stop buffer beyond the high/low (ticks)", minval = 0, group = G3)
+float rr         = input.float(1.0, "Target (R)", minval = 0.5, step = 0.5, group = G3)
+int   maxPerDay  = input.int(1, "Max trades per day", minval = 1, maxval = 10, group = G3)
+int   minRiskT   = input.int(4, "Minimum stop size (ticks)", minval = 1, group = G3)
+float riskPct    = input.float(1.0, "Risk per trade (% of current equity)", minval = 0.05, step = 0.25, group = G4)
+int   maxQty     = input.int(30, "Max contracts per trade", minval = 1, group = G4)
+
+if barstate.isfirst and timeframe.in_seconds() != 180
+    runtime.error("Use the 3-minute chart.")
+
+float tick = syminfo.mintick
+bool inRange = not na(time(timeframe.period, rangeSess, TZ))
+bool inTrade = not na(time(timeframe.period, tradeSess, TZ))
+bool exitNow = not na(time(timeframe.period, exitTime, TZ))
+
+// ── reversion candles: the last CLOSED candle of the chosen timeframe (no repainting) ───────────
+[pO, pH, pL, pC, pT] = request.security(syminfo.tickerid, revTf, [open[1], high[1], low[1], close[1], time[1]], lookahead = barmerge.lookahead_on)
+int tfMs = timeframe.in_seconds(revTf) * 1000
+var array<float> cO = array.new<float>()
+var array<float> cC = array.new<float>()
+var array<int>   cT = array.new<int>()
+bool newCandle = not na(pT) and (cT.size() == 0 or pT != cT.get(cT.size() - 1))
+if newCandle
+    cO.push(pO)
+    cC.push(pC)
+    cT.push(pT)
+    if cT.size() > 3
+        cO.shift()
+        cC.shift()
+        cT.shift()
+
+// ── daily state ──────────────────────────────────────────────────────────────────────────────────
+var float rHi = na
+var float rLo = na
+var int   rStart = na
+var box   rBox = na
+var bool  rangeDone = false
+var int   dir = 0              // -1 = high broken → sells, +1 = low broken → buys
+var int   brkTime = na
+var float extHi = na           // highest high since the break (for the sell stop)
+var float extLo = na
+var int   tradesToday = 0
+
+bool rangeStart = inRange and not inRange[1]
+if rangeStart
+    rHi := high
+    rLo := low
+    rStart := bar_index
+    rangeDone := false
+    dir := 0
+    tradesToday := 0
+    rBox := box.new(bar_index, high, bar_index + 1, low, border_color = color.new(color.blue, 30), bgcolor = color.new(color.blue, 88),
+         text = "RANGE 06:12-07:12", text_color = color.blue, text_size = size.tiny, text_valign = text.align_top, text_halign = text.align_left)
+else if inRange
+    rHi := math.max(rHi, high)
+    rLo := math.min(rLo, low)
+    rBox.set_top(rHi)
+    rBox.set_bottom(rLo)
+    rBox.set_right(bar_index)
+if not inRange and inRange[1]
+    rangeDone := true
+if rangeDone and inTrade and not na(rBox)
+    rBox.set_right(bar_index)
+
+// ── break (wick or close through) ───────────────────────────────────────────────────────────────
+bool brkHigh = rangeDone and inTrade and high > rHi
+bool brkLow  = rangeDone and inTrade and low < rLo
+if brkHigh and dir != -1
+    dir := -1
+    brkTime := time
+    extHi := high
+    label.new(bar_index, na, "BREAK ▲", yloc = yloc.abovebar, style = label.style_none, textcolor = color.orange, size = size.small)
+else if brkLow and dir != 1
+    dir := 1
+    brkTime := time
+    extLo := low
+    label.new(bar_index, na, "BREAK ▼", yloc = yloc.belowbar, style = label.style_none, textcolor = color.orange, size = size.small)
+if dir == -1
+    extHi := math.max(extHi, high)
+if dir == 1
+    extLo := math.min(extLo, low)
+
+// ── 3-candle reversion (first candle must end after the break) ──────────────────────────────────
+bool sellPat = false
+bool buyPat = false
+if newCandle and cT.size() == 3 and dir != 0 and cT.get(0) + tfMs > brkTime
+    float o1 = cO.get(0)
+    float c1 = cC.get(0)
+    float o2 = cO.get(1)
+    float c2 = cC.get(1)
+    float o3 = cO.get(2)
+    float c3 = cC.get(2)
+    sellPat := dir == -1 and c1 > o1 and c2 < o2 and c3 < o3 and c3 < math.min(o1, c1)
+    buyPat  := dir == 1  and c1 < o1 and c2 > o2 and c3 > o3 and c3 > math.max(o1, c1)
+
+// ── orders ──────────────────────────────────────────────────────────────────────────────────────
+var line lS = na
+var line lT = na
+var float tStop = na
+var float tTp = na
+var int   tDir = 0
+bool flat = strategy.position_size == 0
+if (sellPat or buyPat) and flat and inTrade and tradesToday < maxPerDay
+    int d = sellPat ? -1 : 1
+    float stop = d == -1 ? extHi + bufTicks * tick : extLo - bufTicks * tick
+    float rk = math.abs(close - stop)
+    if rk >= minRiskT * tick
+        float tp = close + d * rr * rk
+        int qty = math.min(maxQty, int(math.floor(strategy.equity * riskPct / 100 / (rk * syminfo.pointvalue))))
+        if qty >= 1
+            strategy.entry(d == 1 ? "BUY" : "SELL", d == 1 ? strategy.long : strategy.short, qty = qty)
+            strategy.exit("X", stop = stop, limit = tp, comment_loss = "SL", comment_profit = "TP")
+            tradesToday += 1
+            tStop := stop
+            tTp := tp
+            tDir := d
+            label.new(bar_index, na, (d == 1 ? "BUY" : "SELL") + "\nSL " + str.tostring(stop, format.mintick) + "\nTP " + str.tostring(tp, format.mintick),
+                 yloc = d == 1 ? yloc.belowbar : yloc.abovebar, style = d == 1 ? label.style_label_up : label.style_label_down,
+                 color = d == 1 ? color.teal : color.red, textcolor = color.white, size = size.tiny)
+            lS := line.new(bar_index, stop, bar_index + 1, stop, color = color.red)
+            lT := line.new(bar_index, tp, bar_index + 1, tp, color = color.green)
+            dir := 0                                   // need a fresh break for the next trade
+
+if strategy.position_size != 0
+    lS.set_x2(bar_index)
+    lT.set_x2(bar_index)
+if exitNow and strategy.position_size != 0
+    strategy.close_all(comment = "Time")
+
+// outcome marks
+if strategy.closedtrades > strategy.closedtrades[1]
+    string cm = strategy.closedtrades.exit_comment(strategy.closedtrades - 1)
+    float pnl = strategy.closedtrades.profit(strategy.closedtrades - 1)
+    label.new(bar_index, na, cm == "TP" ? "TP ✓" : cm == "SL" ? "SL ✗" : "closed", yloc = tDir == -1 ? yloc.belowbar : yloc.abovebar,
+         style = label.style_none, textcolor = pnl > 0 ? color.green : color.red, size = size.small)
+
+// ── results ─────────────────────────────────────────────────────────────────────────────────────
+var table tb = table.new(position.bottom_right, 2, 6, bgcolor = color.new(color.black, 25), border_width = 1, border_color = color.new(color.gray, 60))
+f_row(int r, string k, string v, color c) =>
+    table.cell(tb, 0, r, k, text_color = color.white, text_size = size.small, text_halign = text.align_left)
+    table.cell(tb, 1, r, v, text_color = c, text_size = size.small, text_halign = text.align_right)
+if barstate.islast
+    int n = strategy.closedtrades
+    float ret = strategy.netprofit / strategy.initial_capital * 100
+    float pf = strategy.grossloss > 0 ? strategy.grossprofit / strategy.grossloss : na
+    f_row(0, "LRR — " + syminfo.ticker, "reversion " + revTf + "m", color.yellow)
+    f_row(1, "Trades", str.tostring(n), color.white)
+    f_row(2, "Win rate", n > 0 ? str.tostring(float(strategy.wintrades) / n * 100, "0.0") + "%" : "-", color.white)
+    f_row(3, "Net return", str.tostring(ret, "+0.0;-0.0") + "%", ret >= 0 ? color.green : color.red)
+    f_row(4, "Max drawdown", str.tostring(strategy.max_drawdown_percent, "0.0") + "%", color.orange)
+    f_row(5, "Profit factor", na(pf) ? "-" : str.tostring(pf, "0.00"), color.white)
